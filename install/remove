@@ -1,0 +1,229 @@
+#!/bin/bash
+#
+#	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+#
+#	Released under GPLv3 license; see LICENSE.
+#
+#
+# remove
+#
+# removes an instance by:-
+# 1 - optional backing up of database
+# 2 - optional dropping the database
+# 3 - removal of apache virtual host (if it exists) and reload of apache
+# 4 - delete of apache virtual host file (if it exists)
+# 5 - removal of virtual host (if it exists) from /etc/hosts, if present
+# 6 - removal of all source code (if it exists) for the instance
+#
+# Because each of the above steps is optional
+# this will remove a partly installed/removed instance
+#
+# Requires up to 2 parameters:-
+#   - release base directory (optional, default will look in the current directory)
+#   - database (optional, will override this value with the value in release base/conf/config.php"
+#                         if release base/conf/config.php does not exist and this parameter is not supplied"
+#                         will look in the release_config file"
+#                         and then default to base directory name as a last resort)"
+#
+if [ "$rootdir" = "-?" -o "${rootdir:0:1}" = "H" -o "${rootdir:0:1}" = "h" -o "${rootdir:0:2}" = "-H" -o "${rootdir:0:2}" = "-h" -o "${rootdir:0:3}" = "--H" -o "${rootdir:0:3}" = "--h" ]
+then
+  echo "----------------------------------------------------------------------"
+  echo "installRelease"
+  echo ""
+  echo "Requires up to 2 parameters:-"
+  echo "  - release base directory (optional, default will look in the current directory)"
+  echo "  - database (optional, will override this value with the value in release base/conf/config.php"
+  echo "                        if release base/conf/config.php does not exist and this parameter is not supplied"
+  echo "                        will look in the release_config file"
+  echo "                        and then default to base directory name as a last resort)"
+  echo "----------------------------------------------------------------------"
+  exit -1
+fi
+#
+# Get/check instance location
+#
+instance=
+target=
+if [ $# -gt 0 ]
+then
+  instance=$1
+fi
+if [ "$instance" != "" ] && [ -f "$instance/install/release_config" ]
+then
+  . $instance/install/release_config
+else
+  #
+  # Instance is not supplied in parameter 1 so look for release_config file
+  #
+  if [ -f "$instance/install/release_config" ]
+  then
+    . $instance/install/release_config
+  elif [ -f "$instance/release_config" ]
+  then
+    . $instance/release_config
+  elif [ -f "./release_config" ]
+  then
+    . ./release_config
+  else
+    echo "Cannot find release configuration parameter file"
+    exit -1
+  fi
+fi
+if [ "$instance" = "" ]
+then
+  instance=$target
+fi
+instance_name=`basename $instance`
+#
+# Look for release_config file
+#
+p_database=$database   # save value from release_config file
+if [ -f $instance/conf/config.php ]
+then
+  database=`grep -i db_name $instance/conf/config.php | cut -d',' -f2 | cut -d')' -f1`
+  database=${database//\ }
+  database=${database//\'}
+  database=${database//\"}
+fi
+if [ "$database" = "" ]
+then
+  if [ $# -gt 0 ]
+  then
+    database=$2
+  elif [ "$p_database" != "" ]
+  then
+    database=$p_database
+  else
+    database=$instance_name
+  fi
+fi
+echo "Database for this instance is $database"
+#
+#
+#
+echo -n "Do you want to remove this instance? [N] "
+read value
+if [ "${value:0:1}" != "y" -a "${value:0:1}" != "Y" ]
+then
+  echo "Instance will not be removed"
+  exit -1
+fi
+
+echo -n "Remove database? [Y] "
+read removedb
+if [ "$removedb" = "" ]
+then
+  removedb=Y
+elif [ "${removedb:0:1}" != "y" -a "${removedb:0:1}" != "Y" ]
+then
+  removedb=N
+fi
+if [ "${removedb:0:1}" = "y" -o "${removedb:0:1}" = "Y" ]
+then
+  echo -n "Backup database before removal? [Y] "
+  read backupdb
+  if [ "${backupdb:0:1}" = "y" -o "${backupdb:0:1}" = "Y" ]
+  then
+    echo "Backup of Database $database requested"
+    pg_dump -Ft $database > ~/${database}.dump
+    if [ $? -ne 0 ]
+    then
+      echo "Failed to backup database"
+      exit -1
+    else
+      echo "Database backed up to ~/${database}.dump"
+    fi
+  fi
+  su -l postgres -c psql << !EOF
+  DROP DATABASE "$database";
+!EOF
+  if [ $? -ne 0 ]
+  then
+    echo "Failed to drop database $database"
+    exit -1
+  else
+    echo "Database $database dropped"
+  fi
+fi
+#
+# Now remove Apache Virtual Host
+#
+apache_root=`apache2 -V 2>/dev/null | grep HTTPD_ROOT | cut -s -d'"' -f2`
+if [ "$apache_root" = "" ]
+then
+  apache_conf=`apache2 -V 2>/dev/null | grep SERVER_CONFIG_FILE | cut -s -d'"' -f2`
+  apache_root=`cat $apache_conf | grep ^ServerRoot | cut -s -d'"' -f2`
+fi
+uzerp_site=`grep -lE "DocumentRoot.*(${instance}$|${instance}/$)" $apache_root/sites-enabled/*`
+if [ "$uzerp_site" != "" ]
+then
+  uzerp_site=`basename $uzerp_site`
+  a2dissite $uzerp_site
+  if [ $? -ne 0 ]
+  then
+    echo "Failed to disable site $uzerp_site"
+    exit -1
+  fi
+  /etc/init.d/apache2 reload
+  if [ $? -ne 0 ]
+  then
+    echo "Failed to reload Apache"
+    exit -1
+  fi
+fi
+if [ -f $apache_root/sites-available/$uzerp_site ]
+then
+  rm $apache_root/sites-available/$uzerp_site
+  if [ $? -ne 0 ]
+  then
+    echo "Failed to remove $apache_root/sites-available/$uzerp_site"
+    exit -1
+  fi
+fi
+#
+# Now remove the virtual host entry from /etc/hosts if it exists
+#
+if [ "$uzerp_site" != "" ]
+then
+  sed -i".bak" "s/$uzerp_site//" /etc/hosts
+fi
+#
+# Now remove any release history
+#
+if [ "$release_base" = "" ]
+then
+  release_base=/var/releases/$instance_name
+fi
+if [ -d $release_base ]
+then
+  #
+  # Need to check if the release_base directory
+  # to see if it points to the instance
+  # If not, check if the instance exists under release_base
+  # and if it does, point to it
+  #
+  if [ $instance_name != `basename $release_base` ]
+  then
+    tmp_release_base=$release_base/$instance_name
+    if [ -d $tmp_release_base ]
+    then
+      release_base=$tmp_release_base
+    fi
+  fi
+  rm -r $release_base
+fi
+#
+# Now delete the source code
+#
+rm -r $instance
+if [ $? -ne 0 ]
+then
+  echo "Failed to remove $instance source"
+  exit -1
+else
+  echo "Source for $instance removed"
+fi
+#
+# End of process
+#
+echo "Removal of $instance completed"

@@ -1,0 +1,28 @@
+/* add your custom css below */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+
+#ticket_responses
+{
+	color:#333;
+	margin-left:-10px;
+	margin-right:-10px;
+	margin-top:20px;
+}
+
+#ticket_responses li.email,#ticket_responses li.site,#ticket_responses li.status
+{
+	background-color:#ddd;
+	border:1px solid #ccc;
+	margin:10px 10px 20px;
+	padding:10px;
+}
+
+#ticket_responses ul
+{
+	list-style-type:none;
+}

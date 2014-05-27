@@ -1,0 +1,8 @@
+#gedit backups
+*~
+
+#These should go in /var on production systems, but we'll leave them for now
+data/cache/**
+data/templates_c/**
+data/tmp/**
+data/users/**

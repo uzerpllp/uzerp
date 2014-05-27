@@ -1,0 +1,118 @@
+/* $Revision: 1.3 $ */
+
+@import '{THEME_PATH}/preboot.less';
+
+@orange: #FF4B00;
+@dark-grey: #3F3F3F;
+@dark-orange: #ED3900;
+
+body {
+	background-color: #EEE;
+	font-family: Arial, Tahoma, Sans-serif;
+	color: #fff;
+}
+
+#login {
+	font-size: 12px;
+	color: @dark-grey;
+	margin: 100px auto 0;
+	width: 500px;
+	background-color: white;
+	/* padding: 25px; */
+	border-radius: 10px;
+	.box-shadow(1px 1px 6px rgba(0,0,0,.3));
+	.border-radius(10px);
+	.header {
+		.border-radius(10px 10px 0 0);
+		background-color: @orange;
+		padding: 25px;
+		> div {
+			position: relative;
+			height: 80px;
+			width: 150px;
+			margin: 0 auto;
+			background-color: white;
+			border: 1px solid #EEE;
+			.box-shadow(1px 1px 4px rgba(0,0,0,.3));
+			.border-radius(5px);
+			img {
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				margin: auto;
+				border: 0;
+				
+			}
+		}
+		h2 {
+			font-size: 18px;
+			line-height: 18px;
+			margin: 25px 0 5px;
+			text-align: center;
+			color: white;
+		}
+	}
+	.form {
+		padding: 25px;
+		
+	}
+	.footer {
+		padding: 25px;
+		padding-top: 10px;
+	}
+	p {
+		text-align: center;
+		margin: 10px 0;
+	}
+	a {
+		text-decoration: none;
+		color: @dark-grey;
+		border-bottom: 1px dotted @dark-grey;
+	}
+	a:hover {
+		text-decoration: none;
+		color: @dark-orange;
+		border-bottom: 1px solid @dark-orange;
+	}
+	form {
+		margin: 0;
+	}
+	label {
+		float: left;
+		margin-right: 10px;
+    	padding: 3px;
+    	width: 170px;
+	}
+	input {
+		background-color: white;
+		font-family: Arial, Tahoma, Sans-serif;
+		.border-radius(3px);
+		font-size: 18px;
+		width: 170px;
+		padding: 2px;
+  		border: 1px solid #ccc;
+  		margin-right: 7px;
+  	}
+  	input[type=submit] {
+		width: auto;
+  		margin-right: 0;
+  		border: 1px solid lightgray;
+		text-align: center;
+  	}
+}	
+
+#errors {
+	margin: 15px 0;
+	font-size: 14px;
+	padding: 0;
+	li {
+		text-align: center;
+		background-color: red;
+		color: white;
+		.border-radius(5px);
+		padding: 5px;
+		margin: 0;
+	}
+}

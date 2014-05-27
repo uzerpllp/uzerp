@@ -1,0 +1,14 @@
+/* add your custom css below */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+/* $Revision: 1.4 $ */
+/* output setup */
+
+#uzlet_setup-uzlets-new #uzlet_modules, 
+#uzlet_setup-uzlets-edit #uzlet_modules {
+	height: 150px;
+}

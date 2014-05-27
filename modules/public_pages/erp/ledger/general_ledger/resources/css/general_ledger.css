@@ -1,0 +1,27 @@
+/* 	$Revision: 1.2 $ */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+
+/* add your custom css below */
+
+#gltransaction_container
+{
+	border-collapse:collapse;
+	clear:both;
+	float:left;
+	width:100%;
+}
+
+#gltransaction_container td,th
+{
+	padding:5px;
+}
+
+.datagrid th.wide_column
+{
+	width:50%;
+}

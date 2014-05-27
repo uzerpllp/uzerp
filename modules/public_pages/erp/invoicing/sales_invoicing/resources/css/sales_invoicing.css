@@ -1,0 +1,77 @@
+/* 	$Revision: 1.2 $ */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+
+/* add your custom css below */
+
+input.sales_qty {
+	width:60px !important;
+}
+
+input.price {
+	width:60px !important;
+}
+
+select.tax_rate {
+	width:160px !important;
+}
+
+select.account_centre {
+	width:180px !important;
+}
+
+#invoice_lines
+{
+	border-collapse:collapse;
+	clear:both;
+	float:left;
+}
+
+#invoice_lines th
+{
+	border-bottom:1px solid #333;
+	padding:4px 2px;
+	text-align:left;
+}
+
+#invoice_lines th.right
+{
+	text-align:right;
+}
+
+#invoice_lines td
+{
+	padding:2px;
+}
+
+#invoice_lines input.numeric
+{
+	text-align:right;
+	width:50px;
+}
+
+#new_invoice #view_data_left
+{
+	height:350px;
+	width:40%;
+}
+
+#sales_invoice_lines
+{
+	clear:both;
+}
+
+#new_invoice dl.for_textarea dt
+{
+	width:20%;
+}
+
+#new_invoice textarea
+{
+	height:100px;
+	width:300px;
+}

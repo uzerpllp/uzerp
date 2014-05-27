@@ -1,0 +1,28 @@
+---
+#Menu Actions
+
+- calendarevents: 
+    permission: calendarevents
+    title: Calendar Events
+    display: true
+    - actions: 
+      - {permission: _new, title: New Event, display: false}
+      - {permission: view, title: View Event, display: false}
+      - {permission: edit, title: Edit Event, display: false}
+      - {permission: delete, title: Delete Event, display: false}
+      - {permission: monthview, title: Month View, display: false}
+
+- calendars: 
+    permission: calendars
+    title: Calendars
+    display: true
+    - actions: 
+      - {permission: new_personal, title: New Personal calendar, display: false}
+      - {permission: new_group, title: New Group calendar, display: false}
+      - {permission: new_gcal, title: New Google Calendar, display: false}
+      - {permission: edit_personal, title: Edit Personal calendar, display: false}
+      - {permission: edit_group, title: Edit Group calendar, display: false}
+      - {permission: edit_gcal, title: Edit Google calendar, display: false}
+      - {permission: dayview, title: Day View, display: false}
+      - {permission: weekview, title: Week View, display: false}
+      - {permission: monthview, title: Month View, display: false}

@@ -1,0 +1,689 @@
+---
+#Contacts EGlets
+-
+  name: ContactsQuickLinks
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: contacts_quick_links.tpl
+  title: quick_links
+  modules:
+    - contacts
+-
+  name: RecentlyViewedCompaniesEGlet
+  title: recently_viewed_companies
+  default: true
+  modules:
+    - contacts
+-
+  name: RecentlyViewedPeopleEGlet
+  title: recently_viewed_people
+  default: true
+  modules:
+    - contacts
+-
+  name: RecentlyViewedLeadsEGlet
+  title: recently_viewed_leads
+  default: true
+  modules:
+    - contacts
+-
+  name: RecentlyAddedCompaniesEGlet
+  title: recently_added_companies
+  default: true
+  modules:
+    - contacts    
+-
+  name: RecentlyAddedLeadsEGlet
+  title: recently_added_leads
+  default: true
+  modules:
+    - contacts
+-
+  name: CompaniesAddedTodayEGlet
+  title: companies_added_today
+  default: true
+  modules:
+    - contacts   
+-
+  name: LeadsAddedTodayEGlet
+  title: leads_added_today
+  default: true
+  modules:
+    - contacts
+
+#CRM EGlets
+-
+  name: OpportunitiesBySourceGrapher
+  title: opportunity_source_by_value
+  dashboard: true
+  modules:
+    - crm
+-
+  name: OpportunitiesHistoryGrapher
+  title: opportunity_history
+  dashboard: true
+  modules:
+    - crm
+-
+  name: CRMQuickLinks
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: crm_quick_links.tpl
+  title: quick_links
+  modules:
+    - crm
+-
+  name: OpenOpportunitiesEGlet
+  title: my_open_opportunities
+  dashboard: true
+  modules:
+    - crm
+-
+  name: OpportunitiesWeeklyByStatusGrapher
+  title: my_pipeline_for_week
+  dashboard: true
+  modules:
+    - crm
+-
+  name: OpportunitiesMonthlyByStatusGrapher
+  title: my_pipeline_for_month
+  dashboard: true
+  modules:
+    - crm
+-
+  name: OpportunitiesQuarterlyByStatusGrapher
+  title: my_pipeline_for_quarter
+  dashboard: true
+  modules:
+    - crm
+-
+  name: OpportunitiesYearlyByStatusGrapher
+  title: my_pipeline_for_year
+  dashboard: true
+  modules:
+    - crm
+-
+  name: SalesTeamYearlySummaryEGlet
+  title: team_pipeline_for_year
+  dashboard: true
+  default: true
+  modules:
+    - crm
+-
+  name: SalesTeamMonthlySummaryEGlet
+  title: team_pipeline_for_month
+  dashboard: true
+  default: true
+  modules:
+    - crm
+-
+  name: SalesTeamWeeklySummaryEGlet
+  title: team_pipeline_for_week
+  dashboard: true
+  default: true
+  modules:
+    - crm
+-
+  name: CurrentPipelineGrapher
+  title: current_pipeline
+  dashboard: true
+  modules:
+    - crm
+  name: CurrentActivitiesEGlet
+  uses: CurrentActivitiesEGlet
+  dashboard: true
+  title: Current Activities
+  default: true
+  modules:
+    - crm
+
+#SystemAdmin
+-
+  name: SystemAdminQuickLinks
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: system_admin_quick_links.tpl
+  title: quick_links
+  modules:
+    - system_admin
+
+#Projects
+-
+  name: ProjectsQuickLinks
+  uses: StaticContentEGlet
+  call:
+    setTemplate: project_quick_links.tpl
+  title: quick_links
+  default: true
+  enabled: false
+  modules:
+    - projects
+-
+  name: CurrentProjectsEGlet
+  title: my_current_projects
+  dashboard: true
+  default: true
+  modules:
+    - projects
+-
+  name: CurrentTasksEGlet
+  title: my_current_tasks
+  dashboard: true
+  modules:
+    - projects
+-
+  name: LoggedHoursPerWeekEGlet
+  title: logged_hours_this_week
+  modules:
+    - projects
+-
+  name: NewIssuesEGlet
+  title: new_issues
+  dashboard: true
+  modules:
+    - projects
+-
+  name: MyCurrentIssuesEGlet
+  title: current_issues
+  dashboard: true
+  default: true
+  modules:
+    - projects
+-
+  name: EquipmentUtilisationEGlet
+  title: equipment_utilisation
+  modules:
+    - projects
+
+#websites
+-
+  name: WebsiteQuickLinks
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: website_quick_links.tpl
+  title: Quick Links
+  modules:
+    - websites
+-
+  name: MyWebsitesEGlet
+  title: my_websites
+  dashboard: true
+  default: true
+  modules:
+    - websites
+-
+  name: EcommerceQuickLinks
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: ecommerce_quick_links.tpl
+  title: Quick Links
+  modules:
+    - ecommerce
+
+#Dashboard
+-
+  name: CompanySelectorEGlet
+  dashboard: true
+  title: company_selector
+  modules:
+    - dashboard
+
+#HR
+-
+  name: HRQuickLinks
+  uses: StaticContentEGlet
+  call:
+    setTemplate: hr_quick_links.tpl
+  title: quick_links
+  default: true
+  enabled: false
+  modules:
+    - hr
+
+#Ticketing EGlets
+-
+  name: ClientTicketQuickEntryEGlet
+  uses: ClientTicketQuickEntryEGlet
+  dashboard: true
+  title: Quick Ticket Entry
+  default: true
+  enabled: false
+  modules:
+    - ticketing
+-
+  name: TicketingQuickLinks
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: ticketing_quick_links.tpl
+  title: quick_links
+  modules:
+    - ticketing
+-
+  name: TicketsWeeklyByStatusGrapher
+  title: ticket_statuses_for_current_week
+  dashboard: true
+  modules:
+    - ticketing
+-
+  name: TicketsWeeklyByPriorityGrapher
+  title: current_ticket_priorities_for_current_week
+  dashboard: true
+  modules:
+    - ticketing
+-
+  name: TicketsWeeklyBySeverityGrapher
+  title: current_ticket_severities_for_current_week
+  dashboard: true
+  modules:
+    - ticketing
+-
+  name: MyTicketsEGlet
+  title: my_tickets
+  dashboard: true
+  default: true
+  modules:
+    - ticketing
+-
+  name: UnassignedTicketsEGlet
+  title: unassigned_tickets
+  dashboard: true
+  modules:
+    - ticketing
+
+#Accounts/ERP
+-
+  name: erp_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: erp_quick_links.tpl
+  title: Accounts/ERP Quick Links
+  modules:
+    - erp
+
+#ERP/Asset Register
+-
+  name: ar_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: ar_quick_links.tpl
+  title: Asset Register Quick Links
+  modules:
+    - asset_register
+
+#ERP/Cashbook
+-
+  name: cashbook_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: cashbook_quick_links.tpl
+  title: Cashbook Quick Links
+  modules:
+    - cashbook
+-
+  name: PPOverdueEGlet
+  title: overdue_periodic_payments
+  dashboard: true
+  modules:
+    - cashbook
+
+#ERP/CustomerService
+-
+  name: customer_service_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: customer_service_quick_links.tpl
+  title: Customer Service Quick Links
+  modules:
+    - customer_service
+-
+  name: CustomerServiceGrapher
+  title: customer_service_graph
+  dashboard: true
+  modules:
+    - customer_service
+    - sales_invoicing
+
+#ERP/Despatch
+-
+  name: despatch_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: despatch_quick_links.tpl
+  title: Goods Despatch Quick Links
+  modules:
+    - despatch
+
+#ERP/General Ledger
+-
+  name: gl_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: gl_quick_links.tpl
+  title: General Ledger Quick Links
+  modules:
+    - general_ledger
+
+#ERP/Goods Received
+-
+  name: gr_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: gr_quick_links.tpl
+  title: Goods Received Quick Links
+  modules:
+    - goodsreceived
+
+#ERP/Costing
+-
+  name: costing_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: costing_quick_links.tpl
+  title: Costing Quick Links
+  modules:
+    - costing
+
+#ERP/Manufacturing
+-
+  name: MultiBinBalancesPrintEGlet
+  uses: MultiBinBalancesPrintEGlet
+  dashboard: true
+  title: multi_bin_balances_print
+  default: true
+  enabled: true
+  modules:
+    - manufacturing
+     
+-
+  name: manufacturing_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: manufacturing_quick_links.tpl
+  title: Manufacturing Quick Links
+  modules:
+    - manufacturing
+        
+-    
+  name: WOrdersBookOverUnderNewEGlet
+  title: Book_Over/Under_Usage
+  dashboard: true
+  modules:
+    - manufacturing
+    
+-    
+  name: WOrdersBookProductionNewEGlet
+  title: Book_Production
+  dashboard: true
+  modules:
+    - manufacturing
+       
+-    
+  name: WOrdersPrintPaperworkNewEGlet
+  title: Print_Works_Order
+  dashboard: true
+  modules:
+    - manufacturing
+       
+-    
+  name: WHActionsEGlet
+  title: Store_transfer_actions
+  dashboard: true
+  modules:
+    - manufacturing
+        
+-    
+  name: WOrdersBackflushErrorsEGlet
+  title: backflush_errors
+  dashboard: true
+  modules:
+    - manufacturing
+    
+    
+#ERP/Purchase Invoicing
+-
+  name: pi_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: pi_quick_links.tpl
+  title: Purchase Invoicing Quick Links
+  modules:
+    - purchase_invoicing
+-
+  name: POQueryInvoicesEGlet
+  title: po_invoices_in_query
+  dashboard: true
+  modules:
+    - purchase_invoicing
+-
+  name: POoverdueInvoicesEGlet
+  title: po_overdue_invoices
+  dashboard: true
+  modules:
+    - purchase_invoicing
+
+#ERP/Purchase Ledger
+-
+  name: pl_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: pl_quick_links.tpl
+  title: Purchase Ledger Quick Links
+  modules:
+    - purchase_ledger
+-
+  name: agedCreditorsSummaryEGlet
+  title: aged_creditors_summary
+  dashboard: true
+  modules:
+    - purchase_ledger
+
+#ERP/Purchase Order
+-
+  name: po_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: po_quick_links.tpl
+  title: Purchase Order Quick Links
+  modules:
+    - purchase_order
+-
+  name: POrdersDueTodayEGlet
+  title: Purchase_Orders_due_today
+  dashboard: true
+  modules:
+    - purchase_order
+-
+  name: POrdersOverdueEGlet
+  title: Overdue_Purchase_Orders
+  dashboard: true
+  modules:
+    - purchase_order
+-
+  name: POrdersNotAcknowledgedEGlet
+  title: Purchase_Orders_not_acknowledged
+  dashboard: true
+  modules:
+    - purchase_order
+-
+  name: POrdersReceivedValueEGlet
+  title: Purchases_by_value_received
+  dashboard: true
+  modules:
+    - purchase_order
+-
+  name: POrdersAuthRequisitionEGlet
+  title: Orders_awaiting_Authorisation
+  dashboard: true
+  modules:
+    - purchase_order
+-
+  name: POrdersNoAuthUserEGlet
+  title: Orders_with_no_Authorisor
+  dashboard: true
+  modules:
+    - purchase_order
+
+#ERP/Sales Invoicing
+-
+  name: si_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: si_quick_links.tpl
+  title: Sales Invoicing Quick Links
+  modules:
+    - sales_invoicing
+-
+  name: TopSalesInvoicesEGlet
+  title: top_10_sales_invoices_for_month
+  dashboard: true
+  modules:
+    - sales_invoicing
+-
+  name: SalesHistoryGrapher
+  title: sales_history
+  dashboard: true
+  modules:
+    - sales_invoicing
+
+#ERP/Sales Ledger
+-
+  name: sl_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: sl_quick_links.tpl
+  title: Sales Ledger Quick Links
+  modules:
+    - sales_ledger
+-
+  name: AccountsOnStopEGlet
+  title: accounts_on_stop
+  dashboard: true
+  modules:
+    - sales_ledger
+-
+  name: OverDueAccountsEGlet
+  title: overdue_accounts
+  dashboard: true
+  modules:
+    - sales_ledger
+-
+  name: OverCreditLimitEGlet
+  title: accounts_over_credit_limit
+  dashboard: true
+  modules:
+    - sales_ledger
+-
+  name: agedDebtorsSummaryEGlet
+  title: aged_debtors_summary
+  dashboard: true
+  modules:
+    - sales_ledger
+
+ #ERP/Sales Order
+-
+  name: so_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: so_quick_links.tpl
+  title: Sales Order Quick Links
+  modules:
+    - sales_order
+-
+  name: SOrdersOverdueEGlet
+  title: overdue_sales_orders
+  dashboard: true
+  modules:
+    - sales_order
+-
+  name: TopSalesOrdersEGlet
+  title: top_10_sales_orders_for_month
+  dashboard: true
+  modules:
+    - sales_order
+-
+  name: sales_orders_summary
+  uses: SalesOrdersSummaryEGlet
+  title: sales_orders_summary
+  dashboard: true
+  call:
+    setParameters:
+      params:
+        type: 'O'
+  modules:
+    - sales_order
+-
+  name: sales_quotes_summary_eglet
+  uses: SalesOrdersSummaryEGlet
+  title: sales_quotes_summary
+  dashboard: true
+  call:
+    setParameters:
+      params:
+        type: Q
+  modules:
+    - sales_order
+-
+  name: sales_orders_item_summary
+  uses: SOrdersItemSummaryEGlet
+  title: sales_orders_item_summary
+  dashboard: true
+  call:
+    setParameters:
+      params:
+        type: 'O'
+  modules:
+    - sales_order
+
+#ERP/Sales Order
+-
+  name: vat_quick_links
+  uses: StaticContentEGlet
+  default: true
+  enabled: false
+  call:
+    setTemplate: vat_quick_links.tpl
+  title: Vat Links
+  modules:
+    - vat

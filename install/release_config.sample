@@ -1,0 +1,69 @@
+#
+#	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+#
+#	Released under GPLv3 license; see LICENSE.
+#
+# release_config
+#
+# $Revision: 1.4 $
+#
+# Defines the configuration for the source download and release installation
+#
+download_source=
+source_location=
+download_method=
+download_hostname=
+#
+# release_base : the release base directory
+#
+release_base=/var/www/releases/uzerp-base
+#
+# backupdb : the default option for backing up the database prior to the update
+#            which can be overridden when the update is run
+#            N means no backup will be made
+#            Y means a backup will be made
+#
+backupdb=N
+#
+# backups : the sub-directory under the release base directory where the backups of
+#           the code and database prior to update are written.
+#
+backups=backups
+#
+# install_logs : the sub-directory under the release base directory where 
+#                the install logs are written to.
+#
+logs=install_logs
+#
+# releases : the sub-directory under the release base directory where the update tars
+#            are copied to after the update has finished
+#
+releases=releases
+#
+# updates : the sub-directory under the release base directory to which the update tars
+#           are downloaded ready for installation
+#
+source=updates
+#
+# code_base : Defines the parent directory containing the installed code
+#             e.g. if the code is in /var/www/uzerp, the code base is /var/www
+#
+# Only required if the release_config is not located under the code base directory
+#
+code_base=
+#
+# target : Defines the directory containing the installed code
+#          e.g. if the code is in /var/www/uzerp, the target is uzerp
+#          the full path is derived by prefixing with the code_base value above
+#
+target=
+#
+# database : the name of the database; the value here will be overrriden by the
+#            DB_NAME setting in the conf/config.php if it exists
+#
+database=
+#
+# modules : defines the list of files/directories to extract from the update tar
+#           for an update install as opposed to a full, initial install
+#
+modules="LICENSE index.php lib/ modules/ plugins/ schema/ scripts/ resource.php server.php system.php themes/"

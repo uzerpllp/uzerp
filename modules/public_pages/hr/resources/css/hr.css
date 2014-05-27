@@ -1,0 +1,155 @@
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
+ **/
+
+/* $Revision: 1.5 $ */
+
+/* add your custom css below */
+
+#expenses_lines
+{
+	border-collapse:collapse;
+	clear:both;
+	float:left;
+}
+
+.readonly
+{
+	border: none !important;
+}
+
+#expenses_lines th
+{
+	border-bottom:1px solid #333;
+	padding:4px 2px;
+	text-align:left;
+}
+
+#expenses_lines th.right
+{
+	text-align:right;
+}
+
+#expenses_lines td
+{
+	padding:2px;
+}
+
+/* allocate payments */
+#allocated_total.numeric
+{
+	width:70px;
+}
+
+/*************************************
+ * Holidays Calendar STYLING
+ *************************************/
+ #add_event ul li {
+	list-style: none;
+	margin: 10px 0;
+	
+}
+#add_event ul li label {
+	width: 140px;
+	display: block;
+	float: left;
+	
+}
+#add_event ul li input, 
+#add_event ul li select {
+	padding: 3px;
+	width: 200px
+	
+}
+
+#add_event ul li input.start_date,
+#add_event ul li input.end_date {
+	width: 96px;	
+}
+
+#add_event ul li input.start_hours,
+#add_event ul li input.start_minutes,
+#add_event ul li input.end_hours,
+#add_event ul li input.end_minutes {
+	width: 30px;	
+}
+
+#add_event ul li input[name=submit] {
+	width: auto;	
+}
+ 
+
+
+
+#sidebar li {
+	color: #000;
+}
+
+#sidebar #legend ul {
+	border: none;
+	
+}
+
+#sidebar #legend ul li:first-child {
+	border: none;
+}
+
+#sidebar #legend ul li {
+	/* border radius */
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	
+	margin-top: 2px;
+	padding: 2px 2px 2px 5px;
+	
+	border: none;
+}
+
+#sidebar #legend ul li input {
+	float: right;
+	margin-top: 3px;
+}
+
+
+.fc_red,
+.fc-agenda .fc_red .fc-event-time,
+.fc_red a {
+    background-color: #CC0000   !important; /* background color */
+    border-color: #CC0000   !important;     /* border color */
+    color: white !important;           /* text color */
+}
+ 
+
+.fc_green,
+.fc-agenda .fc_green .fc-event-time,
+.fc_green a {
+    background-color: #00A300 !important; /* background color */
+    border-color: #00A300 !important;     /* border color */
+    color: white !important;           /* text color */
+}
+ 
+
+.fc_grey,
+.fc-agenda .fc_grey .fc-event-time,
+.fc_grey a {
+    background-color: 	#CCCCCC  !important; /* background color */
+    border-color: 		#CCCCCC  !important;     /* border color */
+    color: white !important;           /* text color */
+}
+ 
+
+.fc_yellow,
+.fc-agenda .fc_yellow .fc-event-time,
+.fc_yellow a {
+    background-color: orange   !important; /* background color */
+    border-color: orange   !important;     /* border color */
+    color: white !important;           /* text color */
+}
+
+.context-menu-item.icon-edit_request { background-image: url(/themes/default/graphics/add.png); }
+.context-menu-item.icon-cancel_request { background-image: url(/themes/default/graphics/delete.png); }
+.context-menu-item.icon-authorise_request { background-image: url(/themes/default/graphics/actions_small.png); }
+.context-menu-item.icon-decline_request { background-image: url(/themes/default/graphics/cancel.png); }

@@ -1,0 +1,40 @@
+#!/bin/bash
+#
+#	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+#
+#	Released under GPLv3 license; see LICENSE.
+#
+#
+# loadTicketVersions
+#
+# $ Revision: $
+#
+# Loads information from a release tar file into a database table
+#
+dir=`pwd`
+if [ $# -ne 3 -o "$1" = "-?" -o "${1:0:1}" = "H" -o "${1:0:1}" = "h" -o "${1:0:2}" = "-H" -o "${1:0:2}" = "-h" -o "${1:0:3}" = "--H" -o "${1:0:3}" = "--h" ]
+then
+  echo "------------------------------------------------------"
+  echo "loadTicketVersions"
+  echo ""
+  echo "Requires 3 parameters:-"
+  echo "  - ticket number"
+  echo "  - release base directory"
+  echo "  - database name"
+  echo "------------------------------------------------------"
+  exit -1
+fi
+if [ ! -f $2/ticket-$1.tar.gz ]
+then
+  echo "Cannot find release file $2/ticket-$1.tar.gz"
+  exit -1
+fi
+listTarFiles $1 $2 > module_versions.txt
+psql -d $3 << EOF
+delete from ticket_module_versions
+ where ticket_id=$1; 
+copy ticket_module_versions ("ticket_id","module","version")
+     from '$dir/module_versions.txt'
+     with delimiter ';' csv;
+EOF
+rm module_versions.txt

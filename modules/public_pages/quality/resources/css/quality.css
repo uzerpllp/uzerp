@@ -1,0 +1,21 @@
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
+ **/
+
+/* add your custom css below */
+
+/* $Revision: 1.1 $ */
+ 
+/* output setup */
+
+.complaint_number.open a {
+	font-weight: bold;
+	color: #F00 !important;
+}
+
+.complaint_number.complete a {
+	font-weight: bold;
+	color: #006400 !important;
+}

@@ -1,0 +1,19 @@
+/* $Revision: 1.3 $ */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+
+/* add your custom css below */
+
+/* ledger setup */
+.datagrid th.wide_column
+{
+	width:50%;
+}
+
+input.numeric {
+	width: 80px !important;
+}

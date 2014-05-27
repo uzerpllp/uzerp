@@ -1,0 +1,15 @@
+/* 	$Revision: 1.3 $ */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+	
+/* add your custom css below */
+
+/* bank - allocate payments / receipts */
+#allocated_total.numeric
+{
+	width:70px;
+}

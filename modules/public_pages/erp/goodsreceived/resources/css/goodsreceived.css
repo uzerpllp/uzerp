@@ -1,0 +1,18 @@
+/* $Revision: 1.1 $ */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+
+/* add your custom css below */
+
+#confirm_receipt input.numeric
+{
+	width:70px;
+}
+
+#goodsreceived-poreceivedlines-confirmreceipt .numeric {
+	width: 60px;
+}

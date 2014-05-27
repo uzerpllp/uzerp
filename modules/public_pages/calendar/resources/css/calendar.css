@@ -1,0 +1,72 @@
+/* $Revision: 1.5 $ */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+	
+#add_event ul li {
+	list-style: none;
+	margin: 10px 0;
+	
+}
+#add_event ul li label {
+	width: 140px;
+	display: block;
+	float: left;
+	
+}
+#add_event ul li input, 
+#add_event ul li select {
+	padding: 3px;
+	width: 200px
+	
+}
+
+#add_event ul li input.start_date,
+#add_event ul li input.end_date {
+	width: 96px;	
+}
+
+#add_event ul li input.start_hours,
+#add_event ul li input.start_minutes,
+#add_event ul li input.end_hours,
+#add_event ul li input.end_minutes {
+	width: 30px;	
+}
+
+#add_event ul li input[name=submit] {
+	width: auto;	
+}
+
+#sidebar li {
+	color: #000;
+}
+
+#calendar_list ul {
+	border: none;
+	
+}
+
+#calendar_list ul li:first-child {
+	border: none;
+}
+
+#calendar_list ul li {
+	/* border radius */
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	
+	margin-top: 2px;
+	padding: 2px 2px 2px 5px;
+	
+	border: none;
+}
+
+#calendar_list ul li input {
+	float: right;
+	margin-top: 3px;
+	height: auto;
+}

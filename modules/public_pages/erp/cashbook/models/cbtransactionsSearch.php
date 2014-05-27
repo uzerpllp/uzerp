@@ -1,0 +1,128 @@
+<?php
+
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+
+class cbtransactionsSearch extends BaseSearch {
+
+	protected $version='$Revision: 1.8 $';
+	
+	public static function useDefault($search_data=null, &$errors=array(), $defaults=null) {
+		$search = new cbtransactionsSearch($defaults);
+		
+		$cbtrans = DataObjectFactory::Factory('CBTransaction');
+		
+// Search by Account
+		$search->addSearchField(
+			'cb_account_id',
+			'Account',
+			'select',
+			0,
+			'advanced'
+			);
+		$cbaccount = DataObjectFactory::Factory('CBAccount');
+		$options=array('0'=>'All');
+		$cbaccounts=$cbaccount->getAll();
+		$options+=$cbaccounts;
+		$search->setOptions('cb_account_id',$options);
+
+// Search by Customer
+		$search->addSearchField(
+			'company_id',
+			'Company',
+			'select',
+			0,
+			'advanced'
+			);
+		$company = DataObjectFactory::Factory('Company');
+		$options=array('0'=>'All');
+		$companies=$company->getAll();
+		$options+=$companies;
+		$search->setOptions('company_id',$options);
+
+// Search by Person
+		$search->addSearchField(
+			'person',
+			'person',
+			'contains',
+			'',
+			'advanced'
+		);
+
+// Search by Source
+		$search->addSearchField(
+				'source',
+				'Source',
+				'select',
+				'',
+				'advanced'
+				);
+
+		$options=array(''=>'All');
+		$options+=$cbtrans->getEnumOptions('source');
+		$search->setOptions('source',$options);
+		
+// Search by Reference
+		$search->addSearchField(
+			'reference',
+			'Reference',
+			'equal',
+			'',
+			'advanced'
+		);
+
+// Search by Description
+		$search->addSearchField(
+			'description',
+			'Description',
+			'contains',
+			'',
+			'advanced'
+		);
+
+// Search by Transaction Date
+		$search->addSearchField(
+			'transaction_date',
+			'Transaction Date between',
+			'between',
+			'',
+			'advanced'
+		);
+		
+// Search by status
+		$search->addSearchField(
+				'statement_date',
+				'Type',
+				'null',
+				'NULL',
+				'basic'
+				);
+
+		$options=array(''=>'All'
+					  ,'NOT NULL'=>'Reconciled'
+					  ,'NULL'=>'Unreconciled'
+					  );
+		$search->setOptions('statement_date',$options);
+
+// Search by Type
+		$search->addSearchField(
+				'type',
+				'Type',
+				'multi_select',
+				array(),
+				'advanced'
+				);
+		$options=array(''=>'All');
+		$options+=$cbtrans->getEnumOptions('type');
+		$search->setOptions('type',$options);
+		
+		$search->setSearchData($search_data,$errors);
+		return $search;
+	}
+		
+}
+
+// End of cbtransactionsSearch

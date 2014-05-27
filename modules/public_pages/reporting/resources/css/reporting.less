@@ -1,0 +1,252 @@
+/* $Revision: 1.6 $ */
+
+@import '{THEME_PATH}/preboot.less';
+
+/* jquery ui sortable */
+#sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+#sortable li { margin: 0 5px 5px 5px; padding: 5px; font-size: 1.2em; height: 1.5em; }
+html>body #sortable li { height: 1.5em; line-height: 1.2em; }
+.ui-state-highlight { height: 1.3em; line-height: 1.2em; }
+
+
+#reporting-reports-new {
+	.user-select(none);
+}
+
+#properties {
+	table {
+		border-collapse: collapse;
+		tr {
+			td {
+				border: 1px solid rgba(0,0,0,.2);
+				background-color: white;
+				width: 50%;
+				padding: 3px;
+				input, select {
+					width: 142px;
+					border: none;
+					outline: none;
+					margin: 0;
+					padding: 0;
+					background-color: white;
+					height: 20px;
+				}
+				input {
+					width: 140px;
+				}
+				button {
+					width: 20px;
+					height: 18px;
+					border-width: 1px;
+					border-style: solid;
+					border-color: #CCCCCC #CCCCCC #BBBBBB;
+					background: -moz-linear-gradient(center top , #EEEEEE 0%, #CCCCCC 100%) repeat scroll 0 0 transparent;
+					.border-radius(3px);
+					float: right;
+				}
+				input[type=radio], input[type=checkbox] {
+					width: auto;
+				}
+			}
+			&.disabled {
+				opacity: 0.2;
+			}
+		}
+	
+	}
+	fieldset {
+		button {
+			width: 145px;
+			margin-right: 5px;
+		}
+		button:last-of-type {
+			margin-right: 0;
+		}
+	}
+	ul {
+		li {
+			list-style: none;
+			margin-bottom: 10px;
+			height: auto;
+			overflow: auto;
+			label {
+				float: left;
+				margin-bottom: 3px;
+			}
+			input, select {
+				clear: both;
+				float: left;
+				width: 95%;
+			}
+		}
+		li:last-of-type {
+		}
+	}
+}
+
+/* pivot table */
+#pivot_table {
+	border: 1px dotted lightgray;
+	float: left;
+	width: 100%;
+	height: 550px;
+	margin-bottom: 10px;
+	position: relative;
+	& > div {
+		border-right: 1px dotted gray;
+		float: left;
+		padding: 10px;
+		height: 530px;
+		&:last-of-type {
+			border-right: none;
+		}
+	}
+	h3 {
+		font-size: 16px;
+		margin: 10px 0;
+	}
+	h4 {
+		font-size: 13px;
+		margin: 10px 0;
+	}
+	/* reset top amrgin for first elements */
+	h3:first-child, h4:first-child {
+		margin-top: 0;
+	}
+	ul {
+		display: inline-block;
+	}
+	
+	/* default field list styles */
+	ul.field_list {
+		background-color: #FFF;
+		border: 1px solid lightgray;
+		display: block;
+		list-style-type: none;
+		margin: 0;
+		li {
+			-moz-border-radius: 3px;
+			background-color: #CCCCCC;
+			border-color: #CCCCCC #CCCCCC #BBBBBB;
+			border-style: solid;
+			border-weight: 1px;
+			color: #333333;
+			font-weight: normal;
+			cursor: move;
+			margin: 5px;
+			padding: 4px;
+			&:hover {
+				cursor:move;
+			}
+			&.highlight {
+				background: rgba(255,255,0,.5);
+			}
+		}
+	}
+	
+	/* field list orientations */
+	ul.field_list, ul.vertical.field_list {
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+	ul.horizontal.field_list {
+		overflow-x: auto;
+		li {
+			width: 137px;
+			float: left;
+			margin-right: 5px;
+		}
+		li:nth-of-type(4n) {
+			margin-right: 0px;
+		}
+	}
+	
+	/* left panel */
+	.left-pane {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		width: 250px;
+		ul.report_details {
+			li {
+				list-style: none;
+				label, input, select {
+					float: left;
+					clear: both;
+					margin-bottom: 4px;
+				}
+			}
+		}
+		ul.field_list {
+			width: 100%;
+			height: 335px;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		}
+		fieldset {
+			margin-top: 10px;
+			button {
+				width: 120px;
+				margin-right: 5px;
+			}
+			button:last-of-type {
+				margin-right: 0;
+			}
+		}
+	}
+	
+	/* middle pane */
+	.middle-pane {
+		position: absolute;
+		top: 0;
+		right: 320px;
+		bottom: 0;
+		left: 270px;
+		height: auto;
+		ul {
+			min-height: 25px;
+			width: 100%;
+			li {
+				font-weight: bold;
+				span {
+					font-weight: normal;
+				}
+			}			
+		}
+	}
+	
+	/* right pane */
+	.right-pane {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: 300px;
+	}
+	
+}
+
+#filter_dialog {
+	td {
+		width: 150px;
+		padding: 3px;
+		input, select {
+			width: 150px;
+		}
+	}
+}
+
+td span, th span {
+	float: left;
+	width: 100%;
+	&.justify-left {
+		text-align: left;
+	}
+	&.justify-center {
+		text-align: center;
+	}
+	&.justify-right {
+		text-align: right;
+	}
+}

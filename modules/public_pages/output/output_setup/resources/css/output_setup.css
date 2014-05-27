@@ -1,0 +1,17 @@
+/* add your custom css below */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+
+/* $Revision: 1.2 $ */
+ 
+/* output setup */
+
+#output_setup-reportdefinitions-new .code_editor,
+#output_setup-reportparts-new .code_editor {
+	width: 100%;
+	height: 400px;
+}

@@ -1,0 +1,94 @@
+#!/bin/bash
+#
+#	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+#
+#	Released under GPLv3 license; see LICENSE.
+#
+#
+# download_release
+#
+# Copies a release tar file to a local directory
+#
+# "Requires 3 parameters:-"
+# "  - file to download"
+# "  - local release directory (optional, default will look in $code_base/$target)"
+# "  - source release directory (optional if specified in release_config file)"
+#
+# requires a release_config file to define additional parameters such as the
+# method to use to copy the file to the local filesystem
+#
+rootdir=.
+if [ "$#" -eq 0 -o "$1" = "-?" -o "${1:0:1}" = "H" -o "${1:0:1}" = "h" -o "${1:0:2}" = "-H" -o "${1:0:2}" = "-h" -o "${1:0:3}" = "--H" -o "${1:0:3}" = "--h" ]
+then
+  echo "----------------------------------------------------------------"
+  echo "download_release"
+  echo ""
+  echo "Requires 3 parameters:-"
+  echo "  - file to download"
+  echo "  - local release directory (optional, default will look in $code_base/$target)"
+  echo "  - source release directory (optional if specified in release_config file)"
+  echo ""
+  echo "requires a release_config file to define additional parameters such as the"
+  echo "method to use to copy the file to the local filesystem"
+  echo "----------------------------------------------------------------"
+  exit -1
+fi
+p_rootdir=
+if [ $# -gt 1 ]
+then
+  p_rootdir=$2
+fi
+if [ "$p_rootdir" != "" ]
+then
+  rootdir=$p_rootdir
+fi
+if [ ! -d $rootdir ]
+then
+  echo "Cannot find release base directory $rootdir"
+  exit -1
+fi
+download_source=
+cd $rootdir
+rootdir=`pwd`
+if [ -f release_config ]
+then
+  . release_config
+else
+  echo "Cannot find the release_config file in $rootdir"
+  exit -1
+fi
+if [ "$release_base" = "" ]
+then
+  release_base=$rootdir
+fi
+if [ ! -d $release_base ]
+then
+  echo "Cannot find release base directory $release_base"
+  exit -1
+fi
+if [ $# -gt 2 ]
+then
+  download_source=$3
+fi
+WORKSPACE=$source_location/$download_source
+if [ "$download_method" = "scp" ]
+then
+  echo -n "Enter CVS username : "
+  read value
+fi
+if [ ! -d $release_base/$source ]
+then
+  mkdir $release_base/$source
+fi
+if [ $? -ne 0 ]
+then
+  echo "Cannot create download directory $release_base/$source"
+  exit -1
+fi
+`$download_method ${value}${download_hostname}${WORKSPACE}/$1.tar.gz $release_base/$source`
+if [ $? -ne 0 ]
+then
+  echo "Error downloading $1.tar.gz"
+  exit -1
+fi
+echo "File $1.tar.gz downloaded to $release_base/$source"

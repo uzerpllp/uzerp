@@ -1,0 +1,29 @@
+<?php
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+class RecentlyAddedLeadsEGlet extends SimpleListEGlet {
+	
+	function populate() {
+		if(!$this->isCached()) {
+			$pl = new PageList('recently_added_leads');
+			$companies_do = new CompanyCollection(new Company);
+			$sh = new SearchHandler($companies_do,false);
+			$sh->extract();
+			$sh->addConstraint(new Constraint('is_lead','=','true'));
+			$sh->setLimit(10);
+			$sh->setOrderBy('created','DESC');
+			
+			$companies_do->load($sh);
+			$pl->addFromCollection($companies_do,array('module'=>'contacts','controller'=>'companys','action'=>'view'),array('id'),'company','name');
+			$this->setCache($pl->getPages()->toArray());
+		}
+		$this->contents = $this->getCache();
+		
+	}
+	
+}
+?>

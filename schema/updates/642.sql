@@ -1,0 +1,1 @@
+ALTER TABLE po_receivedlines ADD COLUMN received_by varchar;

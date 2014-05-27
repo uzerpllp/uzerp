@@ -1,0 +1,65 @@
+#!/bin/bash
+#
+#	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+#
+#	Released under GPLv3 license; see LICENSE.
+#
+# Simple script to dump PostgreSQL databases to disk.
+# Written by Richard Wilson for Senokian Solutions, 2006.
+# Amended by David Easeman for Severndelta Ltd, 2009.
+
+# Location to place backups.
+backup_dir="/var/backups/postgresql"
+rundate=`date +%Y%m%d`
+backup_log=$backup_dir/pg_backup$rundate.log
+intranet_backup=/var/www/intranet/backuplogs
+days=7
+#databases=`psql -h localhost -U postgres -q -c "\l" | sed -n 4,/\eof/p | grep -v rows\) | grep -v template | awk {'print $1'}`
+databases=`psql -q -l | sed -n 4,/\eof/p | grep -v rows\) | grep -v template | grep -v : | awk {'print $1'}`
+
+echo "Postgres Cleanup and Backup, " `date` > $backup_log
+echo "=========================================================" >> $backup_log
+echo >> $backup_log
+echo -n "Vacuuming:" >> $backup_log
+for i in $databases; do
+        /usr/bin/vacuumdb -z $i >/dev/null 2>&1
+        if [ $? -ne "0" ]
+        then
+          echo 'Failed to vacuum database' $i  >> $backup_log
+          echo 'Failed to vacuum database' $i
+        fi
+        echo -n " $i" >> $backup_log
+done
+echo "." >> $backup_log
+echo "Vacuuming Complete." >> $backup_log
+echo -n "Dumping Databases:" >> $backup_log
+for i in $databases; do
+        /usr/bin/pg_dump -Ft $i > "$backup_dir/$i"
+        if [ $? -ne "0" ]
+        then
+          echo 'Failed to backup database' $i  >> $backup_log
+          echo 'Failed to backup database' $i
+        fi
+        echo -n " $i" >> $backup_log
+done
+echo "." >> $backup_log
+echo "Dumps Complete." >> $backup_log
+
+echo "Latest backup sizes (Before compression/rotation):" >> $backup_log
+cd $backup_dir
+du -csh $databases >> $backup_log
+
+for i in $databases; do
+        savelog -c $days -q -d "$backup_dir/$i"
+        if [ $? -ne "0" ]
+        then
+          echo 'Failed to compress database files' $i  >> $backup_log
+          echo 'Failed to compress database files' $i
+        fi
+done
+
+echo "Backup rotation complete. Total size of backups:" >> $backup_log
+du -h . >> $backup_log
+echo "===============================================================" >> $backup_log
+echo "End of Postgres Cleanup and Backup, " `date` >> $backup_log
+cp $backup_log $intranet_backup/database_backup.log

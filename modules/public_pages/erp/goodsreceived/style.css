@@ -1,0 +1,12 @@
+/* add your custom css below */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+
+#confirm_receipt input.numeric
+{
+	width:70px;
+}

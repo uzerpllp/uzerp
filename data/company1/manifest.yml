@@ -1,0 +1,20 @@
+---
+#Selector Items
+-
+  sales_order:
+    itemTableName: so_product_selector
+    itemOverviewName: so_product_selector
+    linkTableName: so_product_line_link
+    title: Product Selector
+    targetModel: SOProductLine
+    itemFields:
+      1: make
+      2: model
+      3: year
+    targetFields:
+      1: description
+      2: price
+      3: currency
+      4: uom_name
+      5: customer
+      6: so_price_type

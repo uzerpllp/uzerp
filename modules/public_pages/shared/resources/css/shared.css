@@ -1,0 +1,80 @@
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
+ **/
+
+/* $Revision: 1.4 $ */
+
+/* add your custom css below */
+
+#setup_items
+{
+	width:70%;
+}
+
+#setup_item_edit
+{
+	margin-left:20px;
+	width:23%;
+}
+
+#setup_items th,#setup_table tfoot td
+{
+	background-color:#fff;
+	font-size:1.2em;
+	padding:4px 2px;
+	text-align:left;
+}
+
+#setup_table tfoot input
+{
+	float:right;
+}
+
+#setup_table
+{
+	border:1px solid #ccc;
+	border-collapse:collapse;
+}
+
+#setup_table td
+{
+	padding:1px 2px;
+}
+
+#setup_items,#setup_item_edit
+{
+	float:left;
+}
+
+#setup_description
+{
+	clear:both;
+}
+
+#setup_table td.handle
+{
+	width:20px;
+}
+
+#setup_table .handle img
+{
+	cursor:move;
+}
+
+#setup_table.unsaved
+{
+	background-color:#cce9f1;
+}
+
+#setup_table td a
+{
+	color:#333;
+	text-decoration:none;
+}
+
+#setup_table td a:hover
+{
+	text-decoration:underline;
+}

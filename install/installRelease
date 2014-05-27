@@ -1,0 +1,403 @@
+#!/bin/bash
+#
+#	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+#
+#	Released under GPLv3 license; see LICENSE.
+#
+# installRelease
+#
+#
+# $Revision: 1.21 $
+#
+# TODO: Need to split this up into separate functions to make it easier to maintain
+#       The functionseitherneed to be stand alone files or defined within this file
+#       with a main section that calls each of the funstions in the required order
+#
+# installs the contents of release files in a release directory
+# into the target code base
+#
+# Requires up to 2 parameters:-
+#   - release base directory (optional if specified in release_config file
+#                                      default will look in the current directory)
+#   - target install directory (optional, if not specified will look in release_config file
+#                                        default will look in the parent directory of the script)
+#
+# The script will look in the following places for the release_config file
+# 1) the release base directory
+# 2) target install directory (e.g. /var/www/uzerp)
+# 3) install directory in the target install directory (e.g. /var/www/uzerp/install)
+#
+rundate=`date +%Y%m%d%H%M%S`
+current=`pwd`
+# Absolute path to this script
+SCRIPT=$(readlink -f $0)
+# Absolute path this script is in
+SCRIPTPATH=`dirname $SCRIPT`
+s_target=`dirname $SCRIPTPATH`
+if [ "$1" = "-?" -o "${1:0:1}" = "H" -o "${1:0:1}" = "h" -o "${1:0:2}" = "-H" -o "${1:0:2}" = "-h" -o "${1:0:3}" = "--H" -o "${1:0:3}" = "--h" ]
+then
+  echo "----------------------------------------------------------------------"
+  echo "installRelease"
+  echo ""
+  echo "Requires up to 2 parameters:-"
+  echo "  - release base directory (optional if specified in release_config file"
+  echo "                                     default will look in the current directory)"
+  echo "  - target install directory (optional, if not specified will look in release_config file"
+  echo "                                        default will look in the parent directory of the script)"
+  echo ""
+  echo "The script will look in the following places for the release_config file"
+  echo " 1) the release base directory"
+  echo " 2) target install directory (e.g. /var/www/uzerp)"
+  echo " 3) install directory in the target install directory (e.g. /var/www/uzerp/install)"
+  echo "----------------------------------------------------------------------"
+  exit -1
+fi
+release_base=$(readlink -f .)
+rootdir=$(readlink -f .)
+p_rootdir=
+p_target=
+if [ $# -gt 0 ]
+then
+  rootdir=$1
+  rootdir=$(readlink -m $rootdir)
+  p_rootdir=$rootdir
+fi
+if [ $# -gt 1 ]
+then
+  target=$2
+  s_target=$(readlink -m $target)
+  p_target=$s_target
+fi
+database=
+#
+# Look for the release_config file in the 
+# 1) the directory specified in parameter 2
+# 2) if parameter 2 is empty, look in the directory of this running script
+# 3) target directory specified in parameter 1 (e.g. /var/www/uzerp)
+# 4) install directory of (3) above (e.g. /var/www/uzerp/install)
+#
+if [ -f $rootdir/release_config ]
+then
+  release_config=$rootdir
+  . $rootdir/release_config
+elif [ -f $s_target/release_config ]
+then
+  release_config=$s_target
+  . $s_target/release_config
+elif [ -f $s_target/install/release_config ]
+then
+  release_config=$s_target/install
+  . $s_target/install/release_config
+else
+  echo "Cannot find the release_config file in $rootdir, $target or in $target/install"
+  exit -1
+fi
+echo "Using release_config file in $release_config"
+#
+# Set the target install; override any release_config values with parameter 2 if it exists
+#
+if [ "$p_target" != "" ]
+then
+  # override the release_config target setting with the run time value
+  target=$p_target
+elif [ "$code_base/$target" != "/" ]
+then
+  target=$code_base/$target
+else
+  target=$s_target
+fi
+if [ ! -d $target ]
+then
+  echo "Cannot find the target install directory $target"
+  echo "either edit the release_config file to specify the target"
+  echo "or rerun specifying the target as parameter 2"
+  exit -1
+fi
+#
+# Set the release base; override any release_config values with parameter 1 if it exists
+#
+if [ "$p_rootdir" != "" ]
+then
+  # override the release_config release_base setting with the run time value
+  release_base=$p_rootdir
+elif [ "$release_base" = "" ]
+then
+  release_base=$rootdir
+fi
+if [ ! -d $release_base ]
+then
+  echo "Cannot find release base directory $release_base"
+  exit -1
+fi
+#
+# Get the database name from the conf/config.php file if it exists
+#
+if [ -f $target/conf/config.php ]
+then
+  database=`grep -i "\$conf\['DB_NAME'\]" $target/conf/config.php | cut -d"'" -f4`
+fi
+if [ "$database" = "" ]
+then
+  # database parameter not set so default to the target install directory value
+  database=`basename $target`
+fi
+#**************************************************
+#
+# Check configuration and set installation locations
+#
+cd $release_base
+if [ ! -d $logs ]
+then
+  mkdir -p $logs
+  if [ $? -ne 0 ]
+  then
+    echo "Folder $release_base/$logs cannot be created"
+    exit -1
+  fi
+fi
+install_logs=$release_base/$logs
+logdate=`date`
+echo "$logdate Start of uzERP Installation"
+echo "Install Logs Directory=$install_logs"
+echo "Log file is $install_logs/$rundate.log"
+echo "********************************************************************" >> $install_logs/$rundate.log 2>&1
+echo "$logdate Start of uzERP Installation" >> $install_logs/$rundate.log 2>&1
+echo "" >> $install_logs/$rundate.log 2>&1
+echo "Install Logs Directory=$install_logs" >> $install_logs/$rundate.log 2>&1
+echo "Using release_config file in $release_config" >> $install_logs/$rundate.log 2>&1
+#
+if [ ! -d $target ]
+then
+  echo "Folder $target containing current code does not exist"
+  echo "Folder $target containing current code does not exist" >> $install_logs/$rundate.log 2>&1
+  exit -1
+fi
+if [ ! -d $source ]
+then
+  echo "Folder $release_base/$source containing code to install does not exist"
+  echo "Folder $release_base/$source containing code to install does not exist" >> $install_logs/$rundate.log 2>&1
+  exit -1
+fi
+install_source=$release_base/$source
+echo "Install Source Directory=$install_source"
+echo "Install Source Directory=$install_source" >> $install_logs/$rundate.log 2>&1
+#
+if [ ! -d $backups ]
+then
+  mkdir -p $backups
+  if [ $? -ne 0 ]
+  then
+    echo "Folder $release_base/$backups cannot be created"
+    echo "Folder $release_base/$backups cannot be created" >> $install_logs/$rundate.log 2>&1
+    exit -1
+  fi
+fi
+backups_target=$release_base/$backups
+echo "Install Backup Directory=$backups_target"
+echo "Install Backup Directory=$backups_target" >> $install_logs/$rundate.log 2>&1
+#
+if [ ! -d $releases ]
+then
+  mkdir -p $releases
+  if [ $? -ne 0 ]
+  then
+    echo "Folder $release_base/$releases cannot be created"
+    echo "Folder $release_base/$releases cannot be created" >> $install_logs/$rundate.log 2>&1
+    exit -1
+  fi
+fi
+releases_target=$release_base/$releases
+echo "Code will be installed in $target"
+echo "Code will be installed in $target" >> $install_logs/$rundate.log 2>&1
+echo "Database $database will be updated with any database changes in this release"
+echo "Database $database will be updated with any database changes in this release" >> $install_logs/$rundate.log 2>&1
+#*******************************************
+#
+# Verify with user that installation locations are correct
+# and request confirmation to continue with installation
+#
+echo ""
+echo -n "Do you want to continue Y/N [Y] : "
+read value
+if [ "$value" != "" ]
+then
+  continue=${value:0:1}
+else
+  continue="Y"
+fi
+if [ "$continue" = "N" -o "$continue" = "n" ]
+then
+  echo `date` "Installation aborted at user request"
+  echo `date` "Installation aborted at user request" >> $install_logs/$rundate.log 2>&1
+  echo "********************************************************************" >> $install_logs/$rundate.log 2>&1
+  exit -1
+fi
+
+#****************************************************
+#
+# First clear any caches because we might be updating the database
+# or installing library files that normally reside in the cache
+#
+
+$SCRIPTPATH/clear_caches.sh $target
+
+#
+#******************************************************************
+#
+# Make backup of current code
+# 
+cd $target
+#
+tar -zcf $backups_target/pre_release_${rundate}.tar.gz --exclude pre_release_${rundate}.tar.gz .
+if [ $? -ne 0 ]
+then
+  echo 'Failed to backup code'
+  echo 'Failed to backup code' >> $install_logs/$rundate.log 2>&1
+  exit -1
+fi
+#****************************************************
+#
+# get list of any sql files in installation that need to be installed
+#
+for i in `ls -rt $install_source/*`
+do
+  if [ -f $i ]
+  then
+    echo "Installing source file $i"
+    echo "********************************************************************" >> $install_logs/$rundate.log 2>&1
+    echo "Installing source file $i" >> $install_logs/$rundate.log 2>&1
+    sql_files=
+    for sql in `tar -ztf $i --wildcards '*schema/updates/*.sql'`
+    do
+      # Only action the sql if the file does not already exist in the current code base
+      # This allows for the installation of a full base line code release
+      if [ ! -f $sql ]
+      then
+        sql_files="$sql_files $sql"
+      fi
+    done
+    if [ "$sql_files" != "" ]
+    then
+      #*******************************************
+      #
+      # Backup Database
+      #
+      echo "Backing up Database : $database"
+      echo "Backup of Database $database requested" >> $install_logs/$rundate.log 2>&1
+      pg_dump -Ft $database > $backups_target/${database}.${rundate}
+      if [ $? -ne 0 ]
+      then
+        echo "Failed to backup database"
+        echo "Failed to backup database" >> $install_logs/$rundate.log 2>&1
+        exit -1
+      fi
+      #*******************************************
+      #
+      # Get schema list for database
+      #
+      schemas=`psql -d $database -c '\dn' | sed -n 4,/\eof/p | grep -v rows\) | grep -v pg_ | grep -v information_schema | awk {'print $1'}`
+      echo "Current schemas are $schemas"
+      echo "Current schemas are $schemas" >> $install_logs/$rundate.log 2>&1
+      other=`echo $schemas | grep -v public | grep -v reports | grep -v validate`
+      if [ "$other" != "" ]
+      then
+        echo "Additional custom schemas exist - the installation may fail if conflicts exist"
+        echo "Additional custom schemas exist - the installation may fail if conflicts exist" >> $install_logs/$rundate.log 2>&1
+      fi
+      reports=`echo $schemas | grep reports`
+      if [ "$reports" != "" ]
+      then
+        echo "Dropping reports schema"
+        echo "Dropping reports schema" >> $install_logs/$rundate.log 2>&1
+        psql -d $database << !EOF >> $install_logs/$rundate.log 2>&1
+DROP SCHEMA reports CASCADE;
+!EOF
+        if [ $? -ne 0 ]
+        then
+          echo "Error dropping schema reports - install aborted"
+          echo "Error dropping schema reports" >> $install_logs/$rundate.log 2>&1
+          echo "uzERP Installation aborted" `date` >> $install_logs/$rundate.log 2>&1
+          echo "----------------------------------------------------" >> $install_logs/$rundate.log 2>&1
+          exit -1
+        fi
+      fi
+    fi
+    #*************************************************************
+    #
+    # Unpack new code into target location
+    #
+    echo "Installing code into $target"
+    echo "********************************************************************" >> $install_logs/$rundate.log 2>&1
+    echo "Installing code into $target" >> $install_logs/$rundate.log 2>&1
+    echo "" >> $install_logs/$rundate.log 2>&1
+    tar -zxvf $i $modules 2>&1 | grep -ve "newer or same\|Not found in archive\|Exiting with failure status due to previous errors" >> $install_logs/$rundate.log
+    #
+    # Move release code file to history
+    #
+    echo "********************************************************************" >> $install_logs/$rundate.log 2>&1
+    mv $i $releases_target/.
+    if [ $? -ne 0 ]
+    then
+      echo "Failed to move release file $i to $releases_target"
+      echo "Failed to move release file $i to $releases_target" >> $install_logs/$rundate.log 2>&1
+    else
+      echo "Release file $i moved to $releases_target"
+      echo "Release file $i moved to $releases_target" >> $install_logs/$rundate.log 2>&1
+    fi
+    #*************************************************************
+    #
+    # Now update the database with any new sql files in this release
+    #
+    echo "********************************************************************" >> $install_logs/$rundate.log 2>&1
+    if [ "$sql_files" != "" ]
+    then
+      for sql in `ls -rt $sql_files`
+      do
+        echo "Updating database with $sql"
+        echo "Updating database with $sql" >> $install_logs/$rundate.log 2>&1
+        psql -d $database -e -f $sql >> $install_logs/$rundate.log 2>&1
+        if [ $? -ne 0 ]
+        then
+          echo "Failed to update database $database with $sql"
+          echo "Failed to update database $database with $sql" >> $install_logs/$rundate.log 2>&1
+        else
+          echo "Database $database updated with $sql"
+          echo "Database $database updated with $sql" >> $install_logs/$rundate.log 2>&1
+        fi
+      done
+      #*************************************************************
+      #
+      # Now restore the reports schema
+      #
+      echo "Restoring reports schema"
+      echo "Restoring reports schema" >> $install_logs/$rundate.log 2>&1
+      psql -d $database << !EOF >> $install_logs/$rundate.log 2>&1
+CREATE SCHEMA reports;
+GRANT USAGE on SCHEMA reports to "ooo-data";
+!EOF
+      if [ $? -ne 0 ]
+      then
+        echo "Error creating schema reports prior to restore - install aborted"
+        echo "Error creating schema reports prior to restore" >> $install_logs/$rundate.log 2>&1
+        echo "uzERP Installation aborted" `date` >> $install_logs/$rundate.log 2>&1
+        echo "----------------------------------------------------" >> $install_logs/$rundate.log 2>&1
+        exit -1
+      fi
+      pg_restore -d $database -n reports $backups_target/${database}.${rundate} >> $install_logs/$rundate.log 2>&1
+      if [ $? -ne 0 ]
+      then
+        echo "Error restoring schema reports - install aborted"
+        echo "Error restoring schema reports" >> $install_logs/$rundate.log 2>&1
+        echo "uzERP Installation aborted" `date` >> $install_logs/$rundate.log 2>&1
+        echo "----------------------------------------------------" >> $install_logs/$rundate.log 2>&1
+        exit -1
+      fi
+    fi
+  fi
+done
+
+echo "********************************************************************" >> $install_logs/$rundate.log 2>&1
+echo `date` "End of uzERP Install"
+echo `date` "End of uzERP Install" >> $install_logs/$rundate.log 2>&1
+echo "********************************************************************" >> $install_logs/$rundate.log 2>&1
+cd $current

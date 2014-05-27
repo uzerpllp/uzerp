@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+#	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+#
+#	Released under GPLv3 license; see LICENSE.
+#
+
+backupdir=/var/backups/postgresql
+
+# get the full path name of the latest 'uzerp-live' backup
+#
+file=`ls -t $backupdir/uzerp-live* | head -1`
+
+# copy this as latest monthly backup
+# change the 'm' parameter to 'd' to keep the latest daily backup
+#
+/usr/local/bin/copy_backup_files $file $backupdir/monthly/uzerp-live m
+
+# delete any backup files older than 1 day
+#
+/usr/local/bin/deleteFiles $backupdir "*.gz" 1

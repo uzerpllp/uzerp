@@ -1,0 +1,113 @@
+/* $Revision: 1.3 $ */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+	
+/*************************************
+ * DESPTCH STYLING
+ *************************************/
+ #add_event ul li {
+	list-style: none;
+	margin: 10px 0;
+	
+}
+#add_event ul li label {
+	width: 140px;
+	display: block;
+	float: left;
+	
+}
+#add_event ul li input, 
+#add_event ul li select {
+	padding: 3px;
+	width: 200px
+	
+}
+
+#add_event ul li input.start_date,
+#add_event ul li input.end_date {
+	width: 96px;	
+}
+
+#add_event ul li input.start_hours,
+#add_event ul li input.start_minutes,
+#add_event ul li input.end_hours,
+#add_event ul li input.end_minutes {
+	width: 30px;	
+}
+
+#add_event ul li input[name=submit] {
+	width: auto;	
+}
+ 
+
+
+
+#sidebar li {
+	color: #000;
+}
+
+#sidebar #calendars ul {
+	border: none;
+	
+}
+
+#sidebar #calendars ul li:first-child {
+	border: none;
+}
+
+#sidebar #calendars ul li {
+	/* border radius */
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	
+	margin-top: 2px;
+	padding: 2px 2px 2px 5px;
+	
+	border: none;
+}
+
+#sidebar #calendars ul li input {
+	float: right;
+	margin-top: 3px;
+}
+
+
+.fc_red,
+.fc-agenda .fc_red .fc-event-time,
+.fc_red a {
+    background-color: #CC0000 !important; /* background color */
+    border-color: #CC0000 !important;     /* border color */
+    color: white !important;           /* text color */
+}
+ 
+
+.fc_green,
+.fc-agenda .fc_green .fc-event-time,
+.fc_green a {
+    background-color: #00A300 !important; /* background color */
+    border-color: #00A300 !important;     /* border color */
+    color: white !important;           /* text color */
+}
+ 
+
+.fc_pink,
+.fc-agenda .fc_pink .fc-event-time,
+.fc_pink a {
+    background-color: #B20E67  !important; /* background color */
+    border-color: #B20E67  !important;     /* border color */
+    color: white !important;           /* text color */
+}
+ 
+
+.fc_yellow,
+.fc-agenda .fc_yellow .fc-event-time,
+.fc_yellow a {
+    background-color: orange !important; /* background color */
+    border-color: orange !important;     /* border color */
+    color: white !important;           /* text color */
+}

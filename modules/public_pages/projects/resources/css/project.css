@@ -1,0 +1,42 @@
+/* $Revision: 1.4 $ */
+ 
+/** 
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ * 
+ *	Released under GPLv3 license; see LICENSE. 
+ **/
+
+/* add your custom css below */
+
+#view_page #current_allocation
+{
+	width: 90%;
+}
+
+#timesheet_table
+{
+	border:1px solid #333;
+}
+
+#timesheet_table td,#timesheet_table th
+{
+	border-left:1px solid #333;
+	padding:4px 2px;
+}
+
+#timesheet_table tr.footer
+{
+	border-top:1px solid #333;
+	font-size:1.2em;
+	font-weight:bold;
+}
+
+#timesheet_table td.numeric
+{
+	text-align:right;
+}
+
+input.net_value
+{
+	width:75px;
+}

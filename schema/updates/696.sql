@@ -1,0 +1,1 @@
+ALTER TABLE mf_workorders ALTER COLUMN documentation SET NOT NULL;
