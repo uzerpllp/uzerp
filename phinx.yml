@@ -1,0 +1,41 @@
+paths:
+    migrations: %%PHINX_CONFIG_DIR%%/migrations
+
+environments:
+    default_migration_table: phinxlog
+    default_database: development
+    production:
+        adapter: pgsql
+        host: 127.0.0.1
+        name: uzerp-live
+        user: www-data
+        pass: ''
+        port: 5432
+        charset: utf8
+
+    testing:
+        adapter: mysql
+        host: 127.0.0.1
+        name: uzerp-testing
+        user: root
+        pass: ''
+        port: 5432
+        charset: utf8
+
+    diag:
+        adapter: mysql
+        host: 127.0.0.1
+        name: uzerp-diag
+        user: root
+        pass: ''
+        port: 5432
+        charset: utf8
+
+    development:
+        adapter: pgsql
+        host: 127.0.0.1
+        name: uzerp
+        user: www-data
+        pass: ''
+        port: 5432
+        charset: utf8

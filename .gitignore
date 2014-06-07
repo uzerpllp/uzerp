@@ -1,8 +1,16 @@
-#gedit backups
+# gedit backups
 *~
 
-#These should go in /var on production systems, but we'll leave them for now
+# These should go in /var on production systems, but we'll leave them for now
 data/cache/**
 data/templates_c/**
 data/tmp/**
 data/users/**
+
+# Exclude local changes to the config file
+conf/config.php
+
+# Exclude composer installed stuff
+composer.lock
+vendor/
+
