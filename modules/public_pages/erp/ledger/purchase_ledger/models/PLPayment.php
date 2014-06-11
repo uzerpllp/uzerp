@@ -9,7 +9,7 @@
 class PLPayment extends DataObject
 {
 
-	protected $version = '$Revision: 1.24 $';
+	protected $version = '$Revision: 1.25 $';
 	
 	protected $defaultDisplayFields = array('payment_date'
 											,'status'
@@ -140,7 +140,9 @@ class PLPayment extends DataObject
 			$pltransaction = DataObjectFactory::Factory('PLTransaction');
 			$pltransaction->load($data['ledger_transaction_id']);
 			
-			if (!$pltransaction->update($pltransaction->id, 'status', 'P'))
+			if (!$pltransaction->update($pltransaction->id
+                                         , array('status', 'os_value', 'twin_os_value', 'base_os_value')
+                                         , array('P', '0.00', '0.00', '0.00')))
 			{
 				$errors[] = 'Error updating payment status : '.$db->ErrorMsg();
 				return false;
