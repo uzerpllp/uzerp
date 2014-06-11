@@ -8,7 +8,7 @@
 
 class DataObject implements Iterator {
 
-	protected $version = '$Revision: 1.132 $';
+	protected $version = '$Revision: 1.133 $';
 	
 	// string: name of the table represented by the Object
 	protected	$_title;
