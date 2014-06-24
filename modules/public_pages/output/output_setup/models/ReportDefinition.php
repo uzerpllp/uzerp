@@ -9,7 +9,7 @@
 class ReportDefinition extends DataObject
 {
 
-	protected $version='$Revision: 1.5 $';
+	protected $version='$Revision: 1.6 $';
 	
 	protected $defaultDisplayFields = array('name'
 										   ,'report_type'
@@ -47,7 +47,16 @@ class ReportDefinition extends DataObject
 		$report_definition->loadBy('name', $name);
 		
 		return $report_definition;
-	} 
+	}
+	
+	public static function getDefinitionByID($id)
+	{
+		$report_definition = DataObjectFactory::Factory('ReportDefinition');
+	
+		$report_definition->loadBy('id', $id);
+	
+		return $report_definition;
+	}
 	
 	public static function getReportsByType($_report_type_id)
 	{

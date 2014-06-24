@@ -8,7 +8,7 @@
 
 class ReportsController extends PrintController {
 
-	protected $version = '$Revision: 1.34 $';
+	protected $version = '$Revision: 1.35 $';
 	protected $_templateobject;
 
 	protected $default_options = array(
@@ -239,7 +239,23 @@ class ReportsController extends PrintController {
 		$this->view->set('selected_tablename', $report->tablename);
 		$this->view->set('options', $options);
 		$this->view->set('report', $report);
-			
+		
+		//Set report defintion list
+		$report_type_id = ReportType::getReportTypeID('Reports');
+		$definition_list = ReportDefinition::getReportsByType($report_type_id);
+		array_unshift($definition_list, "Default");
+		$this->view->set('report_definitions', $definition_list);
+		
+		//Set currently selected report definition
+		$selected_def = ReportDefinition::getDefinitionByID($report->report_definition);
+		if ($selected_def->_data['name'] == 'PrintCollection')
+		{
+			$this->view->set('selected_reportdef', 'Default');
+		}
+		else
+		{
+			$this->view->set('selected_reportdef', $selected_def->_data['name']);
+		}	
 	}
 
 	public function copy() 
@@ -295,6 +311,7 @@ class ReportsController extends PrintController {
 		if (isset($this->_data['printaction']) || isset($this->_data['printAction']) || isset($this->_data['ajax_print'])) {
 		
 			// build options array
+			$defs = ReportDefinition::getDefinition('PrintCollection');
 			$dialog_options = array(
 				'type' => array(
 					'pdf'	=> '',
@@ -631,10 +648,22 @@ class ReportsController extends PrintController {
 				{
 					$col_widths = $this->parse_column_widths($this->_data['col_widths']);
 				}
-					
+
+				// Use the report defintion defined in DB, else use the standard list xsl
+				if ($report->report_definition)
+				{
+					$def = new ReportDefinition();
+					$def->loadBy('id', $report->report_definition);
+					$report_definition_name = $def->_data['name'];
+				}
+				else
+				{
+					$report_definition_name = 'PrintCollection';
+				}
+				
 				$xsl = $this->build_custom_xsl(
 					$doc,
-					'PrintCollection',
+					$report_definition_name,
 					$report->description,
 					$headings,
 					$col_widths,
@@ -717,6 +746,14 @@ class ReportsController extends PrintController {
 		if (strtolower($this->_data['save'])=='save copy')
 		{
 			unset($this->_data['Report']['id']);
+		}
+		
+		// Set the rpeort definition id, unless Default was selected
+		if ($this->_data['report_def'] != 'Default')
+		{
+			$def = new ReportDefinition();
+			$rdef = $def->getDefinition($this->_data['report_def']);
+			$this->_data['Report']['report_definition'] = $rdef->_data['id'];
 		}
 		
 		// fire up the db
@@ -873,6 +910,10 @@ class ReportsController extends PrintController {
 		$this->view->set('aggregate_fields',implode('<br />',$aggregate_fields));
 		$this->view->set('search_fields',implode(',',$search_fields));
 		$this->view->set('filter_fields',implode('<br />',$filter_fields));
+		
+		$rd = ReportDefinition::getDefinitionByid($report->report_definition);
+		$report_definition_name = $rd->_data['name'];
+		$this->view->set('report_definition', $report_definition_name);
 		
 		$hasreport=new HasReport();
 		$report_list=$hasreport->getAssignedRoles($report->id);

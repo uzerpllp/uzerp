@@ -1,0 +1,10 @@
+
+Changelog
+
+2014.3.2    enchancement    #54 Allow selection of a custom XSL report defintion for reports.
+2014.3.1                    Add phinx for database migrations
+            bug             #1 Sales Order Acknowledgement Print, lines overwrite header
+            bug             #9 CRM Activities view loads calendar instead of activities
+            bug             #10 Adding a project fails due to system policy error
+            bug             #49 OS Value on batch payments not being set to zero
+

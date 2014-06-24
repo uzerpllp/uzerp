@@ -3,7 +3,7 @@
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* $Revision: 1.8 $ *}
+{* $Revision: 1.9 $ *}
 <!-- left pane -->
 <div class="left-pane">
 	<h3>Report Options</h3>
@@ -18,15 +18,18 @@
 			<li>
 				<label>Report Table</label>
 				{if $update}
+					<strong> {$model->tablename}</strong>
 					{input type='hidden' attribute='tablename'}
-					<strong>
-						{$model->tablename}
-					</strong>
 				{else}
 					<select class="required" id="Report_tablename" name="Report[tablename]">
 						{html_options options=$report_options selected=$selected_tablename}
 					</select>
 				{/if}
+			</li>
+			<li>
+				<label>Report Definition</label>
+				{html_options name="report_def" options=$report_definitions selected=$selected_reportdef}
+				<p class="help-text">Choose a custom report format. Leave as default if unsure.</p>
 			</li>
 		</ul>
 	{/with}

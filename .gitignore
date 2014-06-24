@@ -3,6 +3,7 @@
 
 # These should go in /var on production systems, but we'll leave them for now
 data/cache/**
+data/resource_cache/**
 data/templates_c/**
 data/tmp/**
 data/users/**
@@ -14,3 +15,5 @@ conf/config.php
 composer.lock
 vendor/
 
+# Exclude PHP APC monitor
+apc.php

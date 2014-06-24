@@ -3,7 +3,7 @@
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* $Revision: 1.7 $ *}
+{* $Revision: 1.8 $ *}
 {content_wrapper}
 	<div id="view_page" class="clearfix">
 		<dl id="view_data_left">
@@ -22,6 +22,8 @@
 				<dd>{$search_fields} &nbsp;</dd>
 				<dt>Filter Fields</dt>
 				<dd>{$filter_fields} &nbsp;</dd>
+				<dt>Report Definition</dt>
+				<dd>{$report_definition} &nbsp;</dd>
 			{/with}
 		</dl>
 		<dl id="view_data_bottom">

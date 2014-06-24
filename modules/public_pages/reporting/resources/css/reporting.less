@@ -1,4 +1,4 @@
-/* $Revision: 1.6 $ */
+/* $Revision: 1.7 $ */
 
 @import '{THEME_PATH}/preboot.less';
 
@@ -170,13 +170,22 @@ html>body #sortable li { height: 1.5em; line-height: 1.2em; }
 		width: 250px;
 		ul.report_details {
 			li {
-				list-style: none;
+				display: inline-block;
+    			list-style: none outside none;
+    			margin-bottom: 1em;
 				label, input, select {
 					float: left;
 					clear: both;
 					margin-bottom: 4px;
+    				margin-right: 0.5em;
+				}
+				label:after {
+					content: ":";
 				}
 			}
+		}
+		.help-text {
+    		color: #777;
 		}
 		ul.field_list {
 			width: 100%;

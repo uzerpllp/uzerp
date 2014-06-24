@@ -9,7 +9,7 @@
 class ReportType extends DataObject
 {
 
-	protected $version = '$Revision: 1.1 $';
+	protected $version = '$Revision: 1.2 $';
 	
 	function __construct($tablename = 'report_types')
 	{
@@ -42,6 +42,16 @@ class ReportType extends DataObject
 		
 		return $report_type->getAll($cc);
 		
+	}
+	
+	public static function getReportTypeID($name)
+	{
+		$report_type = DataObjectFactory::Factory('ReportType');
+		
+		$report_type->loadBy('name', $name);
+	
+		return $report_type->_data['id'];
+	
 	}
 }
 
