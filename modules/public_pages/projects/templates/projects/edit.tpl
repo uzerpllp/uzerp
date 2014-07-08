@@ -9,6 +9,7 @@
 			{input type='hidden'  attribute='id' }
 			{input type='hidden'  attribute='usercompanyid' }
 			{input type='text'  attribute='name' class="compulsory" }
+			{input type='text' attribute='job_no' class="compulsory"
 			{input type='date'  attribute='start_date' class="compulsory" }
 			{input type='date'  attribute='end_date' class="compulsory" }
 			{input type='text'  attribute='cost' }

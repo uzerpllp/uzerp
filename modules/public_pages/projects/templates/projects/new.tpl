@@ -3,7 +3,7 @@
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* $Revision: 1.5 $ *}
+{* $Revision: 1.6 $ *}
 {content_wrapper}
 	{form controller="projects" action="save"}
 		{with model=$models.Project legend="Project Details"}
@@ -12,6 +12,7 @@
 					{input type='hidden'  attribute='id' }
 					{input type='hidden'  attribute='usercompanyid' }
 					{input type='text'  attribute='name' class="compulsory" }
+					{input type='text' attribute='job_no' class="compulsory" }
 					{select attribute='company_id' constrains='person_id'}
 					{select attribute='person_id' depends='company_id' nonone=true}
 					{select attribute='key_contact_id'}

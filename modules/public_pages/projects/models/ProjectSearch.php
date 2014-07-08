@@ -7,7 +7,7 @@
  **/
 class ProjectSearch extends BaseSearch {
 
-	protected $version='$Revision: 1.6 $';
+	protected $version='$Revision: 1.7 $';
 	
 	protected $fields=array();
 		
@@ -15,10 +15,17 @@ class ProjectSearch extends BaseSearch {
 		$search = new ProjectSearch($defaults);
 		
 		$search->addSearchField(
+			'job_no',
+			'job_no',
+			'equal'
+		);
+
+		$search->addSearchField(
 			'status',
 			'status',
 			'multi_select'
-			);
+		);
+		
 		$project = new Project;
 		$options = array('' => 'All');
 		$statuses = $project->getEnumOptions('status');
@@ -35,8 +42,7 @@ class ProjectSearch extends BaseSearch {
 			'company',
 			'company_name',
 			'begins',
-			null,
-			'advanced'
+			null
 		);
 
 		$search->addSearchField(

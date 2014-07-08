@@ -7,13 +7,14 @@
  **/
 class Project extends DataObject {
 	
-	protected $version='$Revision: 1.12 $';
+	protected $version='$Revision: 1.13 $';
 	
-	protected $defaultDisplayFields=array('name'
-										 ,'company'
-										 ,'person'
-										 ,'end_date'
-										 ,'status'
+	protected $defaultDisplayFields=array('job_no',
+										 'name',
+										 'company',
+										 'person',
+										 'end_date',
+										 'status',
 										 );
 	
 	protected $linkRules;
@@ -26,8 +27,7 @@ class Project extends DataObject {
 
 // Set specific characteristics
 		$this->idField='id';
-		
-		$this->identifierField='name';
+		$this->identifierField='job_no';		
 		$this->orderby='job_no';
 		
 // Define relationships
@@ -80,6 +80,9 @@ class Project extends DataObject {
 								  ,'X'=>'Cancelled'
 								)
 						);
+
+// Define Access Rules
+ 		$this->setAccessControlled(true);
 
 // Define link rules for sidebar related view
 		$this->linkRules=array('expenses'=>array('modules'=>array('link'=>array('module'=>'hr')
