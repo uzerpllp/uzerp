@@ -9,7 +9,7 @@
 class SystemcompanysController extends Controller
 {
 
-	protected $version = '$Revision: 1.17 $';
+	protected $version = '$Revision: 1.18 $';
 	
 	protected $_templateobject;
 
@@ -207,7 +207,7 @@ class SystemcompanysController extends Controller
 		
 		if (isset($data['delete_logo']))
 		{
-			if ($this->delete_logo($systemcompany->logo_file_id, &$errors))
+			if ($this->delete_logo($systemcompany->logo_file_id, $errors))
 			{
 				$data['logo_file_id'] = NULL;
 			}
@@ -228,7 +228,7 @@ class SystemcompanysController extends Controller
 				{
 					$old_file = DataObjectFactory::Factory('File');
 					
-					if (!$this->delete_logo($systemcompany->logo_file_id, &$errors))
+					if (!$this->delete_logo($systemcompany->logo_file_id, $errors))
 					{
 						$errors[] = 'Error replacing Logo image';
 					}
