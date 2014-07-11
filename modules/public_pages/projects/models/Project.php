@@ -82,7 +82,7 @@ class Project extends DataObject {
 						);
 
 // Define Access Rules
- 		$this->setAccessControlled(true);
+ 		//$this->setAccessControlled(true);
 
 // Define link rules for sidebar related view
 		$this->linkRules=array('expenses'=>array('modules'=>array('link'=>array('module'=>'hr')
