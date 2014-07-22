@@ -148,7 +148,7 @@ class Holidayrequest extends DataObject
 			$do_name->belongsTo('Employee', 'employee_id', 'employee', $employee->authorisationPolicy($employee->holiday_model()));
 		}
 		
-		return parent::Factory($data, &$errors, $do_name);
+		return parent::Factory($data, $errors, $do_name);
 	}
 	
 }
