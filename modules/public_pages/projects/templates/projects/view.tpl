@@ -3,14 +3,14 @@
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* $Revision: 1.8 $ *}
+{* $Revision: 1.9 $ *}
 {content_wrapper}
 	<div id="view_page" class="clearfix">
 		<dl id="view_data_left">
 			{with model=$Project}
 				{view_section heading="project_details" expand='open'}
+					{view_data attribute="job_no"}					
 					{view_data attribute="name"}
-					{view_data attribute="job_no"}
 					{view_data attribute="owner" label='Project Manager'}
 					{view_data attribute="key_contact"}
 					{view_data attribute="company"}
@@ -21,7 +21,6 @@
 					{view_data attribute="end_date" modifier="overdue"}
 					{view_data attribute="duration()" label="total_duration_(days)"}
 					{view_data attribute="progress()"}
-					{view_data attribute="rag_status()" label="RAG Status"}
 				{/view_section}
 			{/with}
 		</dl>

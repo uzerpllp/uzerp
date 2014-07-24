@@ -27,7 +27,7 @@ class Project extends DataObject {
 
 // Set specific characteristics
 		$this->idField='id';
-		$this->identifierField='job_no';		
+		$this->identifierField=array('job_no','name');		
 		$this->orderby='job_no';
 		
 // Define relationships
@@ -147,6 +147,9 @@ class Project extends DataObject {
 		return $name;
 	}
 	
+
+	// note RAG status was removed from the view template as it confused users as it has no meaning
+	// code left here in case useful for later
 	function rag_status($html=true) {
 		$exp_progress=$this->expected_progress(false);
 		if($html) {

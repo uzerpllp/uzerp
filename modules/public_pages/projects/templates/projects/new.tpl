@@ -11,8 +11,13 @@
 				{view_section heading="project_details"}
 					{input type='hidden'  attribute='id' }
 					{input type='hidden'  attribute='usercompanyid' }
-					{input type='text'  attribute='name' class="compulsory" }
-					{input type='text' attribute='job_no' class="compulsory" }
+					{if $action=='new'}
+						{input type='text' attribute='job_no' class="compulsory" }
+						{input type='text'  attribute='name' class="compulsory" }
+					{else}
+						{input type='text' attribute='job_no' readonly=true }
+						{input type='text'  attribute='name' readonly=true }
+					{/if}
 					{select attribute='company_id' constrains='person_id'}
 					{select attribute='person_id' depends='company_id' nonone=true}
 					{select attribute='key_contact_id'}
@@ -41,13 +46,13 @@
 					{input type='checkbox'  attribute='archived' }
 				{/view_section}
 			</dl>	
-			<dl id="view_data_fullwidth">
-				{view_section heading=""}
-					{submit}
-					{include file='elements/saveAnother.tpl'}
-				{/view_section}
-			</dl>
+					
 		{/with}
+		{submit}
+		{if $action=='new'}
+			{include file='elements/saveAnother.tpl'}
+		{/if}
+		{include file="elements/cancelForm.tpl"}
 	{/form}
-	{include file='elements/cancelForm.tpl'}
+
 {/content_wrapper}
