@@ -7,6 +7,7 @@
 {content_wrapper}
 	{form controller="projects" action="save"}
 		{with model=$models.Project legend="Project Details"}
+		<div id="view_page" class="clearfix">
 			<dl id="view_data_left">
 				{view_section heading="project_details"}
 					{input type='hidden'  attribute='id' }
@@ -46,13 +47,12 @@
 					{input type='checkbox'  attribute='archived' }
 				{/view_section}
 			</dl>	
-					
+		</div>			
 		{/with}
 		{submit}
 		{if $action=='new'}
 			{include file='elements/saveAnother.tpl'}
 		{/if}
-		{include file="elements/cancelForm.tpl"}
 	{/form}
-
+{include file="elements/cancelForm.tpl"}
 {/content_wrapper}
