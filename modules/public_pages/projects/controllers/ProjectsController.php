@@ -141,7 +141,7 @@ class ProjectsController extends Controller {
 		if (isset($this->_data['id'])) {
 			$project=$this->_uses['Project'];
 			$project->load($this->_data['id']);
-			$project->update($this->_data['id'],'completed','true');
+			$project->update($this->_data['id'],'status','C');
 			foreach ($project->tasks as $task) {
 				$task->complete();
 			}
