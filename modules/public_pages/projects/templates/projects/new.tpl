@@ -19,9 +19,9 @@
 						{input type='text' attribute='job_no' readonly=true }
 						{input type='text'  attribute='name' readonly=true }
 					{/if}
-					{select attribute='company_id' constrains='person_id'}
-					{select attribute='person_id' depends='company_id' nonone=true}
 					{select attribute='key_contact_id'}
+					{select attribute='company_id' constrains='person_id'}
+					{select attribute='person_id' depends='company_id' nonone=true label="Client Contact"}
 				{/view_section}
 				{view_section heading="timescale"}
 					{input type='date'  attribute='start_date'}
