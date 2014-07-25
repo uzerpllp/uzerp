@@ -38,12 +38,11 @@ class Task extends DataObject {
 		$this->belongsTo('User', 'owner', 'task_owner');
  		$this->belongsTo('User', 'altered_by', 'altered');
  		$this->belongsTo('Taskpriority', 'priority_id', 'priority');
-		
- 		$this->hasMany('Resource','resources');
-		$this->hasMany('taskattachment','attachments');
+		$this->hasMany('Task','tasks','parent_id');		
 		$this->hasMany('Hour','hours');
 		$this->hasMany('Expense','expenses');
-		$this->hasMany('Task','tasks','parent_id');
+ 		$this->hasMany('Resource','resources');
+		$this->hasMany('taskattachment','attachments');
 		$this->hasMany('ProjectEquipmentAllocation', 'equipment_allocations', 'task_id');
 		$this->hasMany('ProjectCostCharge', 'purchase_orders', 'task_id');
 		$this->hasMany('ProjectCostCharge', 'sales_invoices', 'task_id');
