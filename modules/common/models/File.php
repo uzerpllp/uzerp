@@ -26,7 +26,7 @@ class File extends DataObject
 		$this->getField('size')->setFormatter(new FilesizeFormatter());
 	}
 	
-	public function delete($id = null, &$errors = array(), $archive = FALSE, $archive_table = null, $archive_schema = null)
+	public function delete($id = null, $errors = array(), $archive = FALSE, $archive_table = null, $archive_schema = null)
 	{
 		if (!$this->isLoaded())
 		{
@@ -50,7 +50,7 @@ class File extends DataObject
 		if ($result)
 		{
 			// Now delete the file entry
-			$result = parent::delete($id, &$errors, $archive, $archive_table, $archive_schema);
+			$result = parent::delete($id, $errors, $archive, $archive_table, $archive_schema);
 		}
 		else
 		{

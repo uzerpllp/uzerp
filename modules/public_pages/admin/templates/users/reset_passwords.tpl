@@ -23,4 +23,4 @@
 		<br /><br />
 		{submit another="false"}
 	{/form}
-{content_wrapper}
+{/content_wrapper}

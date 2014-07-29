@@ -9,7 +9,7 @@
 class GLTransactionHeader extends DataObject
 {
 	
-	protected $version = '$Revision: 1.4 $';
+	protected $version = '$Revision: 1.5 $';
 	
 	protected $defaultDisplayFields = array('docref'			=> 'Doc.Ref'
 											,'transaction_date'	=> 'Date'
@@ -131,7 +131,7 @@ class GLTransactionHeader extends DataObject
 		$data['glperiods_id']	= $glperiod['id'];
 		$data['status']			= $do->newStatus();
 		
-		return parent::Factory($data, &$errors, $do);
+		return parent::Factory($data, $errors, $do);
 	}
 	
 	function setTransactionsCollection()

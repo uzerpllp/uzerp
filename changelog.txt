@@ -1,6 +1,6 @@
 
 Changelog
-
+2014.3.4    bug             #57 Remove call by reference outside function definitions for PHP 5 compatibility
 2014.3.3    enhancement     #55 Open up project job number for editing and enhance the search options
 2014.3.2    enhancement     #54 Allow selection of a custom XSL report defintion for reports.
 2014.3.1                    Add phinx for database migrations

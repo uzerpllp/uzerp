@@ -14,7 +14,7 @@ class SLCustomerSearch extends BaseSearch {
 
 		$search = new SLCustomerSearch($defaults);
 		
-		$search->default_fields(&$search_data);
+		$search->default_fields($search_data);
 		
 // Execute Search
 		$search->setSearchData($search_data,$errors);

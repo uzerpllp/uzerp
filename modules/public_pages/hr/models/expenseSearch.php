@@ -94,7 +94,7 @@ class expenseSearch extends BaseSearch
 		
 	public static function myExpenses($search_data=null, &$errors, $defaults=null)
 	{
-		$search = self::useDefault($search_data, &$errors, $defaults);
+		$search = self::useDefault($search_data, $errors, $defaults);
 		
 		$search->removeSearchField('employee');
 		
