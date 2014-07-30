@@ -30,7 +30,7 @@ class Opportunity extends DataObject
 		
 // Set specific characteristics
 		$this->idField			= 'id';
-		$this->identifierField	= "name ||' - '|| company";
+		$this->identifierField	= array('name','company');
 		$this->orderby			= 'lower(name)';
 		
 		$this->view='';
