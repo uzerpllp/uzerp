@@ -47,7 +47,7 @@ class ProjectsController extends Controller {
 				),
 				'timesheet'=>array(
 					'link'=>array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'timesheets'),
-					'tag'=>'timesheets'
+					'tag'=>'project_hours_summary'
 				)
 			)
 		);
