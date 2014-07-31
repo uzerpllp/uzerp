@@ -26,7 +26,9 @@ class Resourcetemplate extends DataObject {
 		$this->orderby = 'person,name';
 		$this->orderdir = 'asc';
 		
-		$this->belongsTo('Person', 'person_id', 'person', null, "surname || ', ' || firstname");
+		$cc=new ConstraintChain();
+		$cc->add(new Constraint('company_id', '=', EGS_COMPANY_ID));
+ 		$this->belongsTo('Person', 'person_id', 'person',  $cc, "surname || ', ' || firstname");
 		$this->belongsTo('Resourcetype', 'resource_type_id', 'resource_type');
 		
 		$this->validateUniquenessOf(array('name','person_id','usercompanyid'), 'There is already a template of that name.');
