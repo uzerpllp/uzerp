@@ -17,3 +17,8 @@ vendor/
 
 # Exclude PHP APC monitor
 apc.php
+
+# Eclipse
+.buildpath
+.project
+.settings/
