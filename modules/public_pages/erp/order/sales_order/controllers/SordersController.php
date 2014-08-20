@@ -3384,10 +3384,11 @@ class SordersController extends printController
 		
 		// load a few models for later
 		$customer = $this->getCustomer($order->slmaster_id);
+		$bank_account = $order->customerdetails->bank_account_detail;
 		
 		$payment_term = DataObjectFactory::Factory('PaymentTerm');
 		$payment_term->load($customer->payment_term_id);
-		
+
 		// get invoice address
 		$inv_address = array('customer'=>$order->customer);
 		
@@ -3413,7 +3414,7 @@ class SordersController extends printController
 		$document_reference=array();
 		
 		$document_reference[]['line'] = array('label' => 'Date', 'value' => un_fix_date($order->order_date));
-		$document_reference[]['line'] = array('label' => 'Number', 'value' => $order->order_number);
+		$document_reference[]['line'] = array('label' => 'Sales Order', 'value' => $order->order_number);
 		$document_reference[]['line'] = array('label' => 'Your Ref', 'value' => $order->ext_reference);
 		$document_reference[]['line'] = array('label' => 'Del Date', 'value' => un_fix_date($order->despatch_date));
 		$document_reference[]['line'] = array('label' => 'Del Note', 'value' => $order->delivery_note);
@@ -3509,6 +3510,17 @@ class SordersController extends printController
 		
   		// get delivery address
 		$extra['delivery_address'] = $order->customer . ", " . $order->getDeliveryAddress()->fulladdress;
+		
+		// get bank details
+		if (!is_null($bank_account->bank_account_number))
+		{
+			$extra['bank_account']['bank_name'] = $bank_account->bank_name;
+			$extra['bank_account']['bank_sort_code'] = $bank_account->bank_sort_code;
+			$extra['bank_account']['bank_account_number'] = $bank_account->bank_account_number;
+			$extra['bank_account']['bank_address'] = $bank_account->bank_address;
+			$extra['bank_account']['bank_iban_number'] = $bank_account->bank_iban_number;
+			$extra['bank_account']['bank_bic_code'] = $bank_account->bank_bic_code;
+		}
 
 		// generate the xml and add it to the options array
 		$options['xmlSource'] = $this->generateXML(
