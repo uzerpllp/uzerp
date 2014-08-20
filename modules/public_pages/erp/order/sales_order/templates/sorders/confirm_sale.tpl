@@ -10,6 +10,8 @@
 		<dl id="view_data_left">
 		{with model=$SOrder}
 			{view_data attribute="customer" label='Sales Account'}
+			{view_data attribute="getPhone()" label='Phone' }
+			{view_data attribute="getMobile()" label='Mobile' }
 			{view_data attribute="order_date"}
 				<dt>Note</dt>
 				<dd class="inline" id="SOrder_notes">
