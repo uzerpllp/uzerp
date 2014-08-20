@@ -9,7 +9,8 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
      */
     public function up()
     {
-        $xsl = '﻿<?xml version="1.0" encoding="UTF-8"?>
+        $xsl = <<<'UPDOC'
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
 	<xsl:template match="/">
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -59,7 +60,7 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 						</xsl:for-each>
 					</fo:block-container>
 					<!-- list delivery address -->
-					<fo:block-container>
+					<fo:block-container 
 						<!--[address_block_position]--> >
 						<xsl:for-each select="data/extra/invoice_address/*" >
 							<fo:block><xsl:value-of select="."/></fo:block>
@@ -191,23 +192,22 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 								<fo:table-row height="1cm">
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block>Pro Forma, Settlement Required Immediately</fo:block>
-                                                                                <fo:block><xsl:value-of select="data/extra/settlement_terms" /></fo:block>
-										<xsl:if test="data/extra/bank_account/bank_account_number != ''">
-											<fo:block>
-												Bank Name <xsl:value-of select="data/extra/bank_account/bank_name" />
-												Account Number <xsl:value-of select="data/extra/bank_account/bank_account_number" />
-												Sort Code <xsl:value-of select="data/extra/bank_account/bank_sort_code" />
-											</fo:block>
-											<fo:block>Address <xsl:value-of select="data/extra/bank_account/bank_address" /></fo:block>
-											<fo:block>
-												<xsl:if test="data/extra/bank_account/bank_iban_number != ''">
-													Iban Number <xsl:value-of select="data/extra/bank_account/bank_iban_number" />
-												</xsl:if>
-												<xsl:if test="data/extra/bank_account/bank_bic_code != ''">
-													Bic Code <xsl:value-of select="data/extra/bank_account/bank_bic_code" />
-												</xsl:if>
-											</fo:block>
-										</xsl:if>
+                                        <xsl:if test="data/extra/bank_account/bank_account_number != ''''">
+	                                        <fo:block>
+		                                        Bank Name <xsl:value-of select="data/extra/bank_account/bank_name" />
+		                                        Account Number <xsl:value-of select="data/extra/bank_account/bank_account_number" />
+		                                        Sort Code <xsl:value-of select="data/extra/bank_account/bank_sort_code" />
+	                                        </fo:block>
+	                                        <fo:block>Address <xsl:value-of select="data/extra/bank_account/bank_address" /></fo:block>
+	                                        <fo:block>
+		                                        <xsl:if test="data/extra/bank_account/bank_iban_number != ''''">
+			                                        Iban Number <xsl:value-of select="data/extra/bank_account/bank_iban_number" />
+		                                        </xsl:if>
+		                                        <xsl:if test="data/extra/bank_account/bank_bic_code != ''''">
+			                                        Bic Code <xsl:value-of select="data/extra/bank_account/bank_bic_code" />
+		                                        </xsl:if>
+	                                        </fo:block>
+                                        </xsl:if>
 									</fo:table-cell>
 								</fo:table-row>
 							</fo:table-body>
@@ -237,7 +237,7 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 				</fo:static-content>
 				<!-- BODY -->
 				<fo:flow flow-name="xsl-region-body"  font-family="Helvetica">
-					<xsl:if test="data/SOrder/description != ''">
+					<xsl:if test="data/SOrder/description != ''''">
 						<fo:table table-layout="fixed" font-size="8px" margin-bottom="5mm">
 							<fo:table-column column-width="proportional-column-width(1)" />
 							<fo:table-header>
@@ -311,7 +311,8 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 			</fo:page-sequence>
 		</fo:root>
 	</xsl:template>
-</xsl:stylesheet>';
+</xsl:stylesheet>
+UPDOC;
         $date = new DateTime();
         $update_time = $date->format('Y-m-d H:i:s.u');
         $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='${update_time}', alteredby='phinx' WHERE name='SOProFormaInvoice'");
@@ -322,7 +323,8 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
      */
     public function down()
     {
-        $xsl = '<?xml version="1.0" encoding="UTF-8"?>
+        $xsl = <<<'DOWNDOC'
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
 	<xsl:template match="/">
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -334,7 +336,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 						page-width="21cm"
 			                        margin="0.5cm" >
 					<fo:region-body margin-top="9cm" margin-bottom="4.5cm"/>
-
 					<fo:region-before extent="9cm" />
 				</fo:simple-page-master>
 				<!-- layout for the last pages -->
@@ -347,7 +348,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 					<fo:region-after extent="4.5cm" />
 				</fo:simple-page-master>
 				<!-- page sequences -->
-
 				<fo:page-sequence-master master-name="default-sequence" >
 					<fo:repeatable-page-master-alternatives>
 						<fo:conditional-page-master-reference master-reference="rest" page-position="rest" />
@@ -357,7 +357,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 					</fo:repeatable-page-master-alternatives>
 				</fo:page-sequence-master>
 			</fo:layout-master-set>
-
 			<fo:page-sequence master-reference="default-sequence">
 				<!-- PAGE HEADER -->
 				<fo:static-content flow-name="xsl-region-before" font-size="9pt" font-family="Helvetica" >
@@ -367,7 +366,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 						<xsl:for-each select="data/extra/company_address/*" >
 							<fo:block><xsl:value-of select="."/></fo:block>
 						</xsl:for-each>
-
 					</fo:block-container>
 					<!-- list company details -->
 					<fo:block-container absolute-position="absolute" right="0cm" top="0" width="7cm" >
@@ -386,7 +384,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 					<fo:block-container absolute-position="absolute" right="0" top="4cm" width="7cm" text-align="center">
 						<fo:block>PRO FORMA INVOICE</fo:block>
 					</fo:block-container>
-
 					<!-- list delivery details -->
 					<fo:block-container absolute-position="absolute" right="0" top="4.5cm" width="7cm">	
 						<fo:table table-layout="fixed" >
@@ -396,7 +393,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 								<fo:table-row>
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block>Page</fo:block>
-
 									</fo:table-cell>
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block><!--[page_position]--></fo:block>
@@ -406,7 +402,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 									<fo:table-row>
 										<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 											<fo:block>
-
 												<xsl:value-of select="label"/>
 											</fo:block>
 										</fo:table-cell>
@@ -416,7 +411,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 											</fo:block>
 										</fo:table-cell>
 									</fo:table-row>
-
 								</xsl:for-each>
 							</fo:table-body>
 						</fo:table>
@@ -426,7 +420,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 				<fo:static-content flow-name="xsl-region-after"  font-size="8px">
 					<fo:block border-top-width="1pt" border-top-style="solid" border-top-color="<!--[border_colour]-->"></fo:block>
 					<!-- vat analysis table -->
-
 					<fo:block-container absolute-position="absolute" left="0" top="3mm" width="10.5cm" height="2.5cm">
 						<fo:table table-layout="fixed" >
 							<fo:table-column column-width="proportional-column-width(25)" />
@@ -436,7 +429,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 							<fo:table-column column-width="proportional-column-width(20)" />
 							<fo:table-header>
 								<fo:table-row>
-
 									<xsl:attribute name="background-color"><!--[table_header_colour]--></xsl:attribute>
 									<fo:table-cell padding="1mm" <!--[table_cell_borders]--> >
 										<fo:block font-weight="bold">VAT Analysis</fo:block>
@@ -446,7 +438,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 									</fo:table-cell>
 									<fo:table-cell padding="1mm" <!--[table_cell_borders]--> >
 										<fo:block font-weight="bold">Rate</fo:block>
-
 									</fo:table-cell>
 									<fo:table-cell padding="1mm" <!--[table_cell_borders]--> >
 										<fo:block font-weight="bold">Net Amount</fo:block>
@@ -455,7 +446,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 										<fo:block font-weight="bold">VAT</fo:block>
 									</fo:table-cell>
 								</fo:table-row>
-
 							</fo:table-header>
 							<fo:table-body>
 								<xsl:for-each select="data/extra/vat_analysis/line">
@@ -465,7 +455,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 										</fo:table-cell>
 										<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 											<fo:block><xsl:value-of select="currency" /></fo:block>
-
 										</fo:table-cell>
 										<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 											<fo:block><xsl:value-of select="tax_rate" /></fo:block>
@@ -475,7 +464,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 										</fo:table-cell>
 										<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 											<fo:block><xsl:value-of select="tax_amount" /></fo:block>
-
 										</fo:table-cell>
 									</fo:table-row>
 								</xsl:for-each>
@@ -485,7 +473,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 					<!-- totals table -->
 					<fo:block-container absolute-position="absolute" right="0" top="3mm" width="9cm">	
 						<fo:table table-layout="fixed" >
-
 							<fo:table-column column-width="proportional-column-width(60)" />
 							<fo:table-column column-width="proportional-column-width(40)" />
 							<fo:table-body>
@@ -496,7 +483,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 										</fo:table-cell>
 										<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 											<fo:block text-align="right"><xsl:value-of select="value" /></fo:block>
-
 										</fo:table-cell>
 									</fo:table-row>
 								</xsl:for-each>
@@ -507,7 +493,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 					<!-- settlement table -->
 					<fo:block-container absolute-position="absolute" left="0" top="2.5cm" width="10.5cm">	
 						<fo:table table-layout="fixed" >
-
 							<fo:table-column column-width="proportional-column-width(100)" />
 							<fo:table-header>
 								<fo:table-row>
@@ -516,7 +501,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 										<fo:block font-weight="bold">Settlement Terms</fo:block>
 									</fo:table-cell>
 								</fo:table-row>
-
 							</fo:table-header>
 							<fo:table-body>
 								<fo:table-row height="1cm">
@@ -525,7 +509,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 									</fo:table-cell>
 								</fo:table-row>
 							</fo:table-body>
-
 						</fo:table>
 					</fo:block-container>
 					<!-- delivery table -->
@@ -535,7 +518,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 							<fo:table-header>
 								<fo:table-row>
 									<xsl:attribute name="background-color"><!--[table_header_colour]--></xsl:attribute>
-
 									<fo:table-cell padding="1mm" <!--[table_cell_borders]--> >
 										<fo:block font-weight="bold">Delivery Address</fo:block>
 									</fo:table-cell>
@@ -545,7 +527,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 								<fo:table-row height="1cm">
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block><xsl:value-of select="data/extra/delivery_address" /></fo:block>
-
 									</fo:table-cell>
 								</fo:table-row>
 							</fo:table-body>
@@ -554,8 +535,7 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 				</fo:static-content>
 				<!-- BODY -->
 				<fo:flow flow-name="xsl-region-body"  font-family="Helvetica">
-					<xsl:if test="data/SOrder/description != ''">
-
+					<xsl:if test="data/SOrder/description != ''''">
 						<fo:table table-layout="fixed" font-size="8px" margin-bottom="5mm">
 							<fo:table-column column-width="proportional-column-width(1)" />
 							<fo:table-header>
@@ -564,7 +544,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 									<fo:table-cell padding="1mm" <!--[table_cell_borders]--> >
 										<fo:block font-weight="bold">Description</fo:block>
 									</fo:table-cell>
-
 								</fo:table-row>
 							</fo:table-header>
 							<fo:table-body>
@@ -574,7 +553,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 									</fo:table-cell>
 								</fo:table-row>
 							</fo:table-body>
-
 						</fo:table>
 					</xsl:if>
 					<fo:table table-layout="fixed" font-size="8px">
@@ -584,7 +562,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 						<fo:table-column column-width="proportional-column-width(11)" />
 						<fo:table-column column-width="proportional-column-width(11)" />
 						<fo:table-header>
-
 							<fo:table-row>
 								<xsl:attribute name="background-color"><!--[table_header_colour]--></xsl:attribute>
 								<fo:table-cell padding="1mm" <!--[table_cell_borders]--> >
@@ -593,7 +570,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 								<fo:table-cell padding="1mm" <!--[table_cell_borders]--> >
 									<fo:block font-weight="bold">Qty</fo:block>
 								</fo:table-cell>
-
 								<fo:table-cell padding="1mm" <!--[table_cell_borders]--> >
 									<fo:block font-weight="bold">Units</fo:block>
 								</fo:table-cell>
@@ -602,7 +578,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 								</fo:table-cell>
 								<fo:table-cell padding="1mm" <!--[table_cell_borders]--> >
 									<fo:block font-weight="bold">Net Amount</fo:block>
-
 								</fo:table-cell>
 							</fo:table-row>
 						</fo:table-header>
@@ -612,7 +587,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block><xsl:value-of select="description" /></fo:block>
 									</fo:table-cell>
-
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block><xsl:value-of select="revised_qty"/></fo:block>
 									</fo:table-cell>
@@ -622,7 +596,6 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block><xsl:value-of select="price"/></fo:block>
 									</fo:table-cell>
-
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block><xsl:value-of select="net_value"/></fo:block>
 									</fo:table-cell>
@@ -632,12 +605,12 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 					</fo:table>
 					<!-- this is required to calculate the last page number -->
 					<fo:block id="last-page"/>
-
 				</fo:flow>
 			</fo:page-sequence>
 		</fo:root>
 	</xsl:template>
-</xsl:stylesheet>';
+</xsl:stylesheet>
+DOWNDOC;
 
         $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='2011-05-13 11:54:55.507923', alteredby='phinx' WHERE name='SOProFormaInvoice'");
     }

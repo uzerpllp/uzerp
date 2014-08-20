@@ -9,7 +9,8 @@ class ReportDefinitionSalesAcknowledgement extends AbstractMigration
      */
     public function up()
     {
-        $xsl = '<?xml version="1.0" encoding="UTF-8"?>
+        $xsl = <<<'UPDOC'
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
 	<xsl:template match="/">
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -214,7 +215,8 @@ class ReportDefinitionSalesAcknowledgement extends AbstractMigration
 			</fo:page-sequence>
 		</fo:root>
 	</xsl:template>
-</xsl:stylesheet>';
+</xsl:stylesheet>
+UPDOC;
         $date = new DateTime();
         $update_time = $date->format('Y-m-d H:i:s.u');
         $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='${update_time}', alteredby='phinx' WHERE name='SOacknowledgement'");
@@ -225,7 +227,8 @@ class ReportDefinitionSalesAcknowledgement extends AbstractMigration
      */
     public function down()
     {
-        $xsl = '<?xml version="1.0" encoding="UTF-8"?>
+        $xsl = <<<'DOWNDOC'
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
 	<xsl:template match="/">
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -422,7 +425,8 @@ class ReportDefinitionSalesAcknowledgement extends AbstractMigration
 			</fo:page-sequence>
 		</fo:root>
 	</xsl:template>
-</xsl:stylesheet>';
+</xsl:stylesheet>
+DOWNDOC;
         $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='2014-06-24 12:55:45', alteredby='phinx' WHERE name='SOacknowledgement'");
     }
 }

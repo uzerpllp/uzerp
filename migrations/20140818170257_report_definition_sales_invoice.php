@@ -9,7 +9,8 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
      */
     public function up()
     {
-        $xsl = '﻿<?xml version="1.0" encoding="UTF-8"?>
+        $xsl = <<<'UPDOC'
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
 	<xsl:template match="/">
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -59,13 +60,13 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 						</xsl:for-each>
 					</fo:block-container>
 					<!-- list delivery address -->
-					<fo:block-container>
+					<fo:block-container
 						<!--[address_block_position]--> >
 						<xsl:for-each select="data/extra/invoice_address/*" >
 							<fo:block><xsl:value-of select="."/></fo:block>
 						</xsl:for-each>
 					</fo:block-container>
-					<xsl:if test="data/extra/vatnumber != ''">
+					<xsl:if test="data/extra/vatnumber != ''''">
 						<fo:block-container absolute-position="absolute" left="0.78cm" top="8.22cm" >
 							<fo:table table-layout="fixed" >
 								<fo:table-column column-width="3cm" />
@@ -115,7 +116,7 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block><xsl:value-of select="data/SInvoice/invoice_number" /></fo:block>								</fo:table-cell>
 								</fo:table-row>
-								<xsl:if test="data/SInvoice/sales_order_number != ''">
+								<xsl:if test="data/SInvoice/sales_order_number != ''''">
 								<fo:table-row>
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block>Sales Order</fo:block>
@@ -244,7 +245,7 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 								<fo:table-row height="1cm">
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block><xsl:value-of select="data/extra/settlement_terms" /></fo:block>
-										<xsl:if test="data/extra/bank_account/bank_account_number != ''">
+										<xsl:if test="data/extra/bank_account/bank_account_number != ''''">
 											<fo:block>
 												Bank Name <xsl:value-of select="data/extra/bank_account/bank_name" />
 												Account Number <xsl:value-of select="data/extra/bank_account/bank_account_number" />
@@ -252,10 +253,10 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 											</fo:block>
 											<fo:block>Address <xsl:value-of select="data/extra/bank_account/bank_address" /></fo:block>
 											<fo:block>
-												<xsl:if test="data/extra/bank_account/bank_iban_number != ''">
+												<xsl:if test="data/extra/bank_account/bank_iban_number != ''''">
 													Iban Number <xsl:value-of select="data/extra/bank_account/bank_iban_number" />
 												</xsl:if>
-												<xsl:if test="data/extra/bank_account/bank_bic_code != ''">
+												<xsl:if test="data/extra/bank_account/bank_bic_code != ''''">
 													Bic Code <xsl:value-of select="data/extra/bank_account/bank_bic_code" />
 												</xsl:if>
 											</fo:block>
@@ -307,7 +308,7 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 				</fo:static-content>
 				<!-- BODY -->
 				<fo:flow flow-name="xsl-region-body"  font-family="Helvetica">
-					<xsl:if test="data/SInvoice/description != '' or data/extra/notes != ''">
+					<xsl:if test="data/SInvoice/description != '''' or data/extra/notes != ''''">
 						<fo:table table-layout="fixed" font-size="8px" margin-bottom="5mm">
 							<fo:table-column column-width="proportional-column-width(1)" />
 							<fo:table-column column-width="proportional-column-width(1)" />
@@ -395,7 +396,8 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 			</fo:page-sequence>
 		</fo:root>
 	</xsl:template>
-</xsl:stylesheet>';
+</xsl:stylesheet>
+UPDOC;
         $date = new DateTime();
         $update_time = $date->format('Y-m-d H:i:s.u');
         $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='${update_time}', alteredby='phinx' WHERE name='SalesInvoice'");
@@ -406,7 +408,8 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
      */
     public function down()
     {
-        $xsl = '<?xml version="1.0" encoding="UTF-8"?>
+        $xsl = <<<'DOWNDOC'
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" version="1.0">
 	<xsl:template match="/">
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -462,7 +465,7 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 							<fo:block><xsl:value-of select="."/></fo:block>
 						</xsl:for-each>
 					</fo:block-container>
-					<xsl:if test="data/extra/vatnumber != ''">
+					<xsl:if test="data/extra/vatnumber != ''''">
 						<fo:block-container absolute-position="absolute" left="0.78cm" top="8.22cm" >
 							<fo:table table-layout="fixed" >
 								<fo:table-column column-width="3cm" />
@@ -632,7 +635,7 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 								<fo:table-row height="1cm">
 									<fo:table-cell padding="0.5mm" <!--[table_cell_borders]--> >
 										<fo:block><xsl:value-of select="data/extra/settlement_terms" /></fo:block>
-										<xsl:if test="data/extra/bank_account/bank_account_number != ''">
+										<xsl:if test="data/extra/bank_account/bank_account_number != ''''">
 											<fo:block>
 												Bank Name <xsl:value-of select="data/extra/bank_account/bank_name" />
 												Account Number <xsl:value-of select="data/extra/bank_account/bank_account_number" />
@@ -640,10 +643,10 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 											</fo:block>
 											<fo:block>Address <xsl:value-of select="data/extra/bank_account/bank_address" /></fo:block>
 											<fo:block>
-												<xsl:if test="data/extra/bank_account/bank_iban_number != ''">
+												<xsl:if test="data/extra/bank_account/bank_iban_number != ''''">
 													Iban Number <xsl:value-of select="data/extra/bank_account/bank_iban_number" />
 												</xsl:if>
-												<xsl:if test="data/extra/bank_account/bank_bic_code != ''">
+												<xsl:if test="data/extra/bank_account/bank_bic_code != ''''">
 													Bic Code <xsl:value-of select="data/extra/bank_account/bank_bic_code" />
 												</xsl:if>
 											</fo:block>
@@ -695,7 +698,7 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 				</fo:static-content>
 				<!-- BODY -->
 				<fo:flow flow-name="xsl-region-body"  font-family="Helvetica">
-					<xsl:if test="data/SInvoice/description != '' or data/extra/notes != ''">
+					<xsl:if test="data/SInvoice/description != '''' or data/extra/notes != ''''">
 						<fo:table table-layout="fixed" font-size="8px" margin-bottom="5mm">
 							<fo:table-column column-width="proportional-column-width(1)" />
 							<fo:table-column column-width="proportional-column-width(1)" />
@@ -783,7 +786,8 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 			</fo:page-sequence>
 		</fo:root>
 	</xsl:template>
-</xsl:stylesheet>';
+</xsl:stylesheet>
+DOWNDOC;
         $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='2013-01-14 17:20:46.891186', alteredby='phinx' WHERE name='SalesInvoice'");
     }
 }
