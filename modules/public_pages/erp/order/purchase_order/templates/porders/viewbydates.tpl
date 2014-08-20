@@ -29,7 +29,7 @@
 			{foreach name=datagrid key=due_delivery_date item=model from=$outstanding}
 				<tr>
 					<td width=75>
-						{link_to module=$module controller=$controller action=index' due_delivery_date=$due_delivery_date value=$due_delivery_date}</a>
+						{link_to module=$module controller=$controller action='index' due_delivery_date=$due_delivery_date value=$due_delivery_date}</a>
 					</td>
 					<td>
 						{$model.uom_name}
