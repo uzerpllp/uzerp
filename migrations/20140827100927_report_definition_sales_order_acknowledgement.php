@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class ReportDefinitionSalesAcknowledgement extends AbstractMigration
+class ReportDefinitionSalesOrderAcknowledgement extends AbstractMigration
 {
     /**
      * Migrate Up.
