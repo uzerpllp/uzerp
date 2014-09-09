@@ -1,5 +1,10 @@
 
 Changelog
+2014.3.6    enhancement           Show person name on Sales Quote print
+            bug             #66   Regression in report definitions
+            bug             #68   VAT totals incorrect on Sales Order Quote print
+            bug             #69   Error adding periodic payment for Sales/Purchase Ledger Source
+            
 2014.3.5    enhancement     #58   Print company bank account details on pro-forma invoice
             bug             #60   Broken link on view purchase order supply/demand
             enhancement     #61   Show customer phone numbers on confirm sale
