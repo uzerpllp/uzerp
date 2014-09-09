@@ -3282,12 +3282,12 @@ class SordersController extends printController
 			// Construct totals for generic info
 			$vat_total = bcadd($vat_total, $tax_total);
 			
-			$line_gross = bcadd($orderlines->net_value, $vat_total);
+			$line_gross = bcadd($orderlines->net_value, $tax_total);
 			
 			$gross_total = bcadd($line_gross, $gross_total);
 			
 			$orderlines->setAdditional('vat_value', 'numeric');
-			$orderlines->vat_value = $vat_total;
+			$orderlines->vat_value = $tax_total;
 			
 			$orderlines->setAdditional('gross_value', 'numeric');
 			$orderlines->gross_value = $line_gross;
