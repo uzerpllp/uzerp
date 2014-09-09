@@ -3242,6 +3242,13 @@ class SordersController extends printController
 
 		// get customer address
 		$customer_address = array('title'=>'Customer Address:','customer'=>$order->customer);
+		
+		if (!is_null($order->person_id))
+		{
+			$names = explode(',', $order->person);
+			$customer_address += array('person'=>$names[1] . ' ' . $names[0]);
+		}
+		
 		$customer_address+=$this->formatAddress($order->getInvoiceAddress());
 		$extra['customer_address'] = $customer_address;
 		$extra['price_type'] = $order->customer->so_price_type;
