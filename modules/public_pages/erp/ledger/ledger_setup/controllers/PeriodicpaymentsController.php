@@ -246,14 +246,14 @@ class PeriodicpaymentsController extends LedgerController
 				break;
 			case 'SR':
 				$company				= DataObjectFactory::Factory('SLCustomer');
-				$this->idField			= 'company_id';
-				$this->identifierField	= 'name';
+				$company->idField			= 'company_id';
+				$company->identifierField	= 'name';
 				$companylist			= $company->getAll();
 				break;
 			case 'PP':
 				$company				= DataObjectFactory::Factory('PLSupplier');
-				$this->idField			= 'company_id';
-				$this->identifierField	= 'name';
+				$company->idField			= 'company_id';
+				$company->identifierField	= 'name';
 				$companylist			= $company->getAll();
 				break;
 		}
