@@ -67,7 +67,7 @@ class Employee extends DataObject {
 		// Define validation
 		$this->validateUniquenessOf('employee_number');
 		$this->validateUniquenessOf('works_number', NULL, TRUE);
-		$this->validateUniquenessOf('ni', NULL, TRUE);
+		$this->validateUniquenessOf(array('ni', 'finished_date'), NULL, TRUE);
 		
 		// Define enumerated types
 		

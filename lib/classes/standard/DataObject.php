@@ -1061,7 +1061,7 @@ class DataObject implements Iterator {
 				for ($i = 0; $i < count($field); $i++)
 				{
 					
-					if ((!$tablename) && (($this->getField($field[$i])->type == 'numeric') || (substr($this->getField($field[$i])->type, 0, 3) == 'int')) && ($value[$i] == ''))
+					if ((!$tablename) && (($this->getField($field[$i])->type == 'date') || ($this->getField($field[$i])->type == 'numeric') || (substr($this->getField($field[$i])->type, 0, 3) == 'int')) && ($value[$i] == ''))
 					{
 						$where .= ' AND ' . $field[$i] . ' is null';
 					}
