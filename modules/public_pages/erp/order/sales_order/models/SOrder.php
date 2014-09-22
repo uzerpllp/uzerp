@@ -297,6 +297,28 @@ class SOrder extends SPOrder {
 		
 	}
 	
+	public function getPhone()
+	{
+		if (!is_null($this->person_id))
+		{
+			return $this->persondetails->getContactDetail('T');
+		} else {
+			return $this->customerdetails->companydetail->getContactDetail('T');
+		}
+	
+	}
+	
+	public function getMobile()
+	{
+		if (!is_null($this->person_id))
+		{
+			return $this->persondetails->getContactDetail('M');
+		} else {
+			return $this->customerdetails->companydetail->getContactDetail('M');
+		}
+	
+	}
+	
 	public function getPersonAddresses ($id='', $data)
 	{
 		

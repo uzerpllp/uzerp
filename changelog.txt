@@ -1,11 +1,27 @@
 
 Changelog
-2014.3.4    bug             #57 Remove call by reference outside function definitions for PHP 5 compatibility
-2014.3.3    enhancement     #55 Open up project job number for editing and enhance the search options
-2014.3.2    enhancement     #54 Allow selection of a custom XSL report defintion for reports.
-2014.3.1                    Add phinx for database migrations
-            bug             #1 Sales Order Acknowledgement Print, lines overwrite header
-            bug             #9 CRM Activities view loads calendar instead of activities
-            bug             #10 Adding a project fails due to system policy error
-            bug             #49 OS Value on batch payments not being set to zero
+2014.3.7    bug             #70   Duplicate NI should be allowed in combination with finish date in HR - New Employee
+2014.3.6    enhancement           Show person name on Sales Quote print
+            bug             #66   Regression in report definitions
+            bug             #68   VAT totals incorrect on Sales Order Quote print
+            bug             #69   Error adding periodic payment for Sales/Purchase Ledger Source
+            
+2014.3.5    enhancement     #58   Print company bank account details on pro-forma invoice
+            bug             #60   Broken link on view purchase order supply/demand
+            enhancement     #61   Show customer phone numbers on confirm sale
+            enhancement     #62   Show line due dates on sales order acknowledgement
+            enhancement     #64   Show sales order number on sales invoice
+            bug             #65   Parentheses arround address fields cause SQL error
+
+2014.3.4    bug             #57   Remove call by reference outside function definitions for PHP 5 compatibility
+
+2014.3.3    enhancement     #55   Open up project job number for editing and enhance the search options
+
+2014.3.2    enhancement     #54   Allow selection of a custom XSL report defintion for reports.
+
+2014.3.1                          Add phinx for database migrations
+            bug             #1    Sales Order Acknowledgement Print, lines overwrite header
+            bug             #9    CRM Activities view loads calendar instead of activities
+            bug             #10   Adding a project fails due to system policy error
+            bug             #49   OS Value on batch payments not being set to zero
 

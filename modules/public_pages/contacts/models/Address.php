@@ -43,8 +43,14 @@ class Address extends DataObject
 		{
 			if (!empty($data[$field]))
 			{
-				$cc->add(new Constraint($field, '=' ,$data[$field]));
-			}
+				//escape special characters on varchar fields, especially parentheses, to avoid invalid SQL in the contraint chain.
+				$fields = $this->_fields;
+				if ($fields[$field]->type = 'varchar') {
+					$cc->add(new Constraint($field, '=', preg_quote($data[$field])));
+				} else {
+					$cc->add(new Constraint($field, '=', $data[$field]));
+				}
+		    }
 			else
 			{
 				$cc->add(new Constraint($field, 'is' , 'NULL'));
