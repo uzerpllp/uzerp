@@ -12,6 +12,7 @@
 					{input type='hidden'  attribute='id' }
 					{input type='hidden'  attribute='usercompanyid' }
 					{input type='text'  attribute='name' class="compulsory" }
+					{input type='text'  attribute='value' }
 					{input type='text'  attribute='cost' }
 					{select attribute="probability"}
 					{input type='date'  attribute='enddate' label='End date' }

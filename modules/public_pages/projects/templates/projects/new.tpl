@@ -37,6 +37,7 @@
 					{input attribute="consultant_details"}
 					{select attribute='category_id' }
 					{select attribute='work_type_id'}
+					{input type='text'  attribute='value' }
 					{input type='text'  attribute='cost' }
 					{input type='text'  attribute='url' }
 					{select  attribute='phase_id' }

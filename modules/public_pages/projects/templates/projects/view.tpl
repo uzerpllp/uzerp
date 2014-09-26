@@ -31,6 +31,7 @@
 					{view_data attribute="category"}
 					{view_data attribute="work_type"}
 					{view_data attribute="consultant_details"}
+					{view_data attribute="value"}
 					{view_data attribute="cost"}
 					{view_data attribute="url"}
 					{view_data attribute="phase"}

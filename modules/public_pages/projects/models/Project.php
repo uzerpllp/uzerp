@@ -13,6 +13,7 @@ class Project extends DataObject {
 										 'name',
 										 'company',
 										 'person',
+										 'value',
 										 'end_date',
 										 'status',
 										 );
@@ -65,6 +66,9 @@ class Project extends DataObject {
 		$this->addSearchHandler('tasks',$sh);
  		
 // Define field formats
+		$this->getField('cost')->setFormatter(new PriceFormatter());
+		$this->getField('value')->setFormatter(new PriceFormatter());
+		
 		
 // Define field defaults
 		$this->getField('status')->setDefault('N');
