@@ -47,6 +47,10 @@ class ProjectsController extends Controller {
 				),
 				'timesheet'=>array(
 					'link'=>array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'timesheets'),
+					'tag'=>'project_hours_by_employee'
+				),
+				'showprojecthours'=>array(
+					'link'=>array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'showprojecthours'),
 					'tag'=>'project_hours_summary'
 				)
 			)
@@ -447,6 +451,41 @@ class ProjectsController extends Controller {
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	
+	}
+
+
+	public function showprojecthours() {
+
+		$projecthours=new ProjectCollection(new Project());
+		$sh=$this->setSearchHandler($projecthours);
+		$projecthours->getProjectHourTotals($sh);
+		//$projecthours->load($sh);
+
+		//$sh->setfields(array('id'
+		//			,'name'
+		//			,'resource_rate'
+		//			, 'total_hours'));
+
+
+		parent::index($projecthours, $sh);
+
+		$sidebar = new SidebarController($this->view);
+		$sidebar->addList(
+			'Actions',
+			array(
+				'view'=>array(
+					'link'=>array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'index'),
+					'tag'=>'view_projects'
+				),
+				'new'=>array(
+					'link'=>array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'new'),
+					'tag'=>'new_project'
+				)			)
+		);
+		
+		$this->view->register('sidebar',$sidebar);
+		$this->view->set('sidebar',$sidebar);
+
 	}
 
 	

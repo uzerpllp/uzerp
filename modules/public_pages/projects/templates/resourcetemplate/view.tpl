@@ -10,12 +10,13 @@
 		<dt class="heading">Resource details</dt>
 			{view_data attribute="person"}
 			{view_data attribute="name"}
+			{view_data attribute="resource"}
+			{view_data attribute="resource_type"}
 		
 		<dt class="heading">Resource Costs
 			{view_data attribute="standard_rate"}
 			{view_data attribute="overtime_rate"}
-			{view_data attribute="quantity"}
-			{view_data attribute="cost" label="unit_cost"}
+			
 		{/with}
 		</dl>
 	</div>

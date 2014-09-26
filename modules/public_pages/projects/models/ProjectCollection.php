@@ -21,12 +21,15 @@ class ProjectCollection extends DataObjectCollection {
 		$this->setTablename('project_hours_overview');
 		$this->title='Project Hours';
 		// use hour id to set uniqueness of identifier
-		$fields=array('hour_id'
+		$fields=array('id'
+					,'hour_id'
 					,'name'
+					,'person'
+					,'resource'
 					,'resource_rate'
 					, 'sum(duration) as total_hours');
-		$sh->setorderby(array('hour_id','name','resource_rate'));
-		$sh->setGroupBy(array('hour_id','name','resource_rate'));
+		$sh->setorderby(array('id','hour_id','name','person','resource','resource_rate'));
+		$sh->setGroupBy(array('id','hour_id','name','person','resource','resource_rate'));
 		$sh->setFields($fields);
 		if (!empty($_project_id))
 		{

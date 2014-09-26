@@ -11,15 +11,17 @@ class Resourcetemplate extends DataObject {
 	
 	protected $defaultDisplayFields=array('person'
 										, 'name'
+										, 'resource'
 										, 'resource_type'
 										, 'standard_rate'
 										, 'overtime_rate'
-										, 'quantity'
-										, 'cost'
 										);
 
 	public function __construct($tablename='resource_templates') {
+// Contruct the object
 		parent::__construct($tablename);
+
+// Set specific characteristics
 		$this->idField='id';
 		$this->identifierField = 'person';
 		
@@ -28,10 +30,14 @@ class Resourcetemplate extends DataObject {
 		
 		$cc=new ConstraintChain();
 		$cc->add(new Constraint('company_id', '=', EGS_COMPANY_ID));
+		
+// Define relationships
  		$this->belongsTo('Person', 'person_id', 'person',  $cc, "surname || ', ' || firstname");
 		$this->belongsTo('Resourcetype', 'resource_type_id', 'resource_type');
-		
-		$this->validateUniquenessOf(array('name','person_id','usercompanyid'), 'There is already a template of that name.');
+		$this->belongsTo('MFResource', 'mfresource_id', 'resource');
+
+// Define validation
+		$this->validateUniquenessOf(array('person_id','usercompanyid','mfresource_id'), 'There is already a template for this Person/Resource.');
 		$this->getField('name')->setDefault('Standard');
 	}
 
