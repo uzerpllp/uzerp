@@ -20,7 +20,6 @@ class Hour extends DataObject
 										   ,'ticket'
 										   ,'opportunity'
 										   ,'billable'
-										   ,'overtime'
 										   );
 	
 	function __construct($tablename = 'hours')
