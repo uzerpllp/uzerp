@@ -70,8 +70,9 @@
 						{view_data attribute="net_value"}
 						{view_data attribute="base_net_value"}
 					{/view_section}
-					{view_section heading="Description" expand="closed"}
-						{view_data attribute="description" tags=none label=''}
+					{view_section heading="Details" expand="closed"}
+						{view_data attribute="description" tags=none label='Description'}
+						{view_data attribute="project_id" label='Project'}
 					{/view_section}
 					{if isset($linevalue)}
 						{view_section heading="Order Line Summary" expand="closed"}

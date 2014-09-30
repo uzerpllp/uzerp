@@ -44,7 +44,7 @@ class pordersSearch extends BaseSearch
 			false
 		);
 
-// Search by Customer
+// Search by Supplier
 		$search->addSearchField(
 			'plmaster_id',
 			'Supplier',
@@ -57,7 +57,31 @@ class pordersSearch extends BaseSearch
 		$suppliers = $supplier->getAll(null, false, true, '', '');
 		$options += $suppliers;
 		$search->setOptions('plmaster_id',$options);
+		
+// Search by Project
+		$search->addSearchField(
+				'project_id',
+				'Project',
+				'select',
+				'',
+				'advanced'
+		);
+		$project = DataObjectFactory::Factory('Project');
+		$options = array(''=>'All');
+		$projects = $project->getAll();
+		$options += $projects;
+		$search->setOptions('project_id',$options);
 
+
+// Search by Description
+		$search->addSearchField(
+				'description',
+				'Description Contains',
+				'contains',
+				'',
+				'advanced'
+		);
+				
 // Search by Order Date
 		$search->addSearchField(
 			'order_date',
@@ -110,7 +134,7 @@ class pordersSearch extends BaseSearch
 	{
 		$search = new pordersSearch($defaults);
 
-// Search by Customer
+// Search by Supplier
 		$search->addSearchField(
 			'plmaster_id',
 			'Supplier',
@@ -168,7 +192,7 @@ class pordersSearch extends BaseSearch
 	{
 		$search = new pordersSearch($defaults);
 
-// Search by Customer
+// Search by Supplier
 		$search->addSearchField(
 			'plmaster_id',
 			'Supplier',
@@ -240,7 +264,7 @@ class pordersSearch extends BaseSearch
 	{
 		$search = new pordersSearch($defaults);
 
-// Search by Customer
+// Search by Supplier
 		$search->addSearchField(
 			'plmaster_id',
 			'Supplier',

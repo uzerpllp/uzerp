@@ -26,6 +26,7 @@ class POrder extends SPOrder {
 		'base_net_value',
 		'raised_by_person',
 		'description',
+		'project',
 		'plmaster_id'
 	);
 
