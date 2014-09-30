@@ -10,16 +10,17 @@
 			{view_section heading="Resource_details"}
 				{input type='hidden'  attribute='id' }
 				{input type='hidden'  attribute='usercompanyid' }
-				{input type='hidden'  attribute='project_id' }
+				{include file='elements/auditfields.tpl' }
 				{select attribute='person_id' }
 				{input type='text' attribute='name'}
+				{select attribute='mfresource_id' label = 'Resource'}
 				{select attribute='resource_type_id'}
+				
 			{/view_section}
 			{view_section heading="Resource_costs"}
 				{input type='text'  attribute='standard_rate'}
 				{input type='text'  attribute='overtime_rate'}
-				{input type='text'  attribute='quantity'}
-				{input type='text'  attribute='cost' label='unit_cost'}
+				
 			{/view_section}
 			{submit}
 			</dl>

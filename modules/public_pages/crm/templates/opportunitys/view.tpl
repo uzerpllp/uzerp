@@ -15,6 +15,7 @@
 				{view_data attribute='source'}
 				{view_data attribute='campaign'}
 				{view_data attribute='status'}
+				{view_data attribute='value'}
 				{view_data attribute='cost'}
 				{view_data attribute='probability'}
 				{view_data attribute='enddate'}

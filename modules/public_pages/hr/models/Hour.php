@@ -20,7 +20,6 @@ class Hour extends DataObject
 										   ,'ticket'
 										   ,'opportunity'
 										   ,'billable'
-										   ,'overtime'
 										   );
 	
 	function __construct($tablename = 'hours')
@@ -35,7 +34,9 @@ class Hour extends DataObject
 		$this->orderdir='DESC';
 		
 // Define relationships
- 		$this->belongsTo('Person', 'person_id', 'person', null, "surname || ', ' || firstname");
+		$cc=new ConstraintChain();
+		$cc->add(new Constraint('company_id', '=', EGS_COMPANY_ID));
+ 		$this->belongsTo('Person', 'person_id', 'person',  $cc, "surname || ', ' || firstname");
 		$this->belongsTo('Opportunity', 'opportunity_id', 'opportunity'); 
 		$this->belongsTo('Project', 'project_id', 'project');
  		$this->belongsTo('Task', 'task_id', 'task');

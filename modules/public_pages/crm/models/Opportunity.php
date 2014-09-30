@@ -14,6 +14,7 @@ class Opportunity extends DataObject
 										   ,'company'	=> 'Company'
 										   ,'person'	=> 'Person'
 										   ,'status'	=> 'Status'
+										   ,'value'		=> 'Value'
 										   ,'cost'		=> 'Cost'
 										   ,'enddate'	=> 'End'
 										   ,'assigned'	=> 'Assigned To'
@@ -30,7 +31,7 @@ class Opportunity extends DataObject
 		
 // Set specific characteristics
 		$this->idField			= 'id';
-		$this->identifierField	= "name ||' - '|| company";
+		$this->identifierField	= array('name','company');
 		$this->orderby			= 'lower(name)';
 		
 		$this->view='';
@@ -53,6 +54,7 @@ class Opportunity extends DataObject
   		
 // Define field formats
 		$this->getField('cost')->setFormatter(new PriceFormatter());
+		$this->getField('value')->setFormatter(new PriceFormatter());
 
 // Define enumerated types
 		$numbers = array();

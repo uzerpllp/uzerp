@@ -137,23 +137,23 @@ class TasksController extends Controller {
 				)
 			)
 		);
-		$sidebar->addList(
-			'Calendars',
-			array(
-				'day_view'=>array(
-					'link'=>array('module'=>'calendar','controller'=>'index','action'=>'dayview'),
-					'tag'=>'day_view'
-				),
-				'week_view'=>array(
-					'link'=>array('module'=>'calendar','controller'=>'index','action'=>'weekview'),
-					'tag'=>'week_view'
-				),
-				'month_view'=>array(
-					'link'=>array('module'=>'calendar','controller'=>'index','action'=>'monthview'),
-					'tag'=>'month_view'
-				)
-			)
-		);
+//		$sidebar->addList(
+//			'Calendars',
+//			array(
+//				'day_view'=>array(
+//					'link'=>array('module'=>'calendar','controller'=>'index','action'=>'dayview'),
+//					'tag'=>'day_view'
+//				),
+//				'week_view'=>array(
+//					'link'=>array('module'=>'calendar','controller'=>'index','action'=>'weekview'),
+//					'tag'=>'week_view'
+//				),
+//				'month_view'=>array(
+//					'link'=>array('module'=>'calendar','controller'=>'index','action'=>'monthview'),
+//					'tag'=>'month_view'
+//				)
+//			)
+//		);
 		
 		$this->sidebarRelatedItems($sidebar, $task);
 

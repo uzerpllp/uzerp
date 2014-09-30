@@ -14,14 +14,26 @@ class OpportunitySearch extends BaseSearch {
 	public static function useDefault($search_data=null, &$errors, $defaults=null) {
 		
 		$search = new OpportunitySearch($defaults);
+
+		// Search By Status
+		$search->addSearchField(
+			'status_id',
+			'status',
+			'select',
+			''
+		);
+		$model=new OpportunityStatus();
+		$options=array(''=>'All');
+		$options+=$model->getAll();
+		$search->setOptions('status_id',$options);
 		
 		// Search by Open Only
-		$search->addSearchField(
-			'open',
-			'open_only',
-			'hide',
-			'checked'
-		);
+		//$search->addSearchField(
+		//	'open',
+		//	'open_only',
+		//	'hide',
+		//	'checked'
+		//);
 		
 		// Search by Name
 		$search->addSearchField(
@@ -66,18 +78,7 @@ class OpportunitySearch extends BaseSearch {
 		$options+=$model->getAll();
 		$search->setOptions('source_id',$options);
 		
-		// Search By Status
-		$search->addSearchField(
-			'status_id',
-			'status',
-			'select',
-			'',
-			'advanced'
-		);
-		$model=new OpportunityStatus();
-		$options=array(''=>'All');
-		$options+=$model->getAll();
-		$search->setOptions('status_id',$options);
+		
 		
 		// Search By Type
 		$search->addSearchField(

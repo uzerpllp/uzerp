@@ -13,6 +13,7 @@ class Project extends DataObject {
 										 'name',
 										 'company',
 										 'person',
+										 'value',
 										 'end_date',
 										 'status',
 										 );
@@ -27,7 +28,7 @@ class Project extends DataObject {
 
 // Set specific characteristics
 		$this->idField='id';
-		$this->identifierField='job_no';		
+		$this->identifierField=array('job_no','name');		
 		$this->orderby='job_no';
 		
 // Define relationships
@@ -65,6 +66,9 @@ class Project extends DataObject {
 		$this->addSearchHandler('tasks',$sh);
  		
 // Define field formats
+		$this->getField('cost')->setFormatter(new PriceFormatter());
+		$this->getField('value')->setFormatter(new PriceFormatter());
+		
 		
 // Define field defaults
 		$this->getField('status')->setDefault('N');
@@ -80,6 +84,7 @@ class Project extends DataObject {
 								  ,'X'=>'Cancelled'
 								)
 						);
+
 
 // Define link rules for sidebar related view
 		$this->linkRules=array('expenses'=>array('modules'=>array('link'=>array('module'=>'hr')
@@ -144,6 +149,9 @@ class Project extends DataObject {
 		return $name;
 	}
 	
+
+	// note RAG status was removed from the view template as it confused users as it has no meaning
+	// code left here in case useful for later
 	function rag_status($html=true) {
 		$exp_progress=$this->expected_progress(false);
 		if($html) {

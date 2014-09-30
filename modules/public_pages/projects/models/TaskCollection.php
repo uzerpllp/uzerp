@@ -21,13 +21,15 @@ class TaskCollection extends DataObjectCollection {
 
 		$this->setTablename('task_hours_overview');
 		$this->title='Task Hours';
-		$fields=array('usercompanyid'
+		// use hour id to set uniqueness of identifier
+		$fields=array('hour_id'
+					,'name'
 					, 'resource_rate'
 					, 'sum(duration) as total_hours');
-		$sh->setorderby(array('usercompanyid'));
-		$sh->setGroupBy(array('usercompanyid', 'resource_rate'));
+		$sh->setorderby(array('hour_id','name','resource_rate'));
+		$sh->setGroupBy(array('hour_id','name','resource_rate'));
 		$sh->setFields($fields);
-		if (!empty($_project_id))
+		if (!empty($_task_id))
 		{
 			$sh->addConstraint(new Constraint('task_id', '=', $_task_id));
 		}

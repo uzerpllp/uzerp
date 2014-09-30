@@ -10,16 +10,16 @@
 			{input type='hidden'  attribute='id' }
 			{if $Task->project_id neq ''}
 				{view_data attribute='project'}
-			{/if}
+			{/if}	
 			{select attribute='project_id' }
 			{input type='text'  attribute='name' }
+			{select attribute='parent_id' data=$parent_tasks force=true}
 			{select attribute='progress' readonly=$readonly}
 			{datetime attribute='start_date' value=$start_date readonly=$readonly}
 			{datetime attribute='end_date' value=$end_date readonly=$readonly}
 			{interval attribute='duration' readonly=$readonly}
 			{input type='checkbox'  attribute='milestone' readonly=$readonly}
-			{input type='checkbox' attribute='deliverable'}
-			{select attribute='parent_id' data=$parent_tasks force=true}
+			{input type='checkbox' attribute='deliverable'}			
 			{select attribute='priority_id' }
 			{textarea  attribute='description' }
 			{submit}

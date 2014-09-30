@@ -69,10 +69,10 @@ class ProjectBudget extends DataObject {
 		
 // Define enumerated types
  		$this->setEnum('budget_item_type'
-							,array('O'=>'Other'
-								  ,'E'=>'Equipment'
-								  ,'M'=>'Materials'
-								  ,'R'=>'Resources'
+							,array('M'=>'Materials'
+								,'E'=>'Equipment'
+								,'R'=>'Resources'
+								,'O'=>'Other'
 								  )
 						);
 		

@@ -33,7 +33,6 @@
 				{view_section heading="additional_details"}
 					{input type='checkbox' attribute='billable'}
 					{input type='checkbox' attribute='invoiced'}
-					{input type='checkbox' attribute='overtime'}
 				{/view_section}
 				{view_section heading="summary"}
 					<dd id='hours_summary'>
