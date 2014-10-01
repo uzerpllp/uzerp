@@ -1,31 +1,33 @@
 
 Changelog
-2014.3.8	enhamncement		  Changes to projects module
-								  #1 Tidy up projects controller. 
-								     Removed code for old ezPDF 'reports' that no longer work
-								     Removed deprecated actions for a project
-								     Changed view sidebar actions (added go to and add projects under actions)
-								  #2 Tidy up the projects entry and display screen
-								     Set project identifier to be job_no+name
-								     Remove RAG status from view template (code left in controller as may be useful)
-								     Remove edit template as not required
-								     Update new template so can be used for edits as well
-								  #3 Minor changes to templet new.tpl
-								  #4 Update so that a project can be marked as complete and the status is changed to 'C'. Doesn't change any other validations yet.
-								  #5 Another change to the template to get the fields in the correct order
-								  #6 Tidy up the Project Task sidebar so in the same basic order as Projects Remove calendar views as they don't currently work
-								  #7 Change the order of Project Budget Item Type to Materials, Equipment, Resources, Other
-								  #8 Small change to opportunity search
-								  #9 Fixed bug re opportunity identifier field not displaying in drop down correctly
-								  #10 Change to tasks template when adding from a project
-								  #11 Fixed Bug to limit person dropdown when allocating task hours When entering task hours person dropdown now only shows people from the system company 
-								      Note - this means that 'non employees' can still book hours IF they are in the system company as people.
-								  #12 Fixed Bug to limit person dropdown when setting up resource templates
-								  #13 Fixed bug on project hours total in View Poject Totals
-								  #14 Fixed bug on task hours total in View Task Totals
-								  #15 Changes to the way project module handles resources
-								  #16 Fixed bug which allowed hours with no employee also removed overtime checkbox as deprecated
-								  #17 To add value to opportunities and products plus tidy up lik 'opportunity to project'
+2014.3.8    bug             #71   CSV outputs are empty
+            enhancement           Changes to projects module
+                                  Tidy up projects controller:
+                                    Removed code for old ezPDF 'reports' that no longer work
+                                    Removed deprecated actions for a project
+                                    Changed view sidebar actions (added go to and add projects under actions)
+                                  Tidy up the projects entry and display screen:
+                                    Set project identifier to be job_no+name
+                                    Remove RAG status from view template (code left in controller as may be useful)
+                                    Remove edit template as not required
+                                    Update new template so can be used for edits as well
+                                  Minor changes to templet new.tpl
+                                  Update so that a project can be marked as complete and the status is changed to 'C'. Doesn't change any other validations yet.
+                                  Another change to the template to get the fields in the correct order
+                                  Tidy up the Project Task sidebar so in the same basic order as Projects Remove calendar views as they don't currently work
+                                  Change the order of Project Budget Item Type to Materials, Equipment, Resources, Other
+                                  Small change to opportunity search
+                                  Fixed bug re opportunity identifier field not displaying in drop down correctly
+                                  Change to tasks template when adding from a project
+                                  Fixed Bug to limit person dropdown when allocating task hours When entering task hours person dropdown now only shows people from the system company 
+                                    Note - this means that 'non employees' can still book hours IF they are in the system company as people.
+                                  Fixed Bug to limit person dropdown when setting up resource templates
+                                  Fixed bug on project hours total in View Poject Totals
+                                  Fixed bug on task hours total in View Task Totals
+                                  Changes to the way project module handles resources
+                                  Fixed bug which allowed hours with no employee also removed overtime checkbox as deprecated
+                                  To add value to opportunities and products plus tidy up lik 'opportunity to project'
+                                  Add database migration for project module updates
 								  
 2014.3.7    bug             #70   Duplicate NI should be allowed in combination with finish date in HR - New Employee
 2014.3.6    enhancement           Show person name on Sales Quote print
