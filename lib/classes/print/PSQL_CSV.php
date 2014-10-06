@@ -25,7 +25,7 @@ class PSQL_CSV {
 		}
 		
 		// basic sql structure
-		$sql = "psql -d %s -c \"COPY (%s) TO '%s' WITH DELIMITER '%s' CSV %s\" 2>&1";
+		$sql = "psql -d %s -c \"\copy (%s) TO '%s' WITH DELIMITER '%s' CSV %s\" 2>&1";
 		
 		// populate sql structure with values
 		$sql = sprintf(
