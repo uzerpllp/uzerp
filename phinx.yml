@@ -26,7 +26,7 @@ environments:
         adapter: pgsql
         host: 127.0.0.1
         name: uzerp
-        user: www-data
-        pass: ''
+        user: sysadmin
+        pass: 'xxx'
         port: 5432
         charset: utf8
