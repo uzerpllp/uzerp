@@ -94,10 +94,11 @@ class BaseSearch {
 			}
 			elseif (isset($_SESSION['searches'][get_class($this)][$default_search_name]))
 			{
-				
-				$search_data += $_SESSION['searches'][get_class($this)][$default_search_name];
+				if(is_array($_SESSION['searches'][get_class($this)][$default_search_name]))
+				{
+					$search_data += $_SESSION['searches'][get_class($this)][$default_search_name];
+				}
 				debug('BaseSearch::setSearchData '.get_class($this).' '.$search_name.':loading default search '.print_r($search_data, TRUE));
-				
 			}
 			else
 			{
@@ -135,7 +136,9 @@ class BaseSearch {
 				debug('BaseSearch::setSearchData '.get_class($this).' '.$search_name.':saving search in session '.print_r($search_data, TRUE));
 				
 				$_SESSION['searches'][get_class($this)][$search_name]=$search_data;
-				unset($search_data['search_id']);
+				if (isset($search_data['search_id'])) {
+					unset($search_data['search_id']);
+				}
 				$_SESSION['searches'][get_class($this)][$default_search_name]=$search_data;
 				
 			}

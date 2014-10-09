@@ -3,7 +3,44 @@
 use Phinx\Migration\AbstractMigration;
 
 class ProjectsCleanup extends AbstractMigration
-{  
+{
+
+    //Cache keys to be cleaned on migration/rollback
+    var $cache_keys = array(
+    'uzerp[searches][admin][project_equipment_overview_]',
+    'uzerp[searches][admin][projectsoverview_]',
+    'uzerp[table_fields][project_categories]',
+    'uzerp[table_fields][project_equipment]',
+    'uzerp[table_fields][project_equipment_overview]',
+    'uzerp[table_fields][project_hours_overview]',
+    'uzerp[table_fields][project_resources]',
+    'uzerp[table_fields][projects]',
+    'uzerp[table_fields][projectsoverview]',
+    'uzerp[table_fields][resource_templates_overview]',
+    'uzerp[table_fields][project_hours_overview]',
+    'uzerp[table_fields][opportunitiesoverview]',
+    'uzerp[table_fields][resource_templates]',
+    'uzerp[table_fields][hours]'
+    );
+    
+    /**
+    * Remove listed keys from mencache
+    *
+    * @param: array $keys array of key names to remove
+    */    
+    private function CleanMemcache($keys)
+    {
+        $memcache = new Memcached();
+        $memcache->addServer("localhost", 11211); 
+        file_put_contents('php://stderr', 'Removing keys from cache...' . PHP_EOL);
+        foreach ($keys as $key)
+        {
+            $memcache->delete($key);
+            file_put_contents('php://stderr', 'removed '. $key . PHP_EOL);
+        }       
+    }
+
+    
     /**
      * Migrate Up.
      */
@@ -94,6 +131,7 @@ CREATE OR REPLACE VIEW project_hours_overview AS
     h.id AS hour_id,
     h.start_time,
     h.duration,
+    (m.resource_code::text || ' - '::text) || m.description::text AS resource,
     m.resource_rate,
     u.id AS person_id,
     (u.firstname::text || ' '::text) || u.surname::text AS person
@@ -329,7 +367,7 @@ VIEW;
         
         // Execute SQL to re-create the views
         $this->query($resource_templates_overview);
-        $this->query('ALTER TABLE resource_templates OWNER TO "www-data"');
+        $this->query('ALTER TABLE resource_templates_overview OWNER TO "www-data"');
         $this->query($task_hours_overview);
         $this->query('ALTER TABLE task_hours_overview OWNER TO "www-data"');
         $this->query($project_hours_overview);
@@ -344,11 +382,12 @@ VIEW;
         $this->query('ALTER TABLE po_headeroverview OWNER TO "www-data"');
         $this->query($poproductorders);
         $this->query('ALTER TABLE po_product_orders OWNER TO "www-data"');
-        
-        
+
+        // Clear memcache keys
+        $this->CleanMemcache($this->cache_keys);
     }
- 
-    
+
+
     /**
     * Migrate Down.
     */
@@ -685,5 +724,8 @@ VIEW;
         $this->query('ALTER TABLE po_headeroverview OWNER TO "www-data"');
         $this->query($poproductorders);
         $this->query('ALTER TABLE po_product_orders OWNER TO "www-data"');
+
+        // Clear memcache keys
+        $this->CleanMemcache($this->cache_keys);
     }
 }

@@ -8,7 +8,7 @@ environments:
         adapter: pgsql
         host: 127.0.0.1
         name: uzerp
-        user: www-data
+        user: sysadmin
         pass: ''
         port: 5432
         charset: utf8
@@ -17,7 +17,7 @@ environments:
         adapter: pgsql
         host: 127.0.0.1
         name: uzerp-test
-        user: root
+        user: sysadmin
         pass: ''
         port: 5432
         charset: utf8
@@ -27,6 +27,6 @@ environments:
         host: 127.0.0.1
         name: uzerp
         user: sysadmin
-        pass: 'xxx'
+        pass: ''
         port: 5432
         charset: utf8
