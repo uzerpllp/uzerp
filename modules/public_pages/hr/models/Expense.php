@@ -55,6 +55,10 @@ class Expense extends DataObject
 		// Define validation
 		$this->validateUniquenessOf(array("expense_number"));
 
+ 		$cc = new ConstraintChain();
+ 		$cc->add(new Constraint('task_id', '>', '0'));
+		$this->addValidator(new DependencyValidator($cc,array('project_id')));
+		
 		// Define enumerated types
  		$this->setEnum('status',
  			array(

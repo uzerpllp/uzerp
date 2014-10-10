@@ -767,15 +767,8 @@ class ExpensesController extends HrController
 			if(!empty($this->_data['project_id'])) { $_project_id = $this->_data['project_id']; }
 		}
 		
-		if (!empty($_project_id))
-		{
-			$depends = array('project_id' => $_project_id);
-		} else {
-			$depends = array();
-		}
-		
-		$tasks = $this->getOptions($this->_templateobject, 'task_id', '', '', '', $depends);
-		
+		$tasks = $this->getOptions($this->_templateobject, 'task_id', '', '', '', array('project_id' => $_project_id));
+			
 		if(isset($this->_data['ajax']))
 		{
 			echo $tasks;

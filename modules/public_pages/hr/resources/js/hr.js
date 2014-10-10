@@ -166,13 +166,13 @@ $(document).ready(function() {
 	
 	/* hr -> expense -> new */
 
-	$("#Expense_project_id", "#hr-expenses-new").live('change',function(){
+	$("#Expense_project_id", "#hr-expenses-new").on('change',function(){
 		
 		$.uz_ajax({
 			target:{
-				element	: "#Expense_task_id",
-				field	: 'task_id'
-		    },
+					element	: "#Expense_task_id",
+					field	: 'task_id'
+		    	},
 			data:{
 				module		: 'hr',
 				controller	: 'expenses',
