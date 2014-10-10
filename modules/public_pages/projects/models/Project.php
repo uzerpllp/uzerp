@@ -58,6 +58,8 @@ class Project extends DataObject {
 		$this->hasMany('ProjectCostCharge', 'actuals', 'project_id');
 //		$this->hasMany('ProjectCostCharge', 'purchase_orders', 'project_id');
 //		$this->hasMany('ProjectCostCharge', 'sales_invoices', 'project_id');
+		$this->hasMany('POrder','porders');
+
 		
 		$tasks=new TaskCollection(new Task);
 		$sh = new SearchHandler($tasks,false);
@@ -91,6 +93,12 @@ class Project extends DataObject {
 																 ,'new'=>array('module'=>'hr'))
 												,'actions'=>array('link','new')
 												,'rules'=>array()
+												),
+										'porders'=>array('modules'=>array('link'=>array('module'=>'purchase_order')
+																 ,'new'=>array('module'=>'purchase_order'))
+												,'actions'=>array('link','new')
+												,'rules'=>array()
+												,'label'=>'Show Purchase Orders'
 												)
 							);
 							
