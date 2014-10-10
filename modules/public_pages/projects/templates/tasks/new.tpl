@@ -10,8 +10,10 @@
 			{input type='hidden'  attribute='id' }
 			{if $Task->project_id neq ''}
 				{view_data attribute='project'}
+				{input type='hidden'  attribute='project_id' }
+			{else}
+				{select attribute='project_id' }
 			{/if}	
-			{select attribute='project_id' }
 			{input type='text'  attribute='name' }
 			{select attribute='parent_id' data=$parent_tasks force=true}
 			{select attribute='progress' readonly=$readonly}
