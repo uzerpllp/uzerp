@@ -54,7 +54,7 @@
 					{/view_section}
 				{/with}
 				{with model=$delivery_address}
-					{view_section heading="supplier_address" expand="closed"}
+					{view_section heading="delivery_address" expand="closed"}
 						{view_data attribute="street1"}
 						{view_data attribute="street2"}
 						{view_data attribute="street3"}
@@ -73,6 +73,7 @@
 					{view_section heading="Details" expand="closed"}
 						{view_data attribute="description" tags=none label='Description'}
 						{view_data attribute="project_id" label='Project'}
+						{view_data attribute="task_id" label='Task'}
 					{/view_section}
 					{if isset($linevalue)}
 						{view_section heading="Order Line Summary" expand="closed"}

@@ -67,6 +67,34 @@ $(document).ready(function() {
 		
 	});
 	
+    $("#POrder_project_id", "#purchase_order-porders-new").on('change',function(){
+		
+		$.uz_ajax({
+			target:{
+				element	: "#POrder_task_id",
+				field	: 'task_id'
+		    },
+			data:{
+				module		: 'purchase_order',
+				controller	: 'porders',
+				action		: 'getTaskList',
+				project_id	: $('#POrder_project_id').val(),
+				ajax		: ''
+			}
+		});
+		
+	});
+    
+    $("#purchase_order-porders-new #POrder_project_id").live("change", function(){
+		if ($(this).val()=='') {
+			$("#task_id").hide();
+		}
+		else {
+			$("#task_id").show();
+		}
+		
+	});
+	
 	/* purchase_order -> porders -> view */
 	
 	$('.edit-line a, .add_lines_related a').live('click', function(event) {

@@ -27,6 +27,7 @@ class POrder extends SPOrder {
 		'raised_by_person',
 		'description',
 		'project',
+		'project_id',
 		'plmaster_id'
 	);
 
@@ -62,9 +63,9 @@ class POrder extends SPOrder {
  		$this->belongsTo('User', 'raised_by', 'raised_by_person');
  		$this->belongsTo('User', 'authorised_by', 'authorised_by_person');
  		$this->belongsTo('Project', 'project_id', 'project');
+ 		$this->belongsTo('Task', 'task_id', 'task');
 		$this->belongsTo('DeliveryTerm', 'delivery_term_id', 'delivery_term');
- 		
-		$this->hasMany('POrderLine', 'lines', 'order_id');
+ 		$this->hasMany('POrderLine', 'lines', 'order_id');
 		$this->hasMany('PInvoice', 'invoices', 'purchase_order_id');
 		$this->hasMany('PInvoiceLine', 'invoice_lines', 'purchase_order_id');
 		

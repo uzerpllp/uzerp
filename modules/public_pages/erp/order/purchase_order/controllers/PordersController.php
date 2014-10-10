@@ -379,6 +379,15 @@ class PordersController extends printController
 		{
 			$this->view->set('page_title', $this->getPageName($porder->getFormatted('type')));
 		}
+		
+		// This bit allows for projects and tasks 
+		if (!$porder->isLoaded() && !empty($this->_data['project_id']))
+		{
+			$porder->project_id = $this->_data['project_id'];
+		}
+		
+		$this->view->set('tasks', $this->getTaskList($porder->project_id));
+			
 	}
 
 	public function save()
@@ -2751,6 +2760,26 @@ class PordersController extends printController
 		$this->view->set('delivery_address',$address);
 
 		return $porder;
+	}
+	
+	public function getTaskList($_project_id='')
+	{
+	
+		if(isset($this->_data['ajax']))
+		{
+			if(!empty($this->_data['project_id'])) { $_project_id = $this->_data['project_id']; }
+		}
+		
+		$tasks = $this->getOptions($this->_templateobject, 'task_id', '', '', '', array('project_id' => $_project_id));
+			
+		if(isset($this->_data['ajax']))
+		{
+			echo $tasks;
+			exit;
+		}
+		
+		return $tasks;
+	
 	}
 	
 }

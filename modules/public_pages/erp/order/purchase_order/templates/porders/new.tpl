@@ -34,7 +34,8 @@
 					<dt>Due Date</dt>
 					<dd>{input type='date'  attribute='due_date' label=' ' tags='none'}</dd>
 					{select attribute=owner}
-					{select attribute="project_id" label='Project'}
+					{select attribute='project_id' force=true}
+					{select attribute='task_id' options=$tasks force=true}
 				</dl>
 				<dl class="view_data_bottom">
 					{textarea  attribute='description' label='Description' }
