@@ -99,13 +99,13 @@ class Project extends DataObject {
 												,'actions'=>array('link','new')
 												,'rules'=>array()
 												,'label'=>'Show Purchase Orders'
+												),
+										'pinvoices'=>array('modules'=>array('link'=>array('module'=>'purchase_invoicing')
+																 ,'new'=>array('module'=>'purchase_invoicing'))
+												,'actions'=>array('link','new')
+												,'rules'=>array()
+												,'label'=>'Show Purchase Invoices'
 												)
-									//	'pinvoices'=>array('modules'=>array('link'=>array('module'=>'purchase_invoicing')
-									//							 ,'new'=>array('module'=>'purchase_invoicing'))
-									//			,'actions'=>array('link','new')
-									//			,'rules'=>array()
-									//			,'label'=>'Show Purchase Invoices'
-									//			)
 							);
 							
 	}
