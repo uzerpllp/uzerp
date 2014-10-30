@@ -31,6 +31,27 @@ $(document).ready(function() {
 		
 	});
 	
+	/* purchase_invoicing -> pinvoices -> new .... get task list from project */
+	
+	$("#PInvoice_project_id", "#purchase_invoicing-pinvoices-new").live('change',function(){
+		
+		$.uz_ajax({
+			target:{
+				element	: "#PInvoice_task_id",
+				field	: 'task_id'
+		    },
+			data:{
+				module		: 'purchase_invoicing',
+				controller	: 'pinvoices',
+				action		: 'getTaskList',
+				project_id	: $('#PInvoice_project_id').val(),
+				ajax		: ''
+			}
+		});
+		
+	});
+
+	
 	/* purchase_invoicing -> pinvoices -> view */
 	
 	$(".edit-line a, .add_lines_related a").live('click',function(event){

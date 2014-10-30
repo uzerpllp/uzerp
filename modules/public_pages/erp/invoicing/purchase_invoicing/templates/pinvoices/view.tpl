@@ -53,6 +53,10 @@
 			{view_section heading="Description" expand="open"}
 				{view_data model=$PInvoice attribute="description" tags=none label=' '}
 			{/view_section}
+			{view_section heading="Project Details" expand="closed"}
+				{view_data model=$PInvoice attribute="project_id" label='Project'}
+				{view_data model=$PInvoice attribute="task_id" label='Task'}
+			{/view_section}
 		</dl>
 		{/view_section}
 		{view_section heading=$transaction_type_desc|cat:" Lines" expand="open"}

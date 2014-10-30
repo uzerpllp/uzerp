@@ -33,6 +33,10 @@
 			    <dl class="float-right" >
 					{view_section heading="Description"}
 						{textarea  attribute='description' tags=none label=' '}
+					{/view_section}						
+					{view_section heading="Project Details"}					
+						{select attribute='project_id' force=true}
+						{select attribute='task_id' options=$tasks force=true}
 					{/view_section}
 				</dl>
 			{/form}

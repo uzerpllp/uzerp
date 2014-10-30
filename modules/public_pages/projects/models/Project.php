@@ -59,7 +59,7 @@ class Project extends DataObject {
 //		$this->hasMany('ProjectCostCharge', 'purchase_orders', 'project_id');
 //		$this->hasMany('ProjectCostCharge', 'sales_invoices', 'project_id');
 		$this->hasMany('POrder','porders');
-
+		$this->hasMany('PInvoice','pinvoices');
 		
 		$tasks=new TaskCollection(new Task);
 		$sh = new SearchHandler($tasks,false);
@@ -100,6 +100,12 @@ class Project extends DataObject {
 												,'rules'=>array()
 												,'label'=>'Show Purchase Orders'
 												)
+									//	'pinvoices'=>array('modules'=>array('link'=>array('module'=>'purchase_invoicing')
+									//							 ,'new'=>array('module'=>'purchase_invoicing'))
+									//			,'actions'=>array('link','new')
+									//			,'rules'=>array()
+									//			,'label'=>'Show Purchase Invoices'
+									//			)
 							);
 							
 	}

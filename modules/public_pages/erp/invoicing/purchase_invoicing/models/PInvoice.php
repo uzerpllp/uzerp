@@ -21,6 +21,8 @@ class PInvoice extends Invoice
 		'gross_value',
 		'currency',
 		'base_gross_value',
+//	'project',
+		'project_id',
 		'plmaster_id'
 	);
 	
@@ -49,7 +51,9 @@ class PInvoice extends Invoice
  		$this->belongsTo('Currency', 'twin_currency_id', 'twin');
  		$this->belongsTo('PaymentTerm', 'payment_term_id', 'payment'); 
  		$this->belongsTo('TaxStatus', 'tax_status_id', 'tax_status');
-		$this->hasMany('PInvoiceLine','lines','invoice_id');
+		$this->belongsTo('Project', 'project_id', 'project');
+		$this->belongsTo('Task', 'task_id', 'task'); 		
+ 		$this->hasMany('PInvoiceLine','lines','invoice_id');
 		$this->hasMany('POReceivedLine','grn_lines','invoice_id');
 		$this->hasOne('PaymentTerm', 'payment_term_id', 'payment_term');
 		

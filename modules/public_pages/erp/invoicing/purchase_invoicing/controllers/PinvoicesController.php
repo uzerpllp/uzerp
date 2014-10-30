@@ -583,6 +583,14 @@ class PinvoicesController extends printController {
 		// get Purchase Invoice Notes for default customer or first in customer
 		$this->getNotes($defaultsupplier);
 		
+		// This bit allows for projects and tasks to be linked 
+		if (!$pinvoice->isLoaded() && !empty($this->_data['project_id']))
+		{
+			$pinvoice->project_id = $this->_data['project_id'];
+		}
+		
+		$this->view->set('tasks', $this->getTaskList($pinvoice->project_id));
+			
 	}
 	
 	public function delete(){
@@ -1022,6 +1030,26 @@ class PinvoicesController extends printController {
 	protected function getPageName($base=null,$action=null) {
 		return parent::getPageName((empty($base)?'purchase_invoices':$base),$action);
 	}
+
+	public function getTaskList($_project_id='')	{
+	
+		if(isset($this->_data['ajax']))
+		{
+			if(!empty($this->_data['project_id'])) { $_project_id = $this->_data['project_id']; }
+		}
+		
+		$tasks = $this->getOptions($this->_templateobject, 'task_id', '', '', '', array('project_id' => $_project_id));
+			
+		if(isset($this->_data['ajax']))
+		{
+			echo $tasks;
+			exit;
+		}
+		
+		return $tasks;
+	
+	}
+
 
 }
 
