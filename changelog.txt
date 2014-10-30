@@ -1,5 +1,12 @@
 
 Changelog
+				enhancement				 Changes expenses to link to make task selection dependent on project selection in expenses header				
+				enhancement				 Add project tasks to purchase order header and make dependent on project. 
+											 Also fix small annoyance where address heading incorrect on view.
+				bug						 Fix bug when editing a task the project should not be changed
+				enhancement				 Add Purchase orders sidebar link on projects
+				bug						 Add NOT NULL constraint on project_id column in tasks table
+				enhancement				 Changes to allow projects and tasks in entered purchase invoices
 2014.3.8    bug             #71   CSV outputs are empty
             enhancement           Changes to projects module
                                   Tidy up projects controller:
