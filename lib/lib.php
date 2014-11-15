@@ -132,6 +132,7 @@ function system_email($subject, $body)
 {
 	
 	$email = get_config('ADMIN_EMAIL');
+	$from = get_config('ADMIN_FROM_EMAIL');
 	
 	if (!empty($email))
 	{
@@ -139,7 +140,7 @@ function system_email($subject, $body)
 			$email,
 			$subject,
 			$body,
-			"From: webmaster@severndelta.co.uk\r\n"
+			"From: " . $from . "\r\n"
 		);
 	}
 
