@@ -581,7 +581,7 @@ class DatasetsController extends printController
 		$errors = array();
 		
 		// update the current permission position
-		if (!DataObject::updatePositions('DatasetField', $this->_data['field_id'], 'position', $this->_data['new_position'], $this->_data['current_position'], &$errors))
+		if (!DataObject::updatePositions('DatasetField', $this->_data['field_id'], 'position', $this->_data['new_position'], $this->_data['current_position'], $errors))
 		{
 			echo json_encode(array('success' => FALSE, 'errors' => '<li>Error updating desired position</li>'));
 			exit;
