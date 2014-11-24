@@ -1321,6 +1321,7 @@ class SlcustomersController extends LedgerController
 		
 		$customer = DataObjectFactory::Factory('SLCustomer');
 		$customer->load($this->_data['id']);
+		$bank_account = $customer->bank_account_detail;
 		
 		/*
 		if (SYSTEM_COMPANY<>'') {
@@ -1387,6 +1388,19 @@ class SlcustomersController extends LedgerController
 			$extra['aged_debtor_summary'][]['line']=$value;
 			
 		}
+		
+		// get bank details
+		if (!is_null($bank_account->bank_account_number))
+		{
+			$extra['bank_account']['bank_name'] = $bank_account->bank_name;
+			$extra['bank_account']['bank_sort_code'] = $bank_account->bank_sort_code;
+			$extra['bank_account']['bank_account_number'] = $bank_account->bank_account_number;
+			$extra['bank_account']['bank_address'] = $bank_account->bank_address;
+			$extra['bank_account']['bank_iban_number'] = $bank_account->bank_iban_number;
+			$extra['bank_account']['bank_bic_code'] = $bank_account->bank_bic_code;
+		}
+		
+		
 		
 		// generate the XML, include the extras array too
 		$options['xmlSource']=$this->generateXML(array('model'=>$customer,
