@@ -3243,6 +3243,17 @@ class SordersController extends printController
 		// get customer address
 		$customer_address = array('title'=>'Customer Address:','customer'=>$order->customer);
 		
+		$customer = $this->getCustomer($order->slmaster_id);
+		$tax_status = DataObjectFactory::Factory('TaxStatus');
+		$tax_status->load($customer->tax_status_id);
+		
+		if ($tax_status->apply_tax == 'f')
+		{
+			$extra['vat_exempt'] = True;
+		} else {
+			$extra['vat_exempt'] = False;
+		}
+		
 		if (!is_null($order->person_id))
 		{
 			$names = explode(',', $order->person);
