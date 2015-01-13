@@ -3247,12 +3247,7 @@ class SordersController extends printController
 		$tax_status = DataObjectFactory::Factory('TaxStatus');
 		$tax_status->load($customer->tax_status_id);
 		
-		if ($tax_status->apply_tax == 'f')
-		{
-			$extra['vat_exempt'] = True;
-		} else {
-			$extra['vat_exempt'] = False;
-		}
+		$extra['show_vat'] = $tax_status->apply_tax;
 		
 		if (!is_null($order->person_id))
 		{
