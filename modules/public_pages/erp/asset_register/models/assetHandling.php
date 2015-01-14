@@ -218,7 +218,7 @@ class assetHandling
 	static function yearEnd (&$errors)
 	{
 		
-		$assets = new AssetCollection();
+		$assets = new AssetCollection(DataObjectFactory::Factory('Asset'));
 		
 		$sh = new SearchHandler($assets, false);
 		
