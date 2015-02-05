@@ -720,6 +720,18 @@ class SordersController extends printController
 				);
 		}
 		
+		if (count($order->lines) == 0 and !$order->cancelled())
+		{
+			$actions['cancel_order']=array(
+					'link'=>array('modules'=>$this->_modules
+							,'controller'=>$this->name
+							,'action'=>'cancel_order'
+							,'id'=>$id
+					),
+					'tag'=>'Cancel '.$type
+			);
+		}
+		
 		if ($order->partDespatched()
 			|| $order->despatched()
 			|| $order->invoiced())
@@ -1752,8 +1764,8 @@ class SordersController extends printController
 		$flash = Flash::Instance();
 		$errors=array();
 		
-		if ($order->type!='Q') {
-			$flash->addError('Only Quotes can be cancelled');
+		if ($order->type == 'Q' or count($order->lines) > 0) {
+			$flash->addError('Only Quotes or empty orders can be cancelled');
 			sendTo($this->name, 'view', $this->_modules, array('id'=>$this->_data['id']));
 		}
 		$db=DB::Instance();
@@ -1771,7 +1783,9 @@ class SordersController extends printController
 					}
 				}
 			}
+			$order->update($order->id, 'description', $order->description . "\r\n[Cancelled by " . EGS_USERNAME . ", " . date("Y-m-d H:i:s") . "]");
 		}
+
 		if (count($errors)>0) {
 			$db->FailTrans();
 			$flash->addErrors($errors);
