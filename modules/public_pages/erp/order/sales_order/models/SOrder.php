@@ -158,12 +158,6 @@ class SOrder extends SPOrder {
 		
 		if ($customer->isLoaded())
 		{
-			if ($customer->accountStopped())
-			{
-				$flash = Flash::Instance();
-				$flash->addWarning('Customer Account on Stop');
-			}
-			
 			$header_data['currency_id']		= $customer->currency_id;
 			$header_data['payment_term_id']	= $customer->payment_term_id;
 			$header_data['tax_status_id']	= $customer->tax_status_id;

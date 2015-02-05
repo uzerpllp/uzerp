@@ -469,6 +469,12 @@ class SordersController extends printController
 		$this->view->set('sorderlines', $order->lines);
 		$linestatuses=$order->getLineStatuses();
 		$linestatus=$linestatuses['count'];
+		
+		if ($order->customerdetails->accountStopped())
+		{
+			$flash = Flash::Instance();
+			$flash->addWarning('Customer Account Stopped');
+		}
 
 		$sidebar = new SidebarController($this->view);
 		
@@ -2750,7 +2756,12 @@ class SordersController extends printController
 	 */
 	private function createPostInvoice($sorder, &$errors)
 	{
-
+		if ($sorder->customerdetails->accountStopped())
+		{
+			$errors[] = 'Cannot create invoice, customer account stopped';
+			return FALSE;
+		}
+		
 		set_time_limit(0);
 			
 		$linestatuses	= $sorder->getLineStatuses();
