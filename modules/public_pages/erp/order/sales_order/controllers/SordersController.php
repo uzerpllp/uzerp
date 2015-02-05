@@ -1764,7 +1764,7 @@ class SordersController extends printController
 		$flash = Flash::Instance();
 		$errors=array();
 		
-		if ($order->type == 'Q' or count($order->lines) > 0) {
+		if ($order->type != 'Q' and count($order->lines) > 0) {
 			$flash->addError('Only Quotes or empty orders can be cancelled');
 			sendTo($this->name, 'view', $this->_modules, array('id'=>$this->_data['id']));
 		}
