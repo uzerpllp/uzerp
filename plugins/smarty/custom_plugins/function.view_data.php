@@ -11,7 +11,7 @@
 function smarty_function_view_data($params, &$smarty) {
 
 	$attribute = $params['attribute'];
-	$dtclass = $params['class'];
+	$ddclass = $params['ddclass'];
 	
 	// no point in continuing now
 	if (prettify($attribute) == 'EGS_HIDDEN_FIELD')
@@ -26,7 +26,7 @@ function smarty_function_view_data($params, &$smarty) {
 	}
 	else 
 	{
-		if ($dtclass) {
+		if ($ddclass) {
 			$template_html = '<dt>%s</dt><dd id=%s class=%4$s>%s</dd>';
 		} else {
 			$template_html = '<dt>%s</dt><dd id=%s>%s</dd>';
@@ -88,8 +88,8 @@ function smarty_function_view_data($params, &$smarty) {
 	}
 	
 	// use the value as the css class instead of the class string from the view
-	if ($dtclass == 'show_value')
-		$dtclass = strtolower($value);
+	if ($ddclass == 'show_value')
+		$ddclass = strtolower($value);
 	{
 		
 	}
@@ -302,7 +302,7 @@ function smarty_function_view_data($params, &$smarty) {
 		
 	$template_id=(isset($params['id']))?$params['id']:$attribute;
 	$template_id=(empty($template_id))?'':get_class($model).'_'.$template_id;
-	return sprintf($template_html, $tag, $template_id, $value, $dtclass);
+	return sprintf($template_html, $tag, $template_id, $value, $ddclass);
 
 }
 

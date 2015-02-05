@@ -13,7 +13,7 @@
 						{view_data attribute="order_number" label=$SOrder->getFormatted('type')|cat:' number'}
 						{view_data attribute="customer" label='customer'}
 						{view_data attribute="ext_reference" label='customer_reference'}
-						{view_data attribute="status" dtclass="show_value"}
+						{view_data attribute="status" ddclass="show_value"}
 					{/view_section}
 					{view_section heading="Currency/Order Value" expand="closed"}
 						{view_data attribute="currency"}
