@@ -11,7 +11,7 @@ uzERP is an Open Source modular business system designed for UK Small and Medium
 
 The Open Source nature of uzERP means that a business can implement modules that are applicable to their environment. Since the software itself is essentially free, organisations can implement uzERP in a phased way without the ‘big bang’ approach needed to get a quick payback from traditional upfront license fees.
 
-Find out more at [uzerp.com]
+Find out more at [uzerp.com](http://www.uzerp.com)
 
 
 # Copyright and License
@@ -28,5 +28,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with uzERP. If not, see [http://www.gnu.org/licenses/]
-
+along with uzERP. If not, see (http://www.gnu.org/licenses/)
