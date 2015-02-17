@@ -33,7 +33,7 @@ LOGIN_TIMEOUT
 				{include file=$templateName}
 			</div>
 			<div class="footer">
-				<p>{$config.BASE_TITLE} {$config.SYSTEM_VERSION} copyright &copy; <a href="http://www.uzerp.co.uk/">uzERP LLP</a> 2007-{'Y'|date}</p>
+				<p>{$config.BASE_TITLE} {$config.SYSTEM_VERSION} copyright &copy; <a href="http://www.uzerp.com/">uzERP LLP</a> 2007-{'Y'|date}</p>
 				<p>uzERP is Free Software released under the GNU/GPL Licence.</p>
 			</div>
 		</div>
