@@ -1,9 +1,12 @@
 <?php
 
 /** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+ *	uzERP System Loader
+ *	
+ *  @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	@license GPLv3 or later
+ *
  **/
 
 class system {
@@ -1566,6 +1569,9 @@ class system {
 		$controllername	= strtolower(str_replace('Controller', '', get_class($this->controller)));
 		$module_path	= self::findModulePath(PUBLIC_MODULES, $module, FALSE);
 		
+		// Module/controller template overrides. If a user template is found it will be used in place of the standard template
+		$this->templates['moduleoverrides'] = FILE_ROOT . 'user' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . $controllername;
+				
 		if (!empty($module_path))
 		{
 			
