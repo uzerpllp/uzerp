@@ -8,6 +8,9 @@ data/templates_c/**
 data/tmp/**
 data/users/**
 
+# User/site modules and template overrides
+user/**
+
 # Exclude local changes to the config file
 conf/config.php
 
