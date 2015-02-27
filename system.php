@@ -3,11 +3,25 @@
 /** 
  *	uzERP System Loader
  *	
- *  @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
- *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
  *	@license GPLv3 or later
+ *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved. 
  *
- **/
+ *	This file is part of uzERP.
+ *
+ *	uzERP is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	any later version.
+ *
+ *	uzERP is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with uzERP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 class system {
 
@@ -1569,9 +1583,14 @@ class system {
 		$controllername	= strtolower(str_replace('Controller', '', get_class($this->controller)));
 		$module_path	= self::findModulePath(PUBLIC_MODULES, $module, FALSE);
 		
-		// Module/controller template overrides. If a user template is found it will be used in place of the standard template
-		$this->templates['moduleoverrides'] = FILE_ROOT . 'user' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . $controllername;
-				
+		// Module/controller template overrides.
+		$override_dir =  FILE_ROOT . 'user' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . $controllername;
+		if (file_exists($override_dir))
+		{
+			// Add the override directory to the array of searchable template directories, if it exists
+			$this->templates['moduleoverrides'] = $override_dir;
+		}
+			
 		if (!empty($module_path))
 		{
 			
