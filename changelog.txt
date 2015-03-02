@@ -1,5 +1,6 @@
-
 Changelog
+1.4.0-rc1                   #85  Move Smarty dependency to composer
+            enhancement     #86  Allow controller templates to be overridden by users
 1.3.11      enhancement     #84  Allow empty sales orders to be cancelled
             bug             #83  Sales Invoice created for customer on stop
 1.3.10      enhancement     #82  Make VAT amounts availabe to Sales Order Acknowledgement print
@@ -32,7 +33,8 @@ Changelog
                                   Small change to opportunity search
                                   Fixed bug re opportunity identifier field not displaying in drop down correctly
                                   Change to tasks template when adding from a project
-                                  Fixed Bug to limit person dropdown when allocating task hours When entering task hours person dropdown now only shows people from the system company 
+                                  Fixed Bug to limit person dropdown when allocating task hours.
+                                    When entering task hours person dropdown now only shows people from the system company 
                                     Note - this means that 'non employees' can still book hours IF they are in the system company as people.
                                   Fixed Bug to limit person dropdown when setting up resource templates
                                   Fixed bug on project hours total in View Poject Totals
