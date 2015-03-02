@@ -1,6 +1,7 @@
 {
     "require": {
-        "robmorgan/phinx": "*"
+        "robmorgan/phinx": "*",
+        "smarty/smarty": "3.1.21"
     }
 }
 
