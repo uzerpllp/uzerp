@@ -698,6 +698,18 @@ class SordersController extends printController
 		}
 		
 		// edit
+		if (count($order->lines) == 0 and !$order->cancelled())
+		{
+			$actions['cancel_order']=array(
+					'link'=>array('modules'=>$this->_modules
+							,'controller'=>$this->name
+							,'action'=>'cancel_order'
+							,'id'=>$id
+					),
+					'tag'=>'Cancel '.$type
+			);
+		}
+		
 		if (!$order->invoiced() && !$order->cancelled())
 		{
 			$this->view->set('linevalue', $linestatuses['value']);
@@ -718,18 +730,6 @@ class SordersController extends printController
 							 ),
 					'tag'=>'Add_Lines'
 				);
-		}
-		
-		if (count($order->lines) == 0 and !$order->cancelled())
-		{
-			$actions['cancel_order']=array(
-					'link'=>array('modules'=>$this->_modules
-							,'controller'=>$this->name
-							,'action'=>'cancel_order'
-							,'id'=>$id
-					),
-					'tag'=>'Cancel '.$type
-			);
 		}
 		
 		if ($order->partDespatched()
