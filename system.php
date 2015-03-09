@@ -1314,7 +1314,6 @@ class system {
 		require PRINT_ROOT . 'PrintIPP.php';
 		require PRINT_ROOT . 'ExtendedPrintIPP.php';
 		require PRINT_ROOT . 'CupsPrintIPP.php';
-		require SMARTY_ROOT . 'Smarty.class.php';
 		require ADODB_ROOT . 'adodb.inc.php';
 		require ADODB_ROOT . 'adodb-xmlschema03.inc.php';
 		
@@ -1378,7 +1377,6 @@ class system {
 		define('USER_ROOT', FILE_ROOT);
 		define('PRINT_ROOT', PLUGINS_ROOT . 'printIPP' . DIRECTORY_SEPARATOR);
 		define('PDF_ROOT', PLUGINS_ROOT . 'ezpdf' . DIRECTORY_SEPARATOR);
-		define('SMARTY_ROOT', FILE_ROOT . 'vendor' . DIRECTORY_SEPARATOR . 'smarty' . DIRECTORY_SEPARATOR . 'smarty' . DIRECTORY_SEPARATOR . 'libs' . DIRECTORY_SEPARATOR);
 		define('SMARTY_CUSTOM_PLUGINS', PLUGINS_ROOT . 'smarty' . DIRECTORY_SEPARATOR . 'custom_plugins' . DIRECTORY_SEPARATOR);
 		define('ADODB_ROOT', PLUGINS_ROOT . 'adodb5' . DIRECTORY_SEPARATOR);
 		define('JS_ROOT', FILE_ROOT . 'lib/js' . DIRECTORY_SEPARATOR);

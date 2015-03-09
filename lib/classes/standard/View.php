@@ -30,7 +30,7 @@ class View implements Iterator, Countable {
 		$this->smarty->addPluginsDir(
 			array(
 				SMARTY_CUSTOM_PLUGINS,
-				SMARTY_ROOT . 'plugins'
+				'plugins'
 			)
 		);
 		
