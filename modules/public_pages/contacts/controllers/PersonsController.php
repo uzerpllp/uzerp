@@ -1,10 +1,27 @@
 <?php
 
 /** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **/
+ *	PersonsController.php
+ *
+ *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ *	@license GPLv3 or later
+ *	@copyright (c) 2000 - 2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	This file is part of uzERP.
+ *
+ *	uzERP is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	any later version.
+ *
+ *	uzERP is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with uzERP.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 class PersonsController extends printController
 {
@@ -41,7 +58,12 @@ class PersonsController extends printController
 		
 		$_company_ids = $systemCompany->getSystemRelatedCompanies(array($systemCompany->id=>$systemCompany->getIdentifierValue()));
 		
-		$sh->addConstraint(new Constraint('company_id', 'NOT IN', '(' . implode(',', array_keys($_company_ids)) . ')'));
+		//Exclude people attached to system Company accounts but include people with no company
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('company_id', 'NOT IN', '(' . implode(',', array_keys($_company_ids)) . ')'));
+		$cc->add(new Constraint('company_id', 'IS', 'NULL'), 'OR');
+		
+		$sh->addConstraint($cc);
 		
 		parent::index($people, $sh);
 		
