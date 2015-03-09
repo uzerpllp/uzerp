@@ -1,10 +1,19 @@
 <?php
- 
+
 /** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **/
+ *	Flash error handler
+ *
+ *	Utility class for storing and displaying errors to users in the UI
+ *	
+ *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ *	@license GPLv3 or later
+ *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	uzERP is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	any later version.
+ */
 
 class Flash {
 
@@ -75,6 +84,14 @@ class Flash {
 		if (in_array($type, array('errors', 'messages', 'warnings')))
 		{
 			$return = $this->{'_' . $type . '_show'};
+			
+			// If we have errors, send them to Sentry.
+			// It's done here, when the errors for display so we don't have to add this for all modulr actions.
+			if ($type == 'errors' and defined('SENTRY_DSN'))
+			{
+				$this->sentrySend($return);
+			}
+			
 			return $return;
 		}
 		
@@ -211,6 +228,39 @@ class Flash {
 	public function hasErrors()
 	{
 		return count($this->_errors_store) != 0;
+	}
+	
+	/**
+	 * Send errors to a remote Sentry server
+	 * 
+	 * @param array $ferrors
+	 * 
+	 * @return void
+	 */
+	private function sentrySend($ferrors)
+	{
+		try
+		{
+			// Create a new async Raven client
+			$client = new Raven_Client(SENTRY_DSN, array(
+					'curl_method' => 'async',
+			));
+		
+			// Capture the flash errors and send to Sentry
+			$client->user_context(array('username' => EGS_USERNAME));
+			$client->tags_context(array('source' => 'flash'));
+			$cc = 0;
+			foreach ($ferrors as $ferror)
+			{
+				$cc++;
+				$client->extra_context(array('error ' . $cc => $ferror));
+			}
+			$event_id = $client->getIdent($client->captureMessage('Flash Error displayed'));
+		}
+		catch (Exception $e)
+		{
+			//If something went wrong, just continue.
+		}
 	}
 	
 }

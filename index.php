@@ -1,9 +1,26 @@
 <?php
  
 /** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+ *	uzERP Start-up Entry Point
+ *
+ *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ *	@license GPLv3 or later
+ *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *
+ *	This file is part of uzERP.
+ *
+ *	uzERP is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	any later version.
+ *
+ *	uzERP is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with uzERP.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
 /* $Revision: 1.12 $ */
@@ -15,6 +32,7 @@ define('START_TIME', microtime(TRUE));
 
 require 'system.php';
 require 'vendor/autoload.php';
+
 $system = system::Instance();
 
 
@@ -28,6 +46,20 @@ $system = system::Instance();
 
  //**************************
 // ERROR REPORTING & LOGGING
+
+	// if a we have a DSN defined, log exceptions and fatals to Sentry
+	if (defined('SENTRY_DSN'))
+	{
+		try {
+			$client = new Raven_Client(SENTRY_DSN);
+			$error_handler = new Raven_ErrorHandler($client);
+			$error_handler->registerExceptionHandler();
+			$error_handler->registerShutdownFunction();
+		}
+		catch (Exception $e) {
+			//If something went wrong, just continue.
+		}
+	}
 
 	
 	// set the error reporting based on the environment

@@ -1,26 +1,16 @@
 <?php
 
 /** 
- *	PersonsController.php
- *
+ *	Persons Controller
+ *	
  *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
  *	@license GPLv3 or later
- *	@copyright (c) 2000 - 2015 uzERP LLP (support#uzerp.com). All rights reserved.
- *
- *	This file is part of uzERP.
+ *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
  *
  *	uzERP is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation, either version 3 of the License, or
  *	any later version.
- *
- *	uzERP is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU General Public License for more details.
- *
- *	You should have received a copy of the GNU General Public License
- *	along with uzERP.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 class PersonsController extends printController
