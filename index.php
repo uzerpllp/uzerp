@@ -51,7 +51,10 @@ $system = system::Instance();
 	if (defined('SENTRY_DSN'))
 	{
 		try {
-			$client = new Raven_Client(SENTRY_DSN);
+			$client = new Raven_Client(SENTRY_DSN, array(
+					'curl_method' => 'async',
+					'verify_ssl' => FALSE,
+			));
 			$error_handler = new Raven_ErrorHandler($client);
 			$error_handler->registerExceptionHandler();
 			$error_handler->registerShutdownFunction();

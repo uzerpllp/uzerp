@@ -1,7 +1,7 @@
 {
     "require": {
         "robmorgan/phinx": "*",
-        "raven/raven": "0.10.0",
+		"raven/raven": "0.8.*@dev",
         "smarty/smarty": "3.1.21"
     }
 }

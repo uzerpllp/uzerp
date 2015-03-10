@@ -241,9 +241,9 @@ class Flash {
 	{
 		try
 		{
-			// Create a new async Raven client
 			$client = new Raven_Client(SENTRY_DSN, array(
 					'curl_method' => 'async',
+					'verify_ssl' => FALSE,
 			));
 		
 			// Capture the flash errors and send to Sentry
