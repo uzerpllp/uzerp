@@ -46,7 +46,32 @@ $system = system::Instance();
 
  //**************************
 // ERROR REPORTING & LOGGING
-
+	set_exception_handler('exception_handler');
+	function exception_handler($exception) {
+		if (defined('SENTRY_DSN'))
+		{
+			try {
+				$client = new Raven_Client(SENTRY_DSN, array(
+						'curl_method' => 'async',
+						'verify_ssl' => FALSE,
+				));
+				$event_id = $client->getIdent($client->captureException($exception));
+				echo "<h1>Sorry, Something went wrong:</h1>";
+				echo "Please call support and include the following reference ID in your problem report: <strong>" . $event_id . "</strong>";
+				
+			}
+			catch (Exception $e) {
+				//If something went wrong, just continue.
+			}
+		}
+		else
+		{
+			echo "<h1>Sorry, Something went wrong:</h1>";
+			echo "<p>" . $exception->getMessage() . "</p>";
+			echo "<strong>Please call support and include the message above.</strong>";
+		}
+	}
+	
 	// if a we have a DSN defined, log exceptions and fatals to Sentry
 	if (defined('SENTRY_DSN'))
 	{
@@ -56,14 +81,12 @@ $system = system::Instance();
 					'verify_ssl' => FALSE,
 			));
 			$error_handler = new Raven_ErrorHandler($client);
-			$error_handler->registerExceptionHandler();
 			$error_handler->registerShutdownFunction();
 		}
 		catch (Exception $e) {
 			//If something went wrong, just continue.
 		}
 	}
-
 	
 	// set the error reporting based on the environment
 	switch (strtolower(get_config('ENVIRONMENT')))
