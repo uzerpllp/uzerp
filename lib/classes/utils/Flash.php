@@ -231,7 +231,7 @@ class Flash {
 	}
 	
 	/**
-	 * Send errors to a remote Sentry server
+	 * Send errors to a remote Sentry server with level = warning
 	 * 
 	 * @param array $ferrors
 	 * 
@@ -239,27 +239,35 @@ class Flash {
 	 */
 	private function sentrySend($ferrors)
 	{
-		try
-		{
-			$client = new Raven_Client(SENTRY_DSN, array(
-					'curl_method' => 'async',
-					'verify_ssl' => FALSE,
-			));
-		
-			// Capture the flash errors and send to Sentry
-			$client->user_context(array('username' => EGS_USERNAME));
-			$client->tags_context(array('source' => 'flash'));
-			$cc = 0;
-			foreach ($ferrors as $ferror)
+		//ignore if no username or nagios request
+		if(EGS_USERNAME or strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'nagios') !== false) {
+			try
 			{
-				$cc++;
-				$client->extra_context(array('error ' . $cc => $ferror));
+				$client = new Raven_Client(SENTRY_DSN, array(
+						'curl_method' => 'async',
+						'verify_ssl' => FALSE,
+				));
+			
+				// Capture the flash errors and send to Sentry
+				$client->user_context(array('username' => EGS_USERNAME));
+				$client->tags_context(array('source' => 'flash'));
+				
+				$cc = 0;
+				foreach ($ferrors as $ferror)
+				{
+					$cc++;
+					$client->extra_context(array('error ' . $cc => $ferror));
+				}
+				
+				if ($cc != 0)
+				{
+					$event_id = $client->getIdent($client->captureMessage($ferrors[0], array(), 'warning'));
+				}
 			}
-			$event_id = $client->getIdent($client->captureMessage('Flash Error displayed'));
-		}
-		catch (Exception $e)
-		{
-			//If something went wrong, just continue.
+			catch (Exception $e)
+			{
+				//If something went wrong, just continue.
+			}
 		}
 	}
 	

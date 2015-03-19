@@ -46,46 +46,69 @@ $system = system::Instance();
 
  //**************************
 // ERROR REPORTING & LOGGING
-	set_exception_handler('exception_handler');
-	function exception_handler($exception) {
-		if (defined('SENTRY_DSN'))
-		{
-			try {
-				$client = new Raven_Client(SENTRY_DSN, array(
-						'curl_method' => 'async',
-						'verify_ssl' => FALSE,
-				));
-				$event_id = $client->getIdent($client->captureException($exception));
-				echo "<h1>Sorry, Something went wrong:</h1>";
-				echo "Please call support and include the following reference ID in your problem report: <strong>" . $event_id . "</strong>";
-				
-			}
-			catch (Exception $e) {
-				//If something went wrong, just continue.
-			}
-		}
-		else
-		{
-			echo "<h1>Sorry, Something went wrong:</h1>";
-			echo "<p>" . $exception->getMessage() . "</p>";
-			echo "<strong>Please call support and include the message above.</strong>";
-		}
-	}
-	
-	// if a we have a DSN defined, log exceptions and fatals to Sentry
 	if (defined('SENTRY_DSN'))
 	{
+		//custom exception handler, sends to sentry
+		set_exception_handler('sentry_exception_handler');
+		
+		//send fatals to sentry
 		try {
 			$client = new Raven_Client(SENTRY_DSN, array(
 					'curl_method' => 'async',
 					'verify_ssl' => FALSE,
 			));
+			$client->tags_context(array('source' => 'fatal'));
 			$error_handler = new Raven_ErrorHandler($client);
 			$error_handler->registerShutdownFunction();
 		}
 		catch (Exception $e) {
 			//If something went wrong, just continue.
 		}
+	}
+	else
+	{
+		//custom exception handler, show error to user
+		set_exception_handler('uzerp_exception_handler');
+	}
+		
+	function sentry_exception_handler($exception) {
+		try {
+			$client = new Raven_Client(SENTRY_DSN, array(
+					'curl_method' => 'async',
+					'verify_ssl' => FALSE,
+			));
+			$client->tags_context(array('source' => 'exception'));
+			$config	= Config::Instance();
+			$event_id = $client->getIdent($client->captureException($exception, array(
+			    'extra' => array(
+			        'uzerp_version' => $config->get('SYSTEM_VERSION')
+			    ),
+			)));
+			$smarty = new Smarty;
+			$smarty->assign('config', $config->get_all());
+			$smarty->compile_dir = DATA_ROOT . 'templates_c';
+			$smarty->assign('event_id', $event_id);
+			$smarty->assign('support_email', SUPPORT_EMAIL);
+			$email_body = "uzERP Exception logged to sentry with ID: " . $event_id;
+			$smarty->assign('email_body', rawurlencode($email_body));
+			$smarty->display(STANDARD_TPL_ROOT . 'error.tpl');
+		}
+		catch (Exception $e) {
+			//If something went wrong, just continue.
+		}
+	}
+	
+	function uzerp_exception_handler($exception)
+	{
+		$smarty = new Smarty;
+		$config	= Config::Instance();
+		$smarty->assign('config', $config->get_all());
+		$smarty->assign('exception_message', $exception->getMessage());
+		$smarty->assign('support_email', $config->get('ADMIN_EMAIL'));
+		$email_body = "Request: " . $_SERVER['REQUEST_URI'] . "\n";
+		$email_body .= "uzERP Version: " . $config->get('SYSTEM_VERSION') . "\n\n" . $exception->getMessage();
+		$smarty->assign('email_body', rawurlencode($email_body));
+		$smarty->display(STANDARD_TPL_ROOT . 'error.tpl');
 	}
 	
 	// set the error reporting based on the environment
