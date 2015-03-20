@@ -1,6 +1,11 @@
 Changelog
-1.4.0-rc1                   #85  Move Smarty dependency to composer
+1.5.0       bug             #89  Column project_id missing from View:public.po_product_invoices
+            bug             #88  Column project_id missing from View:public.po_product_orders
+                            #85  Move adodb and less-php dependency to composer
+1.4.0       bug             #87  Person added without company is invisible
             enhancement     #86  Allow controller templates to be overridden by users
+                            #85  Move Smarty dependency to composer
+                                 Add support for logging to sentry (getsentry.com)
 1.3.11      enhancement     #84  Allow empty sales orders to be cancelled
             bug             #83  Sales Invoice created for customer on stop
 1.3.10      enhancement     #82  Make VAT amounts availabe to Sales Order Acknowledgement print
