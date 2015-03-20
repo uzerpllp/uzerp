@@ -1298,14 +1298,12 @@ class system {
 #	public function set_plugins()
 	public function setPathNames()
 	{
-		
+		require 'vendor/autoload.php';
 		// Need way of registering plugins
 		require PLUGINS_ROOT . 'Barcode/PHPBarcode.php';
 		require PRINT_ROOT . 'PrintIPP.php';
 		require PRINT_ROOT . 'ExtendedPrintIPP.php';
 		require PRINT_ROOT . 'CupsPrintIPP.php';
-		require ADODB_ROOT . 'adodb.inc.php';
-		require ADODB_ROOT . 'adodb-xmlschema03.inc.php';
 		
 		$this->injector	= $this;
 		
@@ -1368,7 +1366,6 @@ class system {
 		define('PRINT_ROOT', PLUGINS_ROOT . 'printIPP' . DIRECTORY_SEPARATOR);
 		define('PDF_ROOT', PLUGINS_ROOT . 'ezpdf' . DIRECTORY_SEPARATOR);
 		define('SMARTY_CUSTOM_PLUGINS', PLUGINS_ROOT . 'smarty' . DIRECTORY_SEPARATOR . 'custom_plugins' . DIRECTORY_SEPARATOR);
-		define('ADODB_ROOT', PLUGINS_ROOT . 'adodb5' . DIRECTORY_SEPARATOR);
 		define('JS_ROOT', FILE_ROOT . 'lib/js' . DIRECTORY_SEPARATOR);
 		define('JS_LIB_ROOT', JS_ROOT . 'lib' . DIRECTORY_SEPARATOR);
 		define('JS_JQUERY_ROOT', JS_ROOT . 'jquery' . DIRECTORY_SEPARATOR);

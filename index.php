@@ -31,7 +31,6 @@ session_start();
 define('START_TIME', microtime(TRUE));
 
 require 'system.php';
-require 'vendor/autoload.php';
 
 $system = system::Instance();
 

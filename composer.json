@@ -2,7 +2,15 @@
     "require": {
         "robmorgan/phinx": "*",
 		"raven/raven": "0.8.*@dev",
-        "smarty/smarty": "3.1.21"
+        "smarty/smarty": "3.1.21",
+        "adodb/adodb-php": "5.19",
+        "leafo/lessphp": "0.5.0"
+    },
+
+    "autoload": {
+        "files" : [
+            "vendor/adodb/adodb-php/adodb-xmlschema03.inc.php"
+        ]
     }
 }
 

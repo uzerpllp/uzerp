@@ -150,24 +150,25 @@ class ResourceHandler {
 			
 			// if we're dealing with a less file, parse and convert it
 			if ($file_extension == 'less')
-			{
-				
-				// require the file just onces
-				require_once PLUGINS_ROOT . 'lessphp/lessc.inc.php';
-				
+			{		
 				$file_contents = str_replace('{THEME_PATH}', THEME_ROOT . 'default/css/', $file_contents);
 				
-				// instanciate less...
-				$lc = new lessc();
+				// instantiate less...
+				$lc = new lessc;
 				try {
-					$file_contents=$lc->parse($file_contents);
+					$file_contents = $lc->compile($file_contents);
 				} catch (exception $ex) {
-					exit($ex->getMessage());
+					// failed to compile, spit 500 and make sure the response isn't cached by browsers/proxies
+					http_response_code(500);
+					header('Cache-Control: no-cache, no-store, must-revalidate');
+					header('Pragma: no-cache');
+					header('Expires: 0');
+					echo "Failed to compile less file - " . $ex->getMessage();
+					exit;
 				}
 				
 				// and parse the file
-				$file_contents = $lc->parse($file_contents);
-				
+				$file_contents = $lc->compile($file_contents);
 			}
 			
 			// if applicable, minify the contents...
