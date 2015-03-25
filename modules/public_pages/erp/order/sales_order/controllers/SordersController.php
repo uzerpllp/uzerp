@@ -3656,7 +3656,56 @@ class SordersController extends printController
 		// execute the print output function, echo the returned json for jquery
 		echo $this->constructOutput($this->_data['print'],$options);
 		exit;
-	}	
+	}
+
+	public function printDespatchLabel($status = 'generate')
+	{
+		// set the models
+		$order = $this->_uses[$this->modeltype];
+		$order->load($this->_data['id']);
+	
+		// build options array
+		$options = array(
+			'type' => array(
+				'pdf'	=> '',
+				'xml'	=> ''
+			),
+			'output' => array(
+				'print'	=> '',
+				'save'	=> '',
+				'email'	=> '',
+				'view'	=> ''
+			),
+			'filename'	=> 'SODL' . $order->order_number,
+			'report'	=> 'SODespatchLabel'
+		);
+
+		  	
+		if(strtolower($status)=='dialog') {
+			// show the main dialog
+			// pick up the options from above, use these to shape the dialog
+			return $options;
+		}
+	
+		/* generate document */
+		// set the extra array
+		$extra = array();
+		// get delivery address
+		$delivery_address = array('title'=>'Delivery Address: Address:','customer'=>$order->customer);
+		$delivery_address+=$this->formatAddress($order->getDeliveryAddress());
+		$extra['delivery_address'] = $delivery_address;
+		
+		// generate the xml and add it to the options array
+		$options['xmlSource'] = $this->generateXML(array('model'=>$order,
+				//'relationship_whitelist'=>array('lines'),
+				'extra'=>$extra
+		)
+		);
+		
+		// execute the print output function, echo the returned json for jquery
+		echo $this->constructOutput($this->_data['print'], $options);
+		exit;
+	}
 	
 	/* Ajax functions */
 	public function getBalance ($_stitem_id='', $_location_id='')
