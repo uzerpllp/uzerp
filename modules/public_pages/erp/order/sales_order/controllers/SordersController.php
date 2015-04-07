@@ -630,6 +630,17 @@ class SordersController extends printController
 				);			
 			}
 			
+			$actions['printAddressLabel']=array(
+					'link'=>array('modules'=>$this->_modules
+							,'controller'=>$this->name
+							,'action'=>'printDialog'
+							,'printaction'=>'printaddresslabel'
+							,'filename'=>'SODL'.$order->order_number
+							,'id'=>$id
+					),
+					'tag'=>'print Address Label'
+			);
+			
 			$this->output_details_sidebar($sidebar,
 										  array('filename'=>'SO_detail_'.$order->order_number
 											   ,'id'=>$id)
@@ -3658,7 +3669,7 @@ class SordersController extends printController
 		exit;
 	}
 
-	public function printDespatchLabel($status = 'generate')
+	public function printAddressLabel($status = 'generate')
 	{
 		// set the models
 		$order = $this->_uses[$this->modeltype];
@@ -3677,7 +3688,7 @@ class SordersController extends printController
 				'view'	=> ''
 			),
 			'filename'	=> 'SODL' . $order->order_number,
-			'report'	=> 'SODespatchLabel'
+			'report'	=> 'AddressLabel'
 		);
 
 		  	
@@ -3691,7 +3702,7 @@ class SordersController extends printController
 		// set the extra array
 		$extra = array();
 		// get delivery address
-		$delivery_address = array('title'=>'Delivery Address: Address:','customer'=>$order->customer);
+		$delivery_address = array('customer'=>$order->customer);
 		$delivery_address+=$this->formatAddress($order->getDeliveryAddress());
 		$extra['delivery_address'] = $delivery_address;
 		
