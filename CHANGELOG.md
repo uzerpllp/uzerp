@@ -135,3 +135,24 @@ All notable changes to this project will be documented in this file.
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+## [2014.3] - 2014-05-27
+### Changed
+- First Git controlled release on bitbucket
+- Older release notes at [uzerp.com](http://www.uzerp.com/releases)
+
+
+[unreleased]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.0%0Dmaster
+[1.5.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.0%0D1.4.0
+[1.4.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.4.0%0D1.3.11
+[1.3.11]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.3.11%0D1.3.10
+[2014.3.9]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.3.10%0D2014.3.9
+[2014.3.8]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.9%0D2014.3.8
+[2014.3.7]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.8%0D2014.3.7
+[2014.3.6]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.7%0D2014.3.6
+[2014.3.5]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.6%0D2014.3.5
+[2014.3.4]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.5%0D2014.3.4
+[2014.3.3]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.4%0D2014.3.3
+[2014.3.2]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.3%0D2014.3.2
+[2014.3.1]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.2%0D2014.3.1
+[2014.3]: http://www.uzerp.com/releases/uzerp-2014-3/
+
