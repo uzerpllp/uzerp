@@ -3688,7 +3688,7 @@ class SordersController extends printController
 				'view'	=> ''
 			),
 			'filename'	=> 'SODL' . $order->order_number,
-			'report'	=> 'AddressLabel'
+			'report'	=> 'SOAddressLabel'
 		);
 
 		  	
