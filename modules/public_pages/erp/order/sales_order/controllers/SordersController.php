@@ -1,10 +1,17 @@
 <?php
 
 /** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **/
+ *	uzERP Sales Order Controller
+ *
+ *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ *	@license GPLv3 or later
+ *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	uzERP is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	any later version.
+ */
 
 class SordersController extends printController
 {
@@ -3669,13 +3676,24 @@ class SordersController extends printController
 		exit;
 	}
 
+
+	/**
+	 * Print a Delivery Address Label for a Sales Order.
+	 *
+	 * @param string $status Either, 'dialog' to display the print dialog
+	 * 						 or 'generate' to generate the document
+	 *
+	 * @return array Options to be passed back
+	 * 
+	 * @see printController::printDialog()
+	 */
 	public function printAddressLabel($status = 'generate')
 	{
 		// set the models
 		$order = $this->_uses[$this->modeltype];
 		$order->load($this->_data['id']);
 	
-		// build options array
+		/* generate dialog */
 		$options = array(
 			'type' => array(
 				'pdf'	=> '',
@@ -3687,37 +3705,33 @@ class SordersController extends printController
 				'email'	=> '',
 				'view'	=> ''
 			),
-			'filename'	=> 'SODL' . $order->order_number,
+			'filename'	=> 'SOADL' . $order->order_number,
 			'report'	=> 'SOAddressLabel'
 		);
-
 		  	
 		if(strtolower($status)=='dialog') {
-			// show the main dialog
-			// pick up the options from above, use these to shape the dialog
 			return $options;
 		}
 	
 		/* generate document */
-		// set the extra array
-		$extra = array();
-		// get delivery address
-		$delivery_address = array('customer'=>$order->customer);
-		$delivery_address+=$this->formatAddress($order->getDeliveryAddress());
-		$extra['delivery_address'] = $delivery_address;
+		$extra = array(
+			'delivery_address' => array($this->formatAddress($order->getDeliveryAddress())),
+			'account_number' => $order->customerdetails->companydetail->accountnumber
+		);
 		
 		// generate the xml and add it to the options array
-		$options['xmlSource'] = $this->generateXML(array('model'=>$order,
-				//'relationship_whitelist'=>array('lines'),
-				'extra'=>$extra
-		)
+		$options['xmlSource'] = $this->generateXML(
+			array(
+			'model'=>$order,
+			'extra'=>$extra)
 		);
 		
 		// execute the print output function, echo the returned json for jquery
 		echo $this->constructOutput($this->_data['print'], $options);
 		exit;
 	}
-	
+
+
 	/* Ajax functions */
 	public function getBalance ($_stitem_id='', $_location_id='')
 	{
