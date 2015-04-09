@@ -142,7 +142,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
-[unreleased]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.0%0Dmaster
+[unreleased]: https://bitbucket.org/uzerp/uzerp/branches/compare/master%0D1.5.0
 [1.5.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.0%0D1.4.0
 [1.4.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.4.0%0D1.3.11
 [1.3.11]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.3.11%0D1.3.10
