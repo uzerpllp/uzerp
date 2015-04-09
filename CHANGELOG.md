@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - Make changelog more useful to users - [keepachangelog.com](http://keepachangelog.com/)
 - Modify Sales Invoice VAT handling for Prompt Payment Discounts to agree with new UK legislation, [HMRC Brief 49 (2014): VAT - Prompt Payment Discounts](https://www.gov.uk/government/publications/revenue-and-customs-brief-49-2014-vat-prompt-payment-discounts/revenue-and-customs-brief-49-2014-vat-prompt-payment-discounts)
   - Stage 1 - Don't adjust invoice VAT/net, store gross discount
+- Add an option to sales orders to print an address label. You will need to add a permission for controller: SordersController, action: printAddressLabel
 
 ## [1.5.0] - 2015-03-20
 ### Fixed
