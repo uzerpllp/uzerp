@@ -1,10 +1,17 @@
 <?php
 
 /** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **/
+ *	uzERP Sales Order Controller
+ *
+ *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ *	@license GPLv3 or later
+ *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	uzERP is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	any later version.
+ */
 
 class SordersController extends printController
 {
@@ -629,6 +636,17 @@ class SordersController extends printController
 					'class'=>'related_link'
 				);			
 			}
+			
+			$actions['printAddressLabel']=array(
+					'link'=>array('modules'=>$this->_modules
+							,'controller'=>$this->name
+							,'action'=>'printDialog'
+							,'printaction'=>'printaddresslabel'
+							,'filename'=>'SODL'.$order->order_number
+							,'id'=>$id
+					),
+					'tag'=>'print Address Label'
+			);
 			
 			$this->output_details_sidebar($sidebar,
 										  array('filename'=>'SO_detail_'.$order->order_number
@@ -3656,8 +3674,64 @@ class SordersController extends printController
 		// execute the print output function, echo the returned json for jquery
 		echo $this->constructOutput($this->_data['print'],$options);
 		exit;
-	}	
+	}
+
+
+	/**
+	 * Print a Delivery Address Label for a Sales Order.
+	 *
+	 * @param string $status Either, 'dialog' to display the print dialog
+	 * 						 or 'generate' to generate the document
+	 *
+	 * @return array Options to be passed back
+	 * 
+	 * @see printController::printDialog()
+	 */
+	public function printAddressLabel($status = 'generate')
+	{
+		// set the models
+		$order = $this->_uses[$this->modeltype];
+		$order->load($this->_data['id']);
 	
+		/* generate dialog */
+		$options = array(
+			'type' => array(
+				'pdf'	=> '',
+				'xml'	=> ''
+			),
+			'output' => array(
+				'print'	=> '',
+				'save'	=> '',
+				'email'	=> '',
+				'view'	=> ''
+			),
+			'filename'	=> 'SOADL' . $order->order_number,
+			'report'	=> 'SOAddressLabel'
+		);
+		  	
+		if(strtolower($status)=='dialog') {
+			return $options;
+		}
+	
+		/* generate document */
+		$extra = array(
+			'delivery_address' => array($this->formatAddress($order->getDeliveryAddress())),
+			'account_number' => $order->customerdetails->companydetail->accountnumber
+		);
+		
+		// generate the xml and add it to the options array
+		$options['xmlSource'] = $this->generateXML(
+			array(
+			'model'=>$order,
+			'extra'=>$extra)
+		);
+		
+		// execute the print output function, echo the returned json for jquery
+		echo $this->constructOutput($this->_data['print'], $options);
+		exit;
+	}
+
+
 	/* Ajax functions */
 	public function getBalance ($_stitem_id='', $_location_id='')
 	{
