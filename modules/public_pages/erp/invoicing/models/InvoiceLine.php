@@ -21,19 +21,7 @@ class InvoiceLine extends DataObject
 			//tax  (in the UK at least) is dependent on the tax_rate of the item, and the tax status of the customer.
 			//this function is a wrapper to a call to a config-dependent method
 			$data['tax_percentage'] = calc_tax_percentage($data['tax_rate_id'], $data['tax_status_id'], $data['net_value']);
-			
-			//tax_value is the tax percentage of the net value
-			// If a settlement discount applies, reduce the VAT element
-			if (isset($data['settlement_discount']) && $data['settlement_discount'] > 0)
-			{
-				$data['tax_value'] = bcsub($data['net_value'], $data['settlement_discount']);
-				$data['tax_value'] = round(bcmul($data['tax_value'], $data['tax_percentage'], 4), 2);
-			}
-			else
-			{
-				$data['tax_value'] = round(bcmul($data['net_value'], $data['tax_percentage'], 4), 2);
-			}
-			
+			$data['tax_value'] = round(bcmul($data['net_value'], $data['tax_percentage'], 4), 2);
 			$data['tax_rate_percent'] = bcmul($data['tax_percentage'], 100) ;
 		}
 		else

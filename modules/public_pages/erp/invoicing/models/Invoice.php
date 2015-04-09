@@ -269,7 +269,7 @@ abstract class Invoice extends DataObject {
 	
 	public function getSettlementDiscount()
 	{
-		return $this->payment_term->calcSettlementDiscount($this->net_value) ;
+		return $this->payment_term->calcSettlementDiscount($this->gross_value) ;
 	}
 
 	/*
