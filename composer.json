@@ -1,9 +1,16 @@
 {
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://uzerp@bitbucket.org/uzerp/adodb.git"
+        }
+    ],
+
     "require": {
         "robmorgan/phinx": "*",
 		"raven/raven": "0.8.*@dev",
         "smarty/smarty": "3.1.21",
-        "adodb/adodb-php": "5.19",
+        "adodb/adodb-php": "@dev",
         "leafo/lessphp": "0.5.0"
     },
 
