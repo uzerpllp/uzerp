@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.5.2] - 2015-05-15
+### Fixed
+- Report module not working
+
+### Changed
+- adodb will be installed from our fork of v5.18 at https://bitbucket.org/uzerp/adodb
+
 ## [1.5.1] - 2015-04-09
 ### Changed
 - Make changelog more useful to users - [keepachangelog.com](http://keepachangelog.com/)
@@ -144,7 +151,8 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
-[unreleased]: https://bitbucket.org/uzerp/uzerp/branches/compare/master%0D1.5.1
+[unreleased]: https://bitbucket.org/uzerp/uzerp/branches/compare/master%0D1.5.2
+[1.5.1]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.2%0D1.5.1
 [1.5.1]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.1%0D1.5.0
 [1.5.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.0%0D1.4.0
 [1.4.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.4.0%0D1.3.11
