@@ -27,7 +27,7 @@
 		<dl id="view_data_right">
 			{with model=$Project}
 				{view_section heading="further_details" expand='open'}
-					{view_data attribute="opportunity" link_to='"module":"crm", "controller":"opportunitys", "action":"view", "id":"'|cat:$model->opportunity_id|cat:'"'}
+					{view_data attribute="opportunity"}
 					{view_data attribute="category"}
 					{view_data attribute="work_type"}
 					{view_data attribute="consultant_details"}
