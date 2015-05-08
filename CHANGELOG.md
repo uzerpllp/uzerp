@@ -1,6 +1,18 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased][unreleased]
+### Changed
+- Simplify template for getting opportunity details from a project
+
+### Added
+- Add audit fields to projects
+- Add the ability to purchase orders and invoices from a task
+
+### Removed
+- Unecessary action in the Task sidebar removed
+
+
 ## [1.5.2] - 2015-05-15
 ### Fixed
 - Report module not working
