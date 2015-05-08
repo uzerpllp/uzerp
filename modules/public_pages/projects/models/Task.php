@@ -46,6 +46,8 @@ class Task extends DataObject {
 		$this->hasMany('ProjectEquipmentAllocation', 'equipment_allocations', 'task_id');
 		$this->hasMany('ProjectCostCharge', 'purchase_orders', 'task_id');
 		$this->hasMany('ProjectCostCharge', 'sales_invoices', 'task_id');
+		$this->hasMany('POrder','porders');
+		$this->hasMany('PInvoice','pinvoices');
 		$this->actsAsTree();
 		$this->setParent();
  		
@@ -69,7 +71,19 @@ class Task extends DataObject {
 																 ,'new'=>array('module'=>'hr'))
 											 ,'actions'=>array('link','new')
 											 ,'rules'=>array()
-											 )
+											 ),
+									  'porders'=>array('modules'=>array('link'=>array('module'=>'purchase_order')
+																 ,'new'=>array('module'=>'purchase_order'))
+												,'actions'=>array('link','new')
+												,'rules'=>array()
+												,'label'=>'Show Purchase Orders'
+												),
+										'pinvoices'=>array('modules'=>array('link'=>array('module'=>'purchase_invoicing')
+																 ,'new'=>array('module'=>'purchase_invoicing'))
+												,'actions'=>array('link','new')
+												,'rules'=>array()
+												,'label'=>'Show Purchase Invoices'
+												)
 							);
 		
 	}
