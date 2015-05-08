@@ -11,7 +11,7 @@
 			<dl id="view_data_left">
 				{view_section heading="project_details"}
 					{input type='hidden'  attribute='id' }
-					{input type='hidden'  attribute='usercompanyid' }
+					{include file='elements/auditfields.tpl' }
 					{if $action=='new'}
 						{input type='text' attribute='job_no' class="compulsory" }
 						{input type='text'  attribute='name' class="compulsory" }
