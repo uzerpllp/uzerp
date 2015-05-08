@@ -107,15 +107,15 @@ class TasksController extends Controller {
 		}
 	
 		$sidebar=new SidebarController($this->view);
-		$sidebar->addList(
-			'Actions',
-			array(
-				'new_task'=>array(
-					'link'=>array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'new'),
-					'tag'=>'new_task'
-				)
-			)
-		);
+//		$sidebar->addList(
+//			'Actions',
+//			array(
+//				'new_task'=>array(
+//					'link'=>array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'new'),
+//					'tag'=>'new_task'
+//				)
+//			)
+//		);
 		$sidebar->addList(
 			'currently_viewing',
 			array(
