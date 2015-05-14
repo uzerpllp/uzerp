@@ -14,12 +14,12 @@
 					{include file='elements/auditfields.tpl' }
 					{if $action=='new'}
 						{input type='text' attribute='job_no' class="compulsory" }
-						{input type='text'  attribute='name' class="compulsory" }
+						{input type='text'  attribute='name' class="compulsory" label="project_name"}
 					{else}
 						{input type='text' attribute='job_no' readonly=true }
-						{input type='text'  attribute='name' readonly=true }
+						{input type='text'  attribute='name' readonly=true label="project_name" }
 					{/if}
-					{select attribute='key_contact_id'}
+					{select attribute='key_contact_id' label="Project Manager"}
 					{select attribute='company_id' constrains='person_id'}
 					{select attribute='person_id' depends='company_id' nonone=true label="Client Contact"}
 				{/view_section}

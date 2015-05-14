@@ -10,9 +10,8 @@
 			{with model=$Project}
 				{view_section heading="project_details" expand='open'}
 					{view_data attribute="job_no"}					
-					{view_data attribute="name"}
-					{view_data attribute="owner" label='Project Manager'}
-					{view_data attribute="key_contact"}
+					{view_data attribute="name" label='project_name'}
+					{view_data attribute="key_contact_id" label="project_manager"}
 					{view_data attribute="company"}
 					{view_data attribute="person" label="client_contact"}
 				{/view_section}
