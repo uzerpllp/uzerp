@@ -10,9 +10,10 @@ class Project extends DataObject {
 	protected $version='$Revision: 1.13 $';
 	
 	protected $defaultDisplayFields=array('job_no',
-										 'name',
+										 'name' => 'Project Name',
+										 'key_contact' => 'Project Manager',
 										 'company',
-										 'person',
+										 'person' => 'Client Contact',
 										 'value',
 										 'end_date',
 										 'status',
