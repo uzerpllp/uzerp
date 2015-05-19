@@ -61,7 +61,8 @@ class Project extends DataObject {
 //		$this->hasMany('ProjectCostCharge', 'sales_invoices', 'project_id');
 		$this->hasMany('POrder','porders');
 		$this->hasMany('PInvoice','pinvoices');
-		$this->hasMany('SInvoice','sinvoices');	
+		$this->hasMany('SInvoice','sinvoices');
+		$this->hasMany('MFWorkorder','mfworkorders');	
 		$tasks=new TaskCollection(new Task);
 		$sh = new SearchHandler($tasks,false);
 		$sh->addConstraint(new Constraint('parent_id',' is ','NULL'));
@@ -95,6 +96,12 @@ class Project extends DataObject {
 												,'actions'=>array('link','new')
 												,'rules'=>array()
 												),
+										'mfworkorders'=>array('modules'=>array('link'=>array('module'=>'manufacturing')
+																 )
+												,'actions'=>array('link')
+												,'rules'=>array()
+												,'label'=>'Show Works Orders'
+												),		
 										'porders'=>array('modules'=>array('link'=>array('module'=>'purchase_order')
 																 ,'new'=>array('module'=>'purchase_order'))
 												,'actions'=>array('link','new')
@@ -113,6 +120,8 @@ class Project extends DataObject {
 												,'rules'=>array()
 												,'label'=>'Show Sales Invoices'
 												)
+																							
+												
 							);
 							
 	}
