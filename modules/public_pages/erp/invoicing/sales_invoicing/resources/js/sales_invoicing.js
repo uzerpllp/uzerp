@@ -25,10 +25,15 @@ $(document).ready(function() {
 					element	: '#SInvoice_company_id',
 					field	: "company_id"
 				},
-			    {
+			   {
 			    	element	: '#SInvoice_person_id',
 			    	field	: "person_id"
+			   },
+			   {
+			    	element	: '#SInvoice_project_id',
+			    	field	: "project_id"
 			    }
+			 
 			],
 			data:{
 				module			: 'sales_invoicing',
@@ -101,6 +106,26 @@ $(document).ready(function() {
 		}
 		
 	});
+	
+	
+	/* sales_invoicing -> sinvoices -> new .... get task list from project */
+		$("#SInvoice_project_id", "#sales_invoicing-sinvoices-new").live('change',function(){
+		
+		$.uz_ajax({
+			target:{
+				element	: "#SInvoice_task_id",
+				field	: 'task_id'
+		    },
+			data:{
+				module		: 'sales_invoicing',
+				controller	: 'sinvoices',
+				action		: 'getTaskList',
+				project_id	: $('#SInvoice_project_id').val(),
+				ajax		: ''
+			}
+		});
+		
+	});	
 	
 	/* sales_invoicing -> sinvoicelines -> view */
 	

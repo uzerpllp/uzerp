@@ -25,7 +25,8 @@ class SInvoice extends Invoice {
 		'date_printed',
 		'print_count',
 		'slmaster_id',
-		'sales_order_id'
+		'sales_order_id',
+		'project_id'
 	);
 
 	function __construct($tablename = 'si_header')
@@ -63,6 +64,8 @@ class SInvoice extends Invoice {
  		$this->belongsTo('PaymentTerm', 'payment_term_id', 'payment'); 
 		$this->belongsTo('TaxStatus', 'tax_status_id', 'tax_status'); 
  		$this->belongsTo('Person', 'person_id', 'person', null, "surname || ', ' || firstname");
+ 		$this->belongsTo('Project', 'project_id', 'project');
+		$this->belongsTo('Task', 'task_id', 'task'); 
 		
 		$this->setComposite('Address', 'inv_address_id', 'invoice_address', array('street1', 'street2', 'street3', 'town', 'county', 'postcode', 'countrycode'));
  		

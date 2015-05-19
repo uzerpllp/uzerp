@@ -644,6 +644,17 @@ class SinvoicesController extends printController {
 		// get Sales Invoice Notes for default customer or first in customer
 		$this->getNotes($person, $default_customer);
 		
+		// Get Projects and tasks
+		$projects=$this->getProjects($default_customer);
+		$this->view->set('projects', $projects);
+		
+		if (!$sinvoice->isLoaded() && !empty($this->_data['project_id']))
+		{
+			$sinvoice->project_id = $this->_data['project_id'];
+		}
+		
+		$this->view->set('tasks', $this->getTaskList($sinvoice->project_id));
+		
 	}
 	
 	public function delete()
@@ -1512,12 +1523,14 @@ class SinvoicesController extends printController {
 		// set vars
 		$_slmaster_id=$this->_data['slmaster_id'];
 		$_product_search=$this->_data['product_search'];
-		
 		$customer = $this->getCustomer($_slmaster_id);
 		
 		$person_id=$this->getPeople($_slmaster_id);
 		$output['person_id']=array('data'=>$person_id,'is_array'=>is_array($person_id));
 		
+		$project_id=$this->getProjects($_slmaster_id);
+		$output['project_id']=array('data'=>$project_id,'is_array'=>is_array($project_id));
+
 		$output['company_id']=array('data'=>$customer->company_id,'is_array'=>false);
 		
 		// could we return the data as an array here? save having to re use it in the new / edit?
@@ -1555,9 +1568,48 @@ class SinvoicesController extends printController {
 		
 	}
 	
+	
+	public function getProjects($_slmaster_id='') {
+   // Used by Ajax to return projects for a customer after selecting the Customer
+		if($_slmaster_id=='') { $_slmaster_id=$this->_data['slmaster_id']; }
+		
+		$customer = $this->getCustomer($_slmaster_id);
+		$cc=new ConstraintChain();
+		if ($customer->isLoaded()) {
+			$cc=new ConstraintChain();
+			$cc->add(New Constraint('company_id', '=', $customer->company_id));
+			$this->_templateobject->belongsTo[$this->_templateobject->belongsToField['project_id']]['cc']=$cc;
+		}
+
+		$smarty_params=array('nonone'=>'true'
+							,'depends'=>'slmaster_id');
+		unset($this->_data['depends']);
+		
+		return $this->getOptions($this->_templateobject, 'project_id', 'getProjects', 'getOptions', $smarty_params, $depends);
+	}
+	
+	public function getTaskList($_project_id='')	{
+		if(isset($this->_data['ajax']))
+			{
+			if(!empty($this->_data['project_id'])) { $_project_id = $this->_data['project_id']; }
+			}
+		
+			$tasks = $this->getOptions($this->_templateobject, 'task_id', '', '', '', array('project_id' => $_project_id));
+			
+			if(isset($this->_data['ajax']))
+			{
+				echo $tasks;
+				exit;
+			}
+		
+			return $tasks;
+	}
+
+
 	protected function getPageName($base=null,$action=null) {
 		return parent::getPageName((empty($base)?'sales_invoices':$base),$action);
 	}
+	
 
 }
 

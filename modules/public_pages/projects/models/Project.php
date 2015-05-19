@@ -46,7 +46,7 @@ class Project extends DataObject {
 		$this->belongsTo('Projectphase', 'phase_id', 'phase'); 
 		$this->hasMany('ProjectBudget','budgets');
 		$this->hasMany('Task','tasks');
-		$this->hasMany('ProjectIssue','issues');
+//		$this->hasMany('ProjectIssue','issues');
 		$this->hasMany('ProjectNote','notes');
 		$this->hasMany('Hour','hours');
 		$this->hasMany('Expense','expenses');
@@ -61,7 +61,7 @@ class Project extends DataObject {
 //		$this->hasMany('ProjectCostCharge', 'sales_invoices', 'project_id');
 		$this->hasMany('POrder','porders');
 		$this->hasMany('PInvoice','pinvoices');
-		
+		$this->hasMany('SInvoice','sinvoices');	
 		$tasks=new TaskCollection(new Task);
 		$sh = new SearchHandler($tasks,false);
 		$sh->addConstraint(new Constraint('parent_id',' is ','NULL'));
@@ -106,6 +106,12 @@ class Project extends DataObject {
 												,'actions'=>array('link','new')
 												,'rules'=>array()
 												,'label'=>'Show Purchase Invoices'
+												),
+										'sinvoices'=>array('modules'=>array('link'=>array('module'=>'sales_invoicing')
+																 ,'new'=>array('module'=>'sales_invoicing'))
+												,'actions'=>array('link')
+												,'rules'=>array()
+												,'label'=>'Show Sales Invoices'
 												)
 							);
 							
