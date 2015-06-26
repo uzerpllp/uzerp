@@ -51,6 +51,8 @@
 					<div id="payment_terms">
 						{include file="./payment_terms.tpl"}
 					</div>
+					{select attribute='project_id' force=true}
+					{select attribute='task_id' options=$tasks force=true}
 				</dl>
 				<dl class="view_data_bottom">
 					{textarea  attribute='description' label='Description' }

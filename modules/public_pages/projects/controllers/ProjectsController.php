@@ -220,26 +220,7 @@ class ProjectsController extends Controller {
 
 		$this->sidebarRelatedItems($sidebar, $project);
 
-		$sidebarlist['link_purchase_orders']= array('tag'=>'link_purchase_orders'
-												  ,'link'=> array('modules'=>$this->_modules
-												  				 ,'controller'=>'projectcostcharges'
-												  				 ,'action'=>'link_purchase_orders'
-												  				 ,'project_id'=>$project->id)
-												  ,'new'=> array('modules'=>$this->_modules
-												  				 ,'controller'=>'projectcostcharges'
-												  				 ,'action'=>'new_purchase_order'
-												  				 ,'project_id'=>$project->id)
-												  );
-		$sidebarlist['link_sales_invoices']= array('tag'=>'link_sales_invoices'
-												  ,'link'=> array('modules'=>$this->_modules
-												  				 ,'controller'=>'projectcostcharges'
-												  				 ,'action'=>'link_sales_invoices'
-												  				 ,'project_id'=>$project->id)
-												  ,'new'=> array('modules'=>$this->_modules
-												  				 ,'controller'=>'projectcostcharges'
-												  				 ,'action'=>'new_sales_invoice'
-												  				 ,'project_id'=>$project->id)
-												  );
+	
 		$sidebarlist['view_project_totals']= array('tag'=>'view_project_totals'
 												  ,'link'=> array('modules'=>$this->_modules
 												  				 ,'controller'=>$this->name

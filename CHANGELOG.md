@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] 2015-06-26
+### Added
+- Functionality to allow Sales Orders to be allocated to Projects and Tasks
+
 ## [Unreleased] 2015-05-19
 ### Added
 - Functionality to allow Sales Invoices to be allocated to Projects and Tasks

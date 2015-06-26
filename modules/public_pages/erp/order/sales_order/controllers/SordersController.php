@@ -389,6 +389,17 @@ class SordersController extends printController
 			$this->view->set('page_title', $this->getPageName($sorder->getFormatted('type')));
 		}
 		
+		// This bit allows for projects and tasks 
+		$projects=$this->getProjects($default_customer);
+		$this->view->set('projects', $projects);
+		
+		if (!$sorder->isLoaded() && !empty($this->_data['project_id']))
+		{
+			$sorder->project_id = $this->_data['project_id'];
+		}
+		
+		$this->view->set('tasks', $this->getTaskList($sorder->project_id));	
+				
 	}
 
 	public function save()
@@ -3781,6 +3792,9 @@ class SordersController extends printController
 		$customer_term = $this->getDeliveryTerm($_slmaster_id);
 		$output['delivery_term'] = array('data'=>$customer_term,'is_array'=>is_array($customer_term));
 		
+		$project_id=$this->getProjects($_slmaster_id);
+		$output['project_id']=array('data'=>$project_id,'is_array'=>is_array($project_id));
+		
 		$output['company_id'] = array('data'=>$customer->company_id,'is_array'=>false);
 		
 		// could we return the data as an array here? save having to re use it in the new / edit?
@@ -3829,6 +3843,46 @@ class SordersController extends printController
 			return $output;
 		}
 		
+	}
+
+	public function getProjects($_slmaster_id='') {
+   // Used by Ajax to return projects for a customer after selecting the Customer
+		if($_slmaster_id=='') { $_slmaster_id=$this->_data['slmaster_id']; }
+		
+		$customer = $this->getCustomer($_slmaster_id);
+		$cc=new ConstraintChain();
+		if ($customer->isLoaded()) {
+			$cc=new ConstraintChain();
+			$cc->add(New Constraint('company_id', '=', $customer->company_id));
+			$this->_templateobject->belongsTo[$this->_templateobject->belongsToField['project_id']]['cc']=$cc;
+		}
+
+		$smarty_params=array('nonone'=>'true'
+							,'depends'=>'slmaster_id');
+		unset($this->_data['depends']);
+		
+		return $this->getOptions($this->_templateobject, 'project_id', 'getProjects', 'getOptions', $smarty_params, $depends);
+	}
+
+
+	public function getTaskList($_project_id='')
+	{
+	
+		if(isset($this->_data['ajax']))
+		{
+			if(!empty($this->_data['project_id'])) { $_project_id = $this->_data['project_id']; }
+		}
+		
+		$tasks = $this->getOptions($this->_templateobject, 'task_id', '', '', '', array('project_id' => $_project_id));
+			
+		if(isset($this->_data['ajax']))
+		{
+			echo $tasks;
+			exit;
+		}
+		
+		return $tasks;
+	
 	}
 	
 }

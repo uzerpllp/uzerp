@@ -61,6 +61,7 @@ class Project extends DataObject {
 //		$this->hasMany('ProjectCostCharge', 'sales_invoices', 'project_id');
 		$this->hasMany('POrder','porders');
 		$this->hasMany('PInvoice','pinvoices');
+		$this->hasMany('SOrder','sorders');
 		$this->hasMany('SInvoice','sinvoices');
 		$this->hasMany('MFWorkorder','mfworkorders');	
 		$tasks=new TaskCollection(new Task);
@@ -113,6 +114,12 @@ class Project extends DataObject {
 												,'actions'=>array('link','new')
 												,'rules'=>array()
 												,'label'=>'Show Purchase Invoices'
+												),
+										'sorders'=>array('modules'=>array('link'=>array('module'=>'sales_order')
+																 ,'new'=>array('module'=>'sales_order'))
+												,'actions'=>array('link')
+												,'rules'=>array()
+												,'label'=>'Show Sales Orders'
 												),
 										'sinvoices'=>array('modules'=>array('link'=>array('module'=>'sales_invoicing')
 																 ,'new'=>array('module'=>'sales_invoicing'))
