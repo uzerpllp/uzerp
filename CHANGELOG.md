@@ -1,18 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] 2015-05-19
-### Added
-- Functionality to allow Sales Invoices to be allocated to Projects and Tasks
-- Works order view from Projects
-
 ## [Unreleased][unreleased]
-### Changed
-- Simplify template for getting opportunity details from a project
 
 ### Added
+- Allow Sales Invoices to be allocated to Projects and Tasks
+- Works order view from Projects
 - Add audit fields to projects
 - Add the ability to purchase orders and invoices from a task
+- New injector classes for optional LDAP authentication with Apache
+
+### Changed
+- Simplify template for getting opportunity details from a project
 
 ### Removed
 - Unecessary action in the Task sidebar removed
