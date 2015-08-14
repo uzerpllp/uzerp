@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased][unreleased]
 
+### Fixed
+- Setting a custom theme now uses that theme instead of the default
+
 ### Added
 - Allow Sales Invoices to be allocated to Projects and Tasks
 - Works order view from Projects
@@ -14,7 +17,7 @@ All notable changes to this project will be documented in this file.
 - Simplify template for getting opportunity details from a project
 
 ### Removed
-- Unecessary action in the Task sidebar removed
+- Unnecessary action in the Task sidebar removed
 
 
 ## [1.5.2] - 2015-05-15
