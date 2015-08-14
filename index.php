@@ -1,5 +1,5 @@
 <?php
- 
+
 /**
  *	uzERP Start-up Entry Point
  *
@@ -24,7 +24,6 @@
  *	You should have received a copy of the GNU General Public License
  *	along with uzERP.  If not, see <http://www.gnu.org/licenses/>.
  **/
-
 session_start();
 
 // define time at start of request
@@ -34,123 +33,114 @@ require 'system.php';
 
 $system = system::Instance();
 
-
- //*******
+// *******
 // CONFIG
 
-	// we have to load parts of system to load the config
-	$system->check_system();
-	$system->load_essential();
-	
+// we have to load parts of system to load the config
+$system->check_system();
+$system->load_essential();
 
- //**************************
+// **************************
 // ERROR REPORTING & LOGGING
-	if (defined('SENTRY_DSN'))
-	{
-		//custom exception handler, sends to sentry
-		set_exception_handler('sentry_exception_handler');
-		
-		//send fatals to sentry
-		try {
-			$client = new Raven_Client(SENTRY_DSN, array(
-					'curl_method' => 'async',
-					'verify_ssl' => FALSE,
-			));
-			$client->tags_context(array('source' => 'fatal'));
-			$error_handler = new Raven_ErrorHandler($client);
-			$error_handler->registerShutdownFunction();
-		}
-		catch (Exception $e) {
-			//If something went wrong, just continue.
-		}
-	}
-	else
-	{
-		//custom exception handler, show error to user
-		set_exception_handler('uzerp_exception_handler');
-	}
-		
-	function sentry_exception_handler($exception) {
-		try {
-			$client = new Raven_Client(SENTRY_DSN, array(
-					'curl_method' => 'async',
-					'verify_ssl' => FALSE,
-			));
-			$client->tags_context(array('source' => 'exception'));
-			$config	= Config::Instance();
-			$event_id = $client->getIdent($client->captureException($exception, array(
-			    'extra' => array(
-			        'uzerp_version' => $config->get('SYSTEM_VERSION')
-			    ),
-			)));
-			$smarty = new Smarty;
-			$smarty->assign('config', $config->get_all());
-			$smarty->compile_dir = DATA_ROOT . 'templates_c';
-			$smarty->assign('event_id', $event_id);
-			$smarty->assign('support_email', SUPPORT_EMAIL);
-			$email_body = "uzERP Exception logged to sentry with ID: " . $event_id;
-			$smarty->assign('email_body', rawurlencode($email_body));
-			$smarty->display(STANDARD_TPL_ROOT . 'error.tpl');
-		}
-		catch (Exception $e) {
-			//If something went wrong, just continue.
-		}
-	}
-	
-	function uzerp_exception_handler($exception)
-	{
-		$smarty = new Smarty;
-		$config	= Config::Instance();
-		$smarty->assign('config', $config->get_all());
-		$smarty->compile_dir = DATA_ROOT . 'templates_c';
-		$smarty->assign('exception_message', $exception->getMessage());
-		$smarty->assign('support_email', $config->get('ADMIN_EMAIL'));
-		$email_body = "Request: " . $_SERVER['REQUEST_URI'] . "\n";
-		$email_body .= "uzERP Version: " . $config->get('SYSTEM_VERSION') . "\n\n" . $exception->getMessage();
-		$smarty->assign('email_body', rawurlencode($email_body));
-		$smarty->display(STANDARD_TPL_ROOT . 'error.tpl');
-	}
-	
-	// set the error reporting based on the environment
-	switch (strtolower(get_config('ENVIRONMENT')))
-	{
-		
-		case 'development':
-			error_reporting(E_ALL ^ E_USER_DEPRECATED ^ E_DEPRECATED ^ E_NOTICE);
-			//error_reporting(E_ALL);
-			break;
-			
-		case 'production':
-		default:
-			error_reporting(E_ERROR);
-			break;
-			
-	}
-	
-	// define where the log should go, syslog or a file of your liking with
-	$log = $_SERVER["DOCUMENT_ROOT"] . 'data/logs/' . session_id() . '.log';
-	
-	// set the php_ini error log value with the log path
-	ini_set("error_log", $log);
+if (defined('SENTRY_DSN')) {
+    // custom exception handler, sends to sentry
+    set_exception_handler('sentry_exception_handler');
+    
+    // send fatals to sentry
+    try {
+        $client = new Raven_Client(SENTRY_DSN, array(
+            'curl_method' => 'async',
+            'verify_ssl' => FALSE
+        ));
+        $client->tags_context(array(
+            'source' => 'fatal'
+        ));
+        $error_handler = new Raven_ErrorHandler($client);
+        $error_handler->registerShutdownFunction();
+    } catch (Exception $e) {
+        // If something went wrong, just continue.
+    }
+} else {
+    // custom exception handler, show error to user
+    set_exception_handler('uzerp_exception_handler');
+}
 
+function sentry_exception_handler($exception)
+{
+    try {
+        $client = new Raven_Client(SENTRY_DSN, array(
+            'curl_method' => 'async',
+            'verify_ssl' => FALSE
+        ));
+        $client->tags_context(array(
+            'source' => 'exception'
+        ));
+        $config = Config::Instance();
+        $event_id = $client->getIdent($client->captureException($exception, array(
+            'extra' => array(
+                'uzerp_version' => $config->get('SYSTEM_VERSION')
+            )
+        )));
+        $smarty = new Smarty();
+        $smarty->assign('config', $config->get_all());
+        $smarty->compile_dir = DATA_ROOT . 'templates_c';
+        $smarty->assign('event_id', $event_id);
+        $smarty->assign('support_email', SUPPORT_EMAIL);
+        $email_body = "uzERP Exception logged to sentry with ID: " . $event_id;
+        $smarty->assign('email_body', rawurlencode($email_body));
+        $smarty->display(STANDARD_TPL_ROOT . 'error.tpl');
+    } catch (Exception $e) {
+        // If something went wrong, just continue.
+    }
+}
 
- //*******************
+function uzerp_exception_handler($exception)
+{
+    $smarty = new Smarty();
+    $config = Config::Instance();
+    $smarty->assign('config', $config->get_all());
+    $smarty->compile_dir = DATA_ROOT . 'templates_c';
+    $smarty->assign('exception_message', $exception->getMessage());
+    $smarty->assign('support_email', $config->get('ADMIN_EMAIL'));
+    $email_body = "Request: " . $_SERVER['REQUEST_URI'] . "\n";
+    $email_body .= "uzERP Version: " . $config->get('SYSTEM_VERSION') . "\n\n" . $exception->getMessage();
+    $smarty->assign('email_body', rawurlencode($email_body));
+    $smarty->display(STANDARD_TPL_ROOT . 'error.tpl');
+}
+
+// set the error reporting based on the environment
+switch (strtolower(get_config('ENVIRONMENT'))) {
+
+    case 'development':
+        error_reporting(E_ALL ^ E_USER_DEPRECATED ^ E_DEPRECATED ^ E_NOTICE);
+        // error_reporting(E_ALL);
+        break;
+
+    case 'production':
+    default:
+        error_reporting(E_ERROR);
+        break;
+}
+
+// define where the log should go, syslog or a file of your liking with
+$log = $_SERVER["DOCUMENT_ROOT"] . 'data/logs/' . session_id() . '.log';
+
+// set the php_ini error log value with the log path
+ini_set("error_log", $log);
+
+// *******************
 // LOAD THE FRAMEWORK
 
-	$system->display();
-	
-	if (AUDIT || get_config('AUDIT_LOGIN'))
-	{
-		
-		if (is_array($system->controller->_data) && isset($system->controller->_data['password']))
-		{
-			$system->controller->_data['password'] = '********************';
-		}
-		
-		$audit = Audit::Instance();
-		$audit->write(print_r($system->controller->_data, TRUE) . print_r($system->flash, TRUE), TRUE, (microtime(TRUE) - START_TIME));
-		$audit->update();
-	}
-	
+$system->display();
 
-// end of index.php
+if (AUDIT || get_config('AUDIT_LOGIN')) {
+    
+    if (is_array($system->controller->_data) && isset($system->controller->_data['password'])) {
+        $system->controller->_data['password'] = '********************';
+    }
+
+    $audit = Audit::Instance();
+    $audit->write(print_r($system->controller->_data, TRUE) . print_r($system->flash, TRUE), TRUE, (microtime(TRUE) - START_TIME));
+    $audit->update();
+}
+?>
