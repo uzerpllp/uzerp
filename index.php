@@ -1,11 +1,13 @@
 <?php
  
-/** 
+/**
  *	uzERP Start-up Entry Point
  *
+ *  @version $Revision: 1.12 $
+ *  @package uzerp
  *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
  *	@license GPLv3 or later
- *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
  *
  *	This file is part of uzERP.
  *
@@ -22,8 +24,6 @@
  *	You should have received a copy of the GNU General Public License
  *	along with uzERP.  If not, see <http://www.gnu.org/licenses/>.
  **/
-
-/* $Revision: 1.12 $ */
 
 session_start();
 
@@ -102,6 +102,7 @@ $system = system::Instance();
 		$smarty = new Smarty;
 		$config	= Config::Instance();
 		$smarty->assign('config', $config->get_all());
+		$smarty->compile_dir = DATA_ROOT . 'templates_c';
 		$smarty->assign('exception_message', $exception->getMessage());
 		$smarty->assign('support_email', $config->get('ADMIN_EMAIL'));
 		$email_body = "Request: " . $_SERVER['REQUEST_URI'] . "\n";
