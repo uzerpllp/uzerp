@@ -1,25 +1,26 @@
 <?php
- 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **/
 
-/** 
- * Resource Handler
+/**
+ * Resource Handler return a response with a requested css or javascript resource
  *
- */ 
+ * @version $Revision: 1.11 $
+ * @package utils
+ * @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ * @license GPLv3 or later
+ * @copyright (c) 2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ **/
 class ResourceHandler {
 	
-	protected $version='$Revision: 1.10 $';
+	protected $version='$Revision: 1.11 $';
 
 	/**
-	 * 
+	 * Return a css or js from the cache, or build and cache the resource
+	 *
 	 * @param string $type
 	 * @param mixed $resources
+	 * @param string $theme
 	 */
-	function build($type, $resources)
+	function build($type, $resources, $theme = 'default')
 	{
 		
 		// set a few variables
@@ -53,7 +54,7 @@ class ResourceHandler {
 		$status = 200;
 		
 		// collect last modified times from the resources, keeping the newest one
-		// whilst checking if the file exists, if any are thorw a 404		
+		// whilst checking if the file exists, if any are throw a 404
 		foreach ($resources as $key => $file)
 		{
 			
@@ -150,8 +151,8 @@ class ResourceHandler {
 			
 			// if we're dealing with a less file, parse and convert it
 			if ($file_extension == 'less')
-			{		
-				$file_contents = str_replace('{THEME_PATH}', THEME_ROOT . 'default/css/', $file_contents);
+			{
+				$file_contents = str_replace('{THEME_PATH}', THEME_ROOT . "$theme/css/", $file_contents);
 				
 				// instantiate less...
 				$lc = new lessc;
@@ -204,13 +205,18 @@ class ResourceHandler {
 		exit;
 	}
 	
+	/**
+	 * Minify a css resource
+	 *
+	 * @param mixed $css
+	 */
 	protected function minifyCSS($css)
-	{	
+	{
 		
-		/* remove comments */
+		//remove comments
 		$css = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
 		
-		/* remove tabs, spaces, newlines, etc. */
+		//remove tabs, spaces, newlines, etc.
 		$css = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $css);
 		
 		return $css;
