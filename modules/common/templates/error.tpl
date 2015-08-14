@@ -1,5 +1,5 @@
 {* Used to report fatal errors to the user - index.php *}
-{include file="file:{$smarty.const.THEME_ROOT}{$theme}default/elements/head.tpl"}
+{include file="file:{$smarty.const.THEME_ROOT}default/elements/head.tpl"}
 <div id=flash class="sod">
 	<ul id="errors">
 		<li class="logo">
@@ -19,4 +19,4 @@
 		</li>
 	</ul>
 </div>
-{include file="file:{$smarty.const.THEME_ROOT}{$theme}default/elements/footer.tpl"}
+{include file="file:{$smarty.const.THEME_ROOT}default/elements/footer.tpl"}
