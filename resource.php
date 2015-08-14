@@ -1,12 +1,14 @@
-<?php 
- 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **/
+<?php
 
-/* $Revision: 1.5 $ */
+/**
+ * resource.php Handle request to css and js resources
+ *
+ * @version $Revision: 1.6 $
+ * @package uzerp
+ * @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ * @license GPLv3 or later
+ * @copyright (c) 2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ **/
 
 // include relevent files
 require_once('lib/classes/utils/ResourceHandler.php');
@@ -15,6 +17,14 @@ require_once('system.php');
 
 // get resource type
 $type = key($_GET);
+
+// set the theme if specified in the request
+if (isset($_GET['theme']) and $_GET['theme'])
+{
+    $theme = $_GET['theme'];
+} else {
+    $theme = 'default';
+}
 
 // make sure type is not empty, and that it's an allowed type, throw a 403 if it is
 $allowed_types = array('js', 'css');
@@ -49,7 +59,7 @@ if (!isset($_GET['file']))
 		default:
 			
 			// get resources from system
-			$resources = $system->getResources();
+			$resources = $system->getResources($theme);
 			$resources = $resources[$type];
 			break;
 			
@@ -71,6 +81,6 @@ else
 }
 
 // pass data to Handle_resources::build function
-ResourceHandler::build($type, $resources);
+ResourceHandler::build($type, $resources, $theme);
 
 // end of resource.php
