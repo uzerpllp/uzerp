@@ -1,21 +1,17 @@
 <?php
 
-/** 
- *	uzERP System Loader
- *	
- *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
- *	@license GPLv3 or later
- *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
+/**
+ * system uzERP system loader
  *
- *	uzERP is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	any later version.
- */
-
+ * @version $Revision: 1.126 $
+ * @package uzerp
+ * @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ * @license GPLv3 or later
+ * @copyright (c) 2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ **/
 class system {
 
-	protected $version = '$Revision: 1.125 $';
+	protected $version = '$Revision: 1.126 $';
 	
 	const DAY_START_HOURS	= '9';
 	const DAY_START_MINUTES	= '0';
@@ -102,7 +98,7 @@ class system {
 		
 	}
 	
-	function checkPermission() 
+	function checkPermission()
 	{
 		
 		$controllername = get_class($this->controller);
@@ -125,7 +121,7 @@ class system {
 				{
 					sendTo('', 'index', $this->modules);
 				}
-				else 
+				else
 				{
 					
 					if ($count <= 1)
@@ -213,8 +209,8 @@ class system {
 			$location	= '';
 			
 			// check if the package has a location
-			// we use whereis instead parsing the response from the vanila command so if 
-			// we (for some strange reason) searched for the package 'shutdown -h 0' it 
+			// we use whereis instead parsing the response from the vanila command so if
+			// we (for some strange reason) searched for the package 'shutdown -h 0' it
 			// wouldn't kill the server... belt and braces
 			
 			// we also need to remove any characters which could cause our system harm
@@ -274,8 +270,9 @@ class system {
 	
 
 	/**
-	 * A single function to load (in order) all the
-	 * essential foundations to the uzERP framework
+	 * A single function to load (in order) all the essential foundations to the uzERP framework
+	 *
+	 * @param bool $_disable_cache
 	 */
 	public function load_essential($_disable_cache = FALSE)
 	{
@@ -318,16 +315,16 @@ class system {
 		
 	}
 	
-/*
- * Main control function to set up environment, set route (module, controller, action) and call controller action
- */
+    /*
+     * Main control function to set up environment, set route (module, controller, action) and call controller action
+     */
 	public function display()
 	{
 		
 		$start = gettimeofday(TRUE);
 		
 		// ATTN: check system always returns true?
-		if (!$this->check_system()) 
+		if (!$this->check_system())
 		{
 
 			$this->login_required = FALSE;
@@ -337,12 +334,12 @@ class system {
 #				define('SETUP', TRUE);
 #			}
 			
-			if (!defined('MODULE')) 
+			if (!defined('MODULE'))
 			{
 				define('MODULE', 'system_admin');
 			}
 			
-			if (!defined('CONTROLLER')) 
+			if (!defined('CONTROLLER'))
 			{
 				define('CONTROLLER', 'SystemsController');
 			}
@@ -532,10 +529,10 @@ class system {
 			setRefererPage();
 			
 			debug('system::display Calling function ' . get_class($controller) . '::' . $action);
-//echo 'system::display (1),'.microtime(TRUE).'<br>';	
+//echo 'system::display (1),'.microtime(TRUE).'<br>';
 			
 			call_user_func(array($controller, $action));
-//echo 'system::display (2),'.microtime(TRUE).'<br>';	
+//echo 'system::display (2),'.microtime(TRUE).'<br>';
 			
 			$flash->save();
 			
@@ -552,7 +549,7 @@ class system {
 			// assign stuff to smarty
 			$controller->assignModels();
 			
-			// this code fires $controller->index() if (perhaps) getPrintActions doesn't exist, 
+			// this code fires $controller->index() if (perhaps) getPrintActions doesn't exist,
 			// thus overwriting the sidebar. Only fire if subclass of printController
 			if (is_subclass_of($controller, 'printController') && $action != 'printDialog')
 			{
@@ -563,7 +560,7 @@ class system {
 			$this->pid		= $this->access->getPermission($this->modules, $controllername, $action);
 			$self			= array();
 
-			if (!empty($this->pid)) 
+			if (!empty($this->pid))
 			{
 				$self['pid'] = $this->pid;
 			}
@@ -649,17 +646,17 @@ class system {
 		
 		showtime('pre-display');
 		//echo 'System::display end '.(gettimeofday(TRUE)-$start).'<br>';
-//echo 'system::display (3),'.microtime(TRUE).'<br>';	
+//echo 'system::display (3),'.microtime(TRUE).'<br>';
 		$this->view->display('index_page.tpl', $cache_key);
-//echo 'system::display (4),'.microtime(TRUE).'<br>';	
+//echo 'system::display (4),'.microtime(TRUE).'<br>';
 		
 		showtime('post-display');
 		
 	}
 	
-/*
- * Gets the fields for the supplied tablename
- */
+    /*
+     * Gets the fields for the supplied tablename
+     */
 	public static function getFields($tablename, $cache_results = TRUE) {
 		
 		$cached_fields	= FALSE;
@@ -685,12 +682,12 @@ class system {
 			if (is_array($fields))
 			{
 				
-				foreach ($fields as $field) 
+				foreach ($fields as $field)
 				{
 					$return[$field->name] = clone $field;
 				}
 				
-			} 
+			}
 			else
 			{
 				$return = FALSE;
@@ -702,7 +699,7 @@ class system {
 			}
 			
 		}
-		else 
+		else
 		{
 			$return = $cached_fields;
 		}
@@ -714,7 +711,7 @@ class system {
 	public static function scanDirectories($rootDir, $module, $require = FALSE)
 	{
 		
-		if (!empty($module)) 
+		if (!empty($module))
 		{
 			$start = self::findModulePath($rootDir, $module);
 		}
@@ -772,7 +769,7 @@ class system {
 					}
 					
 				}
-				else 
+				else
 				{
 					
 					if (is_dir($path) && is_readable($path))
@@ -822,7 +819,7 @@ class system {
 	public static function findModulePath($directory, $module = '')
 	{
 		
-		if (!empty($module)) 
+		if (!empty($module))
 		{
 			
 			$cache_id = array('module_dir_path', strtolower($module));
@@ -837,7 +834,7 @@ class system {
 				$moduleobject = DataObjectFactory::Factory('ModuleObject');
 				$moduleobject->loadBy('name', $module);
 				
-				if ($moduleobject->isLoaded()) 
+				if ($moduleobject->isLoaded())
 				{
 					
 					$cache->add($cache_id, FILE_ROOT . $moduleobject->location);
@@ -853,7 +850,7 @@ class system {
 					if (is_array($dirContent))
 					{
 						
-						foreach ($dirContent as $content) 
+						foreach ($dirContent as $content)
 						{
 							
 							if (substr($content, 0, 1) != ".")
@@ -863,7 +860,7 @@ class system {
 								{
 									$path = $directory . $content;
 								}
-								else 
+								else
 								{
 									$path = $directory . DIRECTORY_SEPARATOR . $content;
 								}
@@ -871,13 +868,13 @@ class system {
 								if ($content == $module)
 								{
 									return $path;
-								} 
-								elseif (file_exists($path) && is_dir($path) && is_readable($path)) 
+								}
+								elseif (file_exists($path) && is_dir($path) && is_readable($path))
 								{
 									
 									$path = self::findModulePath($path, $module);
 									
-									if (!empty($path)) 
+									if (!empty($path))
 									{
 										return $path;
 									}
@@ -1024,7 +1021,7 @@ class system {
 		
 	}
 
-	public function get_css() 
+	public function get_css()
 	{
 		
 		$cache_id = array('resources', 'css', $this->modules['module']);
@@ -1164,7 +1161,7 @@ class system {
 			$usercompanyid = EGS_COMPANY_ID;
 		}
 		
-		if (!isset($_SESSION['injectorclass'][$usercompanyid][$interface])) 
+		if (!isset($_SESSION['injectorclass'][$usercompanyid][$interface]))
 		{
 			
 			$cc = new ConstraintChain();
@@ -1273,7 +1270,7 @@ class system {
 	
 		$autoloader_paths = $this->get_lib_files($_disable_cache);
 		
-		$autoloader = &AutoLoader::Instance();		 
+		$autoloader = &AutoLoader::Instance();
 		$autoloader->addPath($autoloader_paths);
 		
 		$moduleobject = DataObjectFactory::Factory('ModuleObject');
@@ -1331,13 +1328,13 @@ class system {
 		{
 			define('SERVER_SECURE', (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'));
 			define('SERVER_PROTOCOL', (SERVER_SECURE ? 'https://' : 'http://'));
-			define('SERVER_ROOT', SERVER_PROTOCOL . $_SERVER['HTTP_HOST']); 
+			define('SERVER_ROOT', SERVER_PROTOCOL . $_SERVER['HTTP_HOST']);
 		}
 		
 		if (substr($_SERVER['DOCUMENT_ROOT'], -1) != DIRECTORY_SEPARATOR)
 		{
 			define('FILE_ROOT', $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR);
-		} 
+		}
 		else
 		{
 			define('FILE_ROOT', $_SERVER['DOCUMENT_ROOT']);
@@ -1375,10 +1372,10 @@ class system {
 		
 	}
 	
-	public function getResources()
+	public function getResources($theme = 'default')
 	{
 
-		// javascript resources		
+		// javascript resources
 		$jsfiles = array();
 		
 		// JavaScript console fix
@@ -1430,10 +1427,8 @@ class system {
 		$jsfiles[] = JS_JQUERY_PLUGINS . "jquery.tableScroll" . DIRECTORY_SEPARATOR . "jquery.tablescroll.js";
 		
 		
-		// css resources		
+		// css resources
 		$cssfiles = array();
-		
-		$theme = "default";
 		
 		// Standard CSS files
 		$cssfiles[] = THEME_ROOT . $theme . "/css/reset.css";
@@ -1462,7 +1457,7 @@ class system {
  */
 	public function getContext()
 	{
-//echo 'System::getContext<pre>'.print_r($this->module_context, true).'</pre><br>';		
+//echo 'System::getContext<pre>'.print_r($this->module_context, true).'</pre><br>';
 		return	$this->module_context;
 		
 	}
@@ -1510,7 +1505,7 @@ class system {
 		// TODO: pid should be set here; problem is that this is called from setView
 		// which is called before setController
 		// need to look more closely at the process path here; does this have to
-		// be called from setView? 
+		// be called from setView?
 		if (!is_null($this->pid))
 		{
 			$context = $this->access->permissions[$this->pid];
@@ -1628,7 +1623,7 @@ class system {
 		
 		$this->setContext();
 		
-		$this->view->set('help_link', $this->access->setHelpContext($this->pid)); 
+		$this->view->set('help_link', $this->access->setHelpContext($this->pid));
 		
 		$this->view->set('modules', $this->modules);
 		
@@ -1725,7 +1720,7 @@ class system {
 				return;
 				
 			default:
-				return; 
+				return;
 				
 		}
 		
