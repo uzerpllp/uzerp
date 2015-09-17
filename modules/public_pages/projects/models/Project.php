@@ -296,5 +296,22 @@ class Project extends DataObject {
 		
 	}
 	
+	public function getSalesTotals () {
+		
+		$expenses=new SInvoice();
+		$cc=new ConstraintChain();
+				
+		$cc->add(new Constraint('project_id', '=', $this->id));
+
+		$totals=$expenses->getSumFields(
+					array(
+							'net_value'
+						),
+						$cc
+					);
+
+		return array('total_invoiced'=>$totals['net_value']);
+	}
+	
 }
 ?>

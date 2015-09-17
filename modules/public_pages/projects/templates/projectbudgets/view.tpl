@@ -25,13 +25,7 @@
 						Cost
 					</th>
 					<th class="right">
-						Charge
-					</th>
-					<th class="right">
-						Markup %
-					</th>
-					<th class="right">
-						Margin %
+						Revenue
 					</th>
 				</tr>
 				<tr>
@@ -44,12 +38,6 @@
 					<td align="right">
 						{$model->setup_charge}
 					</td>
-					<td align="right">
-						{$setup_markup}
-					</td>
-					<td align="right">
-						{$setup_margin}
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -61,12 +49,6 @@
 					<td align="right">
 						{$model->charge_rate}
 					</td>
-					<td align="right">
-						{$rate_markup}
-					</td>
-					<td align="right">
-						{$rate_margin}
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -77,12 +59,6 @@
 					</td>
 					<td align="right">
 						{$model->total_charge_rate}
-					</td>
-					<td align="right">
-						{$total_rate_markup}
-					</td>
-					<td align="right">
-						{$total_rate_margin}
 					</td>
 				</tr>
 				<tr>
@@ -96,12 +72,6 @@
 					{assign var=total_charge value=$model->setup_charge+$model->total_charge_rate}
 					<td align="right">
 						{$total_charge}
-					</td>
-					<td align="right">
-						{$total_markup}
-					</td>
-					<td align="right">
-						{$total_margin}
 					</td>
 				</tr>
 			{/data_table}
