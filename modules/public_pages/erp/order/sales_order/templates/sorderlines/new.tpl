@@ -46,6 +46,7 @@
 				{select attribute="glcentre_id" options=$glcentre_options}
 				{select attribute="tax_rate_id" options=$taxrate_options class='tax_rate'}
 				{input type="text" attribute="net_value" class="net_value numeric" size="10" readonly=true }
+				{textarea attribute="note" class="note" size="10" }
 				{if $model->id>0}
 					{input type="checkbox" attribute="cancel_line" class="checkbox" label='Cancel Line'}
 				{/if}

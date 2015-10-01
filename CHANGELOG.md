@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Add audit fields to projects
 - Add the ability to purchase orders and invoices from a task
 - New injector classes for optional LDAP authentication with Apache
+- Add a notes field to sales order line input. Not printed on outputs by default
 
 ### Changed
 - Simplify template for getting opportunity details from a project
