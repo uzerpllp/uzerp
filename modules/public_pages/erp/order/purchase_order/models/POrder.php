@@ -1,9 +1,9 @@
 <?php
 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class POrder extends SPOrder {
@@ -64,6 +64,7 @@ class POrder extends SPOrder {
  		$this->belongsTo('User', 'authorised_by', 'authorised_by_person');
  		$this->belongsTo('Project', 'project_id', 'project');
  		$this->belongsTo('Task', 'task_id', 'task');
+ 		$this->belongsTo('SOrder', 'sales_order_id', 'order_id', null, array('order_number', 'customer', 'person'));
 		$this->belongsTo('DeliveryTerm', 'delivery_term_id', 'delivery_term');
  		$this->hasMany('POrderLine', 'lines', 'order_id');
 		$this->hasMany('PInvoice', 'invoices', 'purchase_order_id');
@@ -303,8 +304,8 @@ class POrder extends SPOrder {
 		
 		$cc = new ConstraintChain();
 		
-		$cc->add(new Constraint('order_id', '=', $this->id));		
-		$cc->add(new Constraint('status', '!=', $po_line->cancelStatus()));		
+		$cc->add(new Constraint('order_id', '=', $this->id));
+		$cc->add(new Constraint('status', '!=', $po_line->cancelStatus()));
 		
 		$totals = $po_line->getSumFields(
 					array(
@@ -390,7 +391,7 @@ class POrder extends SPOrder {
 				if (!$poauthlimit->isLoaded() || $poauthlimit->order_limit<$summary->net_value)
 				{
 					return null;
-				}	
+				}
 			}
 		}
 		return EGS_USERNAME;
@@ -545,7 +546,7 @@ class POrder extends SPOrder {
 			elseif (!$orderline->save())
 			{
 				$errors[] = 'Order Line creation failed for line '.$line['line_number'];
-			}			
+			}
 		}
 		
 		if (count($errors)===0)
