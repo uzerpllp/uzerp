@@ -17,7 +17,10 @@
     "autoload": {
         "files" : [
             "vendor/adodb/adodb-php/adodb-xmlschema03.inc.php"
-        ]
+        ],
+        "psr-4": {
+            "UzerpPhinx\\": "schema/phinx/classes/"
+        }
     }
 }
 
