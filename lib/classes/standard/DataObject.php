@@ -1,9 +1,9 @@
 <?php
 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class DataObject implements Iterator {
@@ -75,7 +75,7 @@ class DataObject implements Iterator {
 	protected	$enumCheck				= array();
 	
 	public		$audit_fields			= array('created', 'createdby', 'lastupdated', 'alteredby', 'usercompanyid');
-	protected	$force_change			= array('lastupdated', 'alteredby');	
+	protected	$force_change			= array('lastupdated', 'alteredby');
 	protected	$notEditable			= array();	// non-editable fields
 	protected	$isUnique				= array();
 	public		$belongsTo				= array();
@@ -114,7 +114,7 @@ class DataObject implements Iterator {
 	
 	/*	Link Rules are used to override default related view links which are generated from hasMany dependencies
 	 *  and where the controller has called sidebarRelatedItems()
-	 *  
+	 *
 	 *  The format is:-
 	 *  	array('<hasmany name>' = array('newtab'=>array('new'=>true)
 	 *  								  ,'modules'=>array('new'=>array('module'=>'<module_name>'))
@@ -127,16 +127,16 @@ class DataObject implements Iterator {
 	 *  	'action', allowed options are 'link' and 'new' and are the defaults; e.g. to suppress 'new' link secifiy 'actions'=>array('link')
 	 *  	'rules', if specified, define the condition(s) when this related view link will appear and relates to the currently viewed data
 	 *  	'label', overrides the default sidebar text which is 'Show <hasmany name>'
-	 *  
+	 *
 	 *  If no link rules are allowed for a hasMany dependency, then an entry of the following form is required:-
 	 *  	array('<hasmany name>' = array('actions'=>array()
 	 *  								  ,'rules'=>array()
 	 *  								  )
-	 *  
+	 *
 	 *  If the controller calls sidebarRelatedItems() to enable related view links, and no link rules are defined,
 	 *  all hasMany dependencies will appear with default options (i.e. view and new) pointing to the controller
 	 *  associated with the hasMany model under the current module.
-	 *  
+	 *
 	 */
 	protected $linkRules = array();
 	
@@ -507,7 +507,7 @@ class DataObject implements Iterator {
 		$return = array();
 		
 		foreach ($this->getDisplayFields() as $field)
-		{	
+		{
 			$return[$field->name] = $field->tag;
 		}
 		
@@ -592,7 +592,7 @@ class DataObject implements Iterator {
 			}
 			
 			$query = "update {$this->_tablename} set " . implode(',', $field_value) . " where {$this->idField} = {$db->qstr($id)}";
-//			echo 'DataObject('.get_class($this).')::update query:'.$query.'<br>';			
+//			echo 'DataObject('.get_class($this).')::update query:'.$query.'<br>';
 		}
 		
 		return ($db->Execute($query) !== FALSE);
@@ -612,10 +612,10 @@ class DataObject implements Iterator {
 			if (!($this->_policyConstraint['constraint'] instanceof ConstraintChain))
 			{
 				$this->_policyConstraint['constraint'] = new ConstraintChain();
-			}			
+			}
 			
 			$this->_policyConstraint['constraint']->add($cc, 'OR');
-		}			
+		}
 		
 	}
 	/**
@@ -731,7 +731,7 @@ class DataObject implements Iterator {
 	
 	/**
 	 * returns the identifier value, loading the model if needed
-	 * 
+	 *
 	 * @param $id
 	 */
 	public function load_identifier_value($id = NULL)
@@ -1160,7 +1160,7 @@ class DataObject implements Iterator {
 				$value = $this->autoHandle($key);
 			}
 			
-			// TODO: Something looks wrong here - if the field is type file 
+			// TODO: Something looks wrong here - if the field is type file
 			// and value empty, then saveFile?!?
 			
 			if ($field->type=='file' && empty($value))
@@ -1204,7 +1204,7 @@ class DataObject implements Iterator {
 		if (!isset($data[$this->idField])
 			|| (isset($data[$this->idField])
 			&& ($this->isAccessAllowed($data[$this->idField], 'write')
-		 	|| isModuleAdmin()))) 
+		 	|| isModuleAdmin())))
 		{
 			$ret = $db->Replace($this->_tablename, $data, $this->idField, TRUE);
 		}
@@ -1561,7 +1561,7 @@ class DataObject implements Iterator {
 			if (!$this->isField($fieldname))
 			{
 				$this->debug('DataObject(' . get_class($this) . ')::validateUniquenessOf Invalid fieldname (' . $fieldname . ') provided to validateUniquenessOf() in DataObject.php');
-				return FALSE; 
+				return FALSE;
 			}
 			
 		}
@@ -1905,7 +1905,7 @@ class DataObject implements Iterator {
 			
 			$this->_fields[$_field]->options = $options;
 			
-			return $this->_fields[$_field]->options;	
+			return $this->_fields[$_field]->options;
 			
 		}
 		
@@ -2106,7 +2106,7 @@ class DataObject implements Iterator {
 				$fkfield	= (empty($this->aliases[$var]['fkfield'])?get_class($this).'_id':$this->aliases[$var]['fkfield']);
 				
 				if ($cc instanceof SearchHandler) {
-					$cc->addConstraint(new Constraint ($fkfield,'=',$fkvalue));					
+					$cc->addConstraint(new Constraint ($fkfield,'=',$fkvalue));
 				}
 				else
 				{
@@ -2373,7 +2373,7 @@ class DataObject implements Iterator {
 	/**
 	 * Returns array of fields defined in $identifierField
 	 *
-	 * @return	array	
+	 * @return	array
 	 *
 	 */
 	public function getIdentifierFields()
@@ -2382,7 +2382,7 @@ class DataObject implements Iterator {
 		if (!is_array($this->identifierField))
 		{
 			
-			if (strpos($this->identifierField, '||')) 
+			if (strpos($this->identifierField, '||'))
 			{
 				$identifier_fields = explode('||', $this->identifierField);
 			}
@@ -2700,13 +2700,13 @@ class DataObject implements Iterator {
 	 * @param	string	$field_name	field on $this that contains FK value to reference $modelName
 	 * @param	string	$name		the name for the composite
 	 * @param	string	$fields		list of fields to inherit from $modelName
-	 * 
+	 *
 	 * For allowing models to act as if they inherit something else
 	 * e.g. a store_customer is essentially a person, with a few extra fields
 	 * so:
-	 * 
+	 *
 	 * $this->setComposite('Person', 'person_id', 'person_name, array('firstname', 'surname'));
-	 * 
+	 *
 	 * will add firstname and surname from Person, referenced via the value in person_id,
 	 * as additional fields to this model
 	 */
@@ -2749,7 +2749,7 @@ class DataObject implements Iterator {
 	 * @param	string	$modelName				the name of the model to alias
 	 * @param	constraintchain	$constraints	a chain of constraints to be met by the model
 	 * @param	string	$requiredfield			required to be present in order for aliased model to be saved
-	 * @param	string	$fkfield				the field on $modelName (default is <$modelName>_id) 
+	 * @param	string	$fkfield				the field on $modelName (default is <$modelName>_id)
 	 */
 	function setAlias($alias, $modelName, $constraints = null, $requiredField = null, $otherFields = array(), $fkfield = null)
 	{
@@ -3133,7 +3133,7 @@ class DataObject implements Iterator {
 		
 		// handle both object and string contraints
 		if ($constraint instanceof ConstraintChain)
-		{	
+		{
 			$sql_constraint = ' WHERE ' . $constraint->__toString();
 		}
 		else
@@ -3194,7 +3194,7 @@ class DataObject implements Iterator {
 	
 	function setPolicyConstraint($module_component = '', $field = '')
 	{
-//echo 'DataObject('.get_class($this).')::setPolicyConstraint module component '.$module_component.'<br>';		
+//echo 'DataObject('.get_class($this).')::setPolicyConstraint module component '.$module_component.'<br>';
 
 		if (!SYSTEM_POLICIES_ENABLED || empty($module_component))
 		{
@@ -3281,9 +3281,9 @@ class DataObject implements Iterator {
 	}
 	
 	/**
-	*Get all the ID Identifier pairs for example to fill a select.
-	* @todo 	Change name!
+	* Get all the ID Identifier pairs for example to fill a select.
 	*
+	* @todo 	Change name!
 	*/
 	function getAll(ConstraintChain $cc = null, $ignore_tree = FALSE, $use_collection = FALSE, $limit = '')
 	{
@@ -3340,7 +3340,7 @@ class DataObject implements Iterator {
 		$constraint	= $uc->__toString();
 		
 		if (!empty($constraint))
-		{	
+		{
 			$query .= ' WHERE '. $constraint;
 		}
 		
@@ -3361,14 +3361,14 @@ class DataObject implements Iterator {
 			
 			foreach ($results as $key => $fields)
 			{
-				$identiferField	= implode($this->identifierFieldJoin, $fields);
+				$identiferField	= rtrim(implode($this->identifierFieldJoin, $fields), $this->identifierFieldJoin);
 				$results[$key]	= $identiferField;
 			}
 		}
 		
 		if ($this->idField == $this->getIdentifier())
 		{
-//echo 'DataObject::getAll idField='.$this->idField.' Identifier='.$this->getIdentifier().'<pre>'.print_r($results, true).'</pre><br>';			
+//echo 'DataObject::getAll idField='.$this->idField.' Identifier='.$this->getIdentifier().'<pre>'.print_r($results, true).'</pre><br>';
 			foreach ($results as $key => $nothing)
 			{
 				$results[$key] = $key;
@@ -3482,7 +3482,7 @@ class DataObject implements Iterator {
 			
 		}
 		else
-		{	
+		{
 			$orderstring = ' ORDER BY ' . $this->getIdentifier();
 		}
 		
@@ -3608,7 +3608,7 @@ class DataObject implements Iterator {
 		
 		if ($doc == null)
 		{
-			$doc_name	= get_class($this) . 'Collection';	
+			$doc_name	= get_class($this) . 'Collection';
 			$doc		= new $doc_name;
 		}
 		
@@ -3635,7 +3635,7 @@ class DataObject implements Iterator {
 		{
 			$ancestors[]	= $parent_id;
 			$query			= 'SELECT parent_id FROM ' . $this->_tablename . ' WHERE id=' . $db->qstr($parent_id);
-			$parent_id		= $db->GetOne($query);		
+			$parent_id		= $db->GetOne($query);
 		}
 
 		return $ancestors;
@@ -3685,7 +3685,7 @@ class DataObject implements Iterator {
 			$parent_id = $id;
 		}
 				
-		$doc		= new get_class($this).'Collection';		
+		$doc		= new get_class($this).'Collection';
 		$db			= &DB::Instance();
 		$query		= 'SELECT ' . $this->idField . ' FROM ' . $this->_tablename . ' WHERE ' . $this->parent_field . (!empty($parent_id)?'='.$db->qstr($parent_id):' IS NULL');
 		$siblings	= $db->GetCol($query);
@@ -3710,7 +3710,7 @@ class DataObject implements Iterator {
 		if (!is_array($this->identifierField))
 		{
 			
-			if (strpos($this->identifierField, '||')) 
+			if (strpos($this->identifierField, '||'))
 			{
 				return $this->identifierField;
 			}
@@ -3737,7 +3737,7 @@ class DataObject implements Iterator {
 		}
 		
 		// Return the valid fields with the concatenation character
-		// or if no valid fields, 
+		// or if no valid fields,
 		// return the first DO field that is not the DO's idField
 
 		if (count($identifier_fields) > 0)
@@ -3964,7 +3964,7 @@ class DataObject implements Iterator {
 							$this->setHidden($default->field_name);
 							$this->_fields[$default->field_name]->system_override = TRUE;
 						}
-					}		
+					}
 				}
 			}
 		}
