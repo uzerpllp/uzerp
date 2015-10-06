@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - New injector classes for optional LDAP authentication with Apache
 - Add a notes field to sales order line input. Not printed on outputs by default
 - Purchase orders can be linked to a sales order
+- Purchase order delivery address can be sourced from a linked sales order, for output only
 
 ### Changed
 - Simplify template for getting opportunity details from a project
