@@ -1,9 +1,9 @@
 <?php
 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class MfworkordersController extends ManufacturingController
@@ -12,7 +12,9 @@ class MfworkordersController extends ManufacturingController
 	protected $version = '$Revision: 1.72 $';
 	
 	protected $_templateobject;
-
+	
+	use getSalesOrderOptions;
+	
 	public function __construct($module = null, $action = null)
 	{
 		parent::__construct($module, $action);
@@ -422,7 +424,7 @@ class MfworkordersController extends ManufacturingController
 													,'id'			=> $id
 													)
 					
-									);		
+									);
 			
 		$sidebarlist['edit'] = array('tag'	=> 'Edit'
 									,'link'	=> array('modules'		=> $this->_modules
@@ -826,7 +828,7 @@ class MfworkordersController extends ManufacturingController
 		}
 		else
 		{
-			$errors[] = 'Quantity must be greater than zero';	
+			$errors[] = 'Quantity must be greater than zero';
 		}
 		
 		if (count($errors)==0)
@@ -881,7 +883,7 @@ class MfworkordersController extends ManufacturingController
 			else
 			{
 				$errors[] = 'Serious error trying to backflush - PLEASE REPORT IMMEDIATELY';
-			} 
+			}
 		}
 		
 		$errors[] = 'Error booking production';
@@ -921,7 +923,7 @@ class MfworkordersController extends ManufacturingController
         $data['report'] = $this->_data['report'];
 
 		$userPreferences = UserPreferences::instance(EGS_USERNAME);
-        $defaultPrinter=$userPreferences->getPreferenceValue('default_printer', 'shared'); 
+        $defaultPrinter=$userPreferences->getPreferenceValue('default_printer', 'shared');
   
         if(empty($defaultPrinter))
         {
@@ -993,7 +995,7 @@ class MfworkordersController extends ManufacturingController
 		}
 		
 		sendBack();
-	}	
+	}
 	
 	public function view_Transactions ()
 	{
@@ -1097,7 +1099,7 @@ class MfworkordersController extends ManufacturingController
 	public function printAction ()
 	{
         $userPreferences	= UserPreferences::instance(EGS_USERNAME);
-        $defaultPrinter		= $userPreferences->getPreferenceValue('default_printer', 'shared'); 
+        $defaultPrinter		= $userPreferences->getPreferenceValue('default_printer', 'shared');
         
         if(empty($defaultPrinter))
         {
@@ -1693,38 +1695,6 @@ class MfworkordersController extends ManufacturingController
 	protected function getPageName($base = null, $action = null)
 	{
 		return parent::getPageName((empty($base)?'works_orders':$base), $action);
-	}
-	
-	/*
-	 * Private Functions
-	 */
-	private function getSalesOrders($_order_id = '')
-	{
-		$sorder = DataObjectFactory::Factory('SOrder');
-		
-		$sorder->identifierField = array('order_number', 'customer', 'person');
-		
-		$cc = new ConstraintChain();
-		$cc1 = new ConstraintChain();
-		
-		$cc1->add(new Constraint('type', '=', $sorder->sales_order()));
-		$cc1->add(new Constraint('status', 'in', "('". $sorder->newStatus() . "','". $sorder->openStatus() . "')"));
-		
-		// TODO: Check that orderlines for each order satisfy the conditions in getOrderLines above
-		
-		$cc->add($cc1);
-		
-		if (!empty($_order_id))
-		{
-			$cc2 = new ConstraintChain();
-			
-			$cc2->add(new Constraint('id', '=', $_order_id));
-			
-			$cc->add($cc2, 'OR');
-		}
-		
-		return $sorder->getAll($cc, true, true);
-		
 	}
 }
 
