@@ -72,6 +72,7 @@
 					{/view_section}
 					{view_section heading="Details" expand="closed"}
 						{view_data attribute="description" tags=none label='Description'}
+						{view_data attribute="sales_order_id" label='Sales Order'}
 						{view_data attribute="project_id" label='Project'}
 						{view_data attribute="task_id" label='Task'}
 					{/view_section}
