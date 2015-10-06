@@ -266,8 +266,8 @@ class POrder extends SPOrder {
 	public function save (&$errors=array())
 	{
 	    // use_sorder_delivery == true makes no sense if a sales order link is not selected
-	    if (empty($this->_data['sales_order_id'])) {
-	        $this->_dats['use_sorder_delivery'] = 'f';
+	    if (!$this->sales_order_id) {
+	        $this->use_sorder_delivery = 'f';
 	    }
 	    
 		$linestatuses	= $this->getLineStatuses();
