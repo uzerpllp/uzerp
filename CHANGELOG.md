@@ -1,8 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased][unreleased]
-
+## [unreleased]
 ### Fixed
 - Setting a custom theme now uses that theme instead of the default
 
@@ -13,9 +12,11 @@ All notable changes to this project will be documented in this file.
 - Add the ability to purchase orders and invoices from a task
 - New injector classes for optional LDAP authentication with Apache
 - Add a notes field to sales order line input. Not printed on outputs by default
+- Purchase orders can be linked to a sales order
 
 ### Changed
 - Simplify template for getting opportunity details from a project
+- Phinx migrations moved to schema/phinx/migrations
 
 ### Removed
 - Unnecessary action in the Task sidebar removed
@@ -172,7 +173,7 @@ All notable changes to this project will be documented in this file.
 
 
 [unreleased]: https://bitbucket.org/uzerp/uzerp/branches/compare/master%0D1.5.2
-[1.5.1]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.2%0D1.5.1
+[1.5.2]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.2%0D1.5.1
 [1.5.1]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.1%0D1.5.0
 [1.5.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.0%0D1.4.0
 [1.4.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.4.0%0D1.3.11
