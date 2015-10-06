@@ -397,6 +397,12 @@ class PordersController extends printController
 		}
 		
 		$this->view->set('sales_orders', $this->getSalesOrders($sales_order_id));
+		
+		// Use SO Delivery Address
+		if (!$porder->isLoaded() && !empty($this->_data['use_sorder_delivery']))
+		{
+		    $porder->use_sorder_delivery = $this->_data['use_sorder_delivery'];
+		}
 			
 	}
 
@@ -522,6 +528,7 @@ class PordersController extends printController
 		$linestatus		= $linestatuses['count'];
 		
 		$this->view->set('linevalue', $linestatuses['value']);
+		$this->view->set('use_sorder_delivery', $order->use_sorder_delivery);
 		
 		$porderline = DataObjectFactory::Factory('POrderLine');
 		$this->view->set('porderlines', $order->lines);
@@ -2571,8 +2578,16 @@ class PordersController extends printController
 		$extra['supplier_address'] = $supplier_address;
 
 		// set delivery address
-		$delivery_address = array('title' => 'Delivery Address:', 'name' => $extra['company_name']);
-		$delivery_address += $this->formatAddress($order->getDeliveryAddress());
+		if ($order->use_sorder_delivery == 't' && !empty($order->sales_order_id)) {
+		    $sorder = DataObjectFactory::Factory('SOrder');
+		    $sorder->load($order->sales_order_id);
+		    $delivery_address = array('title' => 'Delivery Address:', 'name' => $sorder->customer);
+		    $delivery_address += $this->formatAddress($sorder->getDeliveryAddress());
+		} else {
+		    $delivery_address = array('title' => 'Delivery Address:', 'name' => $extra['company_name']);
+		    $delivery_address += $this->formatAddress($order->getDeliveryAddress());
+		}
+		
 		$extra['delivery_address'] = $delivery_address;
 	
 		// set billing address

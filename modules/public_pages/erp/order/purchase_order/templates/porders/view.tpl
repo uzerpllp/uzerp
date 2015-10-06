@@ -62,6 +62,9 @@
 						{view_data attribute="county"}
 						{view_data attribute="postcode"}
 						{view_data attribute="country"}
+						{if $use_sorder_delivery == 't'}
+						{view_data value="Yes" label='Override with SO delivery address' id="deliv_override"}
+						{/if}
 					{/view_section}
 				{/with}
 				{with model=$POrder}
@@ -73,6 +76,7 @@
 					{view_section heading="Details" expand="closed"}
 						{view_data attribute="description" tags=none label='Description'}
 						{view_data attribute="sales_order_id" label='Sales Order'}
+						{view_data attribute="use_sorder_delivery" label='Use SO Delivery Address'}
 						{view_data attribute="project_id" label='Project'}
 						{view_data attribute="task_id" label='Task'}
 					{/view_section}
@@ -87,6 +91,7 @@
 					{/if}
 				{/with}
 			</dl>
+			
 		{/view_section}
 		{view_section heading=$POrder->getFormatted('type')|cat:' Lines' expand="open"}
 			<div id="view_data_bottom">
