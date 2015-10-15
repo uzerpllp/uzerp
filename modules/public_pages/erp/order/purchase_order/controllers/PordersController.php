@@ -2578,7 +2578,7 @@ class PordersController extends printController
 		$extra['supplier_address'] = $supplier_address;
 
 		// set delivery address
-		if ($order->use_sorder_delivery == 't' && !empty($order->sales_order_id)) {
+		if ($order->use_sorder_delivery == 't' && $order->sales_order_id > 0) {
 		    $sorder = DataObjectFactory::Factory('SOrder');
 		    $sorder->load($order->sales_order_id);
 		    $delivery_address = array('title' => 'Delivery Address:', 'name' => $sorder->customer);
