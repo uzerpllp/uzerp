@@ -27,6 +27,7 @@
 				{select attribute='tax_rate_id' options=$tax_rates label='Tax Rate'}
 				{select attribute='glaccount_id' options=$gl_accounts label='GL Account'}
 				{select attribute='glcentre_id' options=$gl_centres label='Cost Centre'}
+				{input type='checkbox' attribute="not_despatchable" label="Hide from Despatching"}
 				{input type='date' attribute='start_date' }
 				{input type='date' attribute='end_date' }
 			{/with}

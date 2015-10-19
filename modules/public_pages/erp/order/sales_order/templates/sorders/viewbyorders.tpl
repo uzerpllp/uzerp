@@ -12,7 +12,7 @@
 					<th>Due Date</th>
 					<th>Order</th>
 					<th>Customer</th>
-					<th>Stock Item</th>
+					<th>Item</th>
 					<th>Status</th>
 					<th class="right">Required</th>
 					<th class="right">Available</th>
@@ -36,7 +36,11 @@
 							{link_to module='sales_ledger' controller='slcustomers' action='view' id=$model.slmaster_id value=$model.customer}
 						</td>
 						<td>
-							{link_to module='manufacturing' controller='stitems' action='view' id=$model.stitem_id value=$model.stitem}
+							{if $model.stitem}
+								{link_to module='manufacturing' controller='stitems' action='view' id=$model.stitem_id value=$model.stitem}
+							{else}
+								{$model.item_description}
+							{/if}
 						</td>
 						<td>
 							{if $model.despatch_number > 0}
@@ -47,6 +51,7 @@
 								{$model.status}
 							{/if}
 						</td>
+						{if $model.stitem}
 						<td width=50 align=right>
 							{link_to module=$module controller=$controller action='viewbydates' id=$model.stitem_id value=$model.required}
 						</td>
@@ -62,6 +67,10 @@
 						<td width=50 align=right>
 							{$model.shortfall}
 						</td>
+						{else}
+						<td width=50 align=right>{$model.required}</td>
+						<td colspan="4" style="text-align:right">Not Stocked</td>
+						{/if}
 						<td align="center">
 							{if $model.despatch_number == -1 && $model.account_status != 'S'}
 								{if $model.despatch}
