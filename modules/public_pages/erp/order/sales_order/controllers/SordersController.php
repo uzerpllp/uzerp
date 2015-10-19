@@ -1,6 +1,6 @@
 <?php
 
-/** 
+/**
  *	uzERP Sales Order Controller
  *
  *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
@@ -152,7 +152,7 @@ class SordersController extends printController
 		{
 			$this->dataError();
 			sendBack();
-		}	
+		}
 		
 		$order = $this->_uses[$this->modeltype];
 		
@@ -351,7 +351,7 @@ class SordersController extends printController
 		}
 		else
 		{
-			$this->view->set('default_despatch_action', $this->getDespatchAction($default_customer));	
+			$this->view->set('default_despatch_action', $this->getDespatchAction($default_customer));
 		}
 		
 		// get delivery address list for default person or first in person
@@ -512,7 +512,7 @@ class SordersController extends printController
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view quotes/orders'
-				);			
+				);
 
 		
 		$sidebar->addList(
@@ -542,7 +542,7 @@ class SordersController extends printController
 								 ,'slmaster_id'=>$order->slmaster_id
 								 ),
 					'tag'=>'view quotes/orders'
-				);			
+				);
 		
 		$sidebar->addList(
 			$order->customerdetails->name,
@@ -576,7 +576,7 @@ class SordersController extends printController
 								 ,'id'=>$id
 								 ),
 					'tag'=>'print Quote'
-				);			
+				);
 			
 			$actions['convert_to_order']=array(
 					'link'=>array('modules'=>$this->_modules
@@ -586,7 +586,7 @@ class SordersController extends printController
 								 ,'id'=>$id
 								 ),
 					'tag'=>'Convert Quote to Order'
-				);			
+				);
 		
 			$actions['cancel_order']=array(
 					'link'=>array('modules'=>$this->_modules
@@ -621,7 +621,7 @@ class SordersController extends printController
 								 ,'id'=>$id
 								 ),
 					'tag'=>'print Acknowledgement'
-				);			
+				);
 			}
 			
 			if ($order->status==$order->newStatus() || $order->status=='P')
@@ -629,12 +629,12 @@ class SordersController extends printController
 				$actions['printProFormaInvoice']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
-								 ,'action'=>'pro_forma' 
+								 ,'action'=>'pro_forma'
 								 ,'id'=>$id
 								 ),
 					'tag'=>'print Pro Forma Invoice',
 					'class'=>'related_link'
-				);			
+				);
 			}
 			
 			$actions['printAddressLabel']=array(
@@ -673,9 +673,18 @@ class SordersController extends printController
 								 ,'id'=>$id
 								 ),
 					'tag'=>'Confirm Pick List'
-				);			
-			}		
+				);
+			}
 			
+			$actions['newdespatchnote']=array(
+			    'link'=>array('modules'=>$this->_modules
+								 ,'controller'=>$this->name
+								 ,'action'=>'createSODespatchNote'
+								 ,'id'=>$id
+								 ),
+			    'tag'=>'Create Despatch Note'
+			);
+				
 			if ($order->someLinesPicked($linestatus))
 			{
 				$actions['unpick_lines']=array(
@@ -694,7 +703,7 @@ class SordersController extends printController
 								 ,'id'=>$id
 								 ),
 					'tag'=>'Confirm Sale'
-				);			
+				);
 			}
 			
 			if ($order->someLinesDespatched($linestatus)
@@ -750,10 +759,12 @@ class SordersController extends printController
 				);
 		}
 		
-		if ($order->partDespatched()
-			|| $order->despatched()
-			|| $order->invoiced())
-		{
+		//$lines_status = $order->getLineStatuses();
+ 		if ($order->partDespatched()
+ 			|| $order->despatched()
+ 			|| $order->invoiced()
+ 			|| $linestatuses['count']['R']>0)
+ 		{
 			$actions['despatchnote']=array(
 					'link'=>array('module'=>'despatch'
 								, 'controller'=>'sodespatchlines'
@@ -761,8 +772,8 @@ class SordersController extends printController
 								, 'order_number'=>$order->order_number
 								, 'status'=>''),
 					'tag'=>'View Despatch Notes'
-				);			
-		}
+				);
+ 		}
 		
 		if ($order->invoices->count()>0)
 		{
@@ -772,7 +783,7 @@ class SordersController extends printController
 								, 'action'=>'view'
 								, 'order_id'=>$order->id),
 					'tag'=>'View Invoice'
-				);			
+				);
 		}
 		
 		if ($order->invoices->count()>1)
@@ -784,7 +795,7 @@ class SordersController extends printController
 								, 'sales_order_number'=>$order->order_number
 								),
 					'tag'=>'View Invoices'
-				);			
+				);
 		}
 		
 		$sidebar->addList(
@@ -1298,7 +1309,7 @@ class SordersController extends printController
 								, 'controller'=>'SLCustomers'
 								, 'action'=>'index'),
 					'tag'=>'view all customers'
-				);			
+				);
 		
 		$actions['newquote'] = array(
 					'link'=>array('modules'=>$this->_modules
@@ -1307,7 +1318,7 @@ class SordersController extends printController
 								 ,'type'=>'Q'
 								 ),
 					'tag'=>'new quote'
-				);			
+				);
 		$actions['neworder'] = array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -1315,14 +1326,14 @@ class SordersController extends printController
 								 ,'type'=>'O'
 								 ),
 					'tag'=>'new order'
-				);			
+				);
 		$actions['vieworder'] = array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view quotes/orders'
-				);			
+				);
 
 		
 		$sidebar->addList(
@@ -1410,7 +1421,7 @@ class SordersController extends printController
 								, 'controller'=>'SLCustomers'
 								, 'action'=>'index'),
 					'tag'=>'view all customers'
-				);			
+				);
 		
 		$actions['newquote']=array(
 					'link'=>array('modules'=>$this->_modules
@@ -1419,7 +1430,7 @@ class SordersController extends printController
 								 ,'type'=>'Q'
 								 ),
 					'tag'=>'new quote'
-				);			
+				);
 		$actions['neworder']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -1427,14 +1438,14 @@ class SordersController extends printController
 								 ,'type'=>'O'
 								 ),
 					'tag'=>'new order'
-				);			
+				);
 		$actions['vieworder']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view quotes/orders'
-				);			
+				);
 		
 		$sidebar->addList(
 			'Actions',
@@ -1444,6 +1455,70 @@ class SordersController extends printController
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 		$this->view->set('page_title',$this->getPageName('', 'View item availability by date for'));
+	}
+	
+	/**
+	 * createSODespatchNote - Create a Despatch Note From the Sales Order
+	 *
+	 * Marks any order lines with status 'New' as released and creates a despatch note.
+	 * Excludes order lines that are not linked to a productline or where the product
+	 * is marked as not 'despatcheable'.
+	 */
+	public function createSODespatchNote()
+	{
+	    $flash=Flash::Instance();
+	    $db = DB::Instance();
+	    $db->StartTrans();
+	    
+	    //Release the order lines
+		$orderline = DataObjectFactory::Factory('SOrderLine');
+		$orderlines=new SOrderLineCollection($orderline);
+		$sh=new SearchHandler($orderlines, false);
+		$sh->addConstraint(new Constraint('status', '=', $orderline->newStatus()));
+		$sh->addConstraint(new Constraint('order_id', '=', $this->_data['id']));
+		$sh->addConstraint(new Constraint('productline_id', 'IS NOT', 'NULL'));
+		$sh->addConstraint(new Constraint('not_despatchable', 'IS NOT', true));
+		
+		$orderlines->load($sh);
+	    
+		if (count($orderlines) > 0)
+		{
+    		$errors=array();
+    		$despatch=array();
+    		$despatchline=array();
+    		
+    		$order = DataObjectFactory::Factory('SOrder');
+    		$order->load($this->_data['id']);
+    		
+    		foreach ($orderlines as $line) {
+    		    if ($line->delivery_note=='') {
+    		        $line->update($line->id, 'status', $line->awaitingDespatchStatus());
+    		        
+    		        $despatch[$this->_data['id']][$line->id]=SODespatchLine::makeLine($order, $line, $errors);
+    		    }
+    		}
+    		
+    		$despatch_num = SODespatchLine::createDespatchNote($despatch, $errors);
+    		
+    		if ($despatch_num && count($errors)===0 && $db->CompleteTrans())
+    		{
+                // Redirect to the desptch note view
+                sendTo('sodespatchlines', 'view', 'despatch', ['id' => $despatch_num]);
+    		}
+    		else
+    		{
+    		    $errors[]='Error creating Despatch Note';
+    		    $flash->addErrors($errors);
+    		    $db->FailTrans();
+    		    $db->CompleteTrans();
+    		    $this->refresh();
+    		}
+	   }
+	   else
+	   {
+	       $flash->addMessage("No lines available to create a despatch note");
+	       sendBack();
+	   }
 	}
 	
 	public function viewByOrders() {
@@ -1462,7 +1537,10 @@ class SordersController extends printController
 // Create an array of items ordered
 		$stitems=array();
 		foreach ($orders as $row) {
-			$stitems[$row->stitem_id]['shortfall']=0;
+		    //ignore PLs without stitem
+		    if ($row->stitem_id) {
+			   $stitems[$row->stitem_id]['shortfall']=0;
+		    }
 		}
 		
 // Now get the balance for each item across all saleable locations
@@ -1488,6 +1566,8 @@ class SordersController extends printController
 			$items[$key]['id']=$row->id;
 			$items[$key]['stitem_id']=$row->stitem_id;
 			$items[$key]['stitem']=$row->stitem;
+			$items[$key]['item_description']=$row->item_description;
+			$items[$key]['productline_id']=$row->productline_id;
 			$items[$key]['required']=$row->required;
 			$items[$key]['due_despatch_date']=$row->due_despatch_date;
 			$items[$key]['order_number']=$row->order_number;
@@ -1497,15 +1577,18 @@ class SordersController extends printController
 			$items[$key]['stuom']=$row->stuom;
 			$items[$key]['for_sale']=$stitems[$row->stitem_id]['for_sale'];
 			$items[$key]['shortfall']=0;
-			$cc=new ConstraintChain();
-			$cc->add(new Constraint('stitem_id', '=',$row->stitem_id));
-			$cc->add(new Constraint('required_by', '<=', $row->due_despatch_date));
-			$worders=MFWorkorder::getBalances($cc);
-			if ($worders) {
-				$stitems[$row->stitem_id]['on_order']=$worders[0]['sumbalance']-$stitems[$row->stitem_id]['total_orders'];
-				$stitems[$row->stitem_id]['total_orders']=$worders[0]['sumbalance'];
-			} else {
-				$stitems[$row->stitem_id]['on_order']=0;
+			//ignore PLs without stitem
+			if ($row->stitem_id) {
+    			$cc=new ConstraintChain();
+    			$cc->add(new Constraint('stitem_id', '=',$row->stitem_id));
+    			$cc->add(new Constraint('required_by', '<=', $row->due_despatch_date));
+    			$worders=MFWorkorder::getBalances($cc);
+    			if ($worders) {
+    				$stitems[$row->stitem_id]['on_order']=$worders[0]['sumbalance']-$stitems[$row->stitem_id]['total_orders'];
+    				$stitems[$row->stitem_id]['total_orders']=$worders[0]['sumbalance'];
+    			} else {
+    				$stitems[$row->stitem_id]['on_order']=0;
+    			}
 			}
 			$on_order=$stitems[$row->stitem_id]['on_order'];
 			$items[$key]['on_order']=$stitems[$row->stitem_id]['on_order'];
@@ -1554,7 +1637,7 @@ class SordersController extends printController
 								, 'controller'=>'SLCustomers'
 								, 'action'=>'index'),
 					'tag'=>'view all customers'
-				);			
+				);
 		
 		$actions['newquote']=array(
 					'link'=>array('modules'=>$this->_modules
@@ -1563,7 +1646,7 @@ class SordersController extends printController
 								 ,'type'=>'Q'
 								 ),
 					'tag'=>'new quote'
-				);			
+				);
 		$actions['neworder']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -1571,21 +1654,21 @@ class SordersController extends printController
 								 ,'type'=>'O'
 								 ),
 					'tag'=>'new order'
-				);			
+				);
 		$actions['vieworder']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view quotes/orders'
-				);			
+				);
 		$actions['viewdespatches']=array(
 					'link'=>array('module'=>'despatch'
 								 ,'controller'=>'sodespatchlines'
 								 ,'action'=>'viewByOrders'
 								 ),
 					'tag'=>'view despatches'
-				);			
+				);
 				
 		$sidebar->addList(
 			'Actions',
@@ -1818,7 +1901,7 @@ class SordersController extends printController
 		if (!isset($this->_data) || !$this->loadData()) {
 			$this->dataError();
 			sendBack();
-		}	
+		}
 		$sorder = $this->_uses[$this->modeltype];
 		
 		$flash = Flash::Instance();
@@ -1841,7 +1924,7 @@ class SordersController extends printController
 		if (!isset($this->_data) || !$this->loadData()) {
 			$this->dataError();
 			sendBack();
-		}	
+		}
 		$sorder = $this->_uses[$this->modeltype];
 		$this->view->set('no_ordering', true);
 		
@@ -1871,7 +1954,7 @@ class SordersController extends printController
 		if (!isset($this->_data) || !$this->loadData()) {
 			$this->dataError();
 			sendBack();
-		}	
+		}
 		$sorder = $this->_uses[$this->modeltype];
 		$this->view->set('no_ordering', true);
 		
@@ -1894,7 +1977,7 @@ class SordersController extends printController
 		if (!isset($this->_data) || !$this->loadData()) {
 			$this->dataError();
 			sendBack();
-		}	
+		}
 		$sorder = $this->_uses[$this->modeltype];
 		
 		$sorder_data=$this->_data[$this->modeltype];
@@ -2026,7 +2109,7 @@ class SordersController extends printController
 		if (!isset($this->_data) || !$this->loadData()) {
 			$this->dataError();
 			sendBack();
-		}	
+		}
 		$sorder = $this->_uses[$this->modeltype];
 		
 		$sorder_data=$this->_data[$this->modeltype];
@@ -2153,7 +2236,7 @@ class SordersController extends printController
 		{
 			$this->dataError();
 			sendBack();
-		}	
+		}
 		
 		$sorder = $this->_uses[$this->modeltype];
 		
@@ -2526,7 +2609,7 @@ class SordersController extends printController
 		{
 // now print the invoice to the users default printer
 			$userPreferences = UserPreferences::instance(EGS_USERNAME);
-			$defaultPrinter=$userPreferences->getPreferenceValue('default_printer','shared'); 
+			$defaultPrinter=$userPreferences->getPreferenceValue('default_printer','shared');
 			if(empty($defaultPrinter))
 			{
 				// Use normal print action
@@ -3049,7 +3132,7 @@ class SordersController extends printController
 		if (!isset($this->_data) || !$this->loadData()) {
 			$this->dataError();
 			sendBack();
-		}	
+		}
 		$sorder = $this->_uses[$this->modeltype];
 		$id=$sorder->id;
 		if (isset($this->_data['updatetype'])) {
@@ -3072,7 +3155,7 @@ class SordersController extends printController
 	/**
 	 * printInvoice: similar in consturction to other FOP print functions, however
 	 * this is more restrictive, at the time only used as part of save_confirmsale
-	 * 
+	 *
 	 * @param DataObject $invoice
 	 * @param array $data
 	 */
@@ -3242,7 +3325,7 @@ class SordersController extends printController
 		}
 		else
 		{
-			$document_type 		= 'Order Acknowledgement';		
+			$document_type 		= 'Order Acknowledgement';
 			$document_name		= 'SOack';
 			$report_definition	= 'SOacknowledgement';
 		}
@@ -3357,7 +3440,7 @@ class SordersController extends printController
 		$extra['order_totals']['VAT']	= $currency->format($vat_total);
 		$extra['order_totals']['gross']	= $currency->format($gross_total);
 		
-		// generate the xml and add it to the options array					
+		// generate the xml and add it to the options array
 		$options['xmlSource'] = $this->generateXML(array('model'=>$order,
 														 'relationship_whitelist'=>array('lines'),
 														 'extra'=>$extra
@@ -3477,7 +3560,7 @@ class SordersController extends printController
 		
 		$extra['document_reference'] = $document_reference;
 		
-		// wish us luck... we're about to calculate VAT! 
+		// wish us luck... we're about to calculate VAT!
 
 		// Return tax percentage and vat anlysis message
 
@@ -3654,12 +3737,12 @@ class SordersController extends printController
 		// get delivery address
 		if(!is_null($order->person_id))
 		{
-			$extra['delivery_details']['person'] = $order->person;	
+			$extra['delivery_details']['person'] = $order->person;
 		}
 		
 		if(!is_null($order->slmaster_id))
 		{
-			$extra['delivery_details']['customer'] = $order->customer;	
+			$extra['delivery_details']['customer'] = $order->customer;
 		}
 		
 		$extra['delivery_details']['full_address'] = implode($this->formatAddress($order->del_address),", ");
@@ -3684,7 +3767,7 @@ class SordersController extends printController
 	 * 						 or 'generate' to generate the document
 	 *
 	 * @return array Options to be passed back
-	 * 
+	 *
 	 * @see printController::printDialog()
 	 */
 	public function printAddressLabel($status = 'generate')
