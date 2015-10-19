@@ -64,7 +64,7 @@ class POrder extends SPOrder {
  		$this->belongsTo('User', 'authorised_by', 'authorised_by_person');
  		$this->belongsTo('Project', 'project_id', 'project');
  		$this->belongsTo('Task', 'task_id', 'task');
- 		$this->belongsTo('SOrder', 'sales_order_id', 'order_id', null, array('order_number', 'customer', 'person'));
+ 		$this->belongsTo('SOrder', 'sales_order_id', 'order_number', null, array('order_number', 'customer', 'person'));
 		$this->belongsTo('DeliveryTerm', 'delivery_term_id', 'delivery_term');
  		$this->hasMany('POrderLine', 'lines', 'order_id');
 		$this->hasMany('PInvoice', 'invoices', 'purchase_order_id');
