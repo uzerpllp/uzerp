@@ -1491,7 +1491,7 @@ class SordersController extends printController
     		$order->load($this->_data['id']);
     		
     		foreach ($orderlines as $line) {
-    		    if ($line->delivery_note=='') {
+    		    if ($line->delivery_note=='' && $line->stitem =='') {
     		        $line->update($line->id, 'status', $line->awaitingDespatchStatus());
     		        
     		        $despatch[$this->_data['id']][$line->id]=SODespatchLine::makeLine($order, $line, $errors);
