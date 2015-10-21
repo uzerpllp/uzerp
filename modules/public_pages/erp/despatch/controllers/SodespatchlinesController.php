@@ -650,6 +650,8 @@ class SodespatchlinesController extends printController
 				else
 				{
 					$stitems[$row->stitem_id]['despatch_action'][$row->despatch_action]=0;
+					// Flag it as a non-stock item
+					$stitems[$row->stitem_id]['non-stock']=true;
 				}
 			}
 		}
@@ -674,9 +676,13 @@ class SodespatchlinesController extends printController
 			$items[$row->order_number]['customer']=$row->customer;
 			$items[$row->order_number]['del_address']=$sorder->del_address->address;
 			
-			if ($stitems[$row->stitem_id]['despatch_action'][$row->despatch_action]>=0)
+			if ($stitems[$row->stitem_id]['non-stock']) // We can always despatch non-stock items
 			{
 				$items[$row->order_number]['line_number'][$row->line_number]['despatch']=true;
+			}
+			elseif ($stitems[$row->stitem_id]['despatch_action'][$row->despatch_action]>=0)
+			{
+			    $items[$row->order_number]['line_number'][$row->line_number]['despatch']=true;
 			}
 			else
 			{
