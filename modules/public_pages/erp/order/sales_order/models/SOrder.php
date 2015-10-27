@@ -70,7 +70,7 @@ class SOrder extends SPOrder {
 		$this->hasMany('SInvoice','invoices','sales_order_id');
 		$this->hasMany('STTransaction', 'transactions', 'process_id');
 		$this->hasMany('MFWorkorder', 'works_orders', 'order_id');
-		$this->hasMany('POrder', 'purchase_orders', 'sales_order_id', 'order_id');
+		$this->hasMany('POrder', 'purchase_orders', 'sales_order_id', 'order_number');
 		
 		// Define field formats
 		$params			= DataObjectFactory::Factory('GLParams');

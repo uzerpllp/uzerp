@@ -41,7 +41,7 @@
 							</td>
 							<td>
 								{$key}
-								{$submodel.stitem}
+								{$submodel.item_description}
 							</td>
 							<td width=50 align=right>
 								{$submodel.required}

@@ -1,9 +1,9 @@
 <?php
  
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 class SODespatchLine extends DataObject
 {
@@ -23,6 +23,7 @@ class SODespatchLine extends DataObject
 											,'stitem'
 											,'invoice_number'
 											,'invoice_id'
+	                                        ,'description'
 											);
 	
 	function __construct($tablename='so_despatchlines')
@@ -42,9 +43,9 @@ class SODespatchLine extends DataObject
 		$this->belongsTo('SOrder', 'order_id', 'order_number');
  		$this->belongsTo('SOrderLine', 'orderline_id', 'order_line');
  		$this->belongsTo('SLCustomer', 'slmaster_id', 'customer');
- 		$this->belongsTo('SOProductline', 'productline_id', 'description'); 
- 		$this->belongsTo('STuom', 'stuom_id', 'uom_name'); 
- 		$this->belongsTo('STItem', 'stitem_id', 'stitem'); 
+ 		$this->belongsTo('SOProductline', 'productline_id', 'description');
+ 		$this->belongsTo('STuom', 'stuom_id', 'uom_name');
+ 		$this->belongsTo('STItem', 'stitem_id', 'stitem');
  		$this->hasOne('WHAction', 'despatch_action', 'despatch_from');
  		$this->hasOne('SOrderLine', 'orderline_id', 'order_line_detail');
  		
@@ -68,6 +69,15 @@ class SODespatchLine extends DataObject
 	
 	}
 	
+	/*
+	 * createDespatchNote - Create a despatch note from the provided data
+	 *
+	 * @param array $data
+	 *     see SODespatchLine::makeLine
+	 *
+	 * @return int|bool
+	 *     Despatch Note id or False
+	 */
 	public static function createDespatchNote ($data, &$errors=array())
 	{
 
@@ -133,9 +143,13 @@ class SODespatchLine extends DataObject
 		}
 		
 		$db->completeTrans();
-
-		return $result;
+        
+		if (count($data) == 1)
+		{
+		  return $saveline->id;
+		}
 		
+		return $result;
 	}
 	
 	/**
@@ -215,14 +229,19 @@ class SODespatchLine extends DataObject
 
 	public function getStockBalance()
 	{
-		$locations=$this->despatch_from->rules_list('from_whlocation_id');
-		$balance=new STBalance();
-		return $balance->getStockBalance($this->stitem_id,$locations);
+		if ($this->stitem)
+		{
+    	    $locations=$this->despatch_from->rules_list('from_whlocation_id');
+    		$balance=new STBalance();
+    		return $balance->getStockBalance($this->stitem_id,$locations);
+		}
+    	
+		return 0;
 	}
 
 	public function item_description()
 	{
-		return $this->order_line_detail->description;
+		return $this->order_line->description;
 	}
 	
 

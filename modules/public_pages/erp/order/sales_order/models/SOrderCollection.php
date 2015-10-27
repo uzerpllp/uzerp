@@ -1,9 +1,9 @@
 <?php
 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class SOrderCollection extends DataObjectCollection {
@@ -96,7 +96,9 @@ class SOrderCollection extends DataObjectCollection {
 			'despatch_action',
 			'status',
 			'account_status',
-			'status'
+			'status',
+		    'item_description',
+		    'productline_id'
 		);
 		
 //		$sh->setOrderby(
