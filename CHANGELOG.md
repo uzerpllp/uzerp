@@ -14,13 +14,14 @@ All notable changes to this project will be documented in this file.
 - Add a notes field to sales order line input. Not printed on outputs by default
 - Purchase orders can be linked to a sales order
 - Purchase order delivery address can be sourced from a linked sales order, for output only
+- Despatch notes can be creted for non-stock product lines
+- Products can be marked as 'not despatchable', i.e. thier product lines can't be added to despatch notes
+- Sales order lines can be released and added to a despatch note for the sales order sidebar
+- Purchase order schedule document print
 
 ### Changed
 - Simplify template for getting opportunity details from a project
 - Phinx migrations moved to schema/phinx/migrations
-- Despatch notes can be creted for non-stock product lines
-- Products can be marked as 'not despatchable', i.e. thier product lines can't be added to despatch notes
-- Sales order lines can be released and added to a despatch note for the sales order sidebar
 
 ### Removed
 - Unnecessary action in the Task sidebar removed
