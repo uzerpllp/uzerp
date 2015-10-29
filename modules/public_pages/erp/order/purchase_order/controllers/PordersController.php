@@ -2523,7 +2523,12 @@ class PordersController extends printController
 		}
 		
 		if (isset($this->_data['report'])) {
-            $report = $this->_data['report'];
+		    $reportdef = new ReportDefinition();
+		    $reportdef->loadBy('name', $this->_data['report']);
+		    // If the report definition exists, then use it
+		    if ($reportdef->isLoaded()) {
+                $report = $this->_data['report'];
+		    }
 		}
 		
 		$order = $this->_uses[$this->modeltype];
