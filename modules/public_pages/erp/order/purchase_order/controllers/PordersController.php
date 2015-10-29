@@ -683,15 +683,27 @@ class PordersController extends printController
 			&& $order->type=='O')
 		{
 			$actions['printAcknowledgement'] = array(
-					'link'	=> array('modules'		=> $this->_modules
-									,'controller'	=> $this->name
-									,'action'		=> 'printDialog'
-									,'printaction'	=> 'printorder'
-									,'filename'		=> 'PO'.$order->order_number
-									,'id'			=> $id
-									),
-					'tag'	=> 'print Order'
-					);
+				'link'	=> array('modules'		=> $this->_modules
+								,'controller'	=> $this->name
+								,'action'		=> 'printDialog'
+								,'printaction'	=> 'printorder'
+								,'filename'		=> 'PO'.$order->order_number
+								,'id'			=> $id
+							    ),
+				'tag'	=> 'print Order'
+				);
+			// Print a PO Schedule by specifying a 'report definition'
+			$actions['printSchedule'] = array(
+			    'link'	=> array('modules'		=> $this->_modules
+            			        ,'controller'	=> $this->name
+            			        ,'action'		=> 'printDialog'
+            			        ,'printaction'	=> 'printorder'
+            			        ,'report'       => 'PurchaseOrderSchedule'
+            			        ,'filename'		=> 'PO'.$order->order_number
+            			        ,'id'			=> $id
+			                    ),
+			    'tag'	=> 'print Schedule'
+			);
 		}
 		
 		if ($order->status==$order->isNew()
@@ -2493,7 +2505,14 @@ class PordersController extends printController
 	
 	
 	/* output functions */
-	public function printOrder($status = 'generate')
+	
+	/**
+	 * printOrder
+	 *
+	 * @param string $status
+	 * @param string $report Name of the Report Definition to Use
+	 */
+	public function printOrder($status = 'generate', $report = 'PurchaseOrder')
 	{
 		
 		// load the model
@@ -2501,6 +2520,10 @@ class PordersController extends printController
 		{
 			$this->dataError();
 			sendBack();
+		}
+		
+		if (isset($this->_data['report'])) {
+            $report = $this->_data['report'];
 		}
 		
 		$order = $this->_uses[$this->modeltype];
@@ -2517,7 +2540,7 @@ class PordersController extends printController
 				'email'	=> ''
 			),
 			'filename'	=>	'PO'.$order->order_number,
-			'report'	=>	'PurchaseOrder'
+			'report'	=>	$report
 		);
 			
 		$order		= $this->_uses[$this->modeltype];
