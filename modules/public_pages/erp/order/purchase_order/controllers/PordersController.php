@@ -2645,7 +2645,7 @@ class PordersController extends printController
 		// decode response, if it was successful update the print count
 		$response = json_decode($json_response, TRUE);
 		
-		if($response['status'] === TRUE && !self::updateStatus($order))
+		if($response['status'] === TRUE && $report == 'PurchaseOrder' && !self::updateStatus($order))
 		{
 			
 			// if the print was successful but the update wasn't...
