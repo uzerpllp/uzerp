@@ -1,4 +1,4 @@
-{** 
+o{** 
  *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
@@ -75,7 +75,7 @@
 					{/view_section}
 					{view_section heading="Details" expand="closed"}
 						{view_data attribute="description" tags=none label='Description'}
-						{view_data attribute="sales_order_id" label='Sales Order'}
+						{view_data attribute="sorder_number" label='Sales Order'}
 						{view_data attribute="use_sorder_delivery" label='Use SO Delivery Address'}
 						{view_data attribute="project_id" label='Project'}
 						{view_data attribute="task_id" label='Task'}
