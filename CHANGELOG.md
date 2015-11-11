@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [unreleased]
 ### Fixed
 - Setting a custom theme now uses that theme instead of the default
+- Sales order add-line was showing multiple prices for an item
 
 ### Added
 - Allow Sales Invoices to be allocated to Projects and Tasks
