@@ -97,7 +97,7 @@ class SOProductline extends DataObject
      * that are for items not specific to the customer
      *
 	 * NOTE: To get filtered results in a single query, this function
-	 * uses an sql query, instead of constraint-chains and the
+	 * uses sql queries, instead of constraint-chains and the
 	 * DataObject functions from the framework. It *should* be
 	 * faster than executing multiple queries and concatenating
 	 * the results in PHP.
@@ -112,91 +112,135 @@ class SOProductline extends DataObject
 	    $customerdetail->load($customer);
 	    $price_type = $customerdetail->so_price_type_id;
 	    
-	    $params_productsearch = [
-	       $productsearch . '%', EGS_COMPANY_ID, $customer, $price_type,
-	       $productsearch . '%', EGS_COMPANY_ID, $customer,
-	       $productsearch . '%', EGS_COMPANY_ID, $price_type,
-	       $productsearch . '%', EGS_COMPANY_ID,
-	    ];
-	    
-	    $params = [
-	        EGS_COMPANY_ID, $customer, $price_type,
-	        EGS_COMPANY_ID, $customer,
-	        EGS_COMPANY_ID, $price_type,
-	        EGS_COMPANY_ID,
-	    ];
-	    
-	    // Find prices for cust/price_type, cust only, price_type only,
-	    // default prices with no cust or price_type,
-	    // filtering out any prices found in the previous query.
-	    $query_productsearch = "WITH cust_type_prices AS
-	       (SELECT id, description, productline_header_id
-	           FROM {$this->tablename}
-	           WHERE description ILIKE ?
-	               AND (usercompanyid = ?
-	               AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
-	               AND (slmaster_id = ? AND so_price_type_id = ?)))),
-	           cust_type_products AS (SELECT productline_header_id FROM cust_type_prices)
-	           SELECT id, description FROM cust_type_prices
-	       UNION
-	       SELECT id, description
-	           FROM {$this->tablename}
-	           WHERE description ilike ?
-	           AND productline_header_id NOT IN (SELECT * FROM cust_type_products)
-	           AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
-	           AND (slmaster_id = ? AND so_price_type_id is NULL)))
-	       UNION
-	       (WITH cust_prices AS
-	           (SELECT id, description, productline_header_id
-	               FROM {$this->tablename}
-	               WHERE description ilike ?
-	               AND productline_header_id NOT IN (SELECT * FROM cust_type_products)
+	    if (!is_null($price_type)) {
+    	    $params_productsearch = [
+    	       $productsearch . '%', EGS_COMPANY_ID, $customer, $price_type,
+    	       $productsearch . '%', EGS_COMPANY_ID, $customer,
+    	       $productsearch . '%', EGS_COMPANY_ID, $price_type,
+    	       $productsearch . '%', EGS_COMPANY_ID,
+    	    ];
+    	    
+    	    $params = [
+    	        EGS_COMPANY_ID, $customer, $price_type,
+    	        EGS_COMPANY_ID, $customer,
+    	        EGS_COMPANY_ID, $price_type,
+    	        EGS_COMPANY_ID,
+    	    ];
+    	    
+    	    // Find prices for cust/price_type, cust only, price_type only,
+    	    // default prices with no cust or price_type,
+    	    // filtering out any prices found in the previous query.
+    	    $query_productsearch = "WITH cust_type_prices AS
+    	       (SELECT id, description, productline_header_id
+    	           FROM so_productlines_overview
+    	           WHERE description ILIKE ?
+    	               AND (usercompanyid = ?
+    	               AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
+    	               AND (slmaster_id = ? AND so_price_type_id = ?)))),
+    	           cust_type_products AS (SELECT productline_header_id FROM cust_type_prices)
+    	           SELECT id, description FROM cust_type_prices
+    	       UNION
+    	       SELECT id, description
+    	           FROM so_productlines_overview
+    	           WHERE description ilike ?
+    	           AND productline_header_id NOT IN (SELECT * FROM cust_type_products)
+    	           AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
+    	           AND (slmaster_id = ? AND so_price_type_id is NULL)))
+    	       UNION
+    	       (WITH cust_prices AS
+    	           (SELECT id, description, productline_header_id
+    	               FROM so_productlines_overview
+    	               WHERE description ilike ?
+    	               AND productline_header_id NOT IN (SELECT * FROM cust_type_products)
+    	               AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
+    	               AND (slmaster_id IS NULL AND so_price_type_id = ?)))),
+    	           cust_products AS (SELECT productline_header_id FROM cust_prices)
+    	           SELECT id, description FROM cust_prices
+    	        UNION
+    	        SELECT id, description
+    	           FROM so_productline_soverview
+    	           WHERE description ilike ?
+    	           AND productline_header_id NOT IN (SELECT * FROM cust_type_products UNION SELECT * FROM cust_products)
+    	           AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
+    	           AND (slmaster_id IS NULL AND so_price_type_id IS NULL)))
+    	       )
+    	    ORDER BY description";
+    	    
+    	    // Save 100ms approx, if product search not needed
+    	    $query = "WITH cust_type_prices AS
+    	       (SELECT id, description, productline_header_id
+    	           FROM so_productlines_overview
+    	           WHERE (usercompanyid = ?
+    	               AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
+    	               AND (slmaster_id = ? AND so_price_type_id = ?)))),
+    	           cust_type_products AS (SELECT productline_header_id FROM cust_type_prices)
+    	           SELECT id, description FROM cust_type_prices
+    	       UNION
+    	       SELECT id, description
+    	           FROM so_productlines_overview
+    	           WHERE productline_header_id NOT IN (SELECT * FROM cust_type_products)
+    	           AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
+    	           AND (slmaster_id = ? AND so_price_type_id is NULL)))
+    	       UNION
+    	       (WITH cust_prices AS
+    	           (SELECT id, description, productline_header_id
+    	               FROM so_productlines_overview
+    	               WHERE productline_header_id NOT IN (SELECT * FROM cust_type_products)
+    	               AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
+    	               AND (slmaster_id IS NULL AND so_price_type_id = ?)))),
+    	           cust_products AS (SELECT productline_header_id FROM cust_prices)
+    	           SELECT id, description FROM cust_prices
+    	        UNION
+    	        SELECT id, description
+    	           FROM so_productlines_overview
+    	           WHERE productline_header_id NOT IN (SELECT * FROM cust_type_products UNION SELECT * FROM cust_products)
+    	           AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
+    	           AND (slmaster_id IS NULL AND so_price_type_id IS NULL)))
+    	       )
+    	    ORDER BY description";
+	    } else {
+	        $params_productsearch = [
+	            $productsearch . '%', EGS_COMPANY_ID, $customer,
+	            $productsearch . '%', EGS_COMPANY_ID,
+	        ];
+	        	
+	        $params = [
+	            EGS_COMPANY_ID, $customer,
+	            EGS_COMPANY_ID,
+	        ];
+	        
+	        $query_productsearch = "WITH cust_prices AS
+	            (SELECT id, description, productline_header_id
+	               FROM so_productlines_overview
+	               WHERE description ILIKE ? AND
+	               (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
+	               AND (slmaster_id = ? AND so_price_type_id IS NULL)))),
+                cust_products AS (SELECT productline_header_id FROM cust_prices)
+                SELECT id, description FROM cust_prices
+                UNION
+                SELECT id, description
+	               FROM so_productlines_overview
+	               WHERE description ILIKE ? AND
+	               productline_header_id NOT IN (SELECT * FROM cust_products)
 	               AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
-	               AND (slmaster_id IS NULL AND so_price_type_id = ?)))),
-	           cust_products AS (SELECT productline_header_id FROM cust_prices)
-	           SELECT id, description FROM cust_prices
-	        UNION
-	        SELECT id, description
-	           FROM {$this->tablename}
-	           WHERE description ilike ?
-	           AND productline_header_id NOT IN (SELECT * FROM cust_type_products UNION SELECT * FROM cust_products)
-	           AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
-	           AND (slmaster_id IS NULL AND so_price_type_id IS NULL)))
-	       )
-	    ORDER BY description";
-	    
-	    // Save 100ms approx, if product search not needed
-	    $query = "WITH cust_type_prices AS
-	       (SELECT id, description, productline_header_id
-	           FROM {$this->tablename}
-	           WHERE (usercompanyid = ?
-	               AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
-	               AND (slmaster_id = ? AND so_price_type_id = ?)))),
-	           cust_type_products AS (SELECT productline_header_id FROM cust_type_prices)
-	           SELECT id, description FROM cust_type_prices
-	       UNION
-	       SELECT id, description
-	           FROM {$this->tablename}
-	           WHERE productline_header_id NOT IN (SELECT * FROM cust_type_products)
-	           AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
-	           AND (slmaster_id = ? AND so_price_type_id is NULL)))
-	       UNION
-	       (WITH cust_prices AS
-	           (SELECT id, description, productline_header_id
-	               FROM {$this->tablename}
-	               WHERE productline_header_id NOT IN (SELECT * FROM cust_type_products)
+	               AND (slmaster_id IS NULL AND so_price_type_id IS NULL)))
+                ORDER BY description";
+	        
+	        $query = "WITH cust_prices AS
+	            (SELECT id, description, productline_header_id
+	               FROM so_productlines_overview
+	               WHERE (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
+	               AND (slmaster_id = ? AND so_price_type_id IS NULL)))),
+                cust_products AS (SELECT productline_header_id FROM cust_prices)
+                SELECT id, description FROM cust_prices
+                UNION
+                SELECT id, description
+	               FROM so_productlines_overview
+	               WHERE productline_header_id NOT IN (SELECT * FROM cust_products)
 	               AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
-	               AND (slmaster_id IS NULL AND so_price_type_id = ?)))),
-	           cust_products AS (SELECT productline_header_id FROM cust_prices)
-	           SELECT id, description FROM cust_prices
-	        UNION
-	        SELECT id, description
-	           FROM {$this->tablename}
-	           WHERE productline_header_id NOT IN (SELECT * FROM cust_type_products UNION SELECT * FROM cust_products)
-	           AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
-	           AND (slmaster_id IS NULL AND so_price_type_id IS NULL)))
-	       )
-	    ORDER BY description";
+	               AND (slmaster_id IS NULL AND so_price_type_id IS NULL)))
+                ORDER BY description";
+	    }
 	    
 	    if ($productsearch != '') {
 	        $query = $query_productsearch;
@@ -205,9 +249,9 @@ class SOProductline extends DataObject
 	    
 	    $db	= &DB::Instance();
 	    $rset = $db->Execute($query, $params);
-	    $rows = $rset->GetAssoc();
 	    
-	    if ($rset && !empty($rows)) {
+	    if ($rset) {
+	       $rows = $rset->GetAssoc();
 	       return $rows;
 	    }
 	    
