@@ -26,6 +26,9 @@
                 <h2>You've been logged out</h2>
                 <a class="button" href="/">Log in &raquo;</a>
             </div>
+            <div class="form">
+            	{flash}
+            </div>
             <div class="footer">
                 <p>{$config.BASE_TITLE} {$config.SYSTEM_VERSION} copyright &copy; <a href="http://www.uzerp.com/">uzERP LLP</a> 2007-{'Y'|date}</p>
                 <p>uzERP is Free Software released under the GNU/GPL Licence.</p>
