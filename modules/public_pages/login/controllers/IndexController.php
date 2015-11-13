@@ -139,11 +139,19 @@ class IndexController extends Controller
                 sendTo($controller, $action, $module, $_POST);
             } else {
                 $flash->addError('Your account is disabled');
+                if (! $authentication->interactive()) {
+                    $this->view->display($this->getTemplateName('logout'));
+                    exit();
+                }
             }
         } else {
+            if (! $authentication->interactive()) {
+                $flash->addError('System company access disabled');
+                $this->view->display($this->getTemplateName('logout'));
+                exit();
+            }
             $flash->addError('Incorrect username/password combination, please try again');
         }
-        
         $this->index();
         $this->_templateName = $this->getTemplateName('index');
     }
@@ -269,7 +277,7 @@ class IndexController extends Controller
         // don't show the login form for non-interactive logins
         $injector = $this->_injector;
         $authentication = $injector->Instantiate('LoginHandler');
-        if ($authentication->interactive() == false) {
+        if (! $authentication->interactive()) {
             $this->view->display($this->getTemplateName('logout'));
             exit();
         }
