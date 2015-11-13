@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Setting a custom theme now uses that theme instead of the default
 - Sales order add-line was showing multiple prices for an item
+- LDAP login fails if user or system company access disabled
 
 ### Added
 - Allow Sales Invoices to be allocated to Projects and Tasks
