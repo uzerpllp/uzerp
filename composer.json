@@ -2,7 +2,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://uzerp@bitbucket.org/uzerp/adodb.git"
+            "url": "https://github.com/uzerpllp/adodb.git"
         }
     ],
 
