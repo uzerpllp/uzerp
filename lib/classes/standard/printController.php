@@ -1812,7 +1812,7 @@ class printController extends Controller
 
                 // construct basic XML of data
                 foreach ($headers as $header => $title) {
-                    $xml .= $basetabs . "\t<" . $header . ">" . str_replace("&", "&amp;", $line_value[$header]) . "</" . $header . ">\r\n";
+                    $xml .= $basetabs . "\t<" . $header . ">" . str_replace(["&", "<"], ["&amp;", "&#60;"], $line_value[$header]) . "</" . $header . ">\r\n";
                 }
 
                 // if any user specified functions exist for the model call them
