@@ -34,6 +34,8 @@
 					<dt>Due Date</dt>
 					<dd>{input type='date'  attribute='due_date' label=' ' tags='none'}</dd>
 					{select attribute=owner}
+					{select attribute='sales_order_id' options=$sales_orders force=true}
+					{input type='checkbox' attribute='use_sorder_delivery' label='Use sales order delivery address'}
 					{select attribute='project_id' force=true}
 					{select attribute='task_id' options=$tasks force=true}
 				</dl>

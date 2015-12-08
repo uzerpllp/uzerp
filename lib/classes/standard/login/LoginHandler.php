@@ -1,16 +1,35 @@
 <?php
- 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+
+/**
+ * LoginHandler authorises a user to access the system
+ *
+ * @param AuthenticationGateway
+ * @version $Revision: 2.0 $
+ * @package login
+ * @author uzERP LLP
+ * @license GPLv3 or later
+ * @copyright (c) 2000 - 2015 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
+interface LoginHandler
+{
 
-/* $Revision: 1.2 $ */
-	
-interface LoginHandler {
-	public function __construct(AuthenticationGateway $gateway);
-	public function doLogin();
+    public function __construct(AuthenticationGateway $gateway);
 
+    /**
+     * Check username and password using AuthenticationGateway
+     *
+     * @return bool
+     */
+    public function doLogin();
+
+    /**
+     * Indicate if this is a interactive login handler
+     *
+     * For a login that requires the html form to be shown, return TRUE.
+     * Otherwise, return false.
+     *
+     * @return bool
+     */
+    public function interactive();
 }
 ?>

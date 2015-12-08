@@ -64,9 +64,15 @@
 				{grid_cell model=$model cell_num=7 field="uom_name"}
 					{$model->uom_name}
 				{/grid_cell}
-				{grid_cell model=$model cell_num=8 field="stitem"}
-					{$model->stitem}
-				{/grid_cell}
+				{if $model->stitem }
+					{grid_cell model=$model cell_num=8 field="stitem"}
+						{$model->stitem}
+					{/grid_cell}
+				{else}
+					{grid_cell model=$model cell_num=8 field="description"}
+					{$model->description}
+					{/grid_cell}
+				{/if}
 				{grid_cell model=$model cell_num=9 field="status"}
 					{$model->getFormatted('status')}
 				{/grid_cell}

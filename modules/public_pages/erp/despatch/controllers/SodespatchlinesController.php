@@ -1,9 +1,9 @@
 <?php
 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class SodespatchlinesController extends printController
@@ -161,7 +161,7 @@ class SodespatchlinesController extends printController
 		$despatch_number=$despatchheader->despatch_number;
 		$despatch_date=$despatchheader->despatch_date;
 		
-		$this->view->set('despatch_number', $despatch_number);		
+		$this->view->set('despatch_number', $despatch_number);
 		
 		$order = DataObjectFactory::Factory('SOrder');
 		$order->load($despatchheader->order_id);
@@ -193,7 +193,7 @@ class SodespatchlinesController extends printController
 											 )
 									   ),
 					'tag'=>'view despatch notes'
-				);			
+				);
 		
 		$actions['viewOrders']=array(
 					'link'=>array_merge($this->_modules
@@ -381,39 +381,41 @@ class SodespatchlinesController extends printController
 				
 				foreach ($despatches as $despatch)
 				{
-					
-					// Create transaction pair for Dispatch
-					$data=array();
-					$data['qty']=$despatch->despatch_qty;
-					$data['process_name']='D';
-					$data['process_id']=$despatch->despatch_number;
-					$data['whaction_id']=$despatch->despatch_action;
-					$data['stitem_id']=$despatch->stitem_id;
-					
-					$result=false;
-					
-					if (STTransaction::getTransferLocations($data, $errors))
+					if ($data['stitem_id'] != '')
 					{
-						$models=STTransaction::prepareMove($data, $errors);
-						if (count($errors)===0)
-						{
-							foreach ($models as $model)
-							{
-								$result=$model->save($errors);
-								if($result===false)
-								{
-									break;
-								}
-							}	
-						}
-					}
-					
-					if($result===false)
-					{
-						$flash->addErrors($errors);
-						$flash->addError('Error updating stock');
-						$db->FailTrans();
-						sendBack();
+    					// Create transaction pair for Dispatch
+    					$data=array();
+    					$data['qty']=$despatch->despatch_qty;
+    					$data['process_name']='D';
+    					$data['process_id']=$despatch->despatch_number;
+    					$data['whaction_id']=$despatch->despatch_action;
+    					$data['stitem_id']=$despatch->stitem_id;
+    					
+    					$result=false;
+    					
+    					if (STTransaction::getTransferLocations($data, $errors))
+    					{
+    						$models=STTransaction::prepareMove($data, $errors);
+    						if (count($errors)===0)
+    						{
+    							foreach ($models as $model)
+    							{
+    								$result=$model->save($errors);
+    								if($result===false)
+    								{
+    									break;
+    								}
+    							}
+    						}
+    					}
+    					
+    					if($result===false)
+    					{
+    						$flash->addErrors($errors);
+    						$flash->addError('Error updating stock');
+    						$db->FailTrans();
+    						sendBack();
+    					}
 					}
 					
 					$despatchline = DataObjectFactory::Factory('SODespatchLine');
@@ -610,6 +612,11 @@ class SodespatchlinesController extends printController
 			$id=$this->_data['id'];
 			$cc->add(new Constraint('stitem_id', '=', $id));
 		}
+		elseif (isset($this->_data['order_id']))
+		{
+		    $order_id=$this->_data['order_id'];
+		    $cc->add(new Constraint('order_id', '=', $order_id));
+		}
 		else
 		{
 			$cc->add(new Constraint('type', '=', 'O'));
@@ -632,7 +639,7 @@ class SodespatchlinesController extends printController
 				
 				$locations = $transferrules->getFromLocations($row->despatch_action);
 				
-				if (count($locations)>0)
+				if (count($locations)>0 and $row->stitem_id) //ignore PLs without stitem
 				{
 					// Should never be zero or somethingis very wrong!
 					$cc = new ConstraintChain();
@@ -643,6 +650,8 @@ class SodespatchlinesController extends printController
 				else
 				{
 					$stitems[$row->stitem_id]['despatch_action'][$row->despatch_action]=0;
+					// Flag it as a non-stock item
+					$stitems[$row->stitem_id]['non-stock']=true;
 				}
 			}
 		}
@@ -667,9 +676,13 @@ class SodespatchlinesController extends printController
 			$items[$row->order_number]['customer']=$row->customer;
 			$items[$row->order_number]['del_address']=$sorder->del_address->address;
 			
-			if ($stitems[$row->stitem_id]['despatch_action'][$row->despatch_action]>=0)
+			if ($stitems[$row->stitem_id]['non-stock']) // We can always despatch non-stock items
 			{
 				$items[$row->order_number]['line_number'][$row->line_number]['despatch']=true;
+			}
+			elseif ($stitems[$row->stitem_id]['despatch_action'][$row->despatch_action]>=0)
+			{
+			    $items[$row->order_number]['line_number'][$row->line_number]['despatch']=true;
 			}
 			else
 			{
@@ -679,6 +692,7 @@ class SodespatchlinesController extends printController
 			$items[$row->order_number]['line_number'][$row->line_number]['despatch_action']=$row->despatch_action;
 			$items[$row->order_number]['due_despatch_date']=$row->due_despatch_date;
 			$items[$row->order_number]['line_number'][$row->line_number]['stitem']=$row->stitem;
+			$items[$row->order_number]['line_number'][$row->line_number]['item_description']=$row->item_description;
 			$items[$row->order_number]['line_number'][$row->line_number]['delivery_note']=$row->delivery_note;
 			$items[$row->order_number]['line_number'][$row->line_number]['required']=$row->required;
 			$items[$row->order_number]['line_number'][$row->line_number]['stuom']=$row->stuom;
@@ -698,7 +712,7 @@ class SodespatchlinesController extends printController
 											 )
 									   ),
 					'tag'=>'view despatch notes'
-				);			
+				);
 
 		
 		$sidebar->addList(
@@ -768,7 +782,7 @@ class SodespatchlinesController extends printController
 											 )
 									   ),
 					'tag'=>'view despatch notes'
-				);			
+				);
 		$actions['viewfordispatch']=array(
 					'link'=>array_merge($this->_modules
 									   ,array('controller'=>$this->name
@@ -776,7 +790,7 @@ class SodespatchlinesController extends printController
 											 )
 									   ),
 					'tag'=>'view Orders for Despatch'
-				);			
+				);
 					
 		
 		$sidebar->addList(
@@ -866,7 +880,7 @@ class SodespatchlinesController extends printController
 		$extra['delivery_address']=$delivery_address;
 		
 		// generate the xml and add it to the options array
-		$options['xmlSource']=$this->generateXML(array('model'=>array($order,$despatchnote),
+		$options['xmlSource']=$this->generate_xml(array('model'=>array($order,$despatchnote),
 													   'extra'=>$extra
 													  )
 												);
@@ -878,7 +892,7 @@ class SodespatchlinesController extends printController
 		$json_response = $this->generate_output($this->_data['print'],$options);
 		
 //		if($response->status===true) {
-//			
+//
 //		}
 		
 		// now we've done our checks, output the original JSON for jQuery to use

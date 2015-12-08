@@ -1,12 +1,12 @@
 <?php
  
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
-class SOrder extends SPOrder { 
+class SOrder extends SPOrder {
 
 	protected $version = '$Revision: 1.75 $';
 	
@@ -73,6 +73,7 @@ class SOrder extends SPOrder {
 		$this->hasMany('SInvoice','invoices','sales_order_id');
 		$this->hasMany('STTransaction', 'transactions', 'process_id');
 		$this->hasMany('MFWorkorder', 'works_orders', 'order_id');
+		$this->hasMany('POrder', 'purchase_orders', 'sales_order_id', 'order_number');
 		
 		// Define field formats
 		$params			= DataObjectFactory::Factory('GLParams');
@@ -130,13 +131,19 @@ class SOrder extends SPOrder {
 					// TODO: Only want this rule to apply to 'New'
 //										 array('field'=>'status', 'criteria'=>"=='N'")
 										)
-			)
+			),
+			'purchase_orders'=>array('modules'=>array('link'=>array('module'=>'purchase_order')
+									 ,'new'=>array('module'=>'purchase_order'))
+					,'actions'=>array('link','new')
+					,'rules'=>array()
+					,'label'=>'Show Purchase Orders'
+					),
 		);
 		
 	}
 	
 	// fire when the DataObject has loaded
-	function cb_loaded($success) 
+	function cb_loaded($success)
 	{
 		
 		if (isset($this->_data['currency_id']))
@@ -246,7 +253,7 @@ class SOrder extends SPOrder {
 		{
 			return array();
 		}
-	}	
+	}
 
 	public function getInvoiceAddress ($id='')
 	{
@@ -281,7 +288,7 @@ class SOrder extends SPOrder {
 		{
 			return array();
 		}
-	}	
+	}
 
 	public function getEmail()
 	{
@@ -438,8 +445,8 @@ class SOrder extends SPOrder {
 		
 		$cc = new ConstraintChain();
 		
-		$cc->add(new Constraint('order_id', '=', $this->id));		
-		$cc->add(new Constraint('status', '!=', $so_line->cancelStatus()));	
+		$cc->add(new Constraint('order_id', '=', $this->id));
+		$cc->add(new Constraint('status', '!=', $so_line->cancelStatus()));
 			
 		$totals = $so_line->getSumFields(
 					array(
@@ -466,7 +473,7 @@ class SOrder extends SPOrder {
 		if ($linestatus['X']>0 &&
 				$this->lines->count()==($linestatus['X']))
 		{
-			return true;		
+			return true;
 		}
 		else
 		{
@@ -480,7 +487,7 @@ class SOrder extends SPOrder {
 		if ($linestatus['D']>0 &&
 				$this->lines->count()==($linestatus['D']+$linestatus['X']))
 		{
-			return true;		
+			return true;
 		}
 		else
 		{
@@ -494,7 +501,7 @@ class SOrder extends SPOrder {
 		if (($linestatus['D']>0 || $linestatus['I']>0) &&
 				$this->lines->count()==($linestatus['I']+$linestatus['D']+$linestatus['X']))
 		{
-			return true;		
+			return true;
 		}
 		else
 		{
@@ -508,7 +515,7 @@ class SOrder extends SPOrder {
 		if (($linestatus['I']>0) &&
 				$this->lines->count()==($linestatus['I']+$linestatus['X']))
 		{
-			return true;		
+			return true;
 		}
 		else
 		{
@@ -522,7 +529,7 @@ class SOrder extends SPOrder {
 		if (($linestatus['N']>0) &&
 				$this->lines->count()==($linestatus['N']+$linestatus['X']))
 		{
-			return true;		
+			return true;
 		}
 		else
 		{
@@ -561,7 +568,7 @@ class SOrder extends SPOrder {
 	{
 		if ($linestatus['D']>0 )
 		{
-			return true;		
+			return true;
 		}
 		else
 		{
@@ -577,9 +584,9 @@ class SOrder extends SPOrder {
 			if($key!='N' && $key!='X' && $value>0)
 			{
 				return true;
-			}			
+			}
 		}
-		return false;		
+		return false;
 	}
 
 	public function lineExistsInDespatchLines($line_id)
@@ -587,7 +594,7 @@ class SOrder extends SPOrder {
 		/**
 		 * if the line exists within so_despatchlines then return its dispatch
 		 * note number, if it doesn't exist, return -1
-		 */ 
+		 */
 		
 		$despatchnote = DataObjectFactory::Factory('SODespatchLine');
 		
@@ -600,12 +607,12 @@ class SOrder extends SPOrder {
 
 		if($despatchnote->isLoaded())
 		{
-			return $despatchnote->despatch_number;	
+			return $despatchnote->despatch_number;
 		}
 		else
 		{
 			return -1;
-		}	
+		}
 	}
 
 	public function status_value ($status)
@@ -685,7 +692,7 @@ class SOrder extends SPOrder {
 			elseif (!$orderline->save())
 			{
 				$errors[] = 'Order Line creation failed for line '.$line['line_number'];
-			}			
+			}
 		}
 		
 		if (count($errors)===0)

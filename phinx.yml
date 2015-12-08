@@ -1,5 +1,6 @@
 paths:
-    migrations: %%PHINX_CONFIG_DIR%%/migrations
+    migrations: %%PHINX_CONFIG_DIR%%/schema/phinx/migrations
+    migration_base_class: Uzerp\Phinx\UzerpMigration
 
 environments:
     default_migration_table: phinxlog
@@ -25,7 +26,7 @@ environments:
     development:
         adapter: pgsql
         host: 127.0.0.1
-        name: uzerp
+        name: dev
         user: sysadmin
         pass: ''
         port: 5432

@@ -1,16 +1,18 @@
 <?php
 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class PordersController extends printController
 {
 
 	protected $version='$Revision: 1.127 $';
-
+	
+    use getSalesOrderOptions;
+	
 	public function __construct($module=null,$action=null)
 	{
 		parent::__construct($module, $action);
@@ -167,7 +169,7 @@ class PordersController extends printController
 		{
 			$this->dataError();
 			sendBack();
-		}	
+		}
 		
 		$order = $this->_uses[$this->modeltype];
 		
@@ -380,13 +382,27 @@ class PordersController extends printController
 			$this->view->set('page_title', $this->getPageName($porder->getFormatted('type')));
 		}
 		
-		// This bit allows for projects and tasks 
+		// This bit allows for projects and tasks
 		if (!$porder->isLoaded() && !empty($this->_data['project_id']))
 		{
 			$porder->project_id = $this->_data['project_id'];
 		}
 		
 		$this->view->set('tasks', $this->getTaskList($porder->project_id));
+		
+		// PO to SO link
+		if (!$porder->isLoaded() && !empty($this->_data['sales_order_id']))
+		{
+		    $porder->sales_order_id = $this->_data['sales_order_id'];
+		}
+		
+		$this->view->set('sales_orders', $this->getSalesOrders($sales_order_id));
+		
+		// Use SO Delivery Address
+		if (!$porder->isLoaded() && !empty($this->_data['use_sorder_delivery']))
+		{
+		    $porder->use_sorder_delivery = $this->_data['use_sorder_delivery'];
+		}
 			
 	}
 
@@ -512,6 +528,7 @@ class PordersController extends printController
 		$linestatus		= $linestatuses['count'];
 		
 		$this->view->set('linevalue', $linestatuses['value']);
+		$this->view->set('use_sorder_delivery', $order->use_sorder_delivery);
 		
 		$porderline = DataObjectFactory::Factory('POrderLine');
 		$this->view->set('porderlines', $order->lines);
@@ -520,7 +537,7 @@ class PordersController extends printController
 		$supplier->load($order->plmaster_id);
 		
 		// Return list of users who can authorise
-		$po_obj = new DataObject('po_auth_summary');		
+		$po_obj = new DataObject('po_auth_summary');
 		$po_obj->idField='username';
 		$po_obj->identifierField='username';
 		
@@ -537,7 +554,7 @@ class PordersController extends printController
 		
 		// TODO: to make this generic, should do something like
 		// $can_edit = ($order->isAccessAllowed() || $can_authorise);
-		// which covers the following condition 
+		// which covers the following condition
 		// However, still need to get the list of allowed users!
 		// How to do this without duplicating effort!
 		
@@ -659,22 +676,34 @@ class PordersController extends printController
 									,'id'			=> $id
 									),
 					'tag'	=> 'view requisition profile'
-					);			
-		}	
+					);
+		}
 
 		if (($order->isNew() || $order->orderSent())
 			&& $order->type=='O')
 		{
 			$actions['printAcknowledgement'] = array(
-					'link'	=> array('modules'		=> $this->_modules
-									,'controller'	=> $this->name
-									,'action'		=> 'printDialog'
-									,'printaction'	=> 'printorder'
-									,'filename'		=> 'PO'.$order->order_number
-									,'id'			=> $id
-									),
-					'tag'	=> 'print Order'
-					);			
+				'link'	=> array('modules'		=> $this->_modules
+								,'controller'	=> $this->name
+								,'action'		=> 'printDialog'
+								,'printaction'	=> 'printorder'
+								,'filename'		=> 'PO'.$order->order_number
+								,'id'			=> $id
+							    ),
+				'tag'	=> 'print Order'
+				);
+			// Print a PO Schedule by specifying a 'report definition'
+			$actions['printSchedule'] = array(
+			    'link'	=> array('modules'		=> $this->_modules
+            			        ,'controller'	=> $this->name
+            			        ,'action'		=> 'printDialog'
+            			        ,'printaction'	=> 'printorder'
+            			        ,'report'       => 'PurchaseOrderSchedule'
+            			        ,'filename'		=> 'PO'.$order->order_number
+            			        ,'id'			=> $id
+			                    ),
+			    'tag'	=> 'print Schedule'
+			);
 		}
 		
 		if ($order->status==$order->isNew()
@@ -688,7 +717,7 @@ class PordersController extends printController
 									,'id'			=> $id
 									),
 					'tag'	=> 'Edit '.$type
-					);			
+					);
 				
 				$actions['add_lines'] = array(
 					'link'	=> array('modules'		=> $this->_modules
@@ -723,10 +752,10 @@ class PordersController extends printController
 									,'id'			=> $id
 									),
 					'tag'	=> 'Order Acknowledgement received'
-					);			
+					);
 		}
 		
-		if ($order->type=='R' 
+		if ($order->type=='R'
 			&& $order->lines->count()>0
 			&& $can_authorise
 			&& !$order->cancelled())
@@ -738,7 +767,7 @@ class PordersController extends printController
 									,'id'			=> $id
 									),
 					'tag'	=> 'Authorise Order'
-					);		
+					);
 		}
 		
 		if ($order->type=='R' && $order->allLinesNew($linestatus))
@@ -794,7 +823,7 @@ class PordersController extends printController
 								,'id'			=> key($invoice_list)
 								),
 				'tag'	=> 'View Invoice'
-				);			
+				);
 		}
 		
 		if (count($invoice_list)>1)
@@ -806,7 +835,7 @@ class PordersController extends printController
 								,'purchase_order_number' => $order->order_number
 								),
 				'tag'	=> 'View Invoices'
-				);			
+				);
 		}
 		
 		$sidebar->addList(
@@ -841,7 +870,7 @@ class PordersController extends printController
 		$this->view->set('delivery_address',$address);
 		
 		// Return list of users who can authorise
-		$po_obj = new DataObject('po_auth_summary');	
+		$po_obj = new DataObject('po_auth_summary');
 			
 		$po_obj->idField		 = 'username';
 		$po_obj->identifierField = 'username';
@@ -854,7 +883,7 @@ class PordersController extends printController
 			
 		// return lines grouped by glaccount_id and glcentre_id
 		// return a list of users who can authorise each individual line
-		$po_linesum_obj = new DataObject('po_linesum');		
+		$po_linesum_obj = new DataObject('po_linesum');
 		
 		$po_linesum_obj->idField		 = 'id';
 		$po_linesum_obj->identifierField = 'order_number';
@@ -870,7 +899,7 @@ class PordersController extends printController
 		
 		$sh->addConstraint(new Constraint('order_number', '=', $order->order_number));
 		
-		$po_linesum_col->load($sh);			
+		$po_linesum_col->load($sh);
 		
 		$this->view->set('po_linesum',$po_linesum_col);
 		
@@ -920,7 +949,7 @@ class PordersController extends printController
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view all requisitions/orders'
-				);			
+				);
 		
 		$sidebar->addList(
 			'Actions',
@@ -964,8 +993,8 @@ class PordersController extends printController
 									 ,'id'=>$id
 									 ),
 						'tag'=>'view requisition'
-					);			
-		}	
+					);
+		}
 		
 		// Get current username
 		$user = getCurrentUser();
@@ -981,9 +1010,9 @@ class PordersController extends printController
 												 ,'id'=>$id
 												 ),
 									'tag'=>'Edit '.$order->getField('type')->formatted
-									);			
+									);
 		}
-		if ($order->type=='R' 
+		if ($order->type=='R'
 				&& $order->lines->count()>0
 					&& $this->authRequisition($order)==true) {
 							$actions['authorise']=array(
@@ -993,7 +1022,7 @@ class PordersController extends printController
 												 ,'id'=>$id
 												 ),
 									'tag'=>'Authorise Order'
-								);		
+								);
 		}
 		
 		$sidebar->addList(
@@ -1179,7 +1208,7 @@ class PordersController extends printController
 						$flash->addMessage('Order Authorised');
 						sendTo($this->name, 'view', $this->_modules, array('id'=>$order->id));
 					}
-				}	
+				}
 			}
 			else
 			{
@@ -1304,21 +1333,21 @@ class PordersController extends printController
 								, 'action'=>'index'
 								),
 					'tag'=>'view all customers'
-				);			
+				);
 		$actions['neworder']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
 								 ,'action'=>'new'
 								 ),
 					'tag'=>'new order'
-				);			
+				);
 		$actions['vieworder']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view requisitions/orders'
-				);			
+				);
 
 		
 		$sidebar->addList(
@@ -1429,21 +1458,21 @@ class PordersController extends printController
 								, 'action'=>'index'
 								),
 					'tag'=>'view all customers'
-				);			
+				);
 		$actions['neworder']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
 								 ,'action'=>'new'
 								 ),
 					'tag'=>'new order'
-				);			
+				);
 		$actions['vieworder']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view requisitions/orders'
-				);			
+				);
 
 		
 		$sidebar->addList(
@@ -1485,21 +1514,21 @@ class PordersController extends printController
 								, 'action'=>'index'
 								),
 					'tag'=>'view all customers'
-				);			
+				);
 		$actions['neworder']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
 								 ,'action'=>'new'
 								 ),
 					'tag'=>'new order'
-				);			
+				);
 		$actions['vieworder']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view requisitions/orders'
-				);			
+				);
 
 		
 		$sidebar->addList(
@@ -1733,7 +1762,7 @@ class PordersController extends printController
 		{
 			$errors[] = 'Error getting order details';
 		}
-		else 
+		else
 		{
 			$linestatuses = $order->getLineStatuses();
 			
@@ -1956,7 +1985,7 @@ class PordersController extends printController
 		$key = 'purchase_order-porders-createinvoice';
 		
 		// get the data, but remove the _total item... it it exists
-		$lines_data = $_SESSION['persistent_selection'][$key];		
+		$lines_data = $_SESSION['persistent_selection'][$key];
 		unset($lines_data['_total']);
 		
 		$porder_descriptions = array();
@@ -2109,7 +2138,7 @@ class PordersController extends printController
 							{
 								$errors[] = 'Failed to create invoice line';
 								break;
-							}						
+							}
 						}
 					}
 					// Save header again to update status/values
@@ -2250,7 +2279,7 @@ class PordersController extends printController
 		$key = 'purchase_order-porders-matchinvoice';
 		
 		// get the data, but remove the _total item... it it exists
-		$lines_data = $_SESSION['persistent_selection'][$key];		
+		$lines_data = $_SESSION['persistent_selection'][$key];
 		
 		$selected_lines = false;
 		
@@ -2476,7 +2505,14 @@ class PordersController extends printController
 	
 	
 	/* output functions */
-	public function printOrder($status = 'generate')
+	
+	/**
+	 * printOrder
+	 *
+	 * @param string $status
+	 * @param string $report Name of the Report Definition to Use
+	 */
+	public function printOrder($status = 'generate', $report = 'PurchaseOrder')
 	{
 		
 		// load the model
@@ -2484,6 +2520,15 @@ class PordersController extends printController
 		{
 			$this->dataError();
 			sendBack();
+		}
+		
+		if (isset($this->_data['report'])) {
+		    $reportdef = new ReportDefinition();
+		    $reportdef->loadBy('name', $this->_data['report']);
+		    // If the report definition exists, then use it
+		    if ($reportdef->isLoaded()) {
+                $report = $this->_data['report'];
+		    }
 		}
 		
 		$order = $this->_uses[$this->modeltype];
@@ -2500,7 +2545,7 @@ class PordersController extends printController
 				'email'	=> ''
 			),
 			'filename'	=>	'PO'.$order->order_number,
-			'report'	=>	'PurchaseOrder'
+			'report'	=>	$report
 		);
 			
 		$order		= $this->_uses[$this->modeltype];
@@ -2561,8 +2606,16 @@ class PordersController extends printController
 		$extra['supplier_address'] = $supplier_address;
 
 		// set delivery address
-		$delivery_address = array('title' => 'Delivery Address:', 'name' => $extra['company_name']);
-		$delivery_address += $this->formatAddress($order->getDeliveryAddress());
+		if ($order->use_sorder_delivery == 't' && $order->sales_order_id > 0) {
+		    $sorder = DataObjectFactory::Factory('SOrder');
+		    $sorder->load($order->sales_order_id);
+		    $delivery_address = array('title' => 'Delivery Address:', 'name' => $sorder->customer);
+		    $delivery_address += $this->formatAddress($sorder->getDeliveryAddress());
+		} else {
+		    $delivery_address = array('title' => 'Delivery Address:', 'name' => $extra['company_name']);
+		    $delivery_address += $this->formatAddress($order->getDeliveryAddress());
+		}
+		
 		$extra['delivery_address'] = $delivery_address;
 	
 		// set billing address
@@ -2592,7 +2645,7 @@ class PordersController extends printController
 		// decode response, if it was successful update the print count
 		$response = json_decode($json_response, TRUE);
 		
-		if($response['status'] === TRUE && !self::updateStatus($order))
+		if($response['status'] === TRUE && $report == 'PurchaseOrder' && !self::updateStatus($order))
 		{
 			
 			// if the print was successful but the update wasn't...
@@ -2716,7 +2769,7 @@ class PordersController extends printController
 		$this->view->set('data',$output);
 		$this->setTemplateName('ajax_multiple');
 		
-	}	
+	}
 
 	/* protected functions */
 	protected function getPageName($base = null, $action = null)
@@ -2781,7 +2834,6 @@ class PordersController extends printController
 		return $tasks;
 	
 	}
-	
 }
 
 // End of PordersController

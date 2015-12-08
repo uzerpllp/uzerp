@@ -177,18 +177,22 @@ $(document).ready(function() {
 		switch(field) {
 		
 			case "product_search":
-				
-				$('#SInvoiceLine_productline_id').uz_ajax({
-					data:{
-						module			: 'sales_invoicing',
-						controller		: 'sinvoicelines',
-						action			: 'getProductLines',
-						product_search	: $self.val(),
-						slmaster_id		: $('#SInvoice_slmaster_id').val(),
-						limit			: $('#prod_search_limit').val(),
-						ajax			: ''
-					}
-				});
+				$('label.info').remove(); /* remove any form errors */
+				if ($self.val() !='' && $self.val().length >= 3){ /* don't search if empty or we'll return 1000's of product lines to the select */
+					$('#SInvoiceLine_productline_id').uz_ajax({
+						data:{
+							module			: 'sales_invoicing',
+							controller		: 'sinvoicelines',
+							action			: 'getProductLines',
+							product_search	: $self.val(),
+							slmaster_id		: $('#SInvoice_slmaster_id').val(),
+							limit			: $('#prod_search_limit').val(),
+							ajax			: ''
+						}
+					});
+				} else {
+					$('<label class="info">3 or more characters needed for search</label>').insertAfter($self);
+				}
 				
 				break;
 				

@@ -1,25 +1,33 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] 2015-06-26
-### Added
-- Functionality to allow Sales Orders to be allocated to Projects and Tasks
 
-## [Unreleased] 2015-05-19
+## [unreleased]
+### Fixed
+- Setting a custom theme now uses that theme instead of the default
+- Sales order add-line was showing multiple prices for an item
+- LDAP login fails if user or system company access disabled
+
 ### Added
-- Functionality to allow Sales Invoices to be allocated to Projects and Tasks
+- Allow Sales Invoices to be allocated to Projects and Tasks
 - Works order view from Projects
-
-## [Unreleased][unreleased]
-### Changed
-- Simplify template for getting opportunity details from a project
-
-### Added
 - Add audit fields to projects
 - Add the ability to purchase orders and invoices from a task
+- New injector classes for optional LDAP authentication with Apache
+- Add a notes field to sales order line input. Not printed on outputs by default
+- Purchase orders can be linked to a sales order
+- Purchase order delivery address can be sourced from a linked sales order, for output only
+- Despatch notes can be creted for non-stock product lines
+- Products can be marked as 'not despatchable', i.e. thier product lines can't be added to despatch notes
+- Sales order lines can be released and added to a despatch note for the sales order sidebar
+- Purchase order schedule document print
+
+### Changed
+- Simplify template for getting opportunity details from a project
+- Phinx migrations moved to schema/phinx/migrations
 
 ### Removed
-- Unecessary action in the Task sidebar removed
+- Unnecessary action in the Task sidebar removed
 
 
 ## [1.5.2] - 2015-05-15
@@ -173,7 +181,7 @@ All notable changes to this project will be documented in this file.
 
 
 [unreleased]: https://bitbucket.org/uzerp/uzerp/branches/compare/master%0D1.5.2
-[1.5.1]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.2%0D1.5.1
+[1.5.2]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.2%0D1.5.1
 [1.5.1]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.1%0D1.5.0
 [1.5.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.0%0D1.4.0
 [1.4.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.4.0%0D1.3.11
