@@ -1,21 +1,17 @@
 <?php
 
 /**
- *	uzERP Purchase Order Search
+ *  Purchase Order Search
  *
- *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
- *	@license GPLv3 or later
- *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ *  Default options for purchase order search
  *
- *	uzERP is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	any later version.
+ *  @package purchase_orders
+ *  @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ *  @license GPLv3 or later
+ *  @copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
  */
 class pordersSearch extends BaseSearch
 {
-
-    protected $version = '$Revision: 1.21 $';
 
     protected $fields = array();
 
@@ -23,10 +19,21 @@ class pordersSearch extends BaseSearch
     {
         $search = new pordersSearch($defaults);
 
+        // Get relevant module preferences
+        $system_prefs = SystemPreferences::instance();
+        $viewAll = $system_prefs->getPreferenceValue('show-all-orders', 'purchase_order');
+
         // Search by Raised_By
-        $search->addSearchField('order', 'order_is', 'porder_status', array(
-            'Raised by me'
-        ));
+        if ($viewAll == 'on') {
+            $search->addSearchField('order', 'order_is', 'porder_status', array(
+                'Raised by me',
+                'Other Orders'
+            ));
+        } else {
+            $search->addSearchField('order', 'order_is', 'porder_status', array(
+                'Raised by me'
+            ));
+        }
 
         // Search by Order Number
         $search->addSearchField('order_number', 'order_number', 'equal', '', 'basic');
@@ -215,4 +222,4 @@ class pordersSearch extends BaseSearch
     }
 }
 
-// End of pordersSearch
+?>
