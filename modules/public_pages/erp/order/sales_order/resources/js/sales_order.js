@@ -70,6 +70,10 @@ $(document).ready(function() {
 					element	: '#SOrder_delivery_term_id',
 					field	: "delivery_term",
 					action	: "selected"
+				},
+				{
+			    	element	: '#SOrder_project_id',
+			    	field	: "project_id"
 				}
 			],
 			data:{
@@ -157,7 +161,27 @@ $(document).ready(function() {
 		}
 		
 	});
-
+	
+	/* sales_orders -> sorders -> new .... get task list from project */
+	$("#SOrder_project_id", "#sales_order-sorders-new").on('change',function(){
+		
+		$.uz_ajax({
+			target:{
+				element	: "#SOrder_task_id",
+				field	: 'task_id'
+		    },
+			data:{
+				module		: 'sales_order',
+				controller	: 'sorders',
+				action		: 'getTaskList',
+				project_id	: $('#SOrder_project_id').val(),
+				ajax		: ''
+			}
+		});
+		
+	});
+    
+    
 	/* sales_order -> sorders -> view */
 	
 	$(".edit-line a, .add_lines_related a").live('click', function(event){

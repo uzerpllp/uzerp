@@ -118,16 +118,8 @@ class ProjectbudgetsController extends Controller {
 		$this->view->set('model',$budget);
 		$total_cost=$budget->setup_cost+$budget->total_cost_rate;
 		$total_charge=$budget->setup_charge+$budget->total_charge_rate;
-		$this->view->set('setup_markup', round(($budget->setup_charge*100/$budget->setup_cost)-100,2));
-		$this->view->set('setup_margin',  round((1-($budget->setup_cost/$budget->setup_charge))*100,2));
-		$this->view->set('rate_markup',  round(($budget->charge_rate*100/$budget->cost_rate)-100,2));
-		$this->view->set('rate_margin',  round((1-($budget->cost_rate/$budget->charge_rate))*100,2));
-		$this->view->set('total_rate_markup',  round(($budget->total_charge_rate*100/$budget->total_cost_rate)-100,2));
-		$this->view->set('total_rate_margin',  round((1-($budget->total_cost_rate/$budget->total_charge_rate))*100,2));
-		$this->view->set('total_markup',  round(($total_charge*100/$total_cost)-100,2));
-		$this->view->set('total_margin',  round((1-($total_cost/$total_charge))*100,2));
-		
-		$sidebar=new SidebarController($this->view);
+ 
+ 		$sidebar=new SidebarController($this->view);
 		$sidebar->addList(
 			'currently_viewing',
 			array(
@@ -171,24 +163,40 @@ class ProjectbudgetsController extends Controller {
 		
 		$uom_id='';
 		switch ($_budget_item_type) {
+			case 'R':
+				$budgetitem=new SOProductline();				
+				$budgetitem->load($_budget_item_id);
+				$uom_id=$budgetitem->stuom_id;
+				$cost_rate=0;
+				$setup_cost=0;				
+				$charge_rate=$budgetitem->price;
+				$setup_charge=0;
+				break;			
 			case 'E':
 				$budgetitem=new ProjectEquipment();
 				$budgetitem->load($_budget_item_id);
 				$uom_id=$budgetitem->uom_id;
-				$charge_rate=$budgetitem->cost_rate;
-				$setup_charge=$budgetitem->setup_cost;
+				$cost_rate=$budgetitem->cost_rate;
+				$setup_cost=$budgetitem->setup_cost;
+				$charge_rate=0;
+				$setup_charge=0;
 				break;
 			case 'M':
 				$budgetitem=new STItem();
 				$budgetitem->load($_budget_item_id);
 				$uom_id=$budgetitem->uom_id;
-				$charge_rate=$budgetitem->latest_cost;
+				$cost_rate=$budgetitem->latest_cost;
+				$setup_cost=0;
+				$charge_rate=0;
 				$setup_charge=0;
 				break;
-			case 'R':
+			case 'L':
 				$budgetitem=new MFResource();
 				$budgetitem->load($_budget_item_id);
-				$charge_rate=$budgetitem->resource_rate;
+				$cost_rate=$budgetitem->resource_rate;
+				$uom_id=11;
+				$setup_cost=0;
+				$charge_rate=0;
 				$setup_charge=0;
 				break;
 			default:
@@ -199,6 +207,8 @@ class ProjectbudgetsController extends Controller {
 		{
 			$output['description']=array('data'=>$budgetitem->getIdentifierValue(),'is_array'=>false);
 			$output['uom_id']=array('data'=>$uom_id,'is_array'=>false);
+			$output['cost_rate']=array('data'=>$cost_rate,'is_array'=>false);
+			$output['setup_cost']=array('data'=>$setup_cost,'is_array'=>false);
 			$output['charge_rate']=array('data'=>$charge_rate,'is_array'=>false);
 			$output['setup_charge']=array('data'=>$setup_charge,'is_array'=>false);
 		}
@@ -206,6 +216,8 @@ class ProjectbudgetsController extends Controller {
 		{
 			$output['description']=array('data'=>'','is_array'=>false);
 			$output['uom_id']=array('data'=>'','is_array'=>false);
+			$output['cost_rate']=array('data'=>0,'is_array'=>false);
+			$output['setup_cost']=array('data'=>0,'is_array'=>false);			
 			$output['charge_rate']=array('data'=>0,'is_array'=>false);
 			$output['setup_charge']=array('data'=>0,'is_array'=>false);
 		}
@@ -223,13 +235,16 @@ class ProjectbudgetsController extends Controller {
 		if(!empty($this->_data['budget_item_type'])) { $_budget_item_type=$this->_data['budget_item_type']; }
 				
 		switch ($_budget_item_type) {
+			case 'R':
+				$budgetitem=new SOProductline();
+				break;
 			case 'E':
 				$budgetitem=new ProjectEquipment();
 				break;
 			case 'M':
 				$budgetitem=new STItem();
 				break;
-			case 'R':
+			case 'L':
 				$budgetitem=new MFResource();
 				break;
 			default:

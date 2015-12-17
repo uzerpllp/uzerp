@@ -44,16 +44,19 @@ class ProjectBudget extends DataObject {
 		$this->getField('charge_rate')->setFormatter(new PriceFormatter());
 		$this->getField('total_charge_rate')->setFormatter(new PriceFormatter());
 		
-// The name for these links is determined from the source and type on the GL Transaction
+// The name for these links is determined from the enumerated type
 		switch (strtoupper($item_type)) {
+			case 'R' :
+				$this->hasOne('SOProductline', 'budget_item_id', 'r');
+				break;
 			case 'E' :
 				$this->hasOne('Equipment', 'budget_item_id', 'e');
 				break;
 			case 'M' :
 				$this->hasOne('STItem', 'budget_item_id', 'm');
 				break;
-			case 'R' :
-				$this->hasOne('MFResource', 'budget_item_id', 'r');
+			case 'L' :
+				$this->hasOne('MFResource', 'budget_item_id', 'l');
 				break;
 		}
 		
@@ -69,9 +72,10 @@ class ProjectBudget extends DataObject {
 		
 // Define enumerated types
  		$this->setEnum('budget_item_type'
-							,array('M'=>'Materials'
+							,array('R'=>'Revenue'
+								,'M'=>'Materials'
+								,'L'=>'Labour'
 								,'E'=>'Equipment'
-								,'R'=>'Resources'
 								,'O'=>'Other'
 								  )
 						);

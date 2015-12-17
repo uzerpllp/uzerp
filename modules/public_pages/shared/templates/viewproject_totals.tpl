@@ -4,6 +4,7 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {* $Revision: 1.5 $ *}
+{content_wrapper title="Project Totals"}
 {data_table}
 	<thead>
 		<tr>
@@ -14,28 +15,25 @@
 				Setup Costs
 			</th>
 			<th class=right>
-				Setup Charges
+				Setup Revenue
 			</th>
 			<th class=right>
-				Total Rate Costs
+				Other Costs
 			</th>
 			<th class=right>
-				Total Rate Charges
+				Other Revenue
 			</th>
 			<th class=right>
 				Total Budget Costs
 			</th>
 			<th class=right>
-				Total Budget Charges
+				Total Budget Revenue
 			</th>
 			<th class=right>
 				Hours to Date
 			</th>
 			<th class=right>
-				Total Costs
-			</th>
-			<th class=right>
-				Total Charges
+				Costs to Date
 			</th>
 			<th class=right>
 				Invoiced
@@ -48,34 +46,31 @@
 				{$budget_type}
 			</td>
 			<td align=right>
-				{$budget.setup_cost}
+				{$budget.setup_cost|number_format:2:".":","}
 			</td>
 			<td align=right>
-				{$budget.setup_charge}
+				{$budget.setup_charge|number_format:2:".":","}
 			</td>
 			<td align=right>
-				{$budget.total_cost_rate}
+				{$budget.total_cost_rate|number_format:2:".":","}
 			</td>
 			<td align=right>
-				{$budget.total_charge_rate}
+				{$budget.total_charge_rate|number_format:2:".":","}
 			</td>
 			<td align=right>
-				{$budget.setup_cost+$budget.total_cost_rate}
+				{($budget.setup_cost+$budget.total_cost_rate)|number_format:2:".":","}
 			</td>
 			<td align=right>
-				{$budget.setup_charge+$budget.total_charge_rate}
+				{($budget.setup_charge+$budget.total_charge_rate)|number_format:2:".":","}
 			</td>
 			<td align=right>
-				{$budget.total_hours}
+				{$budget.total_hours|number_format:1:".":","}
 			</td>
 			<td align=right>
-				{$budget.total_costs}
+				{$budget.total_costs|number_format:2:".":","}
 			</td>
 			<td align=right>
-				{$budget.total_charges}
-			</td>
-			<td align=right>
-				{$budget.total_invoiced}
+				{$budget.total_invoiced|number_format:2:".":","}
 			</td>
 		</tr>
 		{assign var=total_setup_cost value="{$total_setup_cost + $budget.setup_cost}"}
@@ -84,7 +79,6 @@
 		{assign var=total_charge_rate value="{$total_charge_rate + $budget.total_charge_rate}"}
 		{assign var=total_hours value="{$total_hours + $budget.total_hours}"}
 		{assign var=total_costs value="{$total_costs + $budget.total_costs}"}
-		{assign var=total_charges value="{$total_charges + $budget.total_charges}"}
 		{assign var=total_invoiced value="{$total_invoiced + $budget.total_invoiced}"}
 	{foreachelse}
 		No budgets found!
@@ -94,34 +88,32 @@
 			Totals
 		</td>
 		<td class="sub_total" align=right>
-			{$total_setup_cost}
+			{$total_setup_cost|number_format:2:".":","}
 		</td>
 		<td class="sub_total" align=right>
-			{$total_setup_charge}
+			{$total_setup_charge|number_format:2:".":","}
 		</td>
 		<td class="sub_total" align=right>
-			{$total_cost_rate}
+			{$total_cost_rate|number_format:2:".":","}
 		</td>
 		<td class="sub_total" align=right>
-			{$total_charge_rate}
+			{$total_charge_rate|number_format:2:".":","}
 		</td>
 		<td class="sub_total" align=right>
-			{$total_setup_cost+$total_cost_rate}
+			{($total_setup_cost+$total_cost_rate)|number_format:2:".":","}
 		</td>
 		<td class="sub_total" align=right>
-			{$total_setup_charge+$total_charge_rate}
+			{($total_setup_charge+$total_charge_rate)|number_format:2:".":","}
 		</td>
 		<td class="sub_total" align=right>
-			{$total_hours}
+			{$total_hours|number_format:1:".":","}
 		</td>
 		<td class="sub_total" align=right>
-			{$total_costs}
+			{$total_costs|number_format:2:".":","}
 		</td>
 		<td class="sub_total" align=right>
-			{$total_charges}
-		</td>
-		<td class="sub_total" align=right>
-			{$total_invoiced}
+			{$total_invoiced|number_format:2:".":","}
 		</td>
 	</tr>
 {/data_table}
+{/content_wrapper}

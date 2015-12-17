@@ -54,6 +54,10 @@
 					{view_section heading="Description" expand="closed"}
 						{view_data attribute="description" tags=none label=''}
 					{/view_section}
+					{view_section heading="Project Details" expand="closed"}					
+							{view_data attribute="project_id" label='Project'}
+							{view_data  attribute="task_id" label='Task'}
+					{/view_section}
 					{view_section heading="Despatch" expand="closed"}
 						{view_data attribute="despatch_date"}
 						{view_data attribute="due_date"}

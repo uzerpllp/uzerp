@@ -22,6 +22,7 @@ class SOrder extends SPOrder {
 		'currency',
 		'base_net_value',
 		'description',
+		'project_id',
 		'slmaster_id',
 		'person_id'
 	);
@@ -56,6 +57,8 @@ class SOrder extends SPOrder {
 		$this->belongsTo('Address', 'del_address_id', 'delivery_address');
 		$this->belongsTo('Address', 'inv_address_id', 'invoice_address');
 		$this->belongsTo('WHAction', 'despatch_action');
+		$this->belongsTo('Project', 'project_id', 'project');
+ 		$this->belongsTo('Task', 'task_id', 'task');
 		
 		$this->hasOne('SLCustomer', 'slmaster_id', 'customerdetails');
 		$this->hasOne('Person', 'person_id', 'persondetails');

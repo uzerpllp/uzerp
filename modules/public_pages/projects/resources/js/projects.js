@@ -71,11 +71,11 @@ $(document).ready(function() {
 		    	},
 		    	{
 					element	: "#ProjectBudget_cost_rate",
-					field	: 'charge_rate'
+					field	: 'cost_rate'
 		    	},
 		    	{
 					element	: "#ProjectBudget_setup_cost",
-					field	: 'setup_charge'
+					field	: 'setup_cost'
 		    	},
 		    	{
 					element	: "#ProjectBudget_charge_rate",

@@ -1,6 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+
 ## [unreleased]
 ### Fixed
 - Setting a custom theme now uses that theme instead of the default
@@ -25,9 +26,11 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Simplify template for getting opportunity details from a project
 - Phinx migrations moved to schema/phinx/migrations
+- Project Budget Controller to show budgets correctly
 
 ### Removed
 - Unnecessary action in the Task sidebar removed
+- Redundant EGS reports from projects
 
 
 ## [1.5.2] - 2015-05-15

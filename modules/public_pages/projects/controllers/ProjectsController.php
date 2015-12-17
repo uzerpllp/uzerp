@@ -60,67 +60,6 @@ class ProjectsController extends Controller {
 		$this->view->set('sidebar',$sidebar);
 	}
 	
-	public function work_type_analysis() {
-		$graph = new EGSPie(Project::getTotalsByWorkType(),'work_type_analysis'.EGS_COMPANY_ID);
-		$graph->setTitle('Analysis of Work-Type');
-		$graph->render();
-		$this->setTemplateName('image_view');
-		$this->view->set('img_src',$graph->getFilename());
-	}
-	
-	public function category_analysis() {
-		$graph = new EGSPie(Project::getTotalsByCategory(),'category'.EGS_COMPANY_ID);
-		$graph->setTitle('Project Category');
-		$graph->render();
-		$this->setTemplateName('image_view');
-		$this->view->set('img_src',$graph->getFilename());
-	}
-	
-	public function geographical_analysis() {
-		$graph = new EGSPie(Project::getTotalsByCountry(),'country'.EGS_COMPANY_ID);
-		$graph->setTitle('Geographical Analysis');
-		$graph->render();
-		$this->setTemplateName('image_view');
-		$this->view->set('img_src',$graph->getFilename());
-	}
-	public function equipment_time_analysis() {
-		$graph = new EGSPie(Project::getTotalhoursByEquipment(),'equipment_time'.EGS_COMPANY_ID);
-		$graph->setTitle('Equipment Analysis');
-		$graph->render();
-		$this->setTemplateName('image_view');
-		$this->view->set('img_src',$graph->getFilename());
-	}
-	public function equipment_cost_analysis() {
-		$graph = new EGSPie(Project::getTotalcostByEquipment(),'equipment_cost'.EGS_COMPANY_ID);
-		$graph->setTitle('Equipment Cost Analysis');
-		$graph->render();
-		$this->setTemplateName('image_view');
-		$this->view->set('img_src',$graph->getFilename());
-	}
-	public function hour_type_analysis() {
-		$graph = new EGSPie(Project::getTotalHoursByHourType(),'labour_time'.EGS_COMPANY_ID);
-		$graph->setTitle('Labour Type Analysis');
-		$graph->render();
-		$this->setTemplateName('image_view');
-		$this->view->set('img_src',$graph->getFilename());
-	}
-	
-	public function equipment_usage_analysis() {
-		$graph = new EGSPie(Project::getEquipmentUsageByWorktype(),null,900,600);
-		$graph->setTitle('Equipment Usage Analysis');
-		$graph->render();
-		$this->setTemplateName('image_view');
-		$this->view->set('img_src',$graph->getFilename());
-	}
-
-	public function profit_loss_analysis() {
-		$graph = new EGSBar(Project::getProfitLossInformation(),'profit_loss_analysis'.EGS_COMPANY_ID);
-		$graph->setTitle('Profit / Loss Information');
-		$graph->render();
-		$this->setTemplateName('image_view');
-		$this->view->set('img_src',$graph->getFilename());
-	}
-	
 	public function resourcesindex(){
 		$this->view->set('clickaction', 'editresource');
 		parent::index(new ResourceCollection($this->_templateobject));
@@ -220,26 +159,7 @@ class ProjectsController extends Controller {
 
 		$this->sidebarRelatedItems($sidebar, $project);
 
-		$sidebarlist['link_purchase_orders']= array('tag'=>'link_purchase_orders'
-												  ,'link'=> array('modules'=>$this->_modules
-												  				 ,'controller'=>'projectcostcharges'
-												  				 ,'action'=>'link_purchase_orders'
-												  				 ,'project_id'=>$project->id)
-												  ,'new'=> array('modules'=>$this->_modules
-												  				 ,'controller'=>'projectcostcharges'
-												  				 ,'action'=>'new_purchase_order'
-												  				 ,'project_id'=>$project->id)
-												  );
-		$sidebarlist['link_sales_invoices']= array('tag'=>'link_sales_invoices'
-												  ,'link'=> array('modules'=>$this->_modules
-												  				 ,'controller'=>'projectcostcharges'
-												  				 ,'action'=>'link_sales_invoices'
-												  				 ,'project_id'=>$project->id)
-												  ,'new'=> array('modules'=>$this->_modules
-												  				 ,'controller'=>'projectcostcharges'
-												  				 ,'action'=>'new_sales_invoice'
-												  				 ,'project_id'=>$project->id)
-												  );
+	
 		$sidebarlist['view_project_totals']= array('tag'=>'view_project_totals'
 												  ,'link'=> array('modules'=>$this->_modules
 												  				 ,'controller'=>$this->name
@@ -283,9 +203,14 @@ class ProjectsController extends Controller {
 		
 		$projectbudgets=new ProjectBudget();
 		$budget_totals=$projectbudgets->getTotals($project->id);
+
+		$budget_totals['Revenue']=array_merge_recursive($budget_totals['Revenue']
+													, $project->getSalesTotals());
 		
 		$budget_totals['Other']=array_merge_recursive($budget_totals['Other']
 													, $project->getExpensesTotals());
+													
+													
 		
 		$projectcostscharges=new ProjectCostCharge();
 		$budget_totals['Materials']=array_merge_recursive($budget_totals['Materials']
@@ -295,7 +220,7 @@ class ProjectsController extends Controller {
 		$budget_totals['Equipment']=array_merge_recursive($budget_totals['Equipment']
 														, $projectequipment->getChargeTotals($project->id));
 	
-		$budget_totals['Resources']=array_merge_recursive($budget_totals['Resources']
+		$budget_totals['Labour']=array_merge_recursive($budget_totals['Labour']
 														, $project->getHourTotals());
 
 		$this->view->set('budget_totals', $budget_totals);

@@ -61,6 +61,7 @@ class Project extends DataObject {
 //		$this->hasMany('ProjectCostCharge', 'sales_invoices', 'project_id');
 		$this->hasMany('POrder','porders');
 		$this->hasMany('PInvoice','pinvoices');
+		$this->hasMany('SOrder','sorders');
 		$this->hasMany('SInvoice','sinvoices');
 		$this->hasMany('MFWorkorder','mfworkorders');	
 		$tasks=new TaskCollection(new Task);
@@ -113,6 +114,12 @@ class Project extends DataObject {
 												,'actions'=>array('link','new')
 												,'rules'=>array()
 												,'label'=>'Show Purchase Invoices'
+												),
+										'sorders'=>array('modules'=>array('link'=>array('module'=>'sales_order')
+																 ,'new'=>array('module'=>'sales_order'))
+												,'actions'=>array('link')
+												,'rules'=>array()
+												,'label'=>'Show Sales Orders'
 												),
 										'sinvoices'=>array('modules'=>array('link'=>array('module'=>'sales_invoicing')
 																 ,'new'=>array('module'=>'sales_invoicing'))
@@ -287,6 +294,23 @@ class Project extends DataObject {
 
 		return $totals;
 		
+	}
+	
+	public function getSalesTotals () {
+		
+		$expenses=new SInvoice();
+		$cc=new ConstraintChain();
+				
+		$cc->add(new Constraint('project_id', '=', $this->id));
+
+		$totals=$expenses->getSumFields(
+					array(
+							'net_value'
+						),
+						$cc
+					);
+
+		return array('total_invoiced'=>$totals['net_value']);
 	}
 	
 }

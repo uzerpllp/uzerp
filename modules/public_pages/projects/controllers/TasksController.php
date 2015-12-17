@@ -385,7 +385,7 @@ class TasksController extends Controller {
 		$budget_totals['Equipment']=array_merge_recursive($budget_totals['Equipment']
 														, $projectequipment->getChargeTotals($task->project_id, $task->id));
 	
-		$budget_totals['Resources']=array_merge_recursive($budget_totals['Resources']
+		$budget_totals['Labour']=array_merge_recursive($budget_totals['Labour']
 														, $task->getHourTotals());
 														
 		$this->view->set('budget_totals', $budget_totals);
