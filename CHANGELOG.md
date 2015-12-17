@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - Products can be marked as 'not despatchable', i.e. thier product lines can't be added to despatch notes
 - Sales order lines can be released and added to a despatch note for the sales order sidebar
 - Purchase order schedule document print
+- Site-wide preference to list all purchase orders, instead of only those raised by the logged in user.
 
 ### Changed
 - Simplify template for getting opportunity details from a project
