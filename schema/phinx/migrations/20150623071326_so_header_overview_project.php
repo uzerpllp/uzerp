@@ -1,29 +1,22 @@
 <?php
-
 use Phinx\Migration\AbstractMigration;
 
+/**
+ * Phinx Migration
+ *
+ * Update Sales Order Header view - project link
+ *
+ * @author uzERP LLP
+ * @license GPLv3 or later
+ * @copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ */
 class SoHeaderOverviewProject extends AbstractMigration
 {
-    /**
-     * Change Method.
-     *
-     * More information on this method is available here:
-     * http://docs.phinx.org/en/latest/migrations.html#the-change-method
-     *
-     * Uncomment this method if you would like to use it.
-     *
-    public function change()
-    {
-    }
-    */
-    
-    /**
-     * Migrate Up.
-     */
+
     public function up()
     {
-	 	$soheaderoverview = <<<'VIEW'
-CREATE OR REPLACE VIEW so_headeroverview AS 
+        $soheaderoverview = <<<'VIEW'
+CREATE OR REPLACE VIEW so_headeroverview AS
  SELECT so.id,
     so.order_number,
     so.slmaster_id,
@@ -81,15 +74,11 @@ CREATE OR REPLACE VIEW so_headeroverview AS
    LEFT JOIN projects prj ON so.project_id = prj.id;
 VIEW;
 
-
-
-		// we need to save any dependencies for so_headeroverview
-		$this->query("select deps_save_and_drop_dependencies('public', 'so_headeroverview')");
-		$this->query('DROP VIEW so_headeroverview');
-		$this->query($soheaderoverview);
-		$this->query('ALTER TABLE so_headeroverview OWNER TO "www-data"');
-		$this->query("select deps_restore_dependencies('public', 'so_headeroverview')");
-    
+        $this->query("select deps_save_and_drop_dependencies('public', 'so_headeroverview')");
+        $this->query('DROP VIEW so_headeroverview');
+        $this->query($soheaderoverview);
+        $this->query('ALTER TABLE so_headeroverview OWNER TO "www-data"');
+        $this->query("select deps_restore_dependencies('public', 'so_headeroverview')");
     }
 
     /**
@@ -97,8 +86,8 @@ VIEW;
      */
     public function down()
     {
-	 	$soheaderoverview = <<<'VIEW'
-CREATE OR REPLACE VIEW so_headeroverview AS 
+        $soheaderoverview = <<<'VIEW'
+CREATE OR REPLACE VIEW so_headeroverview AS
  SELECT so.id,
     so.order_number,
     so.slmaster_id,
@@ -149,17 +138,13 @@ CREATE OR REPLACE VIEW so_headeroverview AS
    JOIN cumaster twc ON so.twin_currency_id = twc.id
    LEFT JOIN wh_actions wa ON so.despatch_action = wa.id
    LEFT JOIN addressoverview da ON so.del_address_id = da.id
-   LEFT JOIN addressoverview ia ON so.inv_address_id = ia.id; 
+   LEFT JOIN addressoverview ia ON so.inv_address_id = ia.id;
 VIEW;
 
-
-
-		// we need to save any dependencies for so_headeroverview
-		$this->query("select deps_save_and_drop_dependencies('public', 'so_headeroverview')");
-		$this->query('DROP VIEW so_headeroverview');
-		$this->query($soheaderoverview);
-		$this->query('ALTER TABLE so_headeroverview OWNER TO "www-data"');
-		$this->query("select deps_restore_dependencies('public', 'so_headeroverview')");
-
+        $this->query("select deps_save_and_drop_dependencies('public', 'so_headeroverview')");
+        $this->query('DROP VIEW so_headeroverview');
+        $this->query($soheaderoverview);
+        $this->query('ALTER TABLE so_headeroverview OWNER TO "www-data"');
+        $this->query("select deps_restore_dependencies('public', 'so_headeroverview')");
     }
 }
