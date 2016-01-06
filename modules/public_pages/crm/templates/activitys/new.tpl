@@ -12,7 +12,7 @@
 					{input type='hidden'  attribute='id' }
 					{input type='hidden'  attribute='usercompanyid' }
 					{select  attribute='opportunity_id' }
-					{input type='text'  attribute='name' class="compulsory" }
+					{input type='text'  attribute='name' class="compulsory" force=true}
 					{input type='date'  attribute='startdate' }
 					{input type='date'  attribute='enddate' }
 					{input type='date'  attribute='completed' }
@@ -20,12 +20,13 @@
 					{select attribute='type_id' }
 					{select attribute='campaign_id' }
 					{select attribute='company_id' constrains='person_id'}
-					{select attribute='person_id' depends='company_id'}
+					{select attribute='person_id' depends='company_id' }
 					{select attribute='assigned'}
-					{textarea  attribute='description' }
+					{textarea  attribute='description' force=true}
 					{submit}
 				{/view_section}
 			</dl>
 		{/with}
 	{/form}
+    {include file="elements/cancelForm.tpl"}
 {/content_wrapper}
