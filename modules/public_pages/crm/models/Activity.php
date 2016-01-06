@@ -19,7 +19,9 @@ class Activity extends DataObject
         'company' => 'Company',
         'person' => 'Person',
         'startdate' => 'Start Date',
-        'enddate' => 'End Date'
+        'enddate' => 'End Date',
+        'type' => 'Type',
+        'assigned' => 'Assigned'
     );
 
     function __construct($tablename = 'activities')
@@ -31,14 +33,12 @@ class Activity extends DataObject
         $this->orderdir = 'desc';
 
         $this->belongsTo('Activitytype', 'type_id', 'type');
-        $this->belongsTo('User', 'owner', 'activity_owner');
-        $this->belongsTo('User', 'assigned', 'activity_assigned');
-        $this->belongsTo('User', 'alteredby', 'activity_alteredby');
-        $this->belongsTo('Opportunity', 'opportunity_id', 'opportunity');
+        $this->belongsTo('User', 'assigned', 'assigned');
+        //$this->belongsTo('Opportunity', 'opportunity_id', 'opportunity');
         $this->belongsTo('Campaign', 'campaign_id', 'campaign');
         $this->belongsTo('Company', 'company_id', 'company');
         $this->belongsTo('Person', 'person_id', 'person', null, 'surname || \', \' || firstname');
     }
 }
+?>
 
-// End of Activity
