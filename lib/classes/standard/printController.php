@@ -87,31 +87,34 @@ class printController extends Controller
 
         $model = $collection->getModel();
 
-        foreach ($model->getFields() as $fieldname => $field) {
-            if ($fieldname != 'id' && $fieldname != 'usercompanyid' && substr($fieldname, - 3) != '_id' && ! isset($model->belongsToField[$fieldname])) {
-                $display_fields[$fieldname] = $field->tag;
-            }
-        }
-
-        $selected_fields = array();
-
-        if (isset($this->_data['Search']['display_fields'])) {
-            foreach ($this->_data['Search']['display_fields'] as $fieldname => $field) {
-                $selected_fields[$fieldname] = prettify($field);
-            }
-        } else {
-            foreach ($collection->getFields() as $fieldname => $field) {
-                if (substr($fieldname, - 3) != '_id') {
-                    $selected_fields[$fieldname] = $field->tag;
+        // If selection of display fields is disabled, don't set them up
+        if (!$this->search->disable_field_selection){
+            foreach ($model->getFields() as $fieldname => $field) {
+                if ($fieldname != 'id' && $fieldname != 'usercompanyid' && substr($fieldname, - 3) != '_id' && ! isset($model->belongsToField[$fieldname])) {
+                    $display_fields[$fieldname] = $field->tag;
                 }
             }
+
+            $selected_fields = array();
+
+            if (isset($this->_data['Search']['display_fields'])) {
+                foreach ($this->_data['Search']['display_fields'] as $fieldname => $field) {
+                    $selected_fields[$fieldname] = prettify($field);
+                }
+            } else {
+                foreach ($collection->getFields() as $fieldname => $field) {
+                    if (substr($fieldname, - 3) != '_id') {
+                        $selected_fields[$fieldname] = $field->tag;
+                    }
+                }
+            }
+
+            $this->view->set('selected_fields', $selected_fields);
+
+            $display_fields = array_diff($display_fields, $selected_fields);
+
+            $this->view->set('display_fields', $display_fields);
         }
-
-        $this->view->set('selected_fields', $selected_fields);
-
-        $display_fields = array_diff($display_fields, $selected_fields);
-
-        $this->view->set('display_fields', $display_fields);
 
         if (! isset($this->_data['ajax_print'])) {
             parent::index($collection, $sh, $c_query);
