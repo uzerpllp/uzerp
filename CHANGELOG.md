@@ -22,6 +22,8 @@ All notable changes to this project will be documented in this file.
 - Sales order lines can be released and added to a despatch note for the sales order sidebar
 - Purchase order schedule document print
 - Site-wide preference to list all purchase orders, instead of only those raised by the logged in user.
+- Improvements to CRM Activities
+- Statement date and page shown in cashbook transactions view
 
 ### Changed
 - Simplify template for getting opportunity details from a project
