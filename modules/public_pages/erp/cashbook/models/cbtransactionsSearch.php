@@ -1,20 +1,20 @@
 <?php
 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class cbtransactionsSearch extends BaseSearch {
 
 	protected $version='$Revision: 1.8 $';
-	
+
 	public static function useDefault($search_data=null, &$errors=array(), $defaults=null) {
 		$search = new cbtransactionsSearch($defaults);
-		
+
 		$cbtrans = DataObjectFactory::Factory('CBTransaction');
-		
+
 // Search by Account
 		$search->addSearchField(
 			'cb_account_id',
@@ -64,7 +64,7 @@ class cbtransactionsSearch extends BaseSearch {
 		$options=array(''=>'All');
 		$options+=$cbtrans->getEnumOptions('source');
 		$search->setOptions('source',$options);
-		
+
 // Search by Reference
 		$search->addSearchField(
 			'reference',
@@ -91,21 +91,29 @@ class cbtransactionsSearch extends BaseSearch {
 			'',
 			'advanced'
 		);
-		
+
 // Search by status
 		$search->addSearchField(
-				'statement_date',
-				'Type',
-				'null',
-				'NULL',
-				'basic'
+				'status',
+				'Status',
+				'select',
+		         ''
 				);
 
 		$options=array(''=>'All'
-					  ,'NOT NULL'=>'Reconciled'
-					  ,'NULL'=>'Unreconciled'
+					  ,'R'=>'Reconciled'
+					  ,'N'=>'Unreconciled'
 					  );
-		$search->setOptions('statement_date',$options);
+		$search->setOptions('status',$options);
+
+// Search by Transaction Date
+        $search->addSearchField(
+            'statement_date',
+            'Statement Date between',
+            'between',
+            '',
+            'advanced'
+        );
 
 // Search by Type
 		$search->addSearchField(
@@ -118,11 +126,11 @@ class cbtransactionsSearch extends BaseSearch {
 		$options=array(''=>'All');
 		$options+=$cbtrans->getEnumOptions('type');
 		$search->setOptions('type',$options);
-		
+
 		$search->setSearchData($search_data,$errors);
 		return $search;
 	}
-		
+
 }
 
 // End of cbtransactionsSearch
