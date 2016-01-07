@@ -1,9 +1,12 @@
 <?php
 
 /**
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ * Cashbook Transaction Model
  *
- *	Released under GPLv3 license; see LICENSE.
+ * @package cashbook
+ * @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ * @license GPLv3 or later
+ * @copyright (c) 2000-2016 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
 class CBTransaction extends DataObject
 {

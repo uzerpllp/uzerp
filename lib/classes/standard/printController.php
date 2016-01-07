@@ -1,14 +1,15 @@
 <?php
 
 /**
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ * Extends Controller to add output capabilities
  *
- *	Released under GPLv3 license; see LICENSE.
+ * @package standard
+ * @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ * @license GPLv3 or later
+ * @copyright (c) 2000-2016 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
 class printController extends Controller
 {
-
-    protected $version = '$Revision: 1.98 $';
 
     public $rec_count;
 
@@ -88,7 +89,7 @@ class printController extends Controller
         $model = $collection->getModel();
 
         // If selection of display fields is disabled, don't set them up
-        if (!$this->search->disable_field_selection){
+        if (! $this->search->disable_field_selection) {
             foreach ($model->getFields() as $fieldname => $field) {
                 if ($fieldname != 'id' && $fieldname != 'usercompanyid' && substr($fieldname, - 3) != '_id' && ! isset($model->belongsToField[$fieldname])) {
                     $display_fields[$fieldname] = $field->tag;
@@ -869,9 +870,8 @@ class printController extends Controller
             'type' => array(
                 'pdf' => '',
                 'xml' => ''
-            )
+            ),
             // 'csv' => ''
-            ,
             'output' => array(
                 'print' => '',
                 'save' => '',
@@ -1815,7 +1815,13 @@ class printController extends Controller
 
                 // construct basic XML of data
                 foreach ($headers as $header => $title) {
-                    $xml .= $basetabs . "\t<" . $header . ">" . str_replace(["&", "<"], ["&amp;", "&#60;"], $line_value[$header]) . "</" . $header . ">\r\n";
+                    $xml .= $basetabs . "\t<" . $header . ">" . str_replace([
+                        "&",
+                        "<"
+                    ], [
+                        "&amp;",
+                        "&#60;"
+                    ], $line_value[$header]) . "</" . $header . ">\r\n";
                 }
 
                 // if any user specified functions exist for the model call them
