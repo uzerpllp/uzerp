@@ -23,7 +23,9 @@ class CBTransaction extends DataObject
         'person_id',
         'source',
         'type',
-        'payment_type_id'
+        'payment_type_id',
+        'statement_date',
+        'statement_page'
     );
 
     function __construct($tablename = 'cb_transactions')
