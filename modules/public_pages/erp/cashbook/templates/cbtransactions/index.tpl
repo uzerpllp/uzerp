@@ -47,9 +47,15 @@
 			{heading_cell field="source" id=$id }
 				Source
 			{/heading_cell}
-			{heading_cell field="source" id=$id }
+			{heading_cell field="type" id=$id }
 				Type
 			{/heading_cell}
+			{heading_cell field="statement_date" id=$id }
+                Stmt Date
+            {/heading_cell}
+            {heading_cell field="statement_page" id=$id }
+                Stmt Page
+            {/heading_cell}
 		{/heading_row}
 		{foreach name=datagrid item=model from=$cbtransactions}
 			{assign var=totalValue value=$totalValue+$model->gross_value}
@@ -93,6 +99,12 @@
 				{grid_cell model=$model cell_num=10 field="type"}
 					{$model->getFormatted('type')}
 				{/grid_cell}
+				{grid_cell model=$model cell_num=10 field="statement_date"}
+                    {$model->getFormatted('statement_date')}
+                {/grid_cell}
+                {grid_cell model=$model cell_num=10 field="statement_page"}
+                    {$model->getFormatted('statement_page')}
+                {/grid_cell}
 			{/grid_row}
 		{foreachelse}
 			<tr>
