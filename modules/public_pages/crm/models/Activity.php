@@ -33,7 +33,7 @@ class Activity extends DataObject
         $this->orderdir = 'desc';
 
         $this->belongsTo('Activitytype', 'type_id', 'type');
-        $this->belongsTo('User', 'assigned', 'assigned');
+        $this->belongsTo('User', 'assigned', 'username');
         //$this->belongsTo('Opportunity', 'opportunity_id', 'opportunity');
         $this->belongsTo('Campaign', 'campaign_id', 'campaign');
         $this->belongsTo('Company', 'company_id', 'company');
