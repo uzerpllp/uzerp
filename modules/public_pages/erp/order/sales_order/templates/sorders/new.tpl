@@ -23,7 +23,7 @@
 					<input type="hidden" id="input_del_address_id" value="{$model->del_address_id}" />
 					<input type="hidden" id="input_inv_address_id" value="{$model->inv_address_id}" />
 					<input type="hidden" id="company_type" value="company" />
-					{if $model->net_value==0 and !$selected_customer}
+					{if $model->net_value==0}
 						{select attribute='slmaster_id' label='Customer' force=true value=$selected_customer use_collection=true} 
 					{else}
 						{input type='hidden' attribute="slmaster_id"}
