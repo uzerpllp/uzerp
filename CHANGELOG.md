@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - Site-wide preference to list all purchase orders, instead of only those raised by the logged in user.
 - Improvements to CRM Activities
 - Statement date and page shown in cashbook transactions view
+- Sales orders/quotes list and 'new' action from Person side-bar
 
 ### Changed
 - Simplify template for getting opportunity details from a project
@@ -185,12 +186,12 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
-[unreleased]: https://bitbucket.org/uzerp/uzerp/branches/compare/master%0D1.5.2
-[1.5.2]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.2%0D1.5.1
-[1.5.1]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.1%0D1.5.0
-[1.5.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.5.0%0D1.4.0
-[1.4.0]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.4.0%0D1.3.11
-[1.3.11]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.3.11%0D1.3.10
+[unreleased]: https://github.com/uzerpllp/uzerp/compare/1.5.2...master
+[1.5.2]: https://github.com/uzerpllp/uzerp/compare/1.5.1...1.5.2
+[1.5.1]: https://github.com/uzerpllp/uzerp/compare/1.5.0...1.5.1
+[1.5.0]: https://github.com/uzerpllp/uzerp/compare/1.4.0...1.5.0
+[1.4.0]: https://github.com/uzerpllp/uzerp/compare/1.3.11...1.4.0
+[1.3.11]: https://github.com/uzerpllp/uzerp/compare/2014.3.9...1.3.11
 [2014.3.9]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.3.10%0D2014.3.9
 [2014.3.8]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.9%0D2014.3.8
 [2014.3.7]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.8%0D2014.3.7
