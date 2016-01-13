@@ -189,7 +189,7 @@ class PersonsController extends printController
         $person_id = $person->{$person->idField};
         $party_id = $person->party_id;
 
-        company = DataObjectFactory::Factory('Company');
+        $company = DataObjectFactory::Factory('Company');
         $slcustomer = DataObjectFactory::Factory('SLCustomer');
 
         if ($person->isLoaded()) {
