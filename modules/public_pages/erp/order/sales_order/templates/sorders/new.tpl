@@ -23,7 +23,7 @@
 					<input type="hidden" id="input_del_address_id" value="{$model->del_address_id}" />
 					<input type="hidden" id="input_inv_address_id" value="{$model->inv_address_id}" />
 					<input type="hidden" id="company_type" value="company" />
-					{if $model->net_value==0}
+					{if $model->net_value==0 and !$selected_customer}
 						{select attribute='slmaster_id' label='Customer' force=true value=$selected_customer use_collection=true} 
 					{else}
 						{input type='hidden' attribute="slmaster_id"}
@@ -36,7 +36,7 @@
 					<input type="hidden" id="shipping_type" value="shipping" />
 					<input type='hidden' id='person_type' value='person' />
 					{input type="hidden" attribute="default_inv_address_id" value=$default_inv_address }
-					{select label='For Attn: of' attribute='person_id' nonone=true depends="slmaster_id"}
+					{select label='For Attn: of' attribute='person_id' nonone=true force=true depends="slmaster_id"}
 					{select attribute='del_address_id' options=$deliveryAddresses nonone=true label='Delivery Address: *'}
 					{select attribute='inv_address_id' options=$invoiceAddresses value=$invoice_address nonone=true label='Invoice Address'}
 					{select attribute='delivery_term_id' value=$customer_term}

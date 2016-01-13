@@ -189,10 +189,12 @@ class PersonsController extends printController
         $person_id = $person->{$person->idField};
         $party_id = $person->party_id;
 
-        $company = DataObjectFactory::Factory('Company');
+        company = DataObjectFactory::Factory('Company');
+        $slcustomer = DataObjectFactory::Factory('SLCustomer');
 
         if ($person->isLoaded()) {
             $company->load($person->company_id);
+            $slcustomer->loadBy('company_id', $person->company_id);
         }
 
         if (! $person->isLoaded()) {
@@ -457,6 +459,28 @@ class PersonsController extends printController
                 )
             )
         );
+
+        if ($slcustomer->isLoaded()) {
+            $items += array(
+                'sorders' => array(
+                    'tag' => 'Sales Orders',
+                    'link' => array(
+                        'module' => 'sales_order',
+                        'controller' => 'sorders',
+                        'action' => 'viewperson',
+                        'person_id' => $person_id
+                    ),
+                    'new' => array(
+                        'module' => 'sales_order',
+                        'controller' => 'sorders',
+                        'action' => 'new',
+                        'person_id' => $person_id,
+                        'slmaster_id' => $slcustomer->id
+                    )
+                )
+            );
+        }
+
         $sidebar->addList('related_items', $items);
 
         $category = DataObjectFactory::Factory('peopleInCategories');
