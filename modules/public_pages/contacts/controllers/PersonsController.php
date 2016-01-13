@@ -3,6 +3,7 @@
 /**
  *	Persons Controller
  *
+ *  @package contacts
  *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
  *	@license GPLv3 or later
  *	@copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
@@ -463,7 +464,7 @@ class PersonsController extends printController
         if ($slcustomer->isLoaded()) {
             $items += array(
                 'sorders' => array(
-                    'tag' => 'Sales Orders',
+                    'tag' => 'Sales Orders/Quotes',
                     'link' => array(
                         'module' => 'sales_order',
                         'controller' => 'sorders',
