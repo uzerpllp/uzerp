@@ -337,7 +337,7 @@ class SodespatchlinesController extends printController
                 $despatches->load($sh);
 
                 foreach ($despatches as $despatch) {
-                    if ($data['stitem_id'] != '') {
+                    if ($despatch->stitem_id != '') {
                         // Create transaction pair for Dispatch
                         $data = array();
                         $data['qty'] = $despatch->despatch_qty;
