@@ -1,8 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
 
-## [unreleased]
+## [1.6] - 2015-02-16
 ### Fixed
 - Setting a custom theme now uses that theme instead of the default
 - Sales order add-line was showing multiple prices for an item
@@ -186,20 +187,20 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
-[unreleased]: https://github.com/uzerpllp/uzerp/compare/1.5.2...master
+[1.6]: https://github.com/uzerpllp/uzerp/compare/1.5.2...1.6
 [1.5.2]: https://github.com/uzerpllp/uzerp/compare/1.5.1...1.5.2
 [1.5.1]: https://github.com/uzerpllp/uzerp/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/uzerpllp/uzerp/compare/1.4.0...1.5.0
 [1.4.0]: https://github.com/uzerpllp/uzerp/compare/1.3.11...1.4.0
-[1.3.11]: https://github.com/uzerpllp/uzerp/compare/2014.3.9...1.3.11
-[2014.3.9]: https://bitbucket.org/uzerp/uzerp/branches/compare/1.3.10%0D2014.3.9
-[2014.3.8]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.9%0D2014.3.8
-[2014.3.7]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.8%0D2014.3.7
-[2014.3.6]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.7%0D2014.3.6
-[2014.3.5]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.6%0D2014.3.5
-[2014.3.4]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.5%0D2014.3.4
-[2014.3.3]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.4%0D2014.3.3
-[2014.3.2]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.3%0D2014.3.2
-[2014.3.1]: https://bitbucket.org/uzerp/uzerp/branches/compare/2014.3.2%0D2014.3.1
-[2014.3]: http://www.uzerp.com/releases/uzerp-2014-3/
+[1.3.11]: https://github.com/uzerpllp/uzerp/compare/1.3.10...1.3.11
+[1.3.10]: https://github.com/uzerpllp/uzerp/compare/2014.3.9...1.3.10
+[2014.3.9]: https://github.com/uzerpllp/uzerp/compare/2014.3.8...2014.3.9
+[2014.3.8]: https://github.com/uzerpllp/uzerp/compare/2014.3.7...2014.3.8
+[2014.3.7]: https://github.com/uzerpllp/uzerp/compare/2014.3.6...2014.3.7
+[2014.3.6]: https://github.com/uzerpllp/uzerp/compare/2014.3.5...2014.3.6
+[2014.3.5]: https://github.com/uzerpllp/uzerp/compare/2014.3.4...2014.3.5
+[2014.3.4]: https://github.com/uzerpllp/uzerp/compare/2014.3.3...2014.3.4
+[2014.3.3]: https://github.com/uzerpllp/uzerp/compare/2014.3.2...2014.3.3
+[2014.3.2]: https://github.com/uzerpllp/uzerp/compare/2014.3.1...2014.3.2
+[2014.3.1]: https://github.com/uzerpllp/uzerp/compare/2014.3...2014.3.1
 
