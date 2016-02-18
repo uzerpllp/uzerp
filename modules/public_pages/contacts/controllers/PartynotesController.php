@@ -31,6 +31,8 @@ class PartynotesController extends Controller
 
     public function index()
     {
+        $this->view->set('allow_delete',true);
+
         // Search
         $errors = array();
 
