@@ -52,6 +52,7 @@ class PartynotesController extends Controller
 
     public function _new()
     {
+        // Set title when showing form after customer account stopped
         if ($this->_data['title'] == 'Account stopped') {
             $this->view->set('page_title', 'Enter reason for stopping account');
         }
