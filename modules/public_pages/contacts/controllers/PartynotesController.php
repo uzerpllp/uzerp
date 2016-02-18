@@ -50,6 +50,14 @@ class PartynotesController extends Controller
         parent::index(new PartyNoteCollection($this->_templateobject));
     }
 
+    public function _new()
+    {
+        if ($this->_data['title'] == 'Account stopped') {
+            $this->view->set('page_title', 'Enter reason for stopping account');
+        }
+        parent::_new();
+    }
+
     public function delete()
     {
         $flash = Flash::Instance();
