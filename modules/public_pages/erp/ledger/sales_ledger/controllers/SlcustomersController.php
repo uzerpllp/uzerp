@@ -1394,9 +1394,17 @@ class SlcustomersController extends LedgerController
             $flash->addError('Account Status update failed');
         }
 
-        sendTo($this->name, 'view', $this->_modules, array(
-            'id' => $this->_data['id']
-        ));
+        // If we're changing to stopped status, show the new Party Note form
+        if (!$customer->accountStopped())
+        {
+            sendTo('partynotes', 'new', 'contacts', array(
+                'party_id' => $customer->getPartyID(), 'title' => 'Account stopped', 'note_type' => 'contacts'
+            ));
+        } else {
+            sendTo($this->name, 'view', $this->_modules, array(
+                'id' => $this->_data['id']
+            ));
+        }
     }
 
     /*
