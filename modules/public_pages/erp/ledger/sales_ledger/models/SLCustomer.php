@@ -384,6 +384,12 @@ class SLCustomer extends DataObject
 
         return $ledgercategory->getUnassignedCompanies($this);
     }
-}
 
-// End of SLCustomer
+    /*
+     * @return integer Party model record ID
+     */
+    public function getPartyID()
+    {
+        return $this->companydetail->party_id;
+    }
+}
