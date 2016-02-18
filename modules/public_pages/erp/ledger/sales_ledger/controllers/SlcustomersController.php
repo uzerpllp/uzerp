@@ -458,6 +458,22 @@ class SlcustomersController extends LedgerController
             )
         );
 
+        $sidebarlist['viewnotes'] = array(
+            'tag' => 'View Notes',
+            'link' => array(
+                'module' => 'contacts',
+                'controller' => 'partynotes',
+                'action' => 'index',
+                'party_id' => $customer->getPartyID()
+            ),
+            'new' => array(
+                'module' => 'contacts',
+                'controller' => 'partynotes',
+                'action' => 'new',
+                'party_id' => $customer->getPartyID()
+            )
+        );
+
         $sidebar->addList('related_items', $sidebarlist);
 
         $this->view->register('sidebar', $sidebar);
