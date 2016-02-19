@@ -67,7 +67,7 @@ class PartynotesController extends Controller
 
         parent::delete('PartyNote');
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        sendBack();
     }
 
     public function save()
