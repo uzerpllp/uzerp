@@ -15,7 +15,7 @@
 class SorderlinesController extends printController
 {
 
-    protected $version = '$Revision: 1.18 $';
+    use SOactionAllowedOnStop;
 
     public function __construct($module = null, $action = null)
     {
@@ -115,6 +115,13 @@ class SorderlinesController extends printController
 
         $sorder = DataObjectFactory::Factory('SOrder');
         $sorder->load($sorderline->order_id);
+
+        if ($sorder->isLoaded() and !$this->actionAllowedOnStop($sorder->customerdetails))
+        {
+            //$flash = Flash::Instance();
+            $flash->addMessage('Order cannot be changed');
+            sendBack();
+        }
 
         $_slmaster_id = $sorder->slmaster_id;
 
