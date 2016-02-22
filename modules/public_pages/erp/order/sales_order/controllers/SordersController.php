@@ -235,10 +235,10 @@ class SordersController extends printController
         if ($result !== FALSE) {
             switch ($this->_data['type']) {
                 case 'Q':
-                    $doctype = 'quote';
+                    $doctype = 'sales quote';
                     break;
                 case 'T':
-                    $doctype = 'template';
+                    $doctype = 'sales template';
                     break;
                 default:
                     $doctype = 'sales order';
