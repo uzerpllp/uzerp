@@ -233,6 +233,17 @@ class SordersController extends printController
         $result = $order->save_model($data);
 
         if ($result !== FALSE) {
+            switch ($this->_data['type']) {
+                case 'Q':
+                    $doctype = 'quote';
+                    break;
+                case 'T':
+                    $doctype = 'template';
+                    break;
+                default:
+                    $doctype = 'sales order';
+            }
+            $flash->addMessage("New ${doctype} saved");
             sendTo($this->name, 'view', $this->_modules, array(
                 $order->idField => $result['internal_id']
             ));
@@ -794,8 +805,7 @@ class SordersController extends printController
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
 
-        if (!is_null($order->type))
-        {
+        if (! is_null($order->type)) {
             $this->view->set('page_title', strtolower($order->getFormatted('type') . ' Detail'));
         }
     }
