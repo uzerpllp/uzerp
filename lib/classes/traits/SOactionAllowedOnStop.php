@@ -30,10 +30,10 @@ trait SOactionAllowedOnStop
             }
 
             if ($customer->accountStopped() and $pref === 'on') {
-                return true;
+                return false;
             }
 
-            return false;
+            return true;
         } catch (Exception $e) {
             throw $e;
         }
