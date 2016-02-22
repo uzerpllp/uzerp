@@ -1,5 +1,5 @@
 <?php
-use Phinx\Migration\AbstractMigration;
+use UzerpPhinx\UzerpMigration;
 
 /**
  * Phinx Migration
@@ -10,8 +10,12 @@ use Phinx\Migration\AbstractMigration;
  * @license GPLv3 or later
  * @copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
  */
-class AddSorderModulePreferences extends AbstractMigration
+class AddSorderModulePreferences extends UzerpMigration
 {
+    // Cache keys to be cleaned on migration/rollback
+    protected $cache_keys = array(
+        '[resources][lib_root]'
+    );
 
     public function up()
     {
@@ -73,6 +77,10 @@ class AddSorderModulePreferences extends AbstractMigration
 
         $table->insert($permission_data);
         $table->save();
+
+        // Force refresh of autloader cache for uzERP libs
+        // because we've added lib/classes/traits/SOactionAllowedOnStop that uses the SO module prefs
+        $this->cleanMemcache($this->cache_keys);
 
         file_put_contents('php://stderr', 'Permission added for sales_order module SetupController, please update your user roles.' . PHP_EOL);
     }
