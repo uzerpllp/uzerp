@@ -118,7 +118,6 @@ class SorderlinesController extends printController
 
         if ($sorder->isLoaded() and !$this->actionAllowedOnStop($sorder->customerdetails))
         {
-            //$flash = Flash::Instance();
             $flash->addMessage('Order cannot be changed');
             sendBack();
         }
