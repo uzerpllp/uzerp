@@ -15,7 +15,7 @@
 class SordersController extends printController
 {
 
-    protected $version = '$Revision: 1.181 $';
+    use SOactionAllowedOnStop;
 
     public function __construct($module = null, $action = null)
     {
@@ -155,6 +155,14 @@ class SordersController extends printController
             sendBack();
         }
 
+        if (! $this->actionAllowedOnStop($order->customerdetails) and in_array($this->_data['type'], [
+            'O',
+            'T'
+        ])) {
+            $flash->addMessage('Cannot save as new order/template');
+            sendBack();
+        }
+
         $data[$this->modeltype] = array();
 
         foreach ($order->getFields() as $fieldname => $field) {
@@ -249,6 +257,12 @@ class SordersController extends printController
         // Get the OrderObject - if loaded, this is an edit
         $sorder = $this->_uses[$this->modeltype];
 
+        if ($sorder->isLoaded() and $sorder->type == 'O' and ! $this->actionAllowedOnStop($sorder->customerdetails)) {
+            $flash = Flash::Instance();
+            $flash->addMessage('Order cannot be changed');
+            sendBack();
+        }
+
         // get customer list
         if ($sorder->isLoaded() && $sorder->net_value != 0) {
             $customers = array(
@@ -268,6 +282,15 @@ class SordersController extends printController
         if (isset($this->_data['slmaster_id'])) {
             // this is set if there has been error and we are redisplaying the screen
             $default_customer = $this->_data['slmaster_id'];
+            $customer = $this->getCustomer($default_customer);
+            if ($customer->isLoaded() and in_array($sorder->type, [
+                'O',
+                'T'
+            ]) and ! $this->actionAllowedOnStop($customer)) {
+                $flash = Flash::Instance();
+                $flash->addMessage('Cannot add new order/template');
+                sendBack();
+            }
         } elseif (isset($this->_data[$this->modeltype]['slmaster_id'])) {
             // this is set if there has been error and we are redisplaying the screen
             $default_customer = $this->_data[$this->modeltype]['slmaster_id'];
@@ -348,7 +371,7 @@ class SordersController extends printController
         $this->view->set('despatch_actions', $despatch_actions);
 
         if (! is_null($sorder->type)) {
-            $this->view->set('page_title', $this->getPageName($sorder->getFormatted('type')));
+            $this->view->set('page_title', $this->_data['action'] . ' ' . $sorder->getFormatted('type'));
         }
 
         // This bit allows for projects and tasks
@@ -400,6 +423,10 @@ class SordersController extends printController
         $trans_type = $this->_uses[$this->modeltype]->getEnum('type', $header['type']);
 
         $order = SOrder::Factory($header, $errors);
+        if (! $this->actionAllowedOnStop($order->customerdetails)) {
+            $flash->addMessage('Customer account stopped, cannot save');
+            sendBack();
+        }
 
         $result = false;
 
@@ -766,6 +793,11 @@ class SordersController extends printController
 
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
+
+        if (!is_null($order->type))
+        {
+            $this->view->set('page_title', strtolower($order->getFormatted('type') . ' Detail'));
+        }
     }
 
     public function select_products()
