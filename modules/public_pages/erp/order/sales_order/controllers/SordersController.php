@@ -3241,11 +3241,12 @@ class SordersController extends printController
 
         $customer_address += $this->formatAddress($order->getInvoiceAddress());
         $extra['customer_address'] = $customer_address;
+        $extra['customer_number'] = $customer->accountnumber();
         $extra['price_type'] = $order->customer->so_price_type;
 
         // get delivery address
         $delivery_address = array(
-            'title' => 'Delivery Address: Address:',
+            'title' => 'Delivery Address:',
             'customer' => $order->customer
         );
         $delivery_address += $this->formatAddress($order->getDeliveryAddress());
