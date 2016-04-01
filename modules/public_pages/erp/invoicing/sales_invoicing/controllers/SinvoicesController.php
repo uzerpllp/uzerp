@@ -1297,7 +1297,7 @@ class SinvoicesController extends printController
             }
             $invoice_address += (array) $this->formatAddress($invoice->getInvoiceAddress());
             $extra['invoice_address'] = $invoice_address;
-
+            $extra['customer_number'] = $invoice->customerdetail->accountnumber();
             $extra['tax_description'] = $invoice->customerdetail->companydetail->tax_description;
             $extra['vatnumber'] = $invoice->customerdetail->companydetail->vatnumber;
 
