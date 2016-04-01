@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- Add customer account number to XML output of Sales Orders (and related Purchase Orders) and Sales Invoices
 
 ## [1.6] - 2015-02-16
 ### Fixed
