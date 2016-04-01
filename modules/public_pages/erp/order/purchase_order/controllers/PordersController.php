@@ -2376,10 +2376,14 @@ class PordersController extends printController
         $supplier_address += $this->formatAddress($supplier->getBillingAddress());
         $extra['supplier_address'] = $supplier_address;
 
-        // set delivery address
-        if ($order->use_sorder_delivery == 't' && $order->sales_order_id > 0) {
+        // load the associated sales order if set
+        if ($order->sales_order_id > 0) {
             $sorder = DataObjectFactory::Factory('SOrder');
             $sorder->load($order->sales_order_id);
+        }
+
+        // set delivery address
+        if ($order->use_sorder_delivery == 't' && $order->sales_order_id > 0 && $sorder->isLoaded()) {
             $delivery_address = array(
                 'title' => 'Delivery Address:',
                 'name' => $sorder->customer
@@ -2394,6 +2398,12 @@ class PordersController extends printController
         }
 
         $extra['delivery_address'] = $delivery_address;
+
+        // set customer account and order number if a sales order is associated with the PO
+        if (isset($sorder) && $sorder->isLoaded()) {
+            $extra['customer_number'] = $sorder->customerdetails->accountnumber();
+            $extra['sales_order_number'] = $sorder->order_number;
+        }
 
         // set billing address
         $billing_address = array(
