@@ -281,7 +281,7 @@ class SInvoice extends Invoice
         if ($payterms->load($this->payment_term_id)) {
 
             $terms = ($payterms->days == 0) ? $payterms->months . ' months' : $payterms->days . ' days';
-            $terms .= ($payterms->basis == 'I') ? ' from Invoice' : ' from Month End';
+            $terms .= ($payterms->basis == 'I') ? ' from Invoice.' : ' from Month End.';
 
             if ($this->settlement_discount > 0) {
                 $terms .= chr(10) . 'A discount of ' . $this->settlement_discount . ' ' . $this->currency . ' can be deducted if paid before ';
