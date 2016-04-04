@@ -46,6 +46,8 @@ class PartynotesController extends Controller
             $s_data['party_id'] = $this->_data['Search']['party_id'];
         }
 
+        $this->view->set('allow_delete',true);
+
         $this->setSearch('PartynotesSearch', 'useDefault', $s_data);
 
         $this->view->set('clickaction', 'edit');
