@@ -26,7 +26,6 @@ class CbtransactionsController extends printController
 
         if (isset($this->_data['cb_account_id'])) {
             $defaults['cb_account_id'] = $this->_data['cb_account_id'];
-            $defaults['statement_date'] = 'NULL';
             $defaults['reference'] = '';
         }
 
