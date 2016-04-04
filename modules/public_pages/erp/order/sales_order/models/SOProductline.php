@@ -170,7 +170,7 @@ class SOProductline extends DataObject
     	           SELECT id, description FROM cust_prices
     	        UNION
     	        SELECT id, description
-    	           FROM so_productline_soverview
+    	           FROM so_productlines_overview
     	           WHERE description ilike ?
     	           AND productline_header_id NOT IN (SELECT * FROM cust_type_products UNION SELECT * FROM cust_products)
     	           AND (usercompanyid = ? AND ((start_date <= 'today'::date AND (end_date is NULL OR end_date >= 'today'::date))
