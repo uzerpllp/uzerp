@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file.
 ## [1.6.1] -
 ### Fixed
 - Load correct address when creating new sales order for a person
-- Enable deletion of party notes on contacts
 - Add project_id to SO product views
 - Fix product search not returning items when adding sales order lines
 
