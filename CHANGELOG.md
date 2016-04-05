@@ -1,9 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.6.1] -
+### Fixed
+- Load correct address when creating new sales order for a person
+- Enable deletion of party notes on contacts
+- Add project_id to SO product views
+- Fix product search not returning items when adding sales order lines
+
 ### Added
-- Add customer account number to XML output of Sales Orders (and related Purchase Orders) and Sales Invoices
+- Add customer account number to sales order acknowledgement XML output
+- Add customer account and sales order number to purchase order XML output
+- Add customer account number to invoice XML output
 
 ## [1.6] - 2015-02-16
 ### Fixed
