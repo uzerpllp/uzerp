@@ -1,18 +1,19 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [1.6.1] -
+## [1.6.1] - 2016-04-07
 ### Fixed
 - Load correct address when creating new sales order for a person
 - Add project_id to SO product views
 - Fix product search not returning items when adding sales order lines
+- Use concurrency control when updating GL Balances
 
 ### Added
 - Add customer account number to sales order acknowledgement XML output
 - Add customer account and sales order number to purchase order XML output
 - Add customer account number to invoice XML output
 
-## [1.6] - 2015-02-16
+## [1.6] - 2016-02-16
 ### Fixed
 - Setting a custom theme now uses that theme instead of the default
 - Sales order add-line was showing multiple prices for an item
@@ -196,6 +197,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.6.1]: https://github.com/uzerpllp/uzerp/compare/1.6...1.6.1
 [1.6]: https://github.com/uzerpllp/uzerp/compare/1.5.2...1.6
 [1.5.2]: https://github.com/uzerpllp/uzerp/compare/1.5.1...1.5.2
 [1.5.1]: https://github.com/uzerpllp/uzerp/compare/1.5.0...1.5.1
