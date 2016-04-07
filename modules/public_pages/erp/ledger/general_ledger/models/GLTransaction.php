@@ -1150,6 +1150,7 @@ class GLTransaction extends DataObject
         $data['glcentre_id'] = $this->glcentre_id;
         $data['glperiods_id'] = $this->glperiods_id;
         $data['value'] = $this->value;
+        $data['lastupdated']    = $glbalance->lastupdated;  //concurrency control
 
         if ($glbalance !== false) {
             $data['id'] = $glbalance->id;
