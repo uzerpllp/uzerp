@@ -116,9 +116,10 @@ class SorderlinesController extends printController
         $sorder = DataObjectFactory::Factory('SOrder');
         $sorder->load($sorderline->order_id);
 
+        // Prevent any changes to the order line if the customer is on stop
         if ($sorder->isLoaded() and !$this->actionAllowedOnStop($sorder->customerdetails))
         {
-            $flash->addMessage('Order cannot be changed');
+            $flash->addError($sorder->getFormatted('type') . ' cannot be changed');
             sendBack();
         }
 
