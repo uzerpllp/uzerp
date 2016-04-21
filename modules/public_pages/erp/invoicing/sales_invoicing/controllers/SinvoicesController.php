@@ -264,7 +264,7 @@ class SinvoicesController extends printController
                         if (! is_null($invoiceline->productline_id)) {
                             $productline = DataObjectFactory::Factory('SOProductLine');
                             $productline->load($invoiceline->productline_id);
-                            if (! $productline->isLoaded() || (! is_null($productline->end_date) && $productline->end_date < un_fix_date(data(DATE_FORMAT)))) {
+                            if (! $productline->isLoaded() || (! is_null($productline->end_date) && $productline->end_date < un_fix_date(date(DATE_FORMAT)))) {
                                 $flash->addWarning('Selected Product is no longer valid on line ' . $invoiceline->line_number);
                                 $invoiceline->description .= ' ** Selected Product is no longer valid';
                                 $data[$modelname]['description'][$line_count] .= ' ** Selected Product is no longer valid';
