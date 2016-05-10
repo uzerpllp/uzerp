@@ -1,6 +1,19 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+### Fixed
+- Error on 'save as new' in sales orders
+- Error on 'save as new credit' from sales invoice
+- New credit note from customer view
+- Sort sales order list when linking purchase order
+- Ensure that CRM activity attachments are only listed on their own activity
+
+### Added
+- Add UI to allow deletion of contact notes
+- Add customer optional stop controls
+- Show note form when placing a customer account on stop
+
 ## [1.6.1] - 2016-04-07
 ### Fixed
 - Load correct address when creating new sales order for a person
