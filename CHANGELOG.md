@@ -31,6 +31,7 @@ All notable changes to this project will be documented in this file.
 - Setting a custom theme now uses that theme instead of the default
 - Sales order add-line was showing multiple prices for an item
 - LDAP login fails if user or system company access disabled
+- Prevent Apache FOP errors by encoding less-than '<' as `&#60;` in XML output data
 
 ### Added
 - Allow Sales Invoices to be allocated to Projects and Tasks
