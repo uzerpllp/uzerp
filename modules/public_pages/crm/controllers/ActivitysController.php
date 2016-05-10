@@ -242,7 +242,7 @@ class ActivitysController extends printController
                     'modules' => $this->_modules,
                     'controller' => 'activityattachments',
                     'action' => 'index',
-                    'activities_id' => $activity->id
+                    'activity_id' => $activity->id
                 ),
                 'new' => array(
                     'modules' => $this->_modules,
