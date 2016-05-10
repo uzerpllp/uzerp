@@ -34,6 +34,8 @@ class PartynotesController extends Controller
 
     public function index()
     {
+        $this->view->set('allow_delete',true);
+
         // Search
         $errors = array();
 
@@ -53,13 +55,24 @@ class PartynotesController extends Controller
         parent::index(new PartyNoteCollection($this->_templateobject));
     }
 
+
+    public function _new()
+    {
+        // Set title when showing form after customer account stopped
+        if ($this->_data['title'] == 'Account stopped') {
+            $this->view->set('page_title', 'Enter reason for stopping account');
+        }
+        parent::_new();
+    }
+
+
     public function delete()
     {
         $flash = Flash::Instance();
 
         parent::delete('PartyNote');
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        sendBack();
     }
 
     public function save()
