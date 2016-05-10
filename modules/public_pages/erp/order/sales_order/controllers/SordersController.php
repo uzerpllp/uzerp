@@ -209,7 +209,7 @@ class SordersController extends printController
                             $productline = DataObjectFactory::Factory('SOProductLine');
                             $productline->load($orderline->productline_id);
 
-                            if (! $productline->isLoaded() || (! is_null($productline->end_date) && $productline->end_date < un_fix_date(data(DATE_FORMAT)))) {
+                            if (! $productline->isLoaded() || (! is_null($productline->end_date) && $productline->end_date < un_fix_date(date(DATE_FORMAT)))) {
                                 $flash->addWarning('Selected Product is no longer valid on line ' . $orderline->line_number);
                                 $orderline->description .= ' ** Selected Product is no longer valid';
                                 $data[$modelname]['description'][$line_count] .= ' ** Selected Product is no longer valid';
