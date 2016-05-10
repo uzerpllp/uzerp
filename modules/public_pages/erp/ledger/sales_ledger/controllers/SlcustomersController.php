@@ -241,7 +241,7 @@ class SlcustomersController extends LedgerController
             'tag' => 'New Credit Note',
             'link' => array(
                 'module' => 'sales_invoicing',
-                'controller' => ' sinvoices',
+                'controller' => 'sinvoices',
                 'action' => 'new',
                 'slmaster_id' => $idValue,
                 'transaction_type' => 'C',
