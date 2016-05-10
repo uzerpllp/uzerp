@@ -1,7 +1,7 @@
 <?php
 
 /**
- *	uzERP Sales Order Controller
+ *	Sales Order Controller
  *
  *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
  *	@license GPLv3 or later
@@ -15,7 +15,7 @@
 class SordersController extends printController
 {
 
-    protected $version = '$Revision: 1.181 $';
+    use SOactionAllowedOnStop;
 
     public function __construct($module = null, $action = null)
     {
@@ -155,6 +155,16 @@ class SordersController extends printController
             sendBack();
         }
 
+        // Prevent the order from being cloned if the customer is on stop
+        if (! $this->actionAllowedOnStop($order->customerdetails) and in_array($this->_data['type'], [
+            'O',
+            'Q',
+            'T'
+        ])) {
+            $flash->addError('Cannot save as new');
+            sendBack();
+        }
+
         $data[$this->modeltype] = array();
 
         foreach ($order->getFields() as $fieldname => $field) {
@@ -225,6 +235,17 @@ class SordersController extends printController
         $result = $order->save_model($data);
 
         if ($result !== FALSE) {
+            switch ($this->_data['type']) {
+                case 'Q':
+                    $doctype = 'sales quote';
+                    break;
+                case 'T':
+                    $doctype = 'sales template';
+                    break;
+                default:
+                    $doctype = 'sales order';
+            }
+            $flash->addMessage("New ${doctype} saved");
             sendTo($this->name, 'view', $this->_modules, array(
                 $order->idField => $result['internal_id']
             ));
@@ -249,6 +270,13 @@ class SordersController extends printController
         // Get the OrderObject - if loaded, this is an edit
         $sorder = $this->_uses[$this->modeltype];
 
+        // Prevent changes to the order if the customer is on stop
+        if ($sorder->isLoaded() and ! $this->actionAllowedOnStop($sorder->customerdetails)) {
+            $flash = Flash::Instance();
+            $flash->addError($sorder->getFormatted('type') . ' cannot be changed');
+            sendBack();
+        }
+
         // get customer list
         if ($sorder->isLoaded() && $sorder->net_value != 0) {
             $customers = array(
@@ -268,6 +296,7 @@ class SordersController extends printController
         if (isset($this->_data['slmaster_id'])) {
             // this is set if there has been error and we are redisplaying the screen
             $default_customer = $this->_data['slmaster_id'];
+            $customer = $this->getCustomer($default_customer);
         } elseif (isset($this->_data[$this->modeltype]['slmaster_id'])) {
             // this is set if there has been error and we are redisplaying the screen
             $default_customer = $this->_data[$this->modeltype]['slmaster_id'];
@@ -284,6 +313,23 @@ class SordersController extends printController
         }
 
         $customer = $this->getCustomer($default_customer);
+
+        // Prevent the new order action for customers on stop but allow the form
+        // to be shown when the slmaster_id is not set. Otherwise, if the default
+        // customer is on stop, then the form will never display.
+        if (! $this->actionAllowedOnStop($customer) and isset($this->_data['slmaster_id'])) {
+            $flash = Flash::Instance();
+
+            // Assume it will be a new order if the order object has no type
+            $message_type = "order";
+            if (strtolower($sorder->getFormatted('type')) != '') {
+                $message_type = strtolower($sorder->getFormatted('type'));
+            }
+
+            $flash->addError("Cannot add new ${message_type}, customer on stop");
+            sendBack();
+        }
+
         $this->view->set('company_id', $customer->company_id);
 
         if (! $sorder->isLoaded()) {
@@ -299,9 +345,6 @@ class SordersController extends printController
         if (isset($this->_data[$this->modeltype]['person_id'])) {
             // this is set if there has been error and we are redisplaying the screen
             $default_person = $this->_data[$this->modeltype]['person_id'];
-        } elseif ( isset($this->_data['person_id']) ) {
-            // this is set when adding a new order associated with a person
-            $default_person = $this->_data['person_id'];
         } else {
             if (! $sorder->isLoaded()) {
                 $default_person = $this->getDefaultValue($this->modeltype, 'person_id', '');
@@ -351,7 +394,7 @@ class SordersController extends printController
         $this->view->set('despatch_actions', $despatch_actions);
 
         if (! is_null($sorder->type)) {
-            $this->view->set('page_title', $this->getPageName($sorder->getFormatted('type')));
+            $this->view->set('page_title', $this->_data['action'] . ' ' . $sorder->getFormatted('type'));
         }
 
         // This bit allows for projects and tasks
@@ -403,6 +446,12 @@ class SordersController extends printController
         $trans_type = $this->_uses[$this->modeltype]->getEnum('type', $header['type']);
 
         $order = SOrder::Factory($header, $errors);
+
+        // Prevent the order header from being saved if the customer is on stop
+        if (! $this->actionAllowedOnStop($order->customerdetails)) {
+            $flash->addError('Customer account stopped, cannot save');
+            sendBack();
+        }
 
         $result = false;
 
@@ -769,6 +818,10 @@ class SordersController extends printController
 
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
+
+        if (! is_null($order->type)) {
+            $this->view->set('page_title', strtolower($order->getFormatted('type') . ' Detail'));
+        }
     }
 
     public function select_products()
