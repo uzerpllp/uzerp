@@ -811,6 +811,51 @@ $(document).ready(function() {
 		
 	});
 	
+	/* sales_order -> sorders -> select_print_item_labels */
+	
+	$('input.select_all', '#sales_order-sorders-select_print_item_labels').on('click', function() {
+		$.fn.checkAll($("input[type=checkbox]",$(this).parents('form')));
+	});
+	
+	$('input.select_picked', '#sales_order-sorders-select_print_item_labels').on('click', function() {
+		$("input[type=checkbox]",$(this).parents('form')).each(function() {
+			// clear before selecting picked lines
+			if ($(this).is(':checked')) {
+				$(this).attr('checked', false).trigger("change");
+				$(this).data("status", false)
+			}
+			$.fn.checkAll($("td[data-line_status='S'] input[type=checkbox]",$(this).parents('form')));
+		});
+	});
+	
+	$('form','#sales_order-sorders-select_print_item_labels').on('submit', function(event) {
+		
+		// just make sure we're not clicking the cancel button
+		if (!$(this).find('#cancelform').length) {
+			
+			event.preventDefault();
+			
+			var self = $(this);
+			
+			// check to make sure at least one line is selected
+			if($('#view_data_bottom input[type=checkbox]:checked').length==0) {
+				$(function() {
+					$( '#selection-warning' ).dialog({
+						modal: true,
+						buttons: {
+							Ok: function() {
+								$( this ).dialog( "close" );
+							}
+						}
+					});
+				});
+				return false;
+			} else {
+				this.submit();
+			}
+		}
+	});
+	
 	/* sales_order -> sorders -> viewpacking_slips */
 	
 	$('form input[type=submit]', '#sales_order-sorders-viewpacking_slips').live('click', function(event) {
