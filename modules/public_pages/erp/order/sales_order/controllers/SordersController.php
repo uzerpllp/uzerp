@@ -688,6 +688,16 @@ class SordersController extends printController
                 );
             }
 
+            $actions['select_print_item_labels'] = array(
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => $this->name,
+                    'action' => 'select_print_item_labels',
+                    'id' => $id
+                ),
+                'tag' => 'Print Item Labels'
+            );
+
             $actions['newdespatchnote'] = array(
                 'link' => array(
                     'modules' => $this->_modules,
@@ -1895,6 +1905,110 @@ class SordersController extends printController
             $flash->addMessage('Invoice Created and Posted OK');
         }
         $db->CompleteTrans();
+        sendTo($this->name, 'view', $this->_modules, array(
+            'id' => $sorder->id
+        ));
+    }
+
+    /**
+     * Select from a list of SO lines to print item labels for
+     *
+     * The user can select SO lines to print and a quantity of labels
+     * for each one. This would be used where barcode labels must
+     * be attached to ordered items, for exmaple.
+     */
+    public function select_print_item_labels()
+    {
+        if (! isset($this->_data) || ! $this->loadData()) {
+            $this->dataError();
+            sendBack();
+        }
+
+        $sorder = $this->_uses[$this->modeltype];
+        $this->view->set('page_title', 'Print Item Labels - Sales Order');
+        $this->view->set('no_ordering', true);
+        $this->view->set('printers', $this->selectPrinters());
+        $this->view->set('default_printer', $this->getDefaultPrinter());
+    }
+
+    /**
+     * Print labels for selected SO lines
+     *
+     * Handles POST action from select_print_item_labels(),
+     * processes the submitted data and prints the specified
+     * number of labels for selected SO lines.
+     */
+    public function printItemLabels()
+    {
+        $flash = Flash::Instance();
+        $errors = array();
+
+        $this->loadData();
+        if (! isset($this->_data) || ! $this->loadData()) {
+            $this->dataError();
+            sendBack();
+        }
+
+        $sorder = $this->_uses[$this->modeltype];
+
+        // convert the order lines to an array for easy lookup
+        $lines = [];
+        foreach ($sorder->lines as $orderline) {
+            $lines[$orderline->id] = $orderline->_data;
+        }
+
+        // build the label data
+        $extra = [];
+        foreach ($this->_data['SOrderLine'] as $key => $line) {
+            if (! isset($line['id'])) {
+                continue;
+            } elseif ($line['print_qty'] <= 0) {
+                $errors[] = 'line ' . $line['line_number'] . ' : Print quantity must be greater than zero';
+                continue;
+            }
+            $label_data = [];
+            $description_parts = explode('-', $lines[$key]['description'], 2);
+            $label_data[$key]['item_number'] = trim($description_parts[0]);
+            $label_data[$key]['item_description'] = trim($description_parts[1]);
+
+            for ($count = 1; $count <= $line['print_qty']; $count ++) {
+                $extra[]['label'] = $label_data;
+                ;
+            }
+        }
+
+        // abort if there were errors
+        if (count($errors) > 0) {
+            $flash->addErrors($errors);
+            sendBack();
+        }
+
+        // generate the XML
+        $xml = $this->generateXML(array(
+            'extra' => $extra
+        ));
+
+        // set the print options
+        $data['printtype'] = 'pdf';
+        $data['printaction'] = 'Print';
+        $data['printer'] = $this->_data['printer'];
+
+        // build a basic list of options
+        $options = array(
+            'report' => 'SOItemLabel',
+            'xmlSource' => $xml
+        );
+
+        // print the labels
+        $response = json_decode($this->generate_output($data, $options));
+
+        if ($response->status !== true) {
+            $flash->addError("Failed to print labels" . ": " . $response->message);
+        } else {
+            $flash->addMessage("Item labels printed successfully");
+        }
+
+        // back to the sales order view
         sendTo($this->name, 'view', $this->_modules, array(
             'id' => $sorder->id
         ));
