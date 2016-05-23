@@ -23,7 +23,7 @@ else {
         $conf['SETUP'] = false;
 	$conf['SYSTEM_MESSAGE'] = '';
 	$conf['SYSTEM_STATUS'] = 'uzERP Base Install';
-	$conf['SYSTEM_VERSION'] = '1.3.11';
+	$conf['SYSTEM_VERSION'] = '1.6.2';
 	$conf['BASE_TITLE'] = 'uzERP Base System';
 	$conf['ADMIN_EMAIL'] = '';
 
