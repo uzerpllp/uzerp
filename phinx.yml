@@ -1,6 +1,7 @@
 paths:
     migrations: %%PHINX_CONFIG_DIR%%/schema/phinx/migrations
-    migration_base_class: Uzerp\Phinx\UzerpMigration
+
+migration_base_class: Uzerp\Phinx\UzerpMigration
 
 environments:
     default_migration_table: phinxlog
