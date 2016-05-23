@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.6.2] - 2016-05-23
 ### Fixed
 - Error on 'save as new' in sales orders
 - Error on 'save as new credit' from sales invoice
@@ -211,6 +211,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.6.1]: https://github.com/uzerpllp/uzerp/compare/1.6.1...1.6.2
 [1.6.1]: https://github.com/uzerpllp/uzerp/compare/1.6...1.6.1
 [1.6]: https://github.com/uzerpllp/uzerp/compare/1.5.2...1.6
 [1.5.2]: https://github.com/uzerpllp/uzerp/compare/1.5.1...1.5.2
