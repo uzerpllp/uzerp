@@ -46,6 +46,32 @@ function update_prices(num_pages, form_data) {
 
 $(document).ready(function() {
 	
+	/* Sales Order - Sidebar Confirmations */
+	
+	/* SOrdersController -> view, 'New Order with Outstanding' */
+	$(document).on('click', 'a#order-from-new-lines', function(e){
+
+		e.preventDefault();
+		var $targetUrl = $(this).attr("href");
+
+		$( '<div id="#dialog-order-from-new-lines" title="New Order with Outstanding"> \
+			<p>Lines with status \'New\' will be cancelled and moved to a new order.</p> \
+			<p><strong>Do you want to continue?</strong></p></div>'
+		).dialog({
+			resizable: false,
+			modal: true,
+			buttons: {
+				"Continue": function() {
+				  $('.loading').show();
+				  window.location.href = $targetUrl;
+				},
+				Cancel: function() {
+				  $( this ).dialog( "close" );
+				}
+			}
+		});
+	});
+	
 	/* sales_order -> sorders -> new */
 	
 	$("#SOrder_slmaster_id","#sales_order-sorders-new").live('change', function(){
