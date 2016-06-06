@@ -138,7 +138,7 @@ class SordersController extends printController
     }
 
     public function move_new_lines() {
-        $this->make_clone($line_status='new');
+        $this->make_clone($clone_status='new');
     }
 
     public function clone_order() {
@@ -155,7 +155,7 @@ class SordersController extends printController
      *
      * @param string $line_status all|new
      */
-    private function make_clone($line_status='all')
+    private function make_clone($clone_status='all')
     {
         $flash = Flash::Instance();
 
@@ -182,7 +182,7 @@ class SordersController extends printController
             sendBack();
         }
 
-        if ($line_status == 'new' && !$order->someLinesNew($linestatus)){
+        if ($clone_status == 'new' && !$order->someLinesNew($linestatus)){
             $flash->addError('No open lines to copy');
             sendBack();
         }
@@ -222,7 +222,7 @@ class SordersController extends printController
         foreach ($order->lines as $orderline) {
             $line_count ++;
             //Only copy lines with 'New' status
-            if ($orderline->status != $order->newStatus() && $line_status = 'new' && $data[$this->modeltype]['type'] == 'O') {
+            if ($orderline->status != $order->newStatus() && $clone_status == 'new' && $data[$this->modeltype]['type'] == 'O') {
                 if ($line_count > 0){
                     $line_count = $line_count - 1;
                 }
@@ -269,7 +269,7 @@ class SordersController extends printController
         }
 
         //Cancel lines on the current order with 'New' status
-        if ($line_status == 'new'){
+        if ($clone_status == 'new'){
             $db = DB::Instance();
             $db->startTrans();
 
