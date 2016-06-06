@@ -137,7 +137,25 @@ class SordersController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 
-    public function clone_order()
+    public function move_new_lines() {
+        $this->make_clone($line_status='new');
+    }
+
+    public function clone_order() {
+        $this->make_clone();
+    }
+
+    /**
+     * Copy current sales order lines to a new order
+     *
+     * The default is to copy all lines at any status, copied lines
+     * will have status 'New' on the new order. If $line_status is 'new',
+     * then lines with status 'New' are cancelled on the current order and
+     * copied to a new order.
+     *
+     * @param string $line_status all|new
+     */
+    private function make_clone($line_status='all')
     {
         $flash = Flash::Instance();
 
@@ -155,13 +173,17 @@ class SordersController extends printController
             sendBack();
         }
 
+        $linestatuses = $order->getLineStatuses();
+        $linestatus = $linestatuses['count'];
+
         // Prevent the order from being cloned if the customer is on stop
-        if (! $this->actionAllowedOnStop($order->customerdetails) and in_array($this->_data['type'], [
-            'O',
-            'Q',
-            'T'
-        ])) {
+        if ($this->actionAllowedOnStop($order->customerdetails) === FALSE) {
             $flash->addError('Cannot save as new');
+            sendBack();
+        }
+
+        if ($line_status == 'new' && !$order->someLinesNew($linestatus)){
+            $flash->addError('No open lines to copy');
             sendBack();
         }
 
@@ -180,6 +202,9 @@ class SordersController extends printController
                 case 'despatch_date':
                 case 'del_qty':
                     break;
+                case 'ext_reference':
+                    $data[$this->modeltype][$fieldname] = '';
+                    break;
                 case 'status':
                     $data[$this->modeltype][$fieldname] = $order->newStatus();
                     break;
@@ -193,8 +218,17 @@ class SordersController extends printController
         }
 
         $line_count = 0;
-
+        $skipped_lines = [];
         foreach ($order->lines as $orderline) {
+            $line_count ++;
+            //Only copy lines with 'New' status
+            if ($orderline->status != $order->newStatus() && $line_status = 'new' && $data[$this->modeltype]['type'] == 'O') {
+                if ($line_count > 0){
+                    $line_count = $line_count - 1;
+                }
+                $skipped_lines[] = $orderline->line_number;
+                continue;
+            }
             $modelname = get_class($orderline);
             foreach ($orderline->getFields() as $fieldname => $field) {
                 switch ($fieldname) {
@@ -214,6 +248,9 @@ class SordersController extends printController
                     case 'status':
                         $data[$modelname][$fieldname][$line_count] = $orderline->newStatus();
                         break;
+                    case 'line_number':
+                        $data[$modelname][$fieldname][$line_count] = $line_count;
+                        break;
                     case 'productline_id':
                         if (! is_null($orderline->productline_id)) {
                             $productline = DataObjectFactory::Factory('SOProductLine');
@@ -229,12 +266,39 @@ class SordersController extends printController
                         $data[$modelname][$fieldname][$line_count] = $orderline->$fieldname;
                 }
             }
-            $line_count ++;
         }
 
-        $result = $order->save_model($data);
+        //Cancel lines on the current order with 'New' status
+        if ($line_status == 'new'){
+            $db = DB::Instance();
+            $db->startTrans();
 
-        if ($result !== FALSE) {
+            foreach ($order->lines as $line) {
+                if ($line->status == $line->newStatus() && !in_array($line->line_number, $skipped_lines)) {
+                    if (! $line->update($line->id, 'status', $line->cancelStatus())) {
+                        $errors[] = $db->ErrorMsg();
+                        $errors[] = 'Failed to cancel ' . $order->getFormatted('type') . ' line';
+                        break;
+                    }
+                }
+            }
+
+            if (count($errors) > 0) {
+                $db->FailTrans();
+                $flash->addErrors($errors);
+            } else {
+                $order->save();
+                $flash->addMessage('Open ' . strtolower($order->getFormatted('type')) . ' lines cancelled');
+            }
+            $db->CompleteTrans();
+        }
+
+        //Make the new order
+        if (count($errors) == 0) {
+            $result = $order->save_model($data);
+        }
+
+        if (isset($result) and $result !== FALSE) {
             switch ($this->_data['type']) {
                 case 'Q':
                     $doctype = 'sales quote';
@@ -560,6 +624,24 @@ class SordersController extends printController
         $sidebar->addList($order->customerdetails->name, $actions);
 
         $actions = array();
+
+        if ($order->type == 'O'
+            && $order->someLinesNew($linestatus)
+            && !$order->allLinesNew($linestatus)
+            && $this->actionAllowedOnStop($order->customerdetails)
+        ) {
+            $actions["MoveNewLines"] = array(
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => $this->name,
+                    'action' => 'move_new_lines',
+                    'id' => $order->id
+                ),
+                'tag' => 'New Order with Outstanding',
+                'class' => 'confirm-action',
+                'id' => 'order-from-new-lines'
+            );
+        }
 
         foreach ($order->getEnumOptions('type') as $key => $description) {
             $actions['clone' . $description] = array(
