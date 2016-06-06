@@ -60,8 +60,13 @@ $(document).ready(function() {
 		).dialog({
 			resizable: false,
 			modal: true,
+			width: "25%",
+			maxWidth: "100%",
+		    open: function() {
+		    	$(this).siblings('.ui-dialog-buttonpane').find('button:eq(1)').focus();
+		    },
 			buttons: {
-				"Continue": function() {
+				"Move Lines to New Order": function() {
 				  $('.loading').show();
 				  window.location.href = $targetUrl;
 				},
