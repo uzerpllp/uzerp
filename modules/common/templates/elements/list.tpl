@@ -12,7 +12,6 @@
 			{strip}
 				{if $item.tag|prettify neq 'EGS_HIDDEN_FIELD' && !empty($item.link)}
 					<li class="{$item.tag|lower|replace:' ':'_'}_related">
-					   {*{$item|@var_dump}*}
 						{if isset($item.link.newtab)}
 							{assign var=class value='newtab'}
 						{else}
