@@ -67,11 +67,22 @@ $(document).ready(function() {
 		    },
 			buttons: {
 				"Move Lines to New Order": function() {
-				  $('.loading').show();
-				  window.location.href = $targetUrl;
+					$( this ).dialog( "close" );
+					var sorder = document.getElementById('sales_order-sorders-view');
+					$.uz_ajax({
+						type: 'POST',
+						url: '/?module=sales_order&controller=sorders&action=move_new_lines&dialog=',
+						data:{
+							id: sorder.dataset.id,
+						},
+						success: function(data) {
+							response = data;
+							window.location.href = response.redirect;
+						}
+					});
 				},
 				Cancel: function() {
-				  $( this ).dialog( "close" );
+					$( this ).dialog( "close" );
 				}
 			}
 		});
