@@ -5,6 +5,7 @@
  **}
 {* $Revision: 1.11 $ *}
 <form enctype="multipart/form-data" id="save_form" name="login" action="/?action=login" method="post" >
+    <input type="hidden" name="csrf_token" id="csrf_token_id" value="{$csrf_token}" />
 	<label>Username</label>
 	<label>Password</label>
 	{if isset($smarty.cookies.username)}
