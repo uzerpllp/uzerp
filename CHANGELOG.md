@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+### Added
+- Print item labels from Sales Order. Requires a Report Definition called 'SOItemLabel'
+- Transfer outstanding sales order lines to a new order (cancels existing lines)
+- Stronger CSRF protection
+
 ## [1.6.2] - 2016-05-23
 ### Fixed
 - Error on 'save as new' in sales orders
