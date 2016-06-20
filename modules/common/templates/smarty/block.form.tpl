@@ -22,6 +22,7 @@
 	{if $block_form.submit_token_id}
 		<input type="hidden" name="submit_token" id="submit_token_id" value="{$block_form.submit_token_id}" />
 	{/if}
+	<input type="hidden" name="csrf_token" id="csrf_token_id" value="{$csrf_token}" />
 	
 	{if $block_form.display_tags}
 		<div id="view_page" class="clearfix">
