@@ -7,7 +7,7 @@
 <head>
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	
+	<meta content="{$csrf_token}" name="csrf-token" />
 	<title>{$config.BASE_TITLE} {$config.SYSTEM_VERSION}</title>
 	
 	<link rel="stylesheet" type="text/css" href="/resource.php?css" />
@@ -42,3 +42,4 @@
 	</script>
 
 </head>
+

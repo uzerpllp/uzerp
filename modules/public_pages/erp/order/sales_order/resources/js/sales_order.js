@@ -46,6 +46,54 @@ function update_prices(num_pages, form_data) {
 
 $(document).ready(function() {
 	
+	/* Sales Order - Sidebar Confirmations */
+	
+	/* SOrdersController -> view, 'New Order with Outstanding' */
+	$(document).on('click', 'a#order-from-new-lines', function(event){
+
+		event.preventDefault();
+		var $targetUrl = $(this).attr("href");
+
+		$( '<div id="#dialog-order-from-new-lines" title="New Order with Outstanding"> \
+			<p>Lines with status \'New\' will be cancelled and moved to a new order.</p> \
+			<p><strong>This cannot be undone. Do you want to continue?</strong></p></div>'
+		).dialog({
+			resizable: false,
+			modal: true,
+			width: '25%',
+			maxWidth: '100%',
+		    open: function() {
+		    	$(this).siblings('.ui-dialog-buttonpane').find('button:eq(1)').focus();
+		    },
+			buttons: {
+				'Move Lines to New Order': function() {
+					$( this ).dialog( 'close' );
+					$.blockUI({ message: null });
+					var sorder = document.getElementById('sales_order-sorders-view');
+					$.ajax({
+						type: 'POST',
+						async: false,
+						url: '/?module=sales_order&controller=sorders&action=move_new_lines&dialog=',
+						data: {
+							id: sorder.dataset.id,
+						},
+						success: function(response) {
+							$.unblockUI();
+							window.location.href = response.redirect;
+						},
+						error: function(xhr){
+							$.unblockUI();
+							alert('Request Status: ' + xhr.status + ', ' + xhr.statusText + ' - ' + xhr.responseText);
+						}
+					});
+				},
+				'Cancel': function() {
+					$( this ).dialog( 'close' );
+				}
+			}
+		});
+	});
+	
 	/* sales_order -> sorders -> new */
 	
 	$("#SOrder_slmaster_id","#sales_order-sorders-new").live('change', function(){
@@ -809,6 +857,51 @@ $(document).ready(function() {
 		
 		}
 		
+	});
+	
+	/* sales_order -> sorders -> select_print_item_labels */
+	
+	$('input.select_all', '#sales_order-sorders-select_print_item_labels').on('click', function() {
+		$.fn.checkAll($("input[type=checkbox]",$(this).parents('form')));
+	});
+	
+	$('input.select_picked', '#sales_order-sorders-select_print_item_labels').on('click', function() {
+		$("input[type=checkbox]",$(this).parents('form')).each(function() {
+			// clear before selecting picked lines
+			if ($(this).is(':checked')) {
+				$(this).attr('checked', false).trigger("change");
+				$(this).data("status", false)
+			}
+			$.fn.checkAll($("td[data-line_status='S'] input[type=checkbox]",$(this).parents('form')));
+		});
+	});
+	
+	$('form','#sales_order-sorders-select_print_item_labels').on('submit', function(event) {
+		
+		// just make sure we're not clicking the cancel button
+		if (!$(this).find('#cancelform').length) {
+			
+			event.preventDefault();
+			
+			var self = $(this);
+			
+			// check to make sure at least one line is selected
+			if($('#view_data_bottom input[type=checkbox]:checked').length==0) {
+				$(function() {
+					$( '#selection-warning' ).dialog({
+						modal: true,
+						buttons: {
+							Ok: function() {
+								$( this ).dialog( "close" );
+							}
+						}
+					});
+				});
+				return false;
+			} else {
+				this.submit();
+			}
+		}
 	});
 	
 	/* sales_order -> sorders -> viewpacking_slips */

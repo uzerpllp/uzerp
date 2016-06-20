@@ -137,8 +137,32 @@ class SordersController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 
+
+    public function move_new_lines($methods=['post'], $xhr=TRUE)
+    {
+            $this->make_clone($clone_status='new');
+    }
+
+
     public function clone_order()
     {
+        $this->make_clone();
+    }
+
+
+    /**
+     * Copy current sales order lines to a new order
+     *
+     * The default is to copy all lines at any status, copied lines
+     * will have status 'New' on the new order. If $clone_status is 'new',
+     * then lines with status 'New' are cancelled on the current order and
+     * copied to a new order.
+     *
+     * @param string $line_status all|new
+     */
+    private function make_clone($clone_status='all')
+    {
+
         $flash = Flash::Instance();
 
         $errors = array();
@@ -155,13 +179,17 @@ class SordersController extends printController
             sendBack();
         }
 
+        $linestatuses = $order->getLineStatuses();
+        $linestatus = $linestatuses['count'];
+
         // Prevent the order from being cloned if the customer is on stop
-        if (! $this->actionAllowedOnStop($order->customerdetails) and in_array($this->_data['type'], [
-            'O',
-            'Q',
-            'T'
-        ])) {
+        if ($this->actionAllowedOnStop($order->customerdetails) === FALSE) {
             $flash->addError('Cannot save as new');
+            sendBack();
+        }
+
+        if ($clone_status == 'new' && !$order->someLinesNew($linestatus)){
+            $flash->addError('No open lines to copy');
             sendBack();
         }
 
@@ -180,6 +208,9 @@ class SordersController extends printController
                 case 'despatch_date':
                 case 'del_qty':
                     break;
+                case 'ext_reference':
+                    $data[$this->modeltype][$fieldname] = '';
+                    break;
                 case 'status':
                     $data[$this->modeltype][$fieldname] = $order->newStatus();
                     break;
@@ -193,8 +224,17 @@ class SordersController extends printController
         }
 
         $line_count = 0;
-
+        $skipped_lines = [];
         foreach ($order->lines as $orderline) {
+            $line_count ++;
+            //Only copy lines with 'New' status
+            if ($orderline->status != $order->newStatus() && $clone_status == 'new' && $data[$this->modeltype]['type'] == 'O') {
+                if ($line_count > 0){
+                    $line_count = $line_count - 1;
+                }
+                $skipped_lines[] = $orderline->line_number;
+                continue;
+            }
             $modelname = get_class($orderline);
             foreach ($orderline->getFields() as $fieldname => $field) {
                 switch ($fieldname) {
@@ -214,6 +254,9 @@ class SordersController extends printController
                     case 'status':
                         $data[$modelname][$fieldname][$line_count] = $orderline->newStatus();
                         break;
+                    case 'line_number':
+                        $data[$modelname][$fieldname][$line_count] = $line_count;
+                        break;
                     case 'productline_id':
                         if (! is_null($orderline->productline_id)) {
                             $productline = DataObjectFactory::Factory('SOProductLine');
@@ -229,12 +272,39 @@ class SordersController extends printController
                         $data[$modelname][$fieldname][$line_count] = $orderline->$fieldname;
                 }
             }
-            $line_count ++;
         }
 
-        $result = $order->save_model($data);
+        //Cancel lines on the current order with 'New' status
+        if ($clone_status == 'new'){
+            $db = DB::Instance();
+            $db->startTrans();
 
-        if ($result !== FALSE) {
+            foreach ($order->lines as $line) {
+                if ($line->status == $line->newStatus() && !in_array($line->line_number, $skipped_lines)) {
+                    if (! $line->update($line->id, 'status', $line->cancelStatus())) {
+                        $errors[] = $db->ErrorMsg();
+                        $errors[] = 'Failed to cancel ' . $order->getFormatted('type') . ' line';
+                        break;
+                    }
+                }
+            }
+
+            if (count($errors) > 0) {
+                $db->FailTrans();
+                $flash->addErrors($errors);
+            } else {
+                $order->save();
+                $flash->addMessage('Open ' . strtolower($order->getFormatted('type')) . ' lines cancelled');
+            }
+            $db->CompleteTrans();
+        }
+
+        //Make the new order
+        if (count($errors) == 0) {
+            $result = $order->save_model($data);
+        }
+
+        if (isset($result) and $result !== FALSE) {
             switch ($this->_data['type']) {
                 case 'Q':
                     $doctype = 'sales quote';
@@ -561,6 +631,24 @@ class SordersController extends printController
 
         $actions = array();
 
+        if ($order->type == 'O'
+            && $order->someLinesNew($linestatus)
+            && !$order->allLinesNew($linestatus)
+            && $this->actionAllowedOnStop($order->customerdetails)
+        ) {
+            $actions["MoveNewLines"] = array(
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => $this->name,
+                    'action' => 'move_new_lines',
+                    'id' => $order->id
+                ),
+                'tag' => 'New Order with Outstanding',
+                'class' => 'confirm-action',
+                'id' => 'order-from-new-lines'
+            );
+        }
+
         foreach ($order->getEnumOptions('type') as $key => $description) {
             $actions['clone' . $description] = array(
                 'link' => array(
@@ -687,6 +775,16 @@ class SordersController extends printController
                     'tag' => 'Confirm Pick List'
                 );
             }
+
+            $actions['select_print_item_labels'] = array(
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => $this->name,
+                    'action' => 'select_print_item_labels',
+                    'id' => $id
+                ),
+                'tag' => 'Print Item Labels'
+            );
 
             $actions['newdespatchnote'] = array(
                 'link' => array(
@@ -1895,6 +1993,110 @@ class SordersController extends printController
             $flash->addMessage('Invoice Created and Posted OK');
         }
         $db->CompleteTrans();
+        sendTo($this->name, 'view', $this->_modules, array(
+            'id' => $sorder->id
+        ));
+    }
+
+    /**
+     * Select from a list of SO lines to print item labels for
+     *
+     * The user can select SO lines to print and a quantity of labels
+     * for each one. This would be used where barcode labels must
+     * be attached to ordered items, for exmaple.
+     */
+    public function select_print_item_labels()
+    {
+        if (! isset($this->_data) || ! $this->loadData()) {
+            $this->dataError();
+            sendBack();
+        }
+
+        $sorder = $this->_uses[$this->modeltype];
+        $this->view->set('page_title', 'Print Item Labels - Sales Order');
+        $this->view->set('no_ordering', true);
+        $this->view->set('printers', $this->selectPrinters());
+        $this->view->set('default_printer', $this->getDefaultPrinter());
+    }
+
+    /**
+     * Print labels for selected SO lines
+     *
+     * Handles POST action from select_print_item_labels(),
+     * processes the submitted data and prints the specified
+     * number of labels for selected SO lines.
+     */
+    public function printItemLabels()
+    {
+        $flash = Flash::Instance();
+        $errors = array();
+
+        $this->loadData();
+        if (! isset($this->_data) || ! $this->loadData()) {
+            $this->dataError();
+            sendBack();
+        }
+
+        $sorder = $this->_uses[$this->modeltype];
+
+        // convert the order lines to an array for easy lookup
+        $lines = [];
+        foreach ($sorder->lines as $orderline) {
+            $lines[$orderline->id] = $orderline->_data;
+        }
+
+        // build the label data
+        $extra = [];
+        foreach ($this->_data['SOrderLine'] as $key => $line) {
+            if (! isset($line['id'])) {
+                continue;
+            } elseif ($line['print_qty'] <= 0) {
+                $errors[] = 'line ' . $line['line_number'] . ' : Print quantity must be greater than zero';
+                continue;
+            }
+            $label_data = [];
+            $description_parts = explode('-', $lines[$key]['description'], 2);
+            $label_data[$key]['item_number'] = trim($description_parts[0]);
+            $label_data[$key]['item_description'] = trim($description_parts[1]);
+
+            for ($count = 1; $count <= $line['print_qty']; $count ++) {
+                $extra[]['label'] = $label_data;
+                ;
+            }
+        }
+
+        // abort if there were errors
+        if (count($errors) > 0) {
+            $flash->addErrors($errors);
+            sendBack();
+        }
+
+        // generate the XML
+        $xml = $this->generateXML(array(
+            'extra' => $extra
+        ));
+
+        // set the print options
+        $data['printtype'] = 'pdf';
+        $data['printaction'] = 'Print';
+        $data['printer'] = $this->_data['printer'];
+
+        // build a basic list of options
+        $options = array(
+            'report' => 'SOItemLabel',
+            'xmlSource' => $xml
+        );
+
+        // print the labels
+        $response = json_decode($this->generate_output($data, $options));
+
+        if ($response->status !== true) {
+            $flash->addError("Failed to print labels" . ": " . $response->message);
+        } else {
+            $flash->addMessage("Item labels printed successfully");
+        }
+
+        // back to the sales order view
         sendTo($this->name, 'view', $this->_modules, array(
             'id' => $sorder->id
         ));
