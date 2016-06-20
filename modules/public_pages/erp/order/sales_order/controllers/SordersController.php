@@ -137,19 +137,24 @@ class SordersController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 
-    public function move_new_lines() {
-        $this->make_clone($clone_status='new');
+
+    public function move_new_lines($methods=['post'], $xhr=TRUE)
+    {
+            $this->make_clone($clone_status='new');
     }
 
-    public function clone_order() {
+
+    public function clone_order()
+    {
         $this->make_clone();
     }
+
 
     /**
      * Copy current sales order lines to a new order
      *
      * The default is to copy all lines at any status, copied lines
-     * will have status 'New' on the new order. If $line_status is 'new',
+     * will have status 'New' on the new order. If $clone_status is 'new',
      * then lines with status 'New' are cancelled on the current order and
      * copied to a new order.
      *
@@ -157,6 +162,7 @@ class SordersController extends printController
      */
     private function make_clone($clone_status='all')
     {
+
         $flash = Flash::Instance();
 
         $errors = array();
