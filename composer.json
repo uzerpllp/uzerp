@@ -8,10 +8,11 @@
 
     "require": {
         "robmorgan/phinx": "*",
-		"raven/raven": "0.8.*@dev",
+        "raven/raven": "0.8.*@dev",
         "smarty/smarty": "3.1.21",
         "adodb/adodb-php": "@dev",
-        "leafo/lessphp": "0.5.0"
+        "leafo/lessphp": "0.5.0",
+        "riimu/kit-csrf": "2.*"
     },
 
     "autoload": {
