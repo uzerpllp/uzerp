@@ -49,40 +49,46 @@ $(document).ready(function() {
 	/* Sales Order - Sidebar Confirmations */
 	
 	/* SOrdersController -> view, 'New Order with Outstanding' */
-	$(document).on('click', 'a#order-from-new-lines', function(e){
+	$(document).on('click', 'a#order-from-new-lines', function(event){
 
-		e.preventDefault();
+		event.preventDefault();
 		var $targetUrl = $(this).attr("href");
 
 		$( '<div id="#dialog-order-from-new-lines" title="New Order with Outstanding"> \
 			<p>Lines with status \'New\' will be cancelled and moved to a new order.</p> \
-			<p><strong>Do you want to continue?</strong></p></div>'
+			<p><strong>This cannot be undone. Do you want to continue?</strong></p></div>'
 		).dialog({
 			resizable: false,
 			modal: true,
-			width: "25%",
-			maxWidth: "100%",
+			width: '25%',
+			maxWidth: '100%',
 		    open: function() {
 		    	$(this).siblings('.ui-dialog-buttonpane').find('button:eq(1)').focus();
 		    },
 			buttons: {
-				"Move Lines to New Order": function() {
-					$( this ).dialog( "close" );
+				'Move Lines to New Order': function() {
+					$( this ).dialog( 'close' );
+					$.blockUI({ message: null });
 					var sorder = document.getElementById('sales_order-sorders-view');
-					$.uz_ajax({
+					$.ajax({
 						type: 'POST',
+						async: false,
 						url: '/?module=sales_order&controller=sorders&action=move_new_lines&dialog=',
-						data:{
+						data: {
 							id: sorder.dataset.id,
 						},
-						success: function(data) {
-							response = data;
+						success: function(response) {
+							$.unblockUI();
 							window.location.href = response.redirect;
+						},
+						error: function(xhr){
+							$.unblockUI();
+							alert('Request Status: ' + xhr.status + ', ' + xhr.statusText + ' - ' + xhr.responseText);
 						}
 					});
 				},
-				Cancel: function() {
-					$( this ).dialog( "close" );
+				'Cancel': function() {
+					$( this ).dialog( 'close' );
 				}
 			}
 		});
