@@ -1594,6 +1594,10 @@ class system
      *      $methods are an array of http method(s) allowed for the action.
      *      $xhr is TRUE if the request must have the 'X-Requested-With: XMLHttpRequest' header.
      *
+     *   Note:
+     *      viewXXXX actions do not exist on the module controller and are handled by Controller::__call().
+     *      retrieval of default parameters from the controller action is bypassed for these actions.
+     *
      * @param boolean $xhr_required Check X-Requested-With header
      * @return boolean
      */
@@ -1606,16 +1610,18 @@ class system
         $xrw = trim(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']));
 
         // get default parameters from the controller action
-        $ref = new ReflectionMethod($this->controller, $this->action);
-        $params = $ref->getParameters();
-        foreach ($params as $param) {
-            switch($param->getName()) {
-                case 'methods':
-                    $allowed_methods = $param->getDefaultValue();
-                    break;
-                case 'xhr':
-                    $xhr_required = $param->getDefaultValue();
-                    break;
+        if (method_exists($this->action, $this->controller)) {
+            $ref = new ReflectionMethod($this->controller, $this->action);
+            $params = $ref->getParameters();
+            foreach ($params as $param) {
+                switch($param->getName()) {
+                    case 'methods':
+                        $allowed_methods = $param->getDefaultValue();
+                        break;
+                    case 'xhr':
+                        $xhr_required = $param->getDefaultValue();
+                        break;
+                }
             }
         }
 
