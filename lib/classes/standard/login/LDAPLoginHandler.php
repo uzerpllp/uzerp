@@ -30,25 +30,21 @@ class LDAPLoginHandler implements LoginHandler
     public function doLogin()
     {
         // get the authenticated username
-        $username = $_SERVER['PHP_AUTH_USER'];
-        
+        $username = strtolower($_SERVER['PHP_AUTH_USER']);
+
         $db = DB::Instance();
         $is_authorised = $this->gateway->Authenticate(array(
             'username' => $username,
             'db' => $db
         ));
-        
+
         if ($is_authorised) {
-            // populate the _POST globals that are used in IndexController::login()
-            $_POST['username'] = $username;
-            $_POST['password'] = 'xxx';
-            
             return $is_authorised;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Indicate that the html login form should not be shown
      *
