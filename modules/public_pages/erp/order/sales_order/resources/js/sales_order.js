@@ -73,12 +73,12 @@ $(document).ready(function() {
 					$.ajax({
 						type: 'POST',
 						async: false,
-						url: '/?module=sales_order&controller=sorders&action=move_new_lines&dialog=',
+						url: '/?module=sales_order&controller=sorders&action=move_new_lines',
 						data: {
 							id: sorder.dataset.id,
+							dialog: ''
 						},
 						success: function(response) {
-							$.unblockUI();
 							window.location.href = response.redirect;
 						},
 						error: function(xhr){
