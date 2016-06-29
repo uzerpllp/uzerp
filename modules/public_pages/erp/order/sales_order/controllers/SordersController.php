@@ -141,8 +141,8 @@ class SordersController extends printController
     /**
      * Cancel open lines and copy to a new order
      *
-     * Ultimately returns status 400 failure or redirect url on success,
-     * see System::request_valid().
+     * Ultimately returns status 400 failure, see System::request_valid(),
+     * or redirect url on success, see: lib::sendTo().
      *
      * Requires dialog='' in calling parameters (see: lib::sendTo()).
      */
