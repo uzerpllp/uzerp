@@ -138,12 +138,23 @@ class SordersController extends printController
     }
 
 
+    /**
+     * Cancel open lines and copy to a new order
+     *
+     * Ultimately returns status 400 failure or redirect url on success,
+     * see System::request_valid().
+     *
+     * Requires dialog='' in calling parameters (see: lib::sendTo()).
+     */
     public function move_new_lines($methods=['post'], $xhr=TRUE)
     {
             $this->make_clone($clone_status='new');
     }
 
 
+    /**
+     * Copy all lines to a new order
+     */
     public function clone_order()
     {
         $this->make_clone();
