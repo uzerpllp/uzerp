@@ -1247,6 +1247,7 @@ class system
         $jsfiles[] = JS_JQUERY_PLUGINS . "wijmo" . DIRECTORY_SEPARATOR . "jquery.wijmo.wijbarchart.min.js";
         $jsfiles[] = JS_JQUERY_PLUGINS . "wijmo" . DIRECTORY_SEPARATOR . "external" . DIRECTORY_SEPARATOR . "jquery.glob.min.js";
         $jsfiles[] = JS_JQUERY_PLUGINS . "jquery.tableScroll" . DIRECTORY_SEPARATOR . "jquery.tablescroll.js";
+        $jsfiles[] = JS_JQUERY_PLUGINS . "strengthify" . DIRECTORY_SEPARATOR . "jquery.strengthify.js";
 
         // css resources
         $cssfiles = array();
@@ -1267,6 +1268,7 @@ class system
         $cssfiles[] = JS_JQUERY_PLUGINS . "jqPagination" . DIRECTORY_SEPARATOR . "css" . DIRECTORY_SEPARATOR . "style.css";
         // $cssfiles[] = JS_JQUERY_PLUGINS . "jquery.tableScroll" . DIRECTORY_SEPARATOR . "jquery.tablescroll.css";
         $cssfiles[] = JS_JQUERY_PLUGINS . "contextMenu" . DIRECTORY_SEPARATOR . "jquery.contextMenu.css";
+        $cssfiles[] = JS_JQUERY_PLUGINS . "strengthify" . DIRECTORY_SEPARATOR . "strengthify.css";
 
         // return resources
         return array(

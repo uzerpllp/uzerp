@@ -21,4 +21,6 @@ $(document).ready(function() {
 		
 	});
 	
+	$('#new_password_id').strengthify({ zxcvbn: '/lib/js/zxcvbn.js', "drawMessage": true });
+	
 });

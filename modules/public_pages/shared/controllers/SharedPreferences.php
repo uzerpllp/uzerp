@@ -1,24 +1,24 @@
 <?php
 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class SharedPreferences extends ModulePreferences
 {
 
 	protected $version = '$Revision: 1.13 $';
-	
+
 	function __construct($getCurrentValues = true, $model = 'UserPreferences', $username = EGS_USERNAME)
 	{
 		parent::__construct();
-		
+
 		$userPreferences = $model::instance($username);
-		
+
 		$this->setModuleName('shared');
-		
+
 // items-per-page
 		if ($getCurrentValues)
 		{
@@ -28,7 +28,7 @@ class SharedPreferences extends ModulePreferences
 		{
 			$num_items = 10;
 		}
-		
+
 		$this->registerPreference(
 			array(
 				'name'			=> 'items-per-page',
@@ -50,16 +50,16 @@ class SharedPreferences extends ModulePreferences
 				'default'		=> '10',
 				'position'		=> 1
 			)
-		);		
-		
+		);
+
 // default_printer
 		$printerlist = array();
-		
+
 		foreach (printController::selectPrinters() as $key=>$printer)
 		{
 			$printerlist[] = array('label'=>$printer, 'value'=>$key);
 		}
-		
+
 		if ($getCurrentValues)
 		{
 			$current_printer = $userPreferences->getPreferenceValue('default_printer', 'shared');
@@ -68,7 +68,7 @@ class SharedPreferences extends ModulePreferences
 		{
 			$current_printer = '';
 		}
-		
+
 		$this->registerPreference(
 			array(
 				'name'			=> 'default_printer',
@@ -80,7 +80,7 @@ class SharedPreferences extends ModulePreferences
 				'position'		=> 2
 			)
 		);
-		
+
 // password change
 		if ($username == EGS_USERNAME)
 		{
@@ -113,7 +113,7 @@ class SharedPreferences extends ModulePreferences
 				)
 			);
 		}
-		
+
 // pdf-preview/pdf-browser-printing
 		if ($getCurrentValues)
 		{
@@ -125,7 +125,7 @@ class SharedPreferences extends ModulePreferences
 			$pdf_preview = 'off';
 			$pdf_browser_printing = 'off';
 		}
-		
+
 		$this->registerPreference(
 			array(
 				'name'			=> 'pdf-preview',
@@ -136,7 +136,7 @@ class SharedPreferences extends ModulePreferences
 				'position'		=> 6
 			)
 		);
-		
+
 		$this->registerPreference(
 			array(
 				'name'			=> 'pdf-browser-printing',
@@ -147,17 +147,17 @@ class SharedPreferences extends ModulePreferences
 				'position'		=> 7
 			)
 		);
-	
+
 // default_page
 		$modulelist = array();
-		
+
 		// Get modules user has access to
 		$ao = AccessObject::instance();
-		
+
 		$per = DataObjectFactory::Factory('Permission');
-		
+
 		$permissions = $ao->getUserModules($username);
-		
+
 		if (!empty($permissions))
 		{
 			foreach ($permissions as $permission)
@@ -165,7 +165,7 @@ class SharedPreferences extends ModulePreferences
 				$modulelist[] = array('label'=>$permission['title'], 'value'=>strtolower($per->getEnum('type', $permission['type'])).','.$permission['permission']);
 			}
 		}
-		
+
 		if ($getCurrentValues)
 		{
 			$default_page = $userPreferences->getPreferenceValue('default_page', 'shared');
@@ -174,7 +174,7 @@ class SharedPreferences extends ModulePreferences
 		{
 			$default_page = '';
 		}
-		
+
 		$this->registerPreference(
 			array(
 				'name'			=> 'default_page',
@@ -186,35 +186,32 @@ class SharedPreferences extends ModulePreferences
 				'position'		=> 8
 			)
 		);
-	
+
 	}
-	
+
 	public function changePassword($data)
 	{
 		$current_password	= $data['current_password'];
 		$new_password		= $data['new_password'];
 		$confirm_password	= $data['confirm_password'];
-		
+
 		$user = new User();
-		
 		$cc = new ConstraintChain();
-		
-		$cc->add(new Constraint('username','=',EGS_USERNAME));
-		$cc->add(new Constraint('password','=',md5($current_password)));
-		
+		$cc->add(new Constraint('username','=', EGS_USERNAME));
+
 		$result = $user->loadBy($cc);
-		
-		if($result !== false && ($new_password == $confirm_password))
+		$current_match = password_verify($current_password, $result->password);
+
+		if($result !== FALSE && $current_match === TRUE && $new_password === $confirm_password && strlen($new_password) >= 10)
 		{
-			User::updatePassword($new_password,EGS_USERNAME);
+			User::updatePassword($new_password, EGS_USERNAME);
 		}
 		else
 		{
 			$flash = Flash::Instance();
-			
 			$flash->addError('Please check your current password is correct, and that you have typed your new password correctly both times');
-			
-			return false;
+			$flash->addError('Passwords must be at least 10 characters long');
+			return FALSE;
 		}
 	}
 }

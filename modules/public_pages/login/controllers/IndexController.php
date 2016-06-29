@@ -12,7 +12,23 @@
 class IndexController extends Controller
 {
 
-    protected $version = '$Revision: 1.17 $';
+    protected $username = '';
+
+    public function __construct($module=null,$view)
+    {
+        parent::__construct($module=null,$view);
+
+        // Form based login
+        if (isset($_POST['username'])) {
+            //Convert username to lower-case. User names always stored in DB in lowercase.
+            $this->username = strtolower($_POST['username']);
+        }
+
+        // Or we might be using LDAP, etc.
+        if (isset($_SERVER['PHP_AUTH_USER'])) {
+            $this->username = strtolower($_SERVER['PHP_AUTH_USER']);
+        }
+    }
 
     public function index()
     {
@@ -55,14 +71,14 @@ class IndexController extends Controller
         $flash = Flash::Instance();
 
         if ($authentication->interactive()) {
-            if (! isset($_POST['username']) || ! isset($_POST['password'])) {
+            if (! isset($this->username) || ! isset($_POST['password'])) {
                 $flash->addError("Please enter a username and password");
                 sendTo();
             }
         }
 
         if (isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'true') {
-            setcookie("username", $_POST['username'], time() + 3600);
+            setcookie("username", $this->username, time() + 3600);
         }
 
         $available = SystemCompanySettings::Get('access_enabled');
@@ -72,13 +88,13 @@ class IndexController extends Controller
         } elseif ($authentication->doLogin() !== FALSE) {
 
             $user = DataObjectFactory::Factory('User');
-            $user->load($_POST['username']);
+            $user->load($this->username);
 
             if ($user->access_enabled == 't') {
 
                 setLoggedIn();
 
-                $_SESSION['username'] = $_POST['username'];
+                $_SESSION['username'] = $this->username;
 
                 $user->update($_SESSION['username'], 'last_login', date('Y-m-d H:i:s'));
 
@@ -167,7 +183,7 @@ class IndexController extends Controller
         $flash = Flash::Instance();
 
         $user = DataObjectFactory::Factory('User');
-        $user->load($_POST['username']);
+        $user->load($this->username);
 
         if ($user->isLoaded()) {
 
@@ -230,7 +246,7 @@ class IndexController extends Controller
                     $passwd .= $characters[mt_rand(0, count($characters) - 1)];
                 }
 
-                $user->update($user->username, 'password', md5($passwd));
+                $user->update($user->username, 'password', password_hash($passwd, PASSWORD_DEFAULT));
                 $flash->addError('Your new password will be emailed to you shortly.');
 
                 $message = "You have modified your password for " . SERVER_ROOT . "\n" . "Your username is {$user->username}\n" . "Your password is {$passwd}\n" . "Thank you";
@@ -266,6 +282,7 @@ class IndexController extends Controller
 
     function logout()
     {
+
         if (AUDIT || get_config('AUDIT_LOGIN')) {
             $audit = Audit::Instance();
             $audit->write('logout', TRUE, (microtime(TRUE) - START_TIME));
@@ -274,6 +291,10 @@ class IndexController extends Controller
 
         session_destroy();
         session_unset();
+
+        //remove session cookie
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', 0, $params['path'], $params['domain'], $params['secure'], isset($params['httponly']));
 
         // don't show the login form for non-interactive logins
         $injector = $this->_injector;
