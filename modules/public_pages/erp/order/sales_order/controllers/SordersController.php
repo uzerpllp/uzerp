@@ -733,6 +733,18 @@ class SordersController extends printController
                 );
             }
 
+                $actions['printLineSummary'] = array(
+                    'link' => array(
+                        'modules' => $this->_modules,
+                        'controller' => $this->name,
+                        'action' => 'printDialog',
+                        'printaction' => 'printlinesummary',
+                        'filename' => 'SOLS' . $order->order_number,
+                        'id' => $id
+                    ),
+                    'tag' => 'print Line Summary'
+                );
+
             if ($order->status == $order->newStatus() || $order->status == 'P') {
                 $actions['printProFormaInvoice'] = array(
                     'link' => array(
@@ -3938,7 +3950,7 @@ class SordersController extends printController
     }
 
     /**
-     * Print a Delivery Address Label for a Sales Order.
+     * Print a Delivery Address Label for a Sales Order
      *
      * @param string $status
      *            Either, 'dialog' to display the print dialog
@@ -3989,6 +4001,48 @@ class SordersController extends printController
         ));
 
         // execute the print output function, echo the returned json for jquery
+        echo $this->constructOutput($this->_data['print'], $options);
+        exit();
+    }
+
+    /**
+     * Print order line summary
+     *
+     * Internal document for reviewing order lines
+     *
+     * @see printController::printDialog()
+     */
+    public function printLineSummary($status = 'generate')
+    {
+        $order = $this->_uses[$this->modeltype];
+        $order->load($this->_data['id']);
+
+        $options = array(
+            'type' => array(
+                'pdf' => '',
+                'xml' => ''
+            ),
+            'output' => array(
+                'print' => '',
+                'save' => '',
+                'email' => '',
+                'view' => ''
+            ),
+            'filename' => 'SOLS' . $order->order_number,
+            'report' => 'SOLinesSummary'
+        );
+
+        if (strtolower($status) == 'dialog') {
+            return $options;
+        }
+
+        $options['xmlSource'] = $this->generateXML(array(
+            'model' => $order,
+            'relationship_whitelist' => array(
+                'lines'
+            ),
+        ));
+
         echo $this->constructOutput($this->_data['print'], $options);
         exit();
     }
