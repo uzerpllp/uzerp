@@ -1,15 +1,15 @@
 <?php
 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 abstract class Controller {
 
 	protected $version='$Revision: 1.120 $';
-	
+
 	private   $_action;
 	protected $_uses=array();
 	public static $accessControlled=false;
@@ -30,7 +30,22 @@ abstract class Controller {
 	 * 						e.g. $actions['delete']=array('id','username')
 	 */
 	protected $actions=array();
-	
+
+	/**
+	 * @protected array    Checks to be made on the request that calls
+	 *                     the defined Controller action
+	 *
+	 *                     example:
+	 *
+     *                          $this->action_checks = [
+     *                              'move_new_lines' => [
+     *                                  'methods' => ['post'],
+     *                                  'xhr' => TRUE
+     *                              ]
+     *                          ]
+	 */
+	protected $action_checks = null;
+
 	/**
 	 * Constructor
 	 *
@@ -40,7 +55,7 @@ abstract class Controller {
 	 * @todo shouldn't need $module *and* $modules
 	 */
 	public function __construct($module=null,$view) {
-		
+
 		if (isset($_POST['submit_token']) && !isset($_POST['search_id'])) {
 			// This is a form submission - check for double click!
 			if (isset($_SESSION['submit_token'][$_POST['submit_token']])) {
@@ -84,7 +99,7 @@ abstract class Controller {
 		} else {
 			 $this->_modules[$mod_text]= $module;
 		}
-		
+
 		if(!empty($this->_modules) && is_array($this->_modules))
 		{
 			foreach($this->_modules as $mod)
@@ -92,7 +107,41 @@ abstract class Controller {
 				$this->_modules_string .='/'.$mod ;
 			}
 		}
-	 }
+	}
+
+	/**
+	 * Check the request against $action_checks defined for
+	 * the controller action
+     *
+	 * @param Symfony\Component\HttpFoundation\Request $request
+	 * @param string $action Controller action name
+	 */
+	public function checkRequest($request, $action){
+	    $request_method = strtolower($request->getMethod());
+
+	    if (!empty($this->action_checks) && isset($this->action_checks[$action])){
+	        $allowed_methods = $this->action_checks[$action]['methods'];
+	        $xhr_required = $this->action_checks[$action]['xhr'];
+
+	        // test http method
+	        if(isset($allowed_methods)
+	            && !in_array($request_method, $allowed_methods)) {
+	                header('HTTP/1.0 400 Bad Request');
+	                exit('Wrong HTTP request method');
+	            }
+
+            // test for XHR header
+            if(isset($xhr_required)
+                && $xhr_required === TRUE
+                && $request->headers->get('x-requested-with') != 'XMLHttpRequest')
+                {
+                    header('HTTP/1.0 400 Bad Request');
+                    exit('Required HTTP request header missing');
+                }
+	    }
+
+        return $this;
+	}
 
 	public function setView($view) {
 		$this->view=$view;
@@ -122,18 +171,18 @@ abstract class Controller {
 	public function getTemplateName($action,$mustexist=true)
 	{
 		debug('Controller('.$this->name.')::getTemplateName Looking for template '.$action);
-		
+
 		$module=$this->_modules_string;
-		
+
 		$action = strtolower($action);
-		
+
 		if (!empty($action) && $action[0] == '_')
 		{
 			$action = substr($action,1);
 		}
-		
+
 		return $this->view->getTemplateName($action);
-		
+
 	}
 
 	/**
@@ -153,29 +202,29 @@ abstract class Controller {
 		} else {
 			$search_id='';
 		}
-		
-		// included a parameter to force it to use the session, not sure if that's 
+
+		// included a parameter to force it to use the session, not sure if that's
 		if($force_use_session || (isset($this->search) && isset($this->_data['ajax_print']))
 			|| isset($this->_data['orderby'])
 			|| isset($this->_data['page']))
 		{
 			$sh = new SearchHandler($collection, true, false, $search_id);
-			
+
 			$sh->extractOrdering();
 			$sh->extractPaging();
-			
+
 		}
 		else
 		{
 			$sh = new SearchHandler($collection, false, false, $search_id);
-			
+
 			$sh->extract();
-			
+
 			if (isset($this->_data['Search']['display_fields']))
 			{
 				// Set the 'id' field
 				$fields[key($sh->fields)] = current($sh->fields);
-				
+
 				// Add the requested search fields
 				foreach ($this->_data['Search']['display_fields'] as $fieldname=>$tag)
 				{
@@ -183,7 +232,7 @@ abstract class Controller {
 					$fields[$fieldname]->name = $fieldname;
 					$fields[$fieldname]->tag = $tag;
 				}
-				
+
 				// Now get any id fields
 				foreach ($sh->fields as $fieldname=>$field)
 				{
@@ -192,15 +241,15 @@ abstract class Controller {
 						$fields[$fieldname] = $field;
 					}
 				}
-				
+
 				$sh->setFields($fields);
 			}
-		
+
 		}
-		
+
 		return $sh;
 	}
-	
+
 	public function index(DataObjectCollection $collection, $sh='', &$c_query = null) {
 		showtime('start-controller-index');
 		$collection->setParams();
@@ -208,40 +257,40 @@ abstract class Controller {
 			$sh = $this->setSearchHandler($collection);
 		}
 		showtime('sh-extracted');
-		
+
 		if(isset($this->search)
 		&& !isset($this->_data['orderby'])
 		&& !isset($this->_data['page'])) {
 			$cc = $this->search->toConstraintChain();
 			$sh->addConstraintChain($cc);
 			$sh->save();
-			
+
 			// cache the search string
-			
+
 			$search_string_array = array (
 				'fop'	=> $this->search->toString('fop'),
 				'html'	=> $this->search->toString('html')
 			);
-			
+
 			$_SESSION['search_strings'][EGS_USERNAME][$sh->search_id] = $search_string_array;
-			
+
 		}
 		// Need to set the orderby of the collection in the searchhandler?
 		// But if this is set in the collection, seems to take it
 		// so why not here?
 		showtime('pre-load');
-		
+
 		$collection->load($sh, $c_query);
 		$this->view->set('total_records',$collection->total_records);
 		$this->view->set('num_records',$collection->num_records);
 		$this->view->set('num_pages',$collection->num_pages);
 		$this->view->set('cur_page',$collection->cur_page);
-		
+
 		showtime('post-load');
 		$this->view->set(strtolower($collection->getModelName()).'s',$collection);
-		
+
 		if(isset($this->_data['json'])) {
-			$this->view->set('echo',$collection->toJSON());			
+			$this->view->set('echo',$collection->toJSON());
 		}
 		if ($this->_templateName===false)
 		{
@@ -261,7 +310,7 @@ abstract class Controller {
 			}
 		}
 	}
-	
+
 	/**
 	 * Save
 	 *
@@ -275,7 +324,7 @@ abstract class Controller {
 		$flash=Flash::Instance();
 
 		$db->StartTrans();
-		
+
 		if(!empty($dataIn)) {
 			$data = $dataIn;
 		} else {
@@ -292,7 +341,7 @@ abstract class Controller {
 // Check if the model has any FK fields and get the required value from the fkfields array
 		$fkfields=array();
 		foreach ($models as $key=>$name) {
-			
+
 			if (empty($name['ModelName'])) {
 				$flash->addError('Data is invalid for this action');
 				$db->FailTrans();
@@ -369,18 +418,18 @@ abstract class Controller {
 			$flash->addMessage($modelName.' saved successfully');
 			$this->saved_model=$this->getSavedModel($modelName);
 		}
-		
+
 		if (isset($this->_data['saveAnother'])) {
 			$this->saveAnother();
 		}
-		
+
 		return $success;
 	}
 
 	public function saveAnother ()
 	{
 		$res = getParamsArray();
-		
+
 		if (!empty($res))
 		{
 			unset($res['controller']);
@@ -389,14 +438,14 @@ abstract class Controller {
 			unset($res['module']);
 			unset($res['pid']);
 		}
-		
+
 		foreach ($this->context as $parameter=>$value)
 		{
 			$res['other'][$parameter]=$value;
 		}
-		
+
 		sendTo($_GET['controller'],$this->_data['original_action'],array($_GET['module']),$res['other']);
-		
+
 	}
 
 	public function saveModel($modelName, $dataIn=array(),&$errors=array()) {
@@ -410,9 +459,9 @@ abstract class Controller {
 		}
 		debug('Controller('.$this->name.')::saveModel Validating Model '.$modelName);
 //		echo 'Controller('.$this->name.')::saveModel Validating Model '.$modelName.'<pre>'.print_r($data, true).'</pre><br>';
-		
+
 		$model = $modelName::Factory($data, $errors, $modelName);
-		
+
 		if(is_a($model, $modelName)) {
 			debug('Controller('.$this->name.')::saveModel Saving Model '.$modelName);
 			$success=$model->save();
@@ -447,7 +496,7 @@ abstract class Controller {
 							$aliasdata[$constraint->fieldname]=$constraint->value;
 						}
 						$aliasdata[$alias['requiredField']]=$data[$aliasname];
-						
+
 						$modelname = $alias['modelName'];
 						$aliasmodel = $modelname::Factory($aliasdata, $errors, $alias['modelName']);
 						if($aliasmodel!==false) {
@@ -512,11 +561,11 @@ abstract class Controller {
 		{
 			$data = $this->_data[$modelName];
 		}
-		
+
 		$collectionname = $modelName.'Collection';
-		
+
 		$collection = $collectionname::Factory($data, $errors, $modelName);
-		
+
 		if($collection)
 		{
 			if($collection->save())
@@ -569,28 +618,28 @@ abstract class Controller {
 	 */
 	public function _new()
 	{
-		
+
 		$models=array();
-		
+
 		foreach($this->_uses as $model)
 		{
 			$models[get_class($model)]=$model;
 		}
-		
+
 		if(isset($_SESSION['formdata']))
 		{
 			$_POST=$_SESSION['formdata'];
 			unset($_SESSION['formdata']);
 		}
-		
+
 		$this->view->set('models',$models);
-		
+
 		if (!empty($this->_data['person_id']))
 		{
 			$person = DataObjectFactory::Factory('Person');
 			$person->load($this->_data['person_id']);
 			$this->_data['company_id'] = $person->company_id;
-		}		
+		}
 
 		if (isset($this->_data['ajax']))
 		{
@@ -603,7 +652,7 @@ abstract class Controller {
 		{
 			$this->view->set('dialog', true);
 		}
-		
+
 	}
 
 	/**
@@ -618,7 +667,7 @@ abstract class Controller {
 // or the data for the supplied id does not exist
 			$this->dataError();
 			sendBack();
-		}	
+		}
 
 		if (isset($this->_data['ajax'])) {
 			// only reason for ajaxing an edit is for dialog display
@@ -628,7 +677,7 @@ abstract class Controller {
 
 		$this->_new();
 		$this->_templateName = $this->getTemplateName('edit');
-		
+
 		if (empty($this->_templateName))
 		{
 			$this->_templateName = $this->getTemplateName('new');
@@ -637,10 +686,10 @@ abstract class Controller {
 
 	protected function loadData ()
 	{
-		
+
 		$loadcount=0;
 // what about loading dependant data; do we need to register
-// the name of the data field to use to load the model's data 
+// the name of the data field to use to load the model's data
 		foreach($this->_uses as $modeltype)
 		{
 			$loaded = false;
@@ -665,15 +714,15 @@ abstract class Controller {
 				}
 			}
 		}
-		
+
 		if ($loadcount>0) {
 			return true;
 		} else {
 			return false;
 		}
-		
+
 	}
-	
+
 	/*
 	 * Load the model and store in the _uses array
 	 */
@@ -683,47 +732,47 @@ abstract class Controller {
 		{
 			return;
 		}
-		
+
 		if (!isset($this->_uses[$modelname]))
 		{
 			$this->_uses[$modelname] = DataObjectFactory::Factory($modelname);
 		}
-		
+
 		if (!$this->_uses[$modelname]->isLoaded())
 		{
 			$this->_uses[$modelname]->load($id);
 		}
-		
+
 	}
-	
+
 	/*
 	 * get the instance of the specified object from the _uses array
 	 */
 	public function getUsesModel($modelname = '')
 	{
-		
+
 		if (!empty($modelname) && isset($this->_uses[$modelname]))
 		{
 			return $this->_uses[$modelname];
 		}
-		
+
 		return FALSE;
-		
+
 	}
-	
+
 	public function cancel()
 	{
-		
+
 		$flash=Flash::Instance();
-		
+
 		$flash->addMessage('Action cancelled');
-		
+
 		sendTo($_SESSION['refererPage']['controller']
 			  ,$_SESSION['refererPage']['action']
 			  ,$_SESSION['refererPage']['modules']
 			  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
 	}
-	
+
 	/**
 	 * delete
 	 *
@@ -731,9 +780,9 @@ abstract class Controller {
 	 */
 	public function delete($modelName)
 	{
-		
+
 		$flash=Flash::Instance();
-		
+
 		if ($modelName InstanceOf DataObject)
 		{
 			$model		= $modelName;
@@ -744,9 +793,9 @@ abstract class Controller {
 //			$model = new $modelName();
 			$model = DataObjectFactory::Factory($modelName);
 		}
-		
+
 		$errors = array();
-		
+
 		if (isset($this->_data[$modelName][$model->idField]))
 		{
 			$id = $this->_data[$modelName][$model->idField];
@@ -759,7 +808,7 @@ abstract class Controller {
 		{
 			$id = '';
 		}
-		
+
 		if ($model->delete($id, $errors))
 		{
 			$flash->addMessage($modelName.' deleted successfully');
@@ -771,7 +820,7 @@ abstract class Controller {
 			$flash->addErrors($errors, strtolower($modelName).'_');
 			return false;
 		}
-		
+
 	}
 
 	public function setData($array,$subarray=null) {
@@ -789,7 +838,7 @@ abstract class Controller {
 
 		$errors = array();
 		$s_data = array();
-		
+
 		if (isset($this->_data['search_id']))
 		{
 			$defaults['search_id'] = $this->_data['search_id'];
@@ -803,7 +852,7 @@ abstract class Controller {
 		{
 			$defaults['search_id'] = strtotime('now');
 		}
-		
+
 		if(isset($this->_data['Search']))
 		{
 			$s_data = $this->_data['Search'];
@@ -814,10 +863,10 @@ abstract class Controller {
 		{
 			$s_data = $defaults;
 		}
-		
+
 		// Call static method
 		$this->search = $do::$method( $s_data, $errors, $defaults, $params);
-		
+
 		if(count($errors)>0)
 		{
 			$flash = Flash::Instance();
@@ -826,7 +875,7 @@ abstract class Controller {
 		}
 		else
 		{
-			
+
 			if (!empty($this->search->display_fields))
 			{
 				$this->_data['Search']['display_fields'] = $this->search->display_fields;
@@ -835,7 +884,7 @@ abstract class Controller {
 			{
 				unset($this->_data['Search']['display_fields']);
 			}
-			
+
 			$_GET['search_id'] = $this->search->getValue('search_id');
 		}
 
@@ -846,23 +895,23 @@ abstract class Controller {
 	 */
 	protected function uses($model, $primary=true)
 	{
-		
+
 		if(is_string($model))
 		{
 			$model = DataObjectFactory::Factory($model);
 		}
-		
+
 		$modelname = get_class($model);
-		
+
 		$this->_uses[$modelname] = $model;
-		
+
 		if ($primary)
 		{
 			$this->modeltype = $modelname;
 		}
-		
+
 		return $modelname;
-		
+
 	}
 
 	/**
@@ -880,16 +929,16 @@ abstract class Controller {
 		}
 		//$this->view->set('jsos',$jsos);
 		$this->view->set('controller_data',$this->_data);
-		
-		// we need to make sure the template path is fully qualified path, otherwise we 
+
+		// we need to make sure the template path is fully qualified path, otherwise we
 		// might find that smarty cannot find the correct file... and we wouldn't want that
-		
+
 		if(substr($this->_templateName, 0, strlen(FILE_ROOT)) !== FILE_ROOT) {
 			$template_name=FILE_ROOT.$this->_templateName;
 		} else {
 			$template_name=$this->_templateName;
 		}
-		
+
 		$this->view->set('templateName',$template_name);
 		if(isset($this->search)) {
 			$this->view->set('search',$this->search);
@@ -898,13 +947,13 @@ abstract class Controller {
 
 	protected function getPageName($base=null,$action=null)
 	 {
-	 	
+
 		$inflector = new Inflector();
 		if($base==null)
 		{
 			$base = str_replace('Controller','',get_class($this));
 		}
-		
+
 		if (isset($this->_data['original_action']) && !empty($this->_data['original_action']))
 		{
 			$this->_action=$this->_data['original_action'];
@@ -920,32 +969,32 @@ abstract class Controller {
 		{
 			$this->_action='';
 		}
-		
+
 		$title = ($this->_templateobject instanceof DataObject)?$this->_templateobject->getTitle():'';
-		
+
 		$title = (empty($title))?$base:$title;
-		
+
 		if (isset($this->_data['pid']) && isset($this->_action))
 		{
 			$permission=DataObjectFactory::Factory('Permission');
 			$permission->load($this->_data['pid']);
-			
+
 			if ($permission
 				&& ((!empty($this->_action) && strtolower($permission->permission)==strtolower($this->_action))
 					|| (empty($this->_action) && $permission->type=='c')))
 			{
-				
+
 				$action = (!is_null($permission->title)?$permission->title:$this->_action);
-				
+
 				if (!empty($action) || !empty($title))
 				{
 					return $action.'_'.(!empty($title)?' - '.$title:'');
 				}
-			
+
 			}
-			
+
 		}
-		
+
 		switch($this->_action)
 		{
 			case 'new':
@@ -963,7 +1012,7 @@ abstract class Controller {
 		}
 
 		return $name;
-		
+
 	}
 
 	protected function checkParams ($params) {
@@ -987,7 +1036,7 @@ abstract class Controller {
 			$flash->addError($message);
 		}
 	}
-	
+
 	/**
 	 * Set dependency injector
 	 */
@@ -1043,7 +1092,7 @@ abstract class Controller {
 			$this->viewRelated($view_name);
 			return true;
 		}
-		
+
 		if(strtolower(substr($method,0,3))=='get') {
 			if (isset($this->_data['ajax']) && isset($this->_data['id'])) {
 				$value=array();
@@ -1094,14 +1143,14 @@ abstract class Controller {
 
 	public function refresh($template=null, $action=null) {
 // Redisplay original page after form error
-		
+
 		if (!empty($this->_data['original_action'])) {
 			$action=empty($action)?$this->_data['original_action']:$action;
 			$this->view->set('action', $action);
 			$this->_templateName=$this->getTemplateName(empty($template)?$this->_data['original_action']:$template);
 			$this->{$action=='new'?'_new':$action}();
 		}
-		
+
 	}
 
 	public function view() {
@@ -1113,22 +1162,22 @@ abstract class Controller {
 		}
 		$model=$this->_uses[$this->modeltype];
 		$this->view->set('model',$model);
-				
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebarlist=array();
-		
+
 		$sidebarlist['all']=array('link'=>array('modules'=>$this->_modules
 											   ,'controller'=>$this->name
 											   ,'action'=>'index'
 											   ),
 								  'tag'=>'view all '.$model->getTitle()
 								 );
-		
+
 		$sidebar->addList('Actions', $sidebarlist);
-		
+
 		$sidebarlist=array();
-		
+
 		$sidebarlist['view']=array('link'=>array('modules'=>$this->_modules
 											   ,'controller'=>$this->name
 											   ,'action'=>'view'
@@ -1156,33 +1205,33 @@ abstract class Controller {
 											   ),
 								  'tag'=>'delete'
 								 );
-								 
+
 		$sidebar->addList('This '.$model->getTitle(), $sidebarlist);
-		
+
 		$this->sidebarRelatedItems($sidebar, $model);
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
-	
+
 	protected function viewRelated($name)
 	{
-		
+
 		if (empty($this->modeltype))
 		{
 			$system=System::Instance();
 			$this->dataError('Unable to action request - check the registration of the '.$system->modules['module'].'  module');
 			sendBack();
 		}
-		
+
 		$collectionName = $this->modeltype.'Collection';
-		
+
 //		$model=new $this->modeltype;
 		$model=DataObjectFactory::Factory($this->modeltype);
-		
+
 		$related_collection=new $collectionName($model);
-		
+
 		$sh=$this->setSearchHandler($related_collection);
-		
+
 		$qstring=$_GET;
 		unset($qstring['module']);
 		unset($qstring['page']);
@@ -1194,19 +1243,19 @@ abstract class Controller {
 		unset($qstring['id']);
 		unset($qstring['pid']);
 		unset($qstring['_']);
-		
+
 		$sh->constraints = new ConstraintChain();
-		
+
 		if ($model->isField('usercompanyid'))
 		{
 			$sh->addConstraint(new Constraint('usercompanyid','=',EGS_COMPANY_ID));
 		}
-		
+
 		$link=array();
 		$link['module']=$_GET['module'];
 		$link['controller']=str_replace('Controller','',get_class($this));
 		$link['action']='view'.$name;
-		
+
 		foreach($qstring as $key=>$value)
 		{
 			if ($key == 'type')
@@ -1216,26 +1265,26 @@ abstract class Controller {
 			$sh->addConstraint(new Constraint($key,'=',$value));
 			$link[$key]=$value;
 		}
-		
+
 		unset($sh->fields[$name]);
 		unset($sh->fields[$name.'_id']);
-		
+
 		$related_collection->load($sh);
-		
+
 		$this->_templateName=$this->getTemplateName('view_related');
-		
+
 		$c_action=(isset($this->related[$name]['clickaction'])?$this->related[$name]['clickaction']:'view');
-		
+
 		if (isset($this->related[$name]['allow_delete']) && $this->related[$name]['allow_delete'])
 		{
 			$this->view->set('allow_delete',true);
 		}
-		
+
 		if(isset($this->related[$name]['include_id']))
 		{
 			$c_action.='&'.$name.'_id='.$_GET[$name.'_id'];
 		}
-		
+
 		$this->view->set('clickaction',$c_action);
 		$this->view->set('related_collection',$related_collection);
 		$this->view->set('num_pages',$related_collection->num_records);
@@ -1243,19 +1292,19 @@ abstract class Controller {
 		$this->view->set('cur_page',$related_collection->cur_page);
 		$this->view->set('paging_link',$link);
 		$this->view->set('no_ordering',true);
-		
+
 		if($this->modeltype=='Project' || $this->modeltype == 'WebpageRevision' || $this->modeltype=='OrderItem')
 		{
 			$this->view->set('no_delete',true);
 		}
-		
+
 	}
 
 	protected function sidebarActions(SidebarController $sidebar, DataObject $model, $actions = array())
 	{
-			
+
 		$sidebarlist=array();
-		
+
 		$sidebarlist['all']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -1263,7 +1312,7 @@ abstract class Controller {
 								 ),
 					'tag'=>'view all '.$model->getTitle()
 				);
-		
+
 		$sidebarlist['new']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -1271,14 +1320,14 @@ abstract class Controller {
 								 ),
 					'tag'=>'new '.$model->getTitle()
 				);
-		
+
 		$sidebar->addList(
 			'All Actions',
 			$sidebarlist
 		);
-				
+
 		$sidebarlist = array();
-		
+
 		if (!isset($actions['view']) || $actions['view'])
 		{
 			$sidebarlist['view']=array(
@@ -1290,7 +1339,7 @@ abstract class Controller {
 						'tag'=>'view'
 					);
 		}
-		
+
 		if (!isset($actions['edit']) || $actions['edit'])
 		{
 			$sidebarlist['edit']=array(
@@ -1302,7 +1351,7 @@ abstract class Controller {
 						'tag'=>'edit'
 					);
 		}
-		
+
 		if (!isset($actions['delete']) || $actions['delete'])
 		{
 			$sidebarlist['delete']=array(
@@ -1314,25 +1363,25 @@ abstract class Controller {
 						'tag'=>'delete'
 					);
 		}
-		
+
 		$sidebar->addList(
 			'this '.$model->getTitle(),
 			$sidebarlist
 		);
-		
+
 	}
-	
+
 	protected function sidebarRelatedItems(SidebarController $sidebar, DataObject $model)
 	{
-		
+
 		$sidebarlist = array();
-		
+
 		// need to get the module name from the controller name
 		$action_name=array('new'=>'new');
-		
+
 		foreach ($model->getLinkRules() as $name => $hasmany)
 		{
-			
+
 			if (method_exists($this, $name))
 			{
 				$controller_name		= $this->name;
@@ -1357,12 +1406,12 @@ abstract class Controller {
 				$action_name['link']	= 'view_'.strtolower(str_replace(' ', '_', $model->getTitle()));
 				$field					= $hasmany['fkfield'];
 			}
-			
+
 			$link = array();
-			
+
 			foreach ($hasmany['actions'] as $action)
 			{
-				
+
 				if ($action == 'new')
 				{
 					$controller_name	= $hasmany['do'].'s';
@@ -1370,10 +1419,10 @@ abstract class Controller {
 				}
 
 				$modules = isset($hasmany['modules'][$action]) ? $hasmany['modules'][$action] : $this->_modules;
-				
+
 				if (isset($hasmany['newtab'][$action]))
 				{
-					
+
 					$link[$action] = array(
 						'modules'		=> $modules,
 						'controller'	=> $controller_name,
@@ -1381,38 +1430,38 @@ abstract class Controller {
 						$field			=> $model->{$model->idField},
 						'newtab'		=> TRUE
 					);
-					
+
 				}
 				else
 				{
-					
+
 					$link[$action] = array(
 						'modules'		=> $modules,
 						'controller'	=> $controller_name,
 						'action'		=> strtolower($action_name[$action]),
 						$field			=> $model->{$model->idField}
 					);
-					
+
 				}
-				
+
 			}
-			
+
 			if (!empty($link))
 			{
-				
+
 				$sidebarlist[$name] = array_merge(
 					array('tag' => (isset($hasmany['label']) ? $hasmany['label'] : 'Show ' . $name)),
 					$link
 				);
-				
+
 			}
-			
+
 		}
-		
+
 		$sidebar->addList('related_items', $sidebarlist);
-		
+
 	}
-	
+
 	public function sharing($model='') {
 		$flash=Flash::Instance();
 		if (!$this->checkParams(array('id', 'model'), $flash)) {
@@ -1438,7 +1487,7 @@ abstract class Controller {
 				return false;
 			}
 		}
-		
+
 		$roles=array();
 
 		$roleCollection = new RoleCollection();
@@ -1446,7 +1495,7 @@ abstract class Controller {
 		$sh->AddConstraint(new Constraint('usercompanyid', '=', EGS_COMPANY_ID));
 		$roleCollection->load($sh);
 
-		
+
 //		$ObjectRole = new ObjectRole;
 		$ObjectRole = DataObjectFactory::Factory('ObjectRole');
 		$writeRoles=$ObjectRole->getRoleID($this->_data['id'], $object->getTableName(), 'write');
@@ -1462,11 +1511,11 @@ abstract class Controller {
 		}
 
 		$this->view->set('writeRoles',$roles);
-		
+
 //		$ObjectRole = new ObjectRole;
 		$ObjectRole = DataObjectFactory::Factory('ObjectRole');
 		$readRoles=$ObjectRole->getRoleID($this->_data['id'], $object->getTableName(), 'read');
-		
+
 		if ($readRoles === false) { $readRoles = array(); }
 
 		foreach ($roleCollection->getContents() as $role) {
@@ -1483,7 +1532,7 @@ abstract class Controller {
 		$this->view->set('id',$this->_data['id']);
 		$this->view->set('model_name',$this->_data['model']);
 		$this->view->set('model',$object);
-		
+
 		return true;
 	}
 
@@ -1563,7 +1612,7 @@ abstract class Controller {
 	public function usesModels () {
 		return $this->_uses;
 	}
-	
+
 	protected function getDefaultValue($model, $field, $value) {
 		if (isset($this->_uses[$model])) {
 			$field=$this->_uses[$model]->getField($field);
@@ -1576,7 +1625,7 @@ abstract class Controller {
 
 /*
  * public getOptions
- * 
+ *
  * parameters	$_model
  * 				$_field
  * 				$_action
@@ -1584,7 +1633,7 @@ abstract class Controller {
  * 				$_smarty_params
  * 				$_depends
  * 				$_identifierField
- * 
+ *
  */
 	public function getOptions($_model='', $_field='', $_action='', $_function='', $_smarty_params=array(), $_depends=array(), $_identifierField='') {
 		if (empty($_action)) {
@@ -1593,7 +1642,7 @@ abstract class Controller {
 		if (empty($_function)) {
 			$_function='getOptions';
 		}
-		
+
 		if (empty($_model)) {
 			$_model=$this->_templateobject;
 		} elseif (is_string($_model)) {
@@ -1678,9 +1727,9 @@ abstract class Controller {
 			//	4) not an ajax call - just return the data array
 			return $options->_data;
 		}
-		
+
 	}
-	
+
 	protected function buildSelect ($_model='', $_field='', $_data=array(), $_value='', $_smarty_params=array(), $_template='select') {
 		if (empty($_model)) {
 			$_model=$this->_templateobject;
@@ -1697,9 +1746,9 @@ abstract class Controller {
 			$this->view->set($key, $value);
 		}
 		return $this->view->fetch($_template);
-		
+
 	}
-	
+
 	protected function getOtherParams () {
 		$data=$this->_data;
 		unset($data['module']);
@@ -1709,13 +1758,13 @@ abstract class Controller {
 		unset($data['pid']);
 		return $data;
 	}
-	
+
 	public function version() {
 		return $this->version;
 	}
-	
+
 	protected function returnJSONResponse($status,$extra=array()) {
-		
+
 		/*
 		header('Content-type: application/json');
 		$response = array();
@@ -1726,20 +1775,20 @@ abstract class Controller {
 		audit(print_r($this->_data,true).print_r($response,true));
 		return json_encode($response);
 		*/
-		
+
 		returnJSONResponse($status,$extra);
-		
+
 	}
-	
+
 	public function getProgress() {
 // Used by Ajax to return data written by a parallel process
 // e.g. to update a progress bar
-		
+
 		echo json_encode(empty($this->_data['monitor_name'])?0:$_SESSION[$this->_data['monitor_name']]);
 		exit;
-		
+
 	}
-	
+
 }
 
 // End of Controller
