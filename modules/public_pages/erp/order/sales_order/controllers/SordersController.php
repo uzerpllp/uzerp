@@ -26,6 +26,13 @@ class SordersController extends printController
         $this->_templateobject = DataObjectFactory::Factory('SOrder');
 
         $this->uses($this->_templateobject);
+
+        $this->action_checks = [
+            'move_new_lines' => [
+                'methods' => ['post'],
+                'xhr' => TRUE
+            ]
+        ];
     }
 
     public function index()
@@ -141,12 +148,12 @@ class SordersController extends printController
     /**
      * Cancel open lines and copy to a new order
      *
-     * Ultimately returns status 400 failure, see System::request_valid(),
-     * or redirect url on success, see: lib::sendTo().
+     * Ultimately returns status 400 failure,
+     * or redirect url on success. see: lib::sendTo().
      *
      * Requires dialog='' in calling parameters (see: lib::sendTo()).
      */
-    public function move_new_lines($methods=['post'], $xhr=TRUE)
+    public function move_new_lines()
     {
             $this->make_clone($clone_status='new');
     }
