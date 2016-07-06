@@ -10,6 +10,9 @@
  * @copyright (c) 2015 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
 
+require 'vendor/autoload.php';
+use Symfony\Component\HttpFoundation\Request;
+
 class system
 {
 
@@ -93,6 +96,9 @@ class system
 
     protected $user;
 
+    // http request object;
+    protected $request;
+
     /*
      * The permissions context for this request
      * key = permission, value = data for this permission id
@@ -104,6 +110,8 @@ class system
 
         // set path constants
         $this->setPathBase();
+
+        $this->request = Request::createFromGlobals();
     }
 
     public static function &Instance()
@@ -357,8 +365,8 @@ class system
 
         $csrf = new \Riimu\Kit\CSRF\CSRFHandler();
 
-        // check that the request is valid
-        if (!$this->request_valid()) {
+        // check that the csrf token is valid
+        if (!$this->csrfValid()) {
             sendBack();
         }
         $csrf_token = $csrf->getToken();
@@ -495,10 +503,8 @@ class system
             debug('system::display Calling function ' . get_class($controller) . '::' . $action);
             // echo 'system::display (1),'.microtime(TRUE).'<br>';
 
-            call_user_func(array(
-                $controller,
-                $action
-            ));
+            $controller->checkRequest($this->request, $action)->$action();
+
             // echo 'system::display (2),'.microtime(TRUE).'<br>';
 
             $flash->save();
@@ -1126,7 +1132,7 @@ class system
     // public function set_plugins()
     public function setPathNames()
     {
-        require 'vendor/autoload.php';
+
         // Need way of registering plugins
         require PLUGINS_ROOT . 'Barcode/PHPBarcode.php';
         require PRINT_ROOT . 'PrintIPP.php';
@@ -1582,67 +1588,14 @@ class system
     }
 
     /**
-     * Check that the request is valid for the controller action and
-     * validate the CSRF token for unsafe request methods.
+     * Validate the CSRF token for all unsafe request methods
      *
-     * Uses reflection to get the default parameters from the
-     * controller action and checks the request against those
-     * requirements.
-     *
-     *   Example:
-     *      public function controller_action($methods=['post'], $xhr=TRUE){...}
-     *
-     *   Where:
-     *      $methods are an array of http method(s) allowed for the action.
-     *      $xhr is TRUE if the request must have the 'X-Requested-With: XMLHttpRequest' header.
-     *
-     *   Note:
-     *      viewXXXX actions do not exist on the module controller and are handled by Controller::__call().
-     *      retrieval of default parameters from the controller action is bypassed for these actions.
-     *
-     * @param boolean $xhr_required Check X-Requested-With header
      * @return boolean
      */
-    private function request_valid($xhr_required = FALSE)
+    private function csrfValid()
     {
-        $flash = Flash::Instance();
-        $check_errors = 0;
         $safe_methods = ['get', 'head', 'options', 'trace'];
-        $request_method = trim(strtolower($_SERVER['REQUEST_METHOD']));
-        $xrw = trim(strtolower($_SERVER['HTTP_X_REQUESTED_WITH']));
-
-        // get default parameters from the controller action
-        if (method_exists($this->action, $this->controller)) {
-            $ref = new ReflectionMethod($this->controller, $this->action);
-            $params = $ref->getParameters();
-            foreach ($params as $param) {
-                switch($param->getName()) {
-                    case 'methods':
-                        $allowed_methods = $param->getDefaultValue();
-                        break;
-                    case 'xhr':
-                        $xhr_required = $param->getDefaultValue();
-                        break;
-                }
-            }
-        }
-
-        // test http method
-        if(isset($allowed_methods)
-            && !in_array($request_method, $allowed_methods)) {
-                error_log('Wrong HTTP method ' . strtoupper($method) . ' specified, request: ' . $_SERVER[REQUEST_URI]);
-                header('HTTP/1.0 400 Bad Request');
-                exit('Wrong HTTP request method!');
-        }
-
-        // test for XHR header
-        if(empty($xrw)
-            && !$xrw == 'xmlhttprequest'
-            && (isset($xhr_required) && $xhr_required === TRUE)) {
-                error_log('Required header X-Requested-With: XMLHttpRequest missing, request: ' . $_SERVER[REQUEST_URI]);
-                header('HTTP/1.0 400 Bad Request');
-                exit('Missing HTTP header!');
-            }
+        $request_method = strtolower($this->request->getMethod());
 
         // test for valid CSRF token on all unsafe requests
         if(!in_array($request_method, $safe_methods)) {
@@ -1650,9 +1603,9 @@ class system
                 $csrf = new \Riimu\Kit\CSRF\CSRFHandler();
                 $csrf->validateRequest(true);
             } catch (\Riimu\Kit\CSRF\InvalidCSRFTokenException $ex) {
-                error_log('Bad or missing CSRF token: ' . $_SERVER[REQUEST_URI]);
+                error_log('Bad or missing CSRF token: ' . $this->request->getURI());
                 header('HTTP/1.0 400 Bad Request');
-                exit('Bad CSRF Token!');
+                exit('Bad CSRF Token');
             }
         }
 
