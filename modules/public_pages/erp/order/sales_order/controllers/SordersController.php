@@ -708,7 +708,7 @@ class SordersController extends printController
             );
         }
 
-        if ($order->type == 'O') {
+        if ($order->type == 'O' || $order->type == 'Q') {
             $actions['view'] = array(
                 'link' => array(
                     'modules' => $this->_modules,
@@ -718,6 +718,9 @@ class SordersController extends printController
                 ),
                 'tag' => 'view current'
             );
+        }
+
+        if ($order->type == 'O') {
 
             if ($order->status == $order->newStatus()) {
                 $actions['printAcknowledgement'] = array(
@@ -921,8 +924,18 @@ class SordersController extends printController
 
         $sidebar->addList('This ' . $type, $actions);
 
-        if ($order->type == 'O') {
-            $this->sidebarRelatedItems($sidebar, $order);
+        // 'Related Items' sidebar section
+        switch($order->type) {
+            case 'O': // Order
+                $this->sidebarRelatedItems($sidebar, $order);
+                break;
+            case 'Q': // Quote
+                // only display 'Show Lines' for quotes
+                $whitelist = [
+                    'lines',
+                ];
+                $this->sidebarRelatedItems($sidebar, $order, $whitelist);
+                break;
         }
 
         $this->view->register('sidebar', $sidebar);
