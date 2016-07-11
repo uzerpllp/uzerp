@@ -5,6 +5,7 @@
  *
  *	Released under GPLv3 license; see LICENSE.
  **/
+
 abstract class Controller
 {
 
@@ -1286,76 +1287,105 @@ abstract class Controller
         $sidebar->addList('this ' . $model->getTitle(), $sidebarlist);
     }
 
-    protected function sidebarRelatedItems(SidebarController $sidebar, DataObject $model)
-    {
-        $sidebarlist = array();
+    /**
+	 * Model 'related' sidebar
+	 *
+	 * @param SidebarController $sidebar
+	 * @param DataObject $model
+	 * @param array $whitelist only show actions with these names in the related sidebar
+	 */
+	protected function sidebarRelatedItems(SidebarController $sidebar, DataObject $model, $whitelist=NULL)
+	{
 
-        // need to get the module name from the controller name
-        $action_name = array(
-            'new' => 'new'
-        );
+		$sidebarlist = array();
 
-        foreach ($model->getLinkRules() as $name => $hasmany) {
+		// need to get the module name from the controller name
+		$action_name=array('new'=>'new');
 
-            if (method_exists($this, $name)) {
-                $controller_name = $this->name;
-                $action_name['link'] = $name;
-                $field = $hasmany['field'];
-            } elseif (method_exists($this, 'view' . $name)) {
-                $controller_name = $this->name;
-                $action_name['link'] = 'view' . $name;
-                $field = $hasmany['field'];
-            } elseif (method_exists($this, 'view_' . $name)) {
-                $controller_name = $this->name;
-                $action_name['link'] = 'view_' . $name;
-                $field = $hasmany['field'];
-            } else {
-                $controller_name = $hasmany['do'] . 's';
-                $action_name['link'] = 'view_' . strtolower(str_replace(' ', '_', $model->getTitle()));
-                $field = $hasmany['fkfield'];
-            }
+		foreach ($model->getLinkRules() as $name => $hasmany)
+		{
+			if (method_exists($this, $name))
+			{
+				$controller_name		= $this->name;
+				$action_name['link']	= $name;
+				$field					= $hasmany['field'];
+			}
+			elseif (method_exists($this, 'view'.$name))
+			{
+				$controller_name		= $this->name;
+				$action_name['link']	= 'view' . $name;
+				$field					= $hasmany['field'];
+			}
+			elseif (method_exists($this, 'view_' . $name))
+			{
+				$controller_name		= $this->name;
+				$action_name['link']	= 'view_'.$name;
+				$field					= $hasmany['field'];
+			}
+			else
+			{
+				$controller_name		= $hasmany['do'].'s';
+				$action_name['link']	= 'view_'.strtolower(str_replace(' ', '_', $model->getTitle()));
+				$field					= $hasmany['fkfield'];
+			}
 
-            $link = array();
+			$link = array();
 
-            foreach ($hasmany['actions'] as $action) {
+			foreach ($hasmany['actions'] as $action)
+			{
+			    if (!is_null($whitelist) && !in_array($name, $whitelist)){
+			        continue;
+			    }
 
-                if ($action == 'new') {
-                    $controller_name = $hasmany['do'] . 's';
-                    $field = $hasmany['fkfield'];
-                }
+				if ($action == 'new')
+				{
+					$controller_name	= $hasmany['do'].'s';
+					$field				= $hasmany['fkfield'];
+				}
 
-                $modules = isset($hasmany['modules'][$action]) ? $hasmany['modules'][$action] : $this->_modules;
+				$modules = isset($hasmany['modules'][$action]) ? $hasmany['modules'][$action] : $this->_modules;
 
-                if (isset($hasmany['newtab'][$action])) {
+				if (isset($hasmany['newtab'][$action]))
+				{
 
-                    $link[$action] = array(
-                        'modules' => $modules,
-                        'controller' => $controller_name,
-                        'action' => strtolower($action_name[$action]),
-                        $field => $model->{$model->idField},
-                        'newtab' => TRUE
-                    );
-                } else {
+					$link[$action] = array(
+						'modules'		=> $modules,
+						'controller'	=> $controller_name,
+						'action'		=> strtolower($action_name[$action]),
+						$field			=> $model->{$model->idField},
+						'newtab'		=> TRUE
+					);
 
-                    $link[$action] = array(
-                        'modules' => $modules,
-                        'controller' => $controller_name,
-                        'action' => strtolower($action_name[$action]),
-                        $field => $model->{$model->idField}
-                    );
-                }
-            }
+				}
+				else
+				{
 
-            if (! empty($link)) {
+					$link[$action] = array(
+						'modules'		=> $modules,
+						'controller'	=> $controller_name,
+						'action'		=> strtolower($action_name[$action]),
+						$field			=> $model->{$model->idField}
+					);
 
-                $sidebarlist[$name] = array_merge(array(
-                    'tag' => (isset($hasmany['label']) ? $hasmany['label'] : 'Show ' . $name)
-                ), $link);
-            }
-        }
+				}
 
-        $sidebar->addList('related_items', $sidebarlist);
-    }
+			}
+
+			if (!empty($link))
+			{
+
+				$sidebarlist[$name] = array_merge(
+					array('tag' => (isset($hasmany['label']) ? $hasmany['label'] : 'Show ' . $name)),
+					$link
+				);
+
+			}
+
+		}
+
+		$sidebar->addList('related_items', $sidebarlist);
+
+	}
 
     public function sharing($model = '')
     {

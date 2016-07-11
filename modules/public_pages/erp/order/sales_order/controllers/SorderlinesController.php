@@ -468,6 +468,19 @@ class SorderlinesController extends printController
         $this->setTemplateName('ajax_multiple');
     }
 
+    /**
+     * Override the view page_title, set in viewRelated, using the order type
+     *
+     * @see Controller::viewRelated()
+     */
+    protected function viewRelated($name) {
+        parent::viewRelated($name);
+        $order = DataObjectFactory::Factory('SOrder');
+        $order->load($this->_data['order_id']);
+        $order_type = $order->getFormatted('type');
+        $this->view->set('page_title', "View ${order_type} Lines");
+    }
+
     protected function getPageName($base = null, $action = null)
     {
         return parent::getPageName((! empty($base)) ? $base : 'sales_order_line', $action);
