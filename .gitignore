@@ -14,6 +14,7 @@ user/**
 
 # Exclude local changes to the config file
 conf/config.php
+conf/custom-model-order.yaml
 
 # Exclude composer installed stuff
 composer.lock

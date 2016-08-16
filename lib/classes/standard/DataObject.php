@@ -5,11 +5,13 @@
  *
  *	Released under GPLv3 license; see LICENSE.
  **/
+use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Yaml\Exception\ParseException;
 
 class DataObject implements Iterator {
 
 	protected $version = '$Revision: 1.133 $';
-	
+
 	// string: name of the table represented by the Object
 	protected	$_title;
 	protected	$_tablename;
@@ -17,50 +19,50 @@ class DataObject implements Iterator {
 	protected	$_classname;
 	protected	$_classnames			= array();
 	protected	$_select;
-	
+
 	// string: false if any errors found during construct allows graceful trap of errors during construct
 	protected	$_valid;
-	
+
 	// array: array of DataField Objects, representing the fields of the table
 	protected	$_fields;
 
 	// array: an array used to insert data from a collection to prevent multiple queries
 	public		$_data;
 	private		$ser_fields				= '';
-	
+
 	// array: an array of DataField Objects representing the ones to be displayed on an overview
 	private		$_displayFields			= null;
-	
+
 	// boolean: has the object has been updated since it was loaded
 	protected	$_modified;
-	
+
 	// boolean: has the object was loaded from the database
 	protected	$_loaded;
-	
+
 	// array: field-names that shouldn't be settable from anywhere else (e.g. 'created', 'modified' etc.)
 	protected	$_protected				= array();
-	
+
 	// array: name->object pairs representing foreign-key relationships
 	public		$_lookups				= array();
 	protected	$_validators			= array();
-	
+
 	// string: the name of the table's primary key
 	public		$idField				= 'id';
 	public		$fkField				= '';
-	
+
 	// the pointer for the iterator
 	protected	$_pointer				= 0;
 
 	// string: The name of the view to be used when displaying an overview. Accessed by getViewName
 	private		$_viewname;
-	
+
 	// string: the name of the field used as the identifierField and therefore used to sort fields
 	// this will probably disappear depending on usage of views
 	public		$identifierField		= 'name';
-	
+
 	//	Where the identifierField is an array of fields this is the string used when concatenating the fields
 	public	$identifierFieldJoin	= ' - ';
-	
+
 	// which field should be used to order overviews
 	public		$orderby;
 	public		$orderdir;
@@ -69,11 +71,11 @@ class DataObject implements Iterator {
 	protected	$parent_field;
 	protected	$parent_relname;
 	protected	$acts_as_tree			= FALSE;
-	
+
 	//	enumeration fields and their options
 	protected	$enums					= array();
 	protected	$enumCheck				= array();
-	
+
 	public		$audit_fields			= array('created', 'createdby', 'lastupdated', 'alteredby', 'usercompanyid');
 	protected	$force_change			= array('lastupdated', 'alteredby');
 	protected	$notEditable			= array();	// non-editable fields
@@ -90,28 +92,28 @@ class DataObject implements Iterator {
 	public		$concatenations			= array();
 	protected	$hashes					= array();
 	protected	$habtm					= array();
-	
+
 	// fields (if true) that cannot be deleted
 	protected	$indestructable			= array();
-	
+
 	// fields to be hidden
 	protected	$hidden					= array();
 	protected	$defaultDisplayFields	= array();
 	public		$defaultInputFields 	= array();
-	
+
 	// fields whose defaults cannot be overridden
 	protected	$defaultsNotAllowed		= array();
-	
+
 	// search-handlers array, to be used when a hasMany relationship is loaded
 	protected	$searchHandlers			= array();
-	
+
 	// model limited by usernameaccess fields?
 	protected	$_accessControlled		= FALSE;
 	protected	$_accessContraint;
 	protected	$_accessFields			= array();
-	
+
 	public		$_policyConstraint;
-	
+
 	/*	Link Rules are used to override default related view links which are generated from hasMany dependencies
 	 *  and where the controller has called sidebarRelatedItems()
 	 *
@@ -139,7 +141,7 @@ class DataObject implements Iterator {
 	 *
 	 */
 	protected $linkRules = array();
-	
+
 	/**
 	 * Constructor
 	 *
@@ -149,33 +151,33 @@ class DataObject implements Iterator {
 	 */
 	public function __construct($tablename)
 	{
-		
+
 		$db = &DB::Instance();
-		
+
 		if (empty($this->_tablenames))
 		{
 			$this->_tablenames = array($tablename);
 		}
-		
+
 		$this->_tablename = $tablename;
-		
+
 		foreach ($this->_tablenames as $tablename)
 		{
 			$this->_valid = $this->setFields($tablename);
 		}
-		
+
 		$this->validateIdentifierField();
 
 		if ($this->isField($this->idField))
 		{
 			$this->_protected[] = $this->idField;
 		}
-		
+
 		if ($this->isField('owner'))
 		{
 			$this->belongsTo('User', 'owner', 'owned_by');
 		}
-		
+
 		//$this->setTags();
 		$this->setDefaultHidden();
 		$this->setDefaultValidators();
@@ -183,39 +185,99 @@ class DataObject implements Iterator {
 		//$this->setDefaultRelationships();
 		$this->setDefaultFieldValues();
 		$this->_classname = DataObject::className(get_class($this));
-		
+
 		if (empty($this->_classnames))
 		{
 			$this->_classnames = array($this->_classname);
 		}
 
 		$this->getDefaultOrderby();
-		
+
 		$this->setPolicyConstraint(get_class($this));
-		
+
 		return $this->_valid;
-		
 	}
-	
+
+    /**
+     * Set a custom orderby and orderdir from a YAML file
+     *
+     * Setting an order in the YAML file will override
+     * the order set on the Model
+     *
+     * Example YAML:
+     *
+     *      ---
+     *      SOrder:
+     *          orderby:
+     *              - 'customer'
+     *              - 'order_number'
+     *          orderdir:
+     *              - 'DESC'
+     *              - 'DESC'
+     *
+     * @param string $yaml_file
+     * @throws ParseException
+     */
+    public function setCustomModelOrder($yaml_file = NULL) {
+        if (is_null($yaml_file)) {
+            return;
+        }
+
+        // Load model sort overrides from YAML file
+        $cache = Cache::Instance();
+        $cache_id = 'custom_model_order';
+        $model = get_class($this);
+        $custom_order	= $cache->get($cache_id);
+        $flash = Flash::Instance();
+
+        try {
+            // if the cache key is empty, load it from the file
+            if ($custom_order === FALSE && file_exists($yaml_file)) {
+                $custom_order = Yaml::parse(file_get_contents($yaml_file));
+                foreach ($custom_order as $mod_order) {
+                    if (count(array_diff($mod_order['orderdir'], ['ASC', 'DESC'])) > 0) {
+                        throw new ParseException('invalid order direction specified');
+                    }
+                }
+                $cache->add($cache_id, $custom_order);
+            }
+
+            // if the current model matches a custom sort...
+            if (isset($custom_order[$model])) {
+                $this->getDisplayFields();
+                if (count(array_diff($custom_order[$model]['orderby'], array_keys($this->_fields))) == 0) {
+                    $this->orderby			= $custom_order[$model]['orderby'];
+                    $this->orderdir			= $custom_order[$model]['orderdir'];
+                    $this->orderoverride = TRUE;
+                } else {
+                    $fields = implode(', ', array_diff($custom_order[$model]['orderby'], array_keys($this->_fields)));
+                    throw new ParseException("field(s) '${fields}' not found in ${model} model display fields");
+                }
+            }
+        } catch (ParseException $e) {
+            $flash->addError('Unable to use custom model sort from ' . $yaml_file . ': ' . $e->getMessage());
+        }
+    }
+
 	public function clear($var)
 	{
 		if (isset($this->isCached[$var]))
 		{
 			unset($this->isCached[$var]);
 		}
-		
+
 	}
-	
+
 	private function debug($msg)
 	{
-		
+
 		if (get_class($this) != 'Debug' && get_class($this) != 'Debuglines')
 		{
 			debug($msg);
 		}
-		
+
 	}
-	
+
 	public function isValid()
 	{
 		return $this->_valid;
@@ -223,35 +285,35 @@ class DataObject implements Iterator {
 
 	private function setDefaultRelationships()
 	{
-		
+
 		if ($this->isField('parent_id'))
 		{
 			$this->setParent();
 		}
-		
+
 		foreach ($this->_fields as $field)
 		{
-			
+
 			if ($field->name !== 'parent_id' && substr($field->name, -3) == '_id')
 			{
-				
+
 				// we have a possible 'belongsTo', so see if there's a model available
 				$classname = ucfirst(str_replace('_id', '', $field->name));
-				
+
 				if (class_exists($classname))
 				{
 					$this->belongsTo($classname, $field->name, strtolower($classname));
 				}
-				
+
 			}
-			
+
 			if ($field->name == 'owner')
 			{
 				$this->belongsTo('User', 'owner', 'owner');
 			}
 
 		}
-		
+
 	}
 
 	public function actsAsTree($fieldname = 'parent_id')
@@ -259,15 +321,15 @@ class DataObject implements Iterator {
 		$this->acts_as_tree = TRUE;
 		$this->parent_field = $fieldname;
 	}
-	
+
 	public function hasParentRelationship($fieldname)
 	{
 		return (!empty($this->parent_field) && $this->parent_field == $fieldname);
 	}
-	
+
 	public function getParent()
 	{
-		
+
 		if (!empty($this->parent_field) && $this->{$this->parent_field} !== null)
 		{
 			return $this->{$this->parent_field};
@@ -276,7 +338,7 @@ class DataObject implements Iterator {
 		{
 			return FALSE;
 		}
-		
+
 	}
 
 	protected function setParent($fieldname = 'parent_id', $relname = 'parent')
@@ -290,7 +352,7 @@ class DataObject implements Iterator {
 	 */
 	private function setAutoHandlers()
 	{
-		
+
 		$this->_autohandlers['id']				= new IDGenHandler();
 		$this->_autohandlers['usercompanyid']	= new UserCompanyHandler();
 		$this->_autohandlers['created']			= new CurrentTimeHandler();
@@ -314,26 +376,26 @@ class DataObject implements Iterator {
 	{
 		$this->_autohandlers[$fieldname] = $handler;
 	}
-	
+
 	function setFields($tablename)
 	{
-		
+
 		$fields = system::getFields($tablename);
-		
+
 		if ($fields === FALSE || !is_array($fields) || empty($tablename))
 		{
 			$this->debug('DataObject('.get_class($this).')::setFields Failed to load fields, perhaps invalid table name specified in DataObject: '.get_class($this).' Table Name: '.$this->_tablename);
 			return FALSE;
 		}
-		
+
 		foreach ($fields as $key => $field)
 		{
-			
+
 			if (!isset($this->_fields[$key]))
 			{
-				
+
 				$this->_fields[$key] = new DataField($field);
-				
+
 				if ($this->_fields[$key]->has_default)
 				{
 					if ($field->default_value == 'now()')
@@ -345,7 +407,7 @@ class DataObject implements Iterator {
 						$this->_fields[$key]->system_default_value = $this->_fields[$key]->default_value;
 					}
 				}
-				
+
 				if (in_array($key, $this->defaultsNotAllowed))
 				{
 					$this->_fields[$key]->user_defaults_allowed = FALSE;
@@ -354,14 +416,14 @@ class DataObject implements Iterator {
 				{
 					$this->_fields[$key]->user_defaults_allowed = TRUE;
 				}
-				
+
 			}
 		}
-		
+
 		return TRUE;
-		
+
 	}
-	
+
 	/**
 	 * Set Display Fields
 	 *
@@ -371,87 +433,87 @@ class DataObject implements Iterator {
 	 */
 	function setDisplayFields()
 	{
-		
+
 		if (count($this->defaultDisplayFields) > 0)
 		{
-			
+
 			foreach ($this->defaultDisplayFields as $fieldname => $tag)
 			{
-				
+
 				if (is_string($fieldname))
 				{
-					
+
 					$field = $this->getField($fieldname);
-					
+
 					if ($field === FALSE)
 					{
 						$field = new DataField($fieldname);
 					}
-					
+
 					$this->_displayFields[$fieldname]		= $field;
 					$this->_displayFields[$fieldname]->tag	= $tag;
 					$this->_displayFields[$fieldname]->name	= $fieldname;
 					$this->_fields[$fieldname]				= $this->_displayFields[$fieldname];
-					
+
 				}
 				else
 				{
-					
+
 					$field = $this->getField($tag);
-					
+
 					if ($field === FALSE)
 					{
 						$field = new DataField($tag);
 					}
-					
+
 					$this->_displayFields[$tag]			= $field;
 					$this->_displayFields[$tag]->tag	= prettify($tag);
 					$this->_displayFields[$tag]->name	= $tag;
 					$this->_fields[$tag]				= $this->_displayFields[$tag];
-					
+
 				}
-				
+
 			}
-			
+
 			return TRUE;
-			
+
 		}
 		else
 		{
-			
+
 			if (empty($this->_fields))
 			{
 				debug('DataObject('.get_class($this).')::setDisplayFields No Fields Defined');
 			}
-			
+
 			foreach ($this->_fields as $field)
 			{
-				
+
 				if ($field instanceof DataField && !$this->isHidden($field->name))
 				{
 					$this->_displayFields[$field->name] = $field;
 				}
-				
+
 			}
-			
+
 			if (count($this->_displayFields) > 6)
 			{
 				$this->_displayFields=array_slice($this->_displayFields,0,6);
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	function setAdditional($fieldname, $type = null, $tag = null)
 	{
-		
+
 		$t							= new ADOFieldObject();
 		$t->type					= (isset($type)?$type:'varchar');
 		$t->tag						= (isset($tag)?$tag:prettify($fieldname));
 		$t->name					= $fieldname;
 		$t->ignoreField				= TRUE;
-		
+
 		if (in_array($fieldname, $this->defaultsNotAllowed))
 		{
 			$t->user_defaults_allowed = FALSE;
@@ -460,11 +522,11 @@ class DataObject implements Iterator {
 		{
 			$t->user_defaults_allowed = TRUE;
 		}
-		
+
 		$this->_fields[$fieldname]	= new Datafield($t);
-		
+
 	}
-	
+
 	/**
 	 * Might this be needed?
 	 *
@@ -474,47 +536,47 @@ class DataObject implements Iterator {
 	{
 		$this->defaultDisplayFields=$fields;
 	}
-	
+
 	public function getDisplayFields()
 	{
-		
+
 		if (!isset($this->_displayFields))
 		{
 			$this->setDisplayFields();
 		}
-		
+
 		return $this->_displayFields;
-		
+
 	}
-	
+
 	public function getInputFields()
 	{
-		
+
 		$fields = array();
-		
+
 		foreach ($this->defaultInputFields as $field)
 		{
 			$fields[$field] = $field;
 		}
-		
+
 		return $fields;
-		
+
 	}
-	
+
 	public function getDisplayFieldNames()
 	{
-		
+
 		$return = array();
-		
+
 		foreach ($this->getDisplayFields() as $field)
 		{
 			$return[$field->name] = $field->tag;
 		}
-		
+
 		return $return;
-		
+
 	}
-	
+
 	/**
 	 * Might this be needed?
 	 *
@@ -534,52 +596,52 @@ class DataObject implements Iterator {
 	function setDefaultValidators()
 	{
 	}
-	
+
 	public function update($id, $fields, $values)
 	{
-		
+
 		if (!$this->_valid)
 		{
 			return FALSE;
 		}
-		
+
 		$db = &DB::Instance();
-		
+
 		if (!is_array($fields))
 		{
 			$fields = array($fields);
 		}
-		
+
 		if (!is_array($values))
 		{
 			$values = array($values);
 		}
-		
+
 		if ($this->isField('lastupdated') && !in_array('lastupdated', $fields))
 		{
 			$fields[] = 'lastupdated';
 			$values[] = 'now()';
 		}
-		
+
 		if ($this->isField('alteredby') && !in_array('alteredby', $fields))
 		{
 			$fields[] = 'alteredby';
 			$values[] = EGS_USERNAME;
 		}
-		
+
 		if (count($fields) != count($values))
 		{
 			return FALSE;
 		}
-		
+
 		if ($this->isAccessAllowed($id, 'write') || isModuleAdmin())
 		{
-			
+
 		 	$field_value = array();
-		 	
+
 		 	foreach ($values as $index => $value)
 		 	{
-		 		
+
 				if (strtolower($value) !== 'null' && substr($value, 0, 1) != '(')
 				{
 					$field_value[$index] = $fields[$index] . ' = ' . $db->qstr($value);
@@ -588,15 +650,15 @@ class DataObject implements Iterator {
 		 		{
 		 			$field_value[$index] = $fields[$index] . ' = ' . $value;
 		 		}
-		 		
+
 			}
-			
+
 			$query = "update {$this->_tablename} set " . implode(',', $field_value) . " where {$this->idField} = {$db->qstr($id)}";
 //			echo 'DataObject('.get_class($this).')::update query:'.$query.'<br>';
 		}
-		
+
 		return ($db->Execute($query) !== FALSE);
-		
+
 	}
 
 	public function addPolicyConstraint($cc = '')
@@ -605,18 +667,18 @@ class DataObject implements Iterator {
 		{
 			return;
 		}
-		
+
 		if ($cc instanceof ConstraintChain && $cc->count()>0)
 		{
-			
+
 			if (!($this->_policyConstraint['constraint'] instanceof ConstraintChain))
 			{
 				$this->_policyConstraint['constraint'] = new ConstraintChain();
 			}
-			
+
 			$this->_policyConstraint['constraint']->add($cc, 'OR');
 		}
-		
+
 	}
 	/**
 	 * Load a record from the database and assign appropriate values to the Object
@@ -625,13 +687,13 @@ class DataObject implements Iterator {
 	 */
 	public function load($clause, $override = FALSE, $return = FALSE)
 	{
-		
+
 		if (!$this->_valid)
 		{
 			$this->debug('DataObject(' . get_class($this) . ')::load model ' . get_class($this) . ' is not valid');
 			return FALSE;
 		}
-		
+
 		if (isset($this->_data))
 		{
 			$row = $this->_data;
@@ -639,96 +701,96 @@ class DataObject implements Iterator {
 		}
 		else
 		{
-			
+
 			$db		= &DB::Instance();
 			$select	= $this->_select;
-			
+
 			if (empty($select))
 			{
 				$select = '*';
 			}
-			
+
 			if (empty($clause))
 			{
 				return FALSE;
 			}
-			
+
 			$query = 'SELECT ' . $select . ' FROM ' . $this->_tablename . ' WHERE ' . $this->idField . '=' . $db->qstr($clause);
-			
+
 			if (!$override && $this->isField('usercompanyid') && defined('EGS_COMPANY_ID') && EGS_COMPANY_ID != 'null')
 			{
 				$query .= ' AND usercompanyid=' . $db->qstr(EGS_COMPANY_ID);
 			}
-			
+
 			if ($this->isAccessControlled() && $this->countAccessConstraints('read') > 0)
 			{
 				$query .= ' AND ' . $this->getAccessConstraint('read')->__toString();
 			}
-			
+
 			if ($this->_policyConstraint['constraint'] instanceof ConstraintChain && $this->_policyConstraint['constraint']->count()>0)
 			{
 				$query .= ' AND ' . $this->_policyConstraint['constraint']->__toString();
 			}
-			
+
 			if ($return)
 			{
 				return $query;
 			}
-			
+
 			$this->debug('DataObject(' . get_class($this) . ')::load : ' . $query);
 //			echo 'DataObject(' . get_class($this) . ')::load : ' . $query.'<br>';
-			
+
 			$row = $db->GetRow($query);
-			
+
 			if ($row === FALSE)
 			{
 //				echo 'DataObject(' . get_class($this) . ')::load Query failed: ' . $db->ErrorMsg().'<br>';
 				$this->debug('DataObject(' . get_class($this) . ')::load Query failed: ' . $db->ErrorMsg());
 				return FALSE;
 			}
-			
+
 		}
-		
+
 		if (!is_array($row))
 		{
 			return FALSE;
 		}
-		
+
 		foreach ($row as $key => $val)
 		{
-			
+
 			$this->$key = stripslashes($val);
-			
+
 			if (!isset($this->_fields[$key]))
 			{
 				$this->_fields[$key] = stripslashes($val);
 			}
-			
+
 		}
-		
+
 		foreach ($this->hashes as $fieldname => $array)
 		{
 			$this->hashes[$fieldname] = unserialize(base64_decode($this->$fieldname));
 		}
-		
+
 		if (count($row) > 0)
 		{
-			
+
 			$this->_loaded	= TRUE;
 			$this->_data	= $row;
-			
+
 			//$this->setDisplayFields();
-			
+
 			$this->cb_loaded(TRUE);
-			
+
 			return $this;
-			
+
 		}
-		
+
 		return FALSE;
 
 	}
-	
+
 	/**
 	 * returns the identifier value, loading the model if needed
 	 *
@@ -736,21 +798,21 @@ class DataObject implements Iterator {
 	 */
 	public function load_identifier_value($id = NULL)
 	{
-		
+
 		if (!$this->loaded)
 		{
-			
+
 			if (!$this->load($id))
 			{
 				return FALSE;
 			}
-			
+
 		}
-		
+
 		return $this->_data[$this->identifierField];
-		
+
 	}
-	
+
 	/**
 	* Archive (copy) current record to another table
 	* after DO has been loaded
@@ -762,18 +824,18 @@ class DataObject implements Iterator {
 		{
 			return FALSE;
 		}
-		
+
 		if ($id==null && $this->_loaded)
 		{
 			$id = $this->{$this->idField};
 		}
-		
+
 		if ($id !== null && ($this->isAccessAllowed($id, 'write') || isModuleAdmin()))
 		{
-			
+
 			$db = &DB::Instance();
 			$db->StartTrans();
-			
+
 			if (empty($archive_schema))
 			{
 				$archive_schema = 'archive.';
@@ -782,35 +844,35 @@ class DataObject implements Iterator {
 			{
 				$archive_schema = '';
 			}
-			
+
 			if (empty($archive_table))
 			{
 				$archive_table = 'archive_' . $this->_tablename;
 			}
-			
+
 			$a_query = 'INSERT INTO ' . $archive_schema . $archive_table . ' SELECT * FROM ' . $this->_tablename . ' WHERE ' . $this->idField . '=' . $id;
-			
+
 			$this->debug("DataObject(" . get_class($this) . ")::delete " . $a_query);
 //			echo "DataObject(" . get_class($this) . ")::delete " . $a_query.'<br>';
-			
+
 			$result = $db->Execute($a_query);
-			
+
 			if ($result === FALSE)
 			{
 				$errors[] = 'Failed to archive record';
 				$db->FailTrans();
 			}
-			
+
 			$db->CompleteTrans();
-			
+
 			return ($result !== FALSE);
-			
+
 		}
 		else
 		{
 			return FALSE;
 		}
-		
+
 	}
 
 	/**
@@ -824,52 +886,52 @@ class DataObject implements Iterator {
 		{
 			return FALSE;
 		}
-		
+
 		if ($id==null && $this->_loaded)
 		{
 			$id = $this->{$this->idField};
 		}
-		
+
 		if ($id !== null && ($this->isAccessAllowed($id, 'write') || isModuleAdmin()))
 		{
-			
+
 			$delete = TRUE;
-			
+
 			foreach ($this->indestructable as $field => $value)
 			{
-				
+
 				if ($this->{$field} == $value)
 				{
 					$delete = FALSE;
 				}
-				
+
 			}
-			
+
 			$db = &DB::Instance();
 			$db->StartTrans();
-			
+
 			if (count($this->hasMany) > 0)
 			{
-				
+
 				if(!$this->_loaded)
 				{
 					$this->load($id);
 				}
-				
+
 				if (!$this->cascadeDelete($errors))
 				{
 					$delete = FALSE;
 				}
-				
+
 			}
-			
+
 			if (!$delete)
 			{
 				$db->FailTrans();
 				$db->CompleteTrans();
 				return $delete;
 			}
-			
+
 			if ($archive)
 			{
 				$result = $this->archive($id, $errors, $archive_table, $archive_schema);
@@ -878,58 +940,58 @@ class DataObject implements Iterator {
 			{
 				$result = TRUE;
 			}
-			
+
 			if ($result)
 			{
-				
+
 				$query = 'DELETE FROM ' . $this->_tablename . ' WHERE ' . $this->idField . '=' . $id;
-			
+
 				$this->debug("DataObject(" . get_class($this) . ")::delete " . $query);
 //				echo "DataObject(" . get_class($this) . ")::delete " . $query.'<br>';
-				
+
 				$result = $db->Execute($query);
-				
+
 			}
-			
+
 			if ($result === FALSE)
 			{
 				$errors[] = $db->ErrorMsg();
 				$db->FailTrans();
 			}
-			
+
 			$db->CompleteTrans();
-			
+
 			return ($result !== FALSE);
-			
+
 		}
 		else
 		{
 			return FALSE;
 		}
-		
+
 	}
 
 	function cascadeDelete(&$errors = array())
 	{
-		
+
 		foreach ($this->hasMany as $name => $fk)
 		{
-			
+
 			if (is_null($fk['cascade']))
 			{
 				// No action - let the database FK constraint actions apply
 				continue;
 			}
-			
+
 			$do = DataObjectFactory::Factory($fk['do']);
 			$db = &DB::Instance();
-			
+
 			$join = ' WHERE ';
-			
+
 			if (is_array($fk['fkfield']))
 			{
 				$criteria = '';
-				
+
 				foreach ($fk['fkfield'] as $index => $fkfield)
 				{
 					$criteria .= $join . $fkfield . '=' . $this->{$fk['field'][$index]};
@@ -940,15 +1002,15 @@ class DataObject implements Iterator {
 			{
 				$criteria = $join . $fk['fkfield'] . '=' . $this->{$fk['field']};
 			}
-			
+
 			$expected_count = $do->getCount($criteria);
-			
+
 			if ($expected_count === FALSE)
 			{
 				$errors[] = $db->errorMsg();
 				return FALSE;
 			}
-				
+
 			if ($fk['cascade'] === FALSE)
 			{
 				// Cascade delete not allowed
@@ -960,28 +1022,28 @@ class DataObject implements Iterator {
 				}
 				// No FK rows so check next constraint
 				continue;
-				
+
 			}
 			else
 			{
 				// Cascade delete allowed
 				$query = 'DELETE FROM ' . $do->_tablename . $criteria;
-				
+
 				$this->debug("DataObject(".get_class($this).")::cascadeDelete ".$query);
 				//echo "DataObject(".get_class($this).")::cascadeDelete ".$query.'<br>';
-				
+
 				$db->StartTrans();
-				
+
 				$result = $db->Execute($query);
-				
+
 				$deleted_count = $db->Affected_Rows();
-				
+
 				if ($deleted_count === FALSE)
 				{
 					// $db->Affected_Rows() not supported by this database
 					$deleted_count = $expected_count;
 				}
-				
+
 				if ($result === FALSE || $deleted_count != $expected_count)
 				{
 					$errors[] = 'Error deleting linked ' . $name . ': ' . $db->ErrorMsg();
@@ -989,17 +1051,17 @@ class DataObject implements Iterator {
 					$db->CompleteTrans();
 					return FALSE;
 				}
-				
+
 				$db->CompleteTrans();
-				
+
 			}
-			
+
 		}
-		
+
 		return TRUE;
-	
+
 	}
-	
+
 	/**
 	 *Load a DO based on something other than it's idField
 	 *
@@ -1007,27 +1069,27 @@ class DataObject implements Iterator {
 	 */
 	function loadBy($field, $value = null, $tablename = FALSE)
 	{
-		
+
 		if (!$this->_valid)
 		{
 			return FALSE;
 		}
-		
+
 		$db = &DB::Instance();
-		
+
 		if ($field instanceof SearchHandler)
 		{
-			
+
 			$sh = $field;
 			$sh->setLimit(1);
-			
+
 			$qb = new QueryBuilder($db);
-			
+
 			if ($this->isAccessControlled() && $this->countAccessConstraints('read') > 0)
 			{
 				$sh->addConstraintChain($this->getAccessConstraint('read'));
 			}
-			
+
 			$query = $qb
 				->select($sh->fields)
 				->from($this->_tablename)
@@ -1035,11 +1097,11 @@ class DataObject implements Iterator {
 				->orderby($sh->orderby, $sh->orderdir)
 				->limit($sh->perpage, $sh->offset)
 				->__toString();
-				
+
 		}
 		else
 		{
-			
+
 			if ($field instanceof ConstraintChain)
 			{
 				$where = $field->__toString();
@@ -1055,12 +1117,12 @@ class DataObject implements Iterator {
 			}
 			else
 			{
-				
+
 				$where = '1=1';
-				
+
 				for ($i = 0; $i < count($field); $i++)
 				{
-					
+
 					if ((!$tablename) && (($this->getField($field[$i])->type == 'date') || ($this->getField($field[$i])->type == 'numeric') || (substr($this->getField($field[$i])->type, 0, 3) == 'int')) && ($value[$i] == ''))
 					{
 						$where .= ' AND ' . $field[$i] . ' is null';
@@ -1069,21 +1131,21 @@ class DataObject implements Iterator {
 					{
 						$where .= ' AND ' . $field[$i] . '=' . $db->qstr($value[$i]);
 					}
-					
+
 				}
 
 			}
-			
+
 			if (defined('EGS_COMPANY_ID') && $this->isField('usercompanyid') && EGS_COMPANY_ID != 'null')
 			{
 				$where .= ' AND usercompanyid=' . $db->qstr(EGS_COMPANY_ID);
 			}
-			
+
 			if ($this->isAccessControlled() && $this->countAccessConstraints('read') > 0)
 			{
 				$where .= ' AND ' . $this->getAccessConstraint('read')->__toString();
 			}
-			
+
 			if ($tablename)
 			{
 				$query = 'SELECT id FROM ' . $tablename . ' WHERE ' . $where;
@@ -1092,28 +1154,28 @@ class DataObject implements Iterator {
 			{
 				$query = 'SELECT * FROM ' . $this->_tablename . ' WHERE ' . $where;
 			}
-			
+
 		}
-		
+
 		$this->debug("DataObject(" . get_class($this) . ")::loadBy " . $query);
 //		echo "DataObject(".get_class($this).")::loadBy ".$query.'<br>';
 
 		$row = $db->GetRow($query);
-		
+
 		if ($row === FALSE)
 		{
 			$this->debug("DataObject(" . get_class($this) . ")::loadBy Error in loadby: " . $db->ErrorMsg() . $query);
 			return FALSE;
 		}
-		
+
 		if (count($row) > 0)
 		{
 			$this->_data = $row;
 			return $this->load($row[$this->idField]);
 		}
-		
+
 		return FALSE;
-		
+
 	}
 
 	/**
@@ -1127,48 +1189,48 @@ class DataObject implements Iterator {
 	 */
 	function save($debug = FALSE)
 	{
-		
+
 		$this->debug('DataObject(' . get_class($this) . ')::save model ' . get_class($this));
-		
+
 		if (!$this->_valid)
 		{
 			return FALSE;
 		}
-		
+
 		$db = &DB::Instance();
-		
+
 		if ($debug)
 		{
 			$db->debug = TRUE;
 		}
-		
+
 		$data		= array();
 		$myIdField	= $this->{$this->idField};
-		
+
 		foreach ($this->getFields() as $key => $field)
 		{
-			
+
 			if($field->ignoreField)
 			{
 				continue;
 			}
-			
+
 			$value = $field->finalvalue;
-			
+
 			if (in_array($key, $this->force_change))
 			{
 				$value = $this->autoHandle($key);
 			}
-			
+
 			// TODO: Something looks wrong here - if the field is type file
 			// and value empty, then saveFile?!?
-			
+
 			if ($field->type=='file' && empty($value))
 			{
 				$this->saveFile();
 				continue;
 			}
-			
+
 			if (($field->type == 'timestamp' && trim($value) === '')
 				|| (substr($field->type, 0, 3) == 'int' && trim($value) === '')
 				|| ($field->type == 'numeric' && trim($value) === '')
@@ -1185,22 +1247,22 @@ class DataObject implements Iterator {
 			{
 				$data[$key] = $value;
 			}
-			
+
 		}
-		
+
 		foreach ($this->hashes as $fieldname => $array)
 		{
 			$data[$fieldname] = base64_encode(serialize($array));
 		}
-		
+
 		if (isset($data[$this->idField]) && $data[$this->idField] == 'NULL')
 		{
 			unset($data[$this->idField]);
 		}
-		
+
 		// Need a method of checking whether insert is allowed
 		// - assume it is since we have got to this point
-		
+
 		if (!isset($data[$this->idField])
 			|| (isset($data[$this->idField])
 			&& ($this->isAccessAllowed($data[$this->idField], 'write')
@@ -1212,12 +1274,12 @@ class DataObject implements Iterator {
 		{
 			return FALSE;
 		}
-		
+
 		if ($debug)
 		{
 			$db->debug = FALSE;
 		}
-		
+
 		if ($ret === 0)
 		{
 			$this->debug('DataObject(' . get_class($this) . ')::save Save of ' . get_class($this) . ' failed: ' . $db->ErrorMsg());
@@ -1228,9 +1290,9 @@ class DataObject implements Iterator {
 			$this->_loaded = TRUE;
 			return TRUE;
 		}
-		
+
 	}
-	
+
 	private function saveFile()
 	{
 //		$db = DB::Instance();
@@ -1239,46 +1301,46 @@ class DataObject implements Iterator {
 
 	public static function className($var = null)
 	{
-		
+
 		static $name;
-		
+
 		if (empty($name) && !empty($var))
 		{
 			$name = $var;
 		}
-		
+
 		return $name;
-		
+
 	}
-	
+
 	function getBooleanFields()
 	{
-		
+
 		$return = array();
-		
+
 		foreach ($this->getFields() as $field)
 		{
-			
+
 			if ($field->type == 'bool')
 			{
 				$return[] = $field;
 			}
 		}
-		
+
 		return $return;
-		
+
 	}
 
 	function autoHandle($fieldname)
 	{
-		
+
 		$this->setAutoHandlers();
-		
+
 		if (empty($this->_autohandlers[$fieldname]))
 		{
 			return FALSE;
 		}
-		
+
 		return $this->_autohandlers[$fieldname]->handle($this);
 
 	}
@@ -1293,7 +1355,7 @@ class DataObject implements Iterator {
 	 */
 	public static function Factory($data, &$errors = array(), $do_name = null)
 	{
-		
+
 		// first we get an instance of the desired class
 		if (!($do_name instanceof DataObject))
 		{
@@ -1303,52 +1365,52 @@ class DataObject implements Iterator {
 		{
 			$do = $do_name;
 		}
-		
+
 		if (!$do->isValid())
 		{
 			return FALSE;
 		}
 
 		$do->debug('DataObject(' . get_class($do) . ')::Factory model ' . get_class($do));
-		
+
 		// then get the fields and then loop their validators
 		$do_fields	= $do->getFields();
 		$mode		= "NEW";
-		
+
 		foreach ($data as $key => $value)
 		{
-			
+
 			if (!is_array($value))
 			{
 				$data[$key] = trim($value);
 			}
-			
+
 		}
-		
+
 		// if editing, assign current values to $data where fields are empty
 //		if($do->idField!=$do->getIdentifier()&&!empty($data[$do->idField])) {
 
 		if (!empty($data[$do->idField]))
 		{
-			
+
 			$mode		= "EDIT";
 			$current	= $do->load($data[$do->idField]);
 			$maintain	= array('created', 'createdby', 'owner', 'last_login');
-			
+
 			foreach ($maintain as $fieldname)
 			{
-				
+
 				if ($do->isField($fieldname) && empty($data[$fieldname]))
 				{
 					$field				= $do->getField($fieldname);
 					$field->ignoreField	= TRUE;
 				}
-				
+
 			}
-			
+
 			if ($current === FALSE)
 			{
-				
+
 				if ($do->idField == $do->getIdentifier())
 				{
 					$mode = "NEW";
@@ -1358,7 +1420,7 @@ class DataObject implements Iterator {
 					$do->debug("DataObject(" . get_class($do) . ")::Factory Load failed while trying to edit " . get_class($do));
 					return FALSE;
 				}
-				
+
 			}
 			else
 			{
@@ -1366,14 +1428,14 @@ class DataObject implements Iterator {
 				{
 					return FALSE;
 				}
-				
+
 			}
-			
+
 		}
 		else
 		{
 			$maintain	= array('created', 'createdby');
-				
+
 			foreach ($maintain as $fieldname)
 			{
 				// This is an insert; these fields are set automatically
@@ -1381,31 +1443,31 @@ class DataObject implements Iterator {
 				{
 					unset($data[$fieldname]);
 				}
-			
+
 			}
-			
+
 		}
-		
+
 		$do->debug('DataObject('.get_class($do).')::Factory mode='.$mode);
-		
+
 		$db = &DB::Instance();
-		
+
 		foreach ($do_fields as $name => $field)
 		{
-			
+
 			if ($field->ignoreField)
 			{
 				continue;
 			}
-			
+
 			if ($field->type == 'oid')
 			{
 				$data[$name] = 0;
 			}
-			
+
 			if ($mode == "EDIT" && !isset($data[$name]))
 			{
-				
+
 				if ($field->type != 'bool' || !isset($data['_checkbox_exists_' . $name]))
 				{
 					continue;
@@ -1414,72 +1476,72 @@ class DataObject implements Iterator {
 				{
 					$data[$name] = 'false';
 				}
-				
+
 			}
-			
+
 			if ($field->type == 'numeric' && isset($data[$name]) && $data[$name] === '0')
 			{
 				$data[$name] = 0;
 			}
-			
+
 			if (empty($data[$name]) && !(isset($data[$name]) && $data[$name] === 0))
 			{
-				
+
 				if ($field->type == 'bool' && (!isset($data[$name]) || $data[$name] !== TRUE))
 				{
 					$data[$name] = 'false';
 				}
-				
+
 				$do->debug('DataObject(' . get_class($do) . ')::Factory autohandle for ' . $name);
-				
+
 				$test = $do->autoHandle($name);
-				
+
 				if ($test !== FALSE)
 				{
 					$data[$name] = $test;
 				}
-				
+
 			}
-			
+
 			if ($mode == "EDIT" && isset($data[$name]) && $do->isNotEditable($name))
 			{
 				unset($data[$name]);
 				continue;
 			}
-			
+
 			if (!empty($data[$name]))
 			{
-				
+
 				if (isset($do->belongsToField[$name]))
 				{
 					$fk = DataObjectFactory::Factory($do->belongsTo[$do->belongsToField[$name]]['model']);
-					
+
 					// Add any Policy Constraints defined against the FK
 					$fk->addPolicyConstraint($do->belongsTo[$do->belongsToField[$name]]['cc']);
-					
+
 					$fk->load($data[$name]);
-					
+
 					if (!$fk->isLoaded())
 					{
 						$errors[$name] = 'Input value ' . $data[$name] . ' for ' . $do->belongsToField[$name] . ' does not exist in ' . $do->belongsTo[$do->belongsToField[$name]]['model'];
 					}
-					
+
 				}
 				else
 				{
-					
+
 					foreach ($do->hasOne as $hasname => $hasone)
 					{
-						
+
 						if ($hasone['field'] == $name && empty($do->$hasname))
 						{
-							
+
 							$fk = DataObjectFactory::Factory($hasone['model']);
-							
+
 							// This is a fudge to ensure that any FK references are resolved
 							// i.e. remove constraints so only fails if fk truly does not exit
 							$fk->_policyConstraint = null;
-							
+
 							if ($fk->idField == (empty($hasone['fkfield']) ? $fk->idField : $hasone['fkfield']))
 							{
 								$fk->load($data[$name]);
@@ -1488,46 +1550,46 @@ class DataObject implements Iterator {
 							{
 								$fk->loadBy($hasone['fkfield'], $data[$name]);
 							}
-							
+
 							if (!$fk->isLoaded())
 							{
 								$errors[$name] = get_class($do) . ' Input value ' . $data[$name] . ' for ' . $hasname . ' does not exist in ' . $hasone['model'];
 							}
-							
+
 						}
-						
+
 					}
-					
+
 				}
-				
+
 			}
-			
+
 			if (isset($data[$name]))
 			{
 				$do->debug('DataObject(' . get_class($do) . ')::Factory test field ' . $name);
 				$do->$name = $field->test($data[$name], $errors);
 			}
-			
+
 			if (!isset($data[$name]) && $field->has_default == 1)
 			{
 				$do->debug('DataObject(' . get_class($do) . ')::Factory Get Default for ' . $name);
 				$do->$name = $field->default_value;
 				$do->debug('DataObject(' . get_class($do) . ')::Factory default value ' . $do->$name);
 			}
-			
+
 		}
-		
+
 		$do->debug('DataObject(' . get_class($do) . ')::Factory Call do->test');
 		$do->test($errors);
-		
+
 		// then test the model as a whole
 		if (count($errors) == 0)
 		{
 			return $do;
 		}
-		
+
 		return FALSE;
-		
+
 	}
 
 	protected function addValidator(ModelValidation $validator)
@@ -1547,70 +1609,70 @@ class DataObject implements Iterator {
 	 */
 	protected function validateUniquenessOf($fields, $message = NULL, $ignore_nulls = FALSE)
 	{
-		
+
 		$this->isUnique[] = $fields;
-		
+
 		if (!is_array($fields))
 		{
 			$fields = array($fields);
 		}
-		
+
 		foreach ($fields as $fieldname)
 		{
-			
+
 			if (!$this->isField($fieldname))
 			{
 				$this->debug('DataObject(' . get_class($this) . ')::validateUniquenessOf Invalid fieldname (' . $fieldname . ') provided to validateUniquenessOf() in DataObject.php');
 				return FALSE;
 			}
-			
+
 		}
 
 		$this->addValidator(new UniquenessValidator($fields, $message, $ignore_nulls));
-		
+
 		return TRUE;
-		
+
 	}
 
 	public function checkUniqueness($fields)
 	{
-		
+
 		if (!is_array($fields))
 		{
 			return in_array($fields, $this->isUnique);
 		}
 
 	}
-	
+
 	protected function validateEqualityOf($fieldname, $fieldname2)
 	{
-		
+
 		$fieldnames	= array();
 		$args		= func_get_args();
-		
+
 		foreach ($args as $fieldname)
 		{
 			$fieldnames[] = $fieldname;
 		}
-		
+
 		if (count($fieldnames) < 2)
 		{
 			$this->debug('DataObject(' . get_class($this) . ')::validateEqualityOf Need at least 2 fieldnames to test for equality!');
 			return FALSE;
 		}
-		
+
 		$this->addValidator(new EqualityValidator($fieldnames));
-		
+
 	}
 
 	protected function test(Array &$errors)
 	{
-		
+
 		foreach ($this->getValidators() as $validator)
 		{
 			$validator->test($this, $errors);
 		}
-		
+
 	}
 
 	public function isLoaded()
@@ -1620,29 +1682,29 @@ class DataObject implements Iterator {
 
 	public function fieldTest(&$errors)
 	{
-		
+
 		$myIdField	= $this->{$this->idField};
 		$fields		= $this->getFields();
-		
+
 		foreach ($fields as $field)
 		{
-			
+
 			if ($field->_name == $myIdField)
 			{
 				continue;
 			}
-			
+
 			$field = $field->test($errors);
-			
+
 		}
-		
+
 		if ($errors > 0)
 		{
 			return FALSE;
 		}
-		
+
 		return TRUE;
-		
+
 	}
 
 	/**
@@ -1664,10 +1726,10 @@ class DataObject implements Iterator {
 	 */
 	public function __set($key, $val)
 	{
-			 
+
 		if ($this->isField($key))
 		{
-		
+
 			if (is_object($this->_fields[$key]))
 			{
 				$this->_fields[$key]->value = $val;
@@ -1676,20 +1738,20 @@ class DataObject implements Iterator {
 			{
 				$this->_fields[$key] = $val;
 			}
-			
+
 		}
 		else
 		{
-			
+
 			if(isset($this->belongsTo[$key]))
 			{
 				$this->belongsTo[$key] = $val;
 			}
-			
+
 		}
-		
+
 	}
-		
+
 	protected function isProtected($var)
 	{
 		return (in_array($var, $this->_protected));
@@ -1702,17 +1764,17 @@ class DataObject implements Iterator {
 	 */
 	public function getFields()
 	{
-		
+
 		$return=  array();
-		
+
 		if (!empty($this->_fields))
 		{
-			
+
 			$idfield = array();
-			
+
 			foreach ($this->_fields as $fieldname => $field)
 			{
-				
+
 				if ($fieldname != $this->idField)
 				{
 					$return[$fieldname] = $this->getField($fieldname);
@@ -1722,17 +1784,17 @@ class DataObject implements Iterator {
 					$idfield[$fieldname] = $this->getField($fieldname);
 				}
 			}
-			
+
 			ksort($return);
-			
+
 			$return = $idfield + $return;
-			
+
 		}
-		
+
 		return $return;
-		
+
 	}
-	
+
 	/**
 	 * Return the DataField Object representing the named field
 	 *
@@ -1741,68 +1803,68 @@ class DataObject implements Iterator {
 	 */
 	public function getField($field)
 	{
-		
+
 		if (!$this->_valid)
 		{
 			return new DataField('default');
 		}
-		
+
 		$field = strtolower($field);
-		
+
 		if (isset($this->_fields[$field]))
 		{
 			return $this->_fields[$field];
 		}
-		
+
 		if (($field == $this->getIdentifier()) && (strpos($field, '||')))
 		{
 			$ob = new DataField($field, $this->getIdentifierValue());
 			return $ob;
 		}
-		
+
 		if(isset($this->concatenations[$field]))
 		{
-			
+
 			$concat_field		= new DataField($field);
 			$concat_field->type	= 'varchar';
-			
+
 			foreach ($this->concatenations[$field]['fields'] as $fieldname)
 			{
 				$concat_field->value .= $this->$fieldname . $this->concatenations[$field]['separator'];
 			}
-			
+
 			$concat_field->ignoreField	= TRUE;
 			$this->_fields[$field]		= new DataField($concat_field);
-			
+
 		}
-		
+
 		if (isset($this->belongsTo[$field]))
 		{
 			$this->_fields[$field]->ignoreField = TRUE;
 		}
-		
+
 		if (isset($this->aliases[$field]))
 		{
 
 			$alias = $this->aliases[$field];
 			$model = DataObjectFactory::Factory($alias['modelName']);
-			
+
 			//$constraints=$alias['constraints'];
 			//$constraints->add(new Constraint(get_class($this).'_id','=',$this->{$this->idField}));
 			//$model->loadBy($constraints);
-			
+
 			$alias_field = clone $model->getField($alias['requiredField']);
-			
+
 			//$alias_field->value = $this->$field;
-			
+
 			return $alias_field;
-		
+
 		}
-		
+
 		return FALSE;
-		
+
 	}
-	
+
 	/**
 	 * Checks if the given value is the name of one of the DB fields represented by the objects
 	 *
@@ -1813,13 +1875,13 @@ class DataObject implements Iterator {
 	{
 		return (!is_object($var) && isset($this->_fields[strtolower($var)]));
 	}
-	
+
 	public function getOptions($_field, $depth = 5)
 	{
-		
+
 		if ($this->isField($_field, 0))
 		{
-			
+
 			if (!is_null($this->_fields[$_field]->options))
 			{
 				$options = $this->_fields[$_field]->options;
@@ -1828,48 +1890,48 @@ class DataObject implements Iterator {
 			{
 				$options = new FieldOptions();
 			}
-			
+
 //			echo 'DataObject::getOptions '.get_class($this).'->'.$_field.'<pre>'.print_r($options, TRUE).'</pre><br>';
 
 			$cc = new ConstraintChain();
-			
+
 			if (!is_null($options->_depends))
 			{
-				
+
 				foreach ($options->_depends as $depends_field => $value)
 				{
 					$cc->add(new Constraint($depends_field, '=', $value));
 				}
-				
+
 			}
-			
+
 			if (isset($this->belongsToField[$_field]))
 			{
-				
+
 				$bt = $this->belongsTo[$this->belongsToField[$_field]];
-				
+
 				if ($bt["cc"] instanceof ConstraintChain)
 				{
 					$cc->add($bt["cc"]);
 				}
-				
+
 				$this->belongsTo[$this->belongsToField[$_field]]['cc'] = $cc;
 				$model = DataObjectFactory::Factory($bt['model']);
-				
+
 			}
 			else
 			{
 				$model = $this;
 			}
-			
+
 			$autocomplete_limit		= get_config('AUTOCOMPLETE_SELECT_LIMIT');
 			$count					= $this->getOptionsCount($_field);
 			$autocomplete			= ($count > $autocomplete_limit);
 			$options->_autocomplete	= $autocomplete;
 			$options->_count		= $count;
-			
+
 			$limit = (($autocomplete) ? $autocomplete_limit : '');
-			
+
 			if (!is_null($options->_identifierfield))
 			{
 				$model->identifierField = $options->_identifierfield;
@@ -1878,120 +1940,120 @@ class DataObject implements Iterator {
 			{
 				$model->identifierField = $bt["identifierField"];
 			}
-			
+
 			if (is_array($model->identifierField))
 			{
 				$model->identifierField = implode("||'" . $model->identifierFieldJoin . "'||", $model->identifierField);
 			}
-			
+
 			if ($options->_autocomplete && !empty($options->_autocomplete_value))
 			{
 				$cc->add(new Constraint('lower(' . $model->identifierField . ')', 'like', strtolower($options->_autocomplete_value) . '%'));
 			}
-			
+
 			//echo 'DataObject::getOptions '.$_field.' cc='.$cc->__toString().'<br>';
 			//echo 'DataObject::getOptions '.$_field.'<pre>'.print_r($options, TRUE).'</pre><br>';
 			//echo 'DataObject::getOptions '.$_field.'<pre>'.print_r($this->_fields[$field], TRUE).'</pre><br>';
-			
+
 			if ($this->_fields[$_field]->not_null == '')
 			{
 				$options->_data		= array('' => 'None');
 				$options->_nonone	= TRUE;
 			}
-			
+
 			$options->_data += $model->getAll($cc, TRUE, $options->_use_collection, $limit);
-			
+
 			//echo 'DataObject::getOptions '.$_field.'<pre>'.print_r($options, TRUE).'</pre><br>';
-			
+
 			$this->_fields[$_field]->options = $options;
-			
+
 			return $this->_fields[$_field]->options;
-			
+
 		}
-		
+
 		if ($depth > 0)
 		{
-			
+
 			foreach ($this->composites as $name => $array)
 			{
-				
+
 				$model		= DataObjectFactory::Factory($array['modelName']);
 				$options	= $model->getOptions($_field, $depth - 1);
-				
+
 				if ($options !== FALSE)
 				{
 					return $options;
 				}
-				
+
 			}
-			
+
 			foreach ($this->aliases as $alias => $array)
 			{
-				
+
 				$model		= DataObjectFactory::Factory($array['modelName']);
 				$options	= $model->getOptions($_field, $depth - 1);
-				
+
 				if ($options !== FALSE)
 				{
 					return $options;
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		return FALSE;
-		
+
 	}
-	
+
 	public function getOptionsCount($field)
 	{
-		
+
 		if ($this->isField($field, 0))
 		{
-			
+
 			if (isset($this->belongsToField[$field]))
 			{
-				
+
 				$bt		= $this->belongsTo[$this->belongsToField[$field]];
 				$model	= DataObjectFactory::Factory( $bt['model']);
-				
+
 				return $model->getCount($bt['cc']);
-				
+
 			}
 			else
 			{
 				return $this->getCount();
 			}
-			
+
 		}
-		
+
 	}
 
 	function setOptions($field, $options)
 	{
-		
+
 		if ($this->isField($field) && $options instanceof fieldOptions)
 		{
 			$this->_fields[$field]->options = $options;
 		}
-		
+
 	}
-	
+
 	/**
 	 * A function to cycle the fields and assign human-friendly tags
 	 * @see getTag();
 	 */
 	public function setTags()
 	{
-		
+
 		foreach ($this->getFields() as $fieldname => $field)
 		{
 			$field->tag = $this->getTag($fieldname);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Returns a human-friendly title for the field
 	 * Expected to be over-ridden by sub-classes, and probably user-customisable as well?
@@ -2001,17 +2063,17 @@ class DataObject implements Iterator {
 	 */
 	public function getTag($field)
 	{
-		
+
 		global $system;
-		
+
 		//return ucwords(str_replace('_id','',strtolower($field)));
-		
+
 		$translator = $system->injector->instantiate('Translation');
-		
+
 		return $translator->translate($field);
-		
+
 	}
-	
+
 	public function getEnum($name, $val)
 	{
 		return $this->enums[$name][$val];
@@ -2019,12 +2081,12 @@ class DataObject implements Iterator {
 
 	function getFormatted($name, $html = TRUE)
 	{
-		
+
 		if (isset($this->_fields[$name]->html))
 		{
 			$this->_fields[$name]->html = $html;
 		}
-		
+
 		if (isset($this->belongsToField[$name]))
 		{
 			return $this->{$this->belongsToField[$name]};
@@ -2050,61 +2112,61 @@ class DataObject implements Iterator {
 	 */
 	public function __get($var)
 	{
-		
+
 		$this->debug('DataObject('.get_class($this).')::__get field '.$var);
 //		echo 'DataObject('.get_class($this).')::__get field '.$var.'<br>';
-		
+
 		$var = strtolower($var);
-		
+
 		if ($this->isField($var, 1))
 		{
 			if (is_string($this->_fields[$var]))
 			{
 				return $this->_fields[$var];
 			}
-			
+
 			$attempt = $this->_fields[$var]->value;
-			
+
 			if (!empty($attempt) || $attempt === 0 || $attempt === '0')
 			{
 				return $attempt;
 			}
-			
+
 		}
-		
+
 		if ($var == $this->parent_relname)
 		{
-			
+
 			$p_name			= get_class($this);
 			$parent_model	= DataObjectFactory::Factory($p_name);
 			$parent_id		= $this->getParent();
-		
+
 			$parent_model->load($parent_id);
 
 			$parent = $parent_model->{$this->getIdentifier()};
 			return $parent;
 		}
-		
+
 		if (isset($this->isCached[$var]))
 		{
 			return $this->isCached[$var];
 		}
-		
+
 		if (isset($this->aliases[$var]))
 		{
-			
+
 			$model		= DataObjectFactory::Factory($this->aliases[$var]['modelName']);
 			$fkvalue	= ($this->subClass?$this->{$this->fkField}:$this->{$this->idField});
-			
+
 //			$fkvalue=$this->{$this->idField};
 
 			if (!is_null($fkvalue))
 			{
-				
+
 				$cc			= $this->aliases[$var]['constraints'];
-				
+
 				$fkfield	= (empty($this->aliases[$var]['fkfield'])?get_class($this).'_id':$this->aliases[$var]['fkfield']);
-				
+
 				if ($cc instanceof SearchHandler) {
 					$cc->addConstraint(new Constraint ($fkfield,'=',$fkvalue));
 				}
@@ -2112,14 +2174,14 @@ class DataObject implements Iterator {
 				{
 					$cc->add(new Constraint ($fkfield,'=',$fkvalue));
 				}
-				
+
 				$model->loadby($cc);
 				$this->isCached[$var] = $model;
-				
+
 			}
-			
+
 			return $model;
-			
+
 		}
 
 //		if(isset($this->compositesField[$var])) {
@@ -2130,46 +2192,46 @@ class DataObject implements Iterator {
 
 		if (isset($this->composites[$var]))
 		{
-			
+
 			$model = DataObjectFactory::Factory($this->composites[$var]['modelName']);
-			
+
 			$model->load($this->{$this->composites[$var]['field']});
-		
+
 			$this->isCached[$var] = $model;
-			
+
 			return $model;
-			
+
 		}
-		
+
 		if (isset($this->concatenations[$var]))
 		{
-			
+
 			$string = '';
-			
+
 			foreach ($this->concatenations[$var]['fields'] as $fieldname)
 			{
 //				$string.=$this->$fieldname.' ';
-				
+
 				$s = $this->$fieldname;
-				
+
 				if (!empty($s))
 				{
 					$string .= $this->$fieldname . $this->concatenations[$var]['separator'];
 				}
-				
+
 			}
-			
+
 			return $string;
-			
+
 		}
-		
+
 		if (isset($this->hasManyThrough[$var]))
 		{
-			
+
 			$jo				= $this->hasManyThrough[$var]['jo'];
 			$collectionname	= $jo . 'Collection';
 			$collection		= new $collectionname(DataObjectFactory::Factory($jo));
-						
+
 			if (!isset($handlers[$var]))
 			{
 				$sh = new SearchHandler($collection,FALSE);
@@ -2179,51 +2241,51 @@ class DataObject implements Iterator {
 			{
 				$sh = $handlers[$var];
 			}
-			
+
 			unset($sh->fields[strtolower(get_class($this))]);
 			unset($sh->fields[strtolower(get_class($this)).'_id']);
-			
+
 			$sh->addConstraint(new Constraint(get_class($this).'_id','=',$this->{$this->idField}));
 			$collection->load($sh);
-			
+
 			return $collection;
-			
+
 		}
-		
+
 		if (isset($this->habtm[$var]))
 		{
-			
+
 			$db			= DB::Instance();
 			$r_model	= DataObjectFactory::Factory($this->habtm[$var]['model']);
-			
+
 			$a			= strtolower(get_class($this)).'_id';
 			$b			= strtolower($this->habtm[$var]['model']).'_id';
 			$query		= 'SELECT remote.* FROM '.$this->_tablename.' AS local JOIN '.$this->habtm[$var]['table'].' AS middle ON (local.'.$this->idField.'=middle.'.$a.') JOIN '.$r_model->_tablename.' AS remote ON (middle.'.$b.'=remote.'.$r_model->idField.') WHERE local.'.$this->idField.'='.$db->qstr($this->{$this->idField});
 			$c_query	= str_replace('remote.*','count(*)',$query);
 			$c_name		= $this->habtm[$var]['model'].'Collection';
 			$collection	= new $c_name($r_model);
-			
+
 			$collection->load($query, $c_query);
 			$this->isCached[$var]=$collection;
-			
+
 			return $collection;
-			
+
 		}
-		
+
 		if (isset($this->hasMany[$var]))
 		{
-			
+
 			$do				= $this->hasMany[$var]['do'];
 			$collectionname	= $do . 'Collection';
 			$collection		= new $collectionname(DataObjectFactory::Factory($do));
-			
+
 			if (!$this->isLoaded())
 			{
 				return $collection;
 			}
-			
+
 			$handlers = $this->searchHandlers;
-			
+
 			if (!isset($handlers[$var]))
 			{
 				$sh = new SearchHandler($collection, FALSE);
@@ -2232,10 +2294,10 @@ class DataObject implements Iterator {
 			{
 				$sh = $handlers[$var];
 			}
-			
+
 			unset($sh->fields[strtolower(get_class($this))]);
 			unset($sh->fields[strtolower(get_class($this)).'_id']);
-			
+
 			if (is_array($this->hasMany[$var]['fkfield']))
 			{
 				foreach ($this->hasMany[$var]['fkfield'] as $index => $fkfield)
@@ -2247,24 +2309,24 @@ class DataObject implements Iterator {
 			{
 				$sh->addConstraint(new Constraint($this->hasMany[$var]['fkfield'],'=',$this->{$this->hasMany[$var]['field']}));
 			}
-			
+
 			$collection->load($sh);
-			
+
 			$this->isCached[$var] = $collection;
-			
+
 			return $collection;
-			
+
 		}
 
 		if (isset($this->hasOne[$var]))
 		{
-			
+
 			$field		= $this->hasOne[$var]['field'];
 			$fkfield	= $this->hasOne[$var]['fkfield'];
-			
+
 			if (isset($this->hasOne[$var]['cached']))
 			{
-				
+
 				if (is_null($fkfield))
 				{
 					$id = $this->hasOne[$var]['cached']->idField;
@@ -2273,18 +2335,18 @@ class DataObject implements Iterator {
 				{
 					$id = $fkfield;
 				}
-				
+
 				if ($this->hasOne[$var]['cached']->$id == $this->$field)
 				{
 					// return the cached object as it hasn't changed
 					return $this->hasOne[$var]['cached'];
 				}
-				
+
 			}
-			
+
 			// no cached object or cached object has changed
 			$model = DataObjectFactory::Factory($this->hasOne[$var]['model']);
-			
+
 			if (is_null($fkfield))
 			{
 				$model->load($this->$field);
@@ -2293,83 +2355,83 @@ class DataObject implements Iterator {
 			{
 				$model->loadBy($fkfield, $this->$field);
 			}
-			
+
 			$this->hasOne[$var]['cached'] = $model;
-			
+
 			return $model;
-			
+
 		}
 
 		if (isset($this->belongsTo[$var]))
 		{
-			
+
 			$fields = $this->_fields;
-			
+
 			if (isset($fields[$var]))
 			{
 				$value = $this->_fields[$var]->value;
 			}
-			
+
 			if (empty($value))
 			{
-				
+
 				$model = DataObjectFactory::Factory($this->belongsTo[$var]['model']);
-				
+
 				// Remove any policies to ensure the FK can be resolved to get the FK value
 				$model->_policyConstraint = null;
-				
+
 				$model->load($this->{$this->belongsTo[$var]['field']});
-				
+
 				if (!empty($this->belongsTo[$var]['identifierField']))
 				{
 					$model->identifierField = $this->belongsTo[$var]['identifierField'];
 				}
-				
+
 				$field = $model->getField($model->getIdentifier());
-				
+
 				//$this->_fields[$var] = clone $field;
-				
+
 				$field->tag	= prettify($var);
 				$value		= $field->value;
-				
+
 				if (empty($value))
 				{
 					$value = $model->{$model->getIdentifier()};
 				}
-				
+
 			}
-			
+
 			return $value;
-			
+
 		}
 
 		if ($var == 'identifierField')
 		{
 			return $this->getIdentifier();
 		}
-		
+
 		if ($var == $this->getIdentifier())
 		{
 			return $this->getIdentifierValue();
 		}
-		
+
 		if ($var == 'loaded' || $var == 'modified' || $var == 'tablename')
 		{
 			return $this->{'_' . $var};
 		}
-		
+
 		foreach ($this->hashes as $fieldname => $objects)
 		{
-			
+
 			if (isset($objects[$var]))
 			{
 				return unserialize($objects[$var]);
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * Returns array of fields defined in $identifierField
 	 *
@@ -2381,7 +2443,7 @@ class DataObject implements Iterator {
 
 		if (!is_array($this->identifierField))
 		{
-			
+
 			if (strpos($this->identifierField, '||'))
 			{
 				$identifier_fields = explode('||', $this->identifierField);
@@ -2394,43 +2456,43 @@ class DataObject implements Iterator {
 			{
 				$identifier_fields = array($this->identifierField);
 			}
-			
+
 			foreach ($identifier_fields as $key => $field)
 			{
 				$identifier_fields[$key] = trim(str_replace(array(' ', ',', "'", '"', '/'), '', $field));
 			}
-			
+
 		}
 		else
 		{
 			$identifier_fields = $this->identifierField;
 		}
-	
+
 		foreach ($identifier_fields as $key => $field)
 		{
-			
+
 			if (!$this->isField($field) && !isset($this->concatenations[$field]))
 			{
 				unset($identifier_fields[$key]);
 			}
-			
+
 		}
-		
+
 		return array_values($identifier_fields);
-	
+
 	}
 
 	function getIdentifierValue()
 	{
-		
+
 		$exploded	= explode('||', $this->getIdentifier());
 		$return		= '';
-		
+
 		if ($this->isLoaded())
 		{
 			foreach ($exploded as $var)
 			{
-				
+
 				if ($this->isField(trim($var)))
 				{
 					$return .= $this->{$this->_fields[trim($var)]->name};
@@ -2443,13 +2505,13 @@ class DataObject implements Iterator {
 				{
 					$return .= str_replace('\'', '', $var);
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		return $return;
-		
+
 	}
 
 	/**
@@ -2464,10 +2526,10 @@ class DataObject implements Iterator {
 	 */
 	function hasOne($do, $field = null, $name = null, $fkfield = null)
 	{
-		
+
 		if (!isset($field))
 		{
-			
+
 			if ($this->isField(strtolower($do) . 'id'))
 			{
 				$field = strtolower($do) . 'id';
@@ -2481,43 +2543,43 @@ class DataObject implements Iterator {
 				$this->ErrorMsg = 'If neither <fk>id nor <fk>_id are fields in the table, the fieldname must be specified';
 				return FALSE;
 			}
-			
+
 		}
-		
+
 		if (!$this->isField($field))
 		{
 			return FALSE;
 		}
-		
+
 		if (!isset($name))
 		{
 			$name = strtolower($do);
 		}
-		
+
 		if (class_exists($do))
 		{
-			
+
 			$this->hasOne[$name] = array(
 				'model'		=>$do,
 				'field'		=> $field,
 				'name'		=> $name,
 				'fkfield'	=> $fkfield
-		
+
 			);
-			
+
 			return TRUE;
-			
+
 		}
-		
+
 		return FALSE;
-		
+
 	}
-	
+
 	function getHasOne()
 	{
 		return $this->hasOne;
 	}
-	
+
 	public function addSearchHandler($cname, SearchHandler $sh)
 	{
 		$this->searchHandlers[$cname] = $sh;
@@ -2536,10 +2598,10 @@ class DataObject implements Iterator {
 	 */
 	function belongsTo($do, $field = null, $name = null, $cc = null, $identifierField = null)
 	{
-		
+
 		if (!isset($field))
 		{
-			
+
 			if ($this->isField(strtolower($do) . 'id'))
 			{
 				$field = strtolower($do) . 'id';
@@ -2553,45 +2615,45 @@ class DataObject implements Iterator {
 				$this->ErrorMsg = 'If neither <fk>id nor <fk>_id are fields in the table, the fieldname must be specified';
 				return FALSE;
 			}
-			
+
 		}
-		
+
 		if (!$this->isField($field))
 		{
 			return FALSE;
 		}
-		
+
 		if (!isset($name)) {
 			$name = strtolower($do);
 		}
-		
+
 		if (class_exists($do))
 		{
-			
+
 			$this->belongsTo[$name] = array(
 				'model'				=> $do,
 				'field'				=> $field,
 				'cc'				=> $cc,
 				'identifierField'	=> $identifierField
 			);
-			
+
 			$this->belongsToField[$field]		= $name;
 			$this->_fields[$name]				= new DataField(new ADOFieldObject());
 			$this->_fields[$name]->name			= $name;
 			$this->_fields[$name]->tag			= prettify($name);
 			$this->_fields[$name]->field		= $field;
 			$this->_fields[$name]->ignoreField	= TRUE;
-			
+
 //			$this->getField($field)->addValidator(new ForeignKeyValidator($do));
-			
+
 			$this->setPolicyConstraint($do, $field);
-			
+
 			return TRUE;
-			
+
 		}
-		
+
 		return FALSE;
-		
+
 	}
 
 	/**
@@ -2606,19 +2668,19 @@ class DataObject implements Iterator {
 	 */
 	function hasMany($do, $name = null, $fkfield = null, $field = null, $cascade = NULL)
 	{
-		
+
 		if (!isset($name))
 		{
 			// default to adding an s
 			$name = strtolower($do) . 's';
 		}
-		
+
 		if (!isset($fkfield))
 		{
 			// default to the name of the current class + id
 			$fkfield = strtolower(get_class($this)) . '_id';
 		}
-		
+
 		if (!isset($field) || empty($field))
 		{
 			if (is_array($fkfield))
@@ -2631,7 +2693,7 @@ class DataObject implements Iterator {
 				$field = $this->idField;
 			}
 		}
-		
+
 		if ((is_array($fkfield) && is_array($field) && count($fkfield)==count($field))
 			|| (!is_array($field) && !is_array($fkfield)))
 		{
@@ -2642,32 +2704,32 @@ class DataObject implements Iterator {
 				'field'		=> $field,
 				'cascade'	=> $cascade
 			);
-		
+
 			return TRUE;
 		}
 		else
 		{
 			return FALSE;
 		}
-		
+
 	}
 
 	function hasManyThrough($jo, $field, $name)
 	{
 		$this->hasManyThrough[$name] = array('jo' => $jo, 'field' => $field);
 	}
-	
+
 	function hasAndBelongsToMany($do, $j_table, $name = null)
 	{
-		
+
 		if ($name == null)
 		{
 			$inflector	= new Inflector();
 			$name		= $inflector->pluralize(strtolower($do));
 		}
-		
+
 		$this->habtm[$name] = array('model' => $do, 'table' => $j_table);
-		
+
 	}
 
 	function getHasMany($name = '')
@@ -2676,7 +2738,7 @@ class DataObject implements Iterator {
 		{
 			return $this->hasMany;
 		}
-		
+
 		if (isset($this->hasMany[$name]))
 		{
 			return $this->hasMany[$name];
@@ -2685,9 +2747,9 @@ class DataObject implements Iterator {
 		{
 			return array();
 		}
-		
+
 	}
-	
+
 	function getBelongsTo()
 	{
 		return $this->belongsTo;
@@ -2712,34 +2774,34 @@ class DataObject implements Iterator {
 	 */
 	protected function setComposite($model_name, $field_name = null, $name = null, $fields = array())
 	{
-		
+
 		if ($field_name == null)
 		{
 			$field_name = strtolower($model_name) . '_id';
 		}
-		
+
 		if ($name == null)
 		{
 			$name = strtolower($model_name);
 		}
-		
+
 		$this->composites[$name]['modelName']	= $model_name;
 		$this->composites[$name]['field']		= $field_name;
-		
+
 		if (is_array($fields) && !empty($fields))
 		{
 			$model = DataObjectFactory::Factory($model_name);
-		
+
 			foreach($fields as $fieldname)
 			{
 				$this->_fields[$fieldname]				= clone $model->getField($fieldname);
-				
+
 				$this->_fields[$fieldname]->ignoreField	= TRUE;
-				
+
 				$this->compositesField[$fieldname] = $name;
 			}
 		}
-		
+
 	}
 
 	/**
@@ -2753,12 +2815,12 @@ class DataObject implements Iterator {
 	 */
 	function setAlias($alias, $modelName, $constraints = null, $requiredField = null, $otherFields = array(), $fkfield = null)
 	{
-		
+
 		if (is_null($constraints))
 		{
 			$constraints = new ConstraintChain();
 		}
-		
+
 		$this->aliases[$alias] = array(
 			'modelName'		=> $modelName,
 			'constraints'	=> $constraints,
@@ -2766,28 +2828,28 @@ class DataObject implements Iterator {
 			'otherFields'	=> $otherFields,
 			'fkfield'		=> $fkfield
 		);
-		
+
 		$model = DataObjectFactory::Factory($modelName);
-		
+
 		$this->debug('DataObject(' . get_class($this) . ')::setAlias ' . $alias . ' for ' . $modelName);
-		
+
 		if (count($otherFields) > 0)
 		{
-			
+
 			foreach($otherFields as $fieldname)
 			{
 				$this->_fields[$fieldname]				= clone $model->getField($fieldname);
 				$this->_fields[$fieldname]->ignoreField	= TRUE;
 			}
-			
+
 		}
-		
+
 		if (!empty($requiredField))
 		{
 			$this->_fields[$alias]				= clone $model->getField($requiredField);
 			$this->_fields[$alias]->ignoreField	= TRUE;
 		}
-		
+
 	}
 
 	/**
@@ -2798,28 +2860,28 @@ class DataObject implements Iterator {
 	 */
 	function getAlias($alias)
 	{
-		
+
 		if (isset($this->aliases[$alias]))
 		{
 			return $this->aliases[$alias];
 		}
-		
+
 		return FALSE;
-		
+
 	}
 
 	function getComposite($alias)
 	{
-		
+
 		if (isset($this->composites[$alias]))
 		{
 			return $this->composites[$alias];
 		}
-		
+
 		return FALSE;
-		
+
 	}
-	
+
 	function setConcatenation($name, Array $fields, $separator = ' ')
 	{
 		$this->concatenations[$name] = array('fields' => $fields, 'separator' => $separator);
@@ -2827,25 +2889,25 @@ class DataObject implements Iterator {
 
 	function getCount($constraint = '')
 	{
-		
+
 		$db			= &DB::Instance();
 		$tablename	= $this->_tablename;
-		
+
 		if ($constraint instanceof ConstraintChain)
 		{
-			
+
 			$constraint = $constraint->__toString();
-			
+
 			if (!empty($constraint))
 			{
 				$constraint = ' WHERE ' . $constraint;
 			}
-			
+
 		}
-		
+
 		if ($this->isAccessControlled() && $this->countAccessConstraints('read') > 0)
 		{
-			
+
 			if ($constraint == '')
 			{
 				$constraint = ' WHERE ';
@@ -2854,14 +2916,14 @@ class DataObject implements Iterator {
 			{
 				$constraint .= ' AND ';
 			}
-			
+
 			$constraint .= $this->getAccessConstraint('read')->__toString();
-			
+
 		}
-		
+
 		if ($this->isField('usercompanyid'))
 		{
-			
+
 			if ($constraint == '')
 			{
 				$constraint = ' WHERE ';
@@ -2870,35 +2932,35 @@ class DataObject implements Iterator {
 			{
 				$constraint .= ' AND ';
 			}
-			
+
 			$constraint .= 'usercompanyid=' . $db->qstr(EGS_COMPANY_ID);
-			
+
 		}
-		
+
 		$query = 'SELECT count(*) FROM ' . $tablename;
-		
+
 		if ($constraint <> '')
 		{
 			$query .= $constraint;
 		}
-		
+
 //		echo get_class($this).'::getCount : '.$query.'<br>';
 
 		return $db->GetOne($query);
-		
+
 	}
 
 	function getDistinct($field, $constraint = '', $tablename = '')
 	{
-		
+
 		$db = &DB::Instance();
-		
+
 		// if no tablename provided, use current
 		if ($tablename == '')
 		{
 			$tablename = $this->_tablename;
 		}
-		
+
 		// handle both object and string contraints
 		if ($constraint instanceof ConstraintChain)
 		{
@@ -2911,7 +2973,7 @@ class DataObject implements Iterator {
 
 		if ($this->isAccessControlled() && $this->countAccessConstraints('read') > 0)
 		{
-			
+
 			if ($sql_constraint == '')
 			{
 				$sql_constraint = ' WHERE ';
@@ -2920,14 +2982,14 @@ class DataObject implements Iterator {
 			{
 				$sql_constraint .= ' AND ';
 			}
-			
+
 			$sql_constraint .= $this->getAccessConstraint('read')->__toString();
-			
+
 		}
-		
+
 		if ($this->isField('usercompanyid'))
 		{
-			
+
 			if ($sql_constraint == '')
 			{
 				$sql_constraint = ' WHERE ';
@@ -2936,46 +2998,46 @@ class DataObject implements Iterator {
 			{
 				$sql_constraint .= ' AND ';
 			}
-			
+
 			$sql_constraint .= 'usercompanyid=' . $db->qstr(EGS_COMPANY_ID);
-			
+
 		}
-		
+
 		$query = 'SELECT distinct ' . $field . ' FROM ' . $tablename;
 
 		if ($sql_constraint <> '')
 		{
 			$query .= $sql_constraint;
 		}
-		
+
 		$this->debug('DataObject(' . get_class($this) . ')::getDistinct : ' . $query);
 //		echo get_class($this).'::getDistinct : '.$query.'<br>';
-		
+
 		$rows	= $db->GetAll($query);
 		$array	= array();
-		
+
 		foreach ($rows as $row)
 		{
 			$array[$row[$field]] = $row[$field];
 		}
-		
+
 //		echo get_class($this).'::getDistinct : rows=<pre>'.print_r($array,TRUE).'</pre><br>';
 
 		return $array;
-		
+
 	}
-	
+
 	function getSum($field, $constraint = '', $tablename = '')
 	{
-		
+
 		$db = &DB::Instance();
-		
+
 		// if no tablename provided, use current
 		if ($tablename == '')
 		{
 			$tablename = $this->_tablename;
 		}
-		
+
 		// handle both object and string contraints
 		if ($constraint instanceof ConstraintChain)
 		{
@@ -2988,7 +3050,7 @@ class DataObject implements Iterator {
 
 		if ($this->isAccessControlled() && $this->countAccessConstraints('read') > 0)
 		{
-			
+
 			if ($sql_constraint == '')
 			{
 				$sql_constraint = ' WHERE ';
@@ -2997,14 +3059,14 @@ class DataObject implements Iterator {
 			{
 				$sql_constraint .= ' AND ';
 			}
-			
+
 			$sql_constraint .= $this->getAccessConstraint('read')->__toString();
-			
+
 		}
-		
+
 		if ($this->isField('usercompanyid'))
 		{
-			
+
 			if ($sql_constraint == '')
 			{
 				$sql_constraint = ' WHERE ';
@@ -3013,56 +3075,56 @@ class DataObject implements Iterator {
 			{
 				$sql_constraint .= ' AND ';
 			}
-			
+
 			$sql_constraint .= 'usercompanyid=' . $db->qstr(EGS_COMPANY_ID);
-			
+
 		}
-		
+
 		$query = 'SELECT sum(' . $field . ') FROM ' . $tablename;
 
 		if ($sql_constraint <> '')
 		{
 			$query .= $sql_constraint;
 		}
-		
+
 		$this->debug('DataObject(' . get_class($this) . ')::getSum : ' . $query);
-		
+
 //		echo get_class($this).'::getSum : '.$query.'<br>';
-		
+
 		$sum = $db->GetOne($query);
-		
+
 		if ($sum == '')
 		{
 			$sum = 0;
 		}
-		
+
 		return $sum;
-		
+
 	}
 
 	function getSumFields($fields, $constraint = '', $tablename = '')
 	{
-		
+
 		$db = &DB::Instance();
 
 		if (!is_array($fields))
 		{
 			$fields = array($fields);
 		}
-		
+
 		$sumfields = array();
-		
+
 		foreach ($fields as $field)
 		{
 			$sumfields[] = 'sum(' . $field . ') as ' . $field;
 		}
-		
+
 		// if no tablename provided, use current
 		if ($tablename == '')
 		{
 			$tablename = $this->_tablename;
 		}
-		
+
 		// handle both object and string contraints
 		if ($constraint instanceof ConstraintChain)
 		{
@@ -3075,7 +3137,7 @@ class DataObject implements Iterator {
 
 		if ($this->isAccessControlled() && $this->countAccessConstraints('read') > 0)
 		{
-			
+
 			if ($sql_constraint == '')
 			{
 				$sql_constraint = ' WHERE ';
@@ -3084,14 +3146,14 @@ class DataObject implements Iterator {
 			{
 				$sql_constraint .= ' AND ';
 			}
-			
+
 			$sql_constraint .= $this->getAccessConstraint('read')->__toString();
-			
+
 		}
-		
+
 		if ($this->isField('usercompanyid'))
 		{
-			
+
 			if ($sql_constraint == '')
 			{
 				$sql_constraint = ' WHERE ';
@@ -3100,37 +3162,37 @@ class DataObject implements Iterator {
 			{
 				$sql_constraint .= ' AND ';
 			}
-			
+
 			$sql_constraint .= 'usercompanyid=' . $db->qstr(EGS_COMPANY_ID);
-			
+
 		}
-		
+
 		$query = 'SELECT count(id) as numrows, ' . implode(',', $sumfields) . ' FROM ' . $tablename;
 
 		if ($sql_constraint <> '')
 		{
 			$query .= $sql_constraint;
 		}
-		
+
 		$this->debug('DataObject(' . get_class($this) . ')::getSum : ' . $query);
-		
+
 //		echo get_class($this).'::getSum : '.$query.'<br>';
-		
+
 		return $db->GetRow($query);
-		
+
 	}
 
 	function getMax($field, $constraint = '', $tablename = '')
 	{
-		
+
 		$db = &DB::Instance();
-		
+
 		// if no tablename provided, use current
 		if ($tablename == '')
 		{
 			$tablename = $this->_tablename;
 		}
-		
+
 		// handle both object and string contraints
 		if ($constraint instanceof ConstraintChain)
 		{
@@ -3143,7 +3205,7 @@ class DataObject implements Iterator {
 
 		if ($this->isAccessControlled() && $this->countAccessConstraints('read') > 0)
 		{
-			
+
 			if ($sql_constraint == '')
 			{
 				$sql_constraint = ' WHERE ';
@@ -3152,14 +3214,14 @@ class DataObject implements Iterator {
 			{
 				$sql_constraint .= ' AND ';
 			}
-			
+
 			$sql_constraint .= $this->getAccessConstraint('read')->__toString();
-			
+
 		}
-		
+
 		if ($this->isField('usercompanyid'))
 		{
-			
+
 			if ($sql_constraint == '')
 			{
 				$sql_constraint = ' WHERE ';
@@ -3168,21 +3230,21 @@ class DataObject implements Iterator {
 			{
 				$sql_constraint .= ' AND ';
 			}
-			
+
 			$sql_constraint .= 'usercompanyid=' . $db->qstr(EGS_COMPANY_ID);
-			
+
 		}
-		
+
 		$query = 'SELECT max(' . $field . ') FROM ' . $tablename;
 
 		if ($sql_constraint <> '')
 		{
 			$query .= $sql_constraint;
 		}
-		
+
 		$this->debug('DataObject(' . get_class($this) . ')::getMax : ' . $query);
 //		echo get_class($this).'::getMax : '.$query.'<br>';
-		
+
 		return $db->GetOne($query);
 
 	}
@@ -3191,7 +3253,7 @@ class DataObject implements Iterator {
 	{
 		$this->_policyConstraint = null;
 	}
-	
+
 	function setPolicyConstraint($module_component = '', $field = '')
 	{
 //echo 'DataObject('.get_class($this).')::setPolicyConstraint module component '.$module_component.'<br>';
@@ -3200,7 +3262,7 @@ class DataObject implements Iterator {
 		{
 			return;
 		}
-		
+
 		if (isLoggedIn() && defined('EGS_USERNAME'))
 		{
 
@@ -3208,16 +3270,16 @@ class DataObject implements Iterator {
 			{
 				$this->_policyConstraint['constraint'] = new ConstraintChain();
 			}
-			
+
  			$module_component = strtolower($module_component);
-			
+
 			$rows = SystemPolicyControlListCollection::getPolicies($module_component, EGS_USERNAME);
-			
+
 			if (!empty($rows))
 			{
 				foreach ($rows as $value)
 				{
-					
+
 					if (empty($value['value']))
 					{
 						$value['value'] = 'NULL';
@@ -3226,7 +3288,7 @@ class DataObject implements Iterator {
 					{
 						$value['value'] = 'NULL';
 					}
-					
+
 					if (strtolower(get_class($this))==$module_component)
 					{
 						// Policy is for this dataobject so just add the constraint
@@ -3235,7 +3297,7 @@ class DataObject implements Iterator {
 									, ($value['allowed']==='t'?FALSE:TRUE));
 						$this->_policyConstraint['name'][] = ($value['allowed']==='t'?'':'not ').$value['name'];
 						$this->_policyConstraint['field'][] = $value['fieldname'];
-						
+
 						if (($value['operator']=='=' && $value['allowed']!=='t')
 							|| ($value['operator']=='!=' && $value['allowed']==='t'))
 						{
@@ -3247,7 +3309,7 @@ class DataObject implements Iterator {
 					{
 						$fk_model = DataObjectFactory::Factory($module_component);
 //echo 'DataObject('.get_class($this).')::setPolicyConstraint FK Model:'.$module_component.' field:'.$field.'<pre>'.print_r($value, true).'</pre><br>';
-						
+
 						if (!empty($field) && $fk_model->idField == $value['fieldname'])
 						{
 							// Policy is for foreign key primary key value
@@ -3263,7 +3325,7 @@ class DataObject implements Iterator {
 						{
 							// Policy is for foreign key on non primary key field
 							// so need to add constraint as subquery; this may be inefficient in large data sets!
-														
+
 							$sql = 'select '.$fk_model->idField.' from '.$fk_model->getTablename().' where '.$fk_model->_policyConstraint['constraint']->__toString();
 							$c = new Constraint($field, 'IN', '('.$sql.')');
 							if (!$this->_policyConstraint['constraint']->find($c))
@@ -3277,9 +3339,9 @@ class DataObject implements Iterator {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	* Get all the ID Identifier pairs for example to fill a select.
 	*
@@ -3287,46 +3349,46 @@ class DataObject implements Iterator {
 	*/
 	function getAll(ConstraintChain $cc = null, $ignore_tree = FALSE, $use_collection = FALSE, $limit = '')
 	{
-		
+
 		$db			= DB::Instance();
 		$tablename	= $this->_tablename;
-		
+
 		if ($use_collection)
 		{
 			$collection_name	= get_class($this).'Collection';
 			$coln				= new $collection_name($this);
 			$tablename			= $coln->_tablename;
 		}
-		
+
 		if (empty($cc))
 		{
 			$cc = new ConstraintChain();
 		}
-		
+
 		if ($this->isAccessControlled() && $this->countAccessConstraints('read') > 0)
 		{
 			$cc->add($this->getAccessConstraint('read'));
 		}
-		
+
 		$uc = new ConstraintChain();
-		
+
 		if ($this->isField('usercompanyid'))
 		{
 			$uc->add(new Constraint('usercompanyid', '=', EGS_COMPANY_ID));
 		}
-		
+
 		$uc->add($cc);
-		
+
 		if ($this->_policyConstraint['constraint'] instanceof ConstraintChain)
 		{
 			$uc->add($this->_policyConstraint['constraint']);
 		}
-		
+
 		if (!$ignore_tree && $this->acts_as_tree)
 		{
 			return $this->getAllAsTree($cc, $tablename);
 		}
-		
+
 		if (is_array($this->identifierField))
 		{
 			$fields = implode(',', $this->identifierField);
@@ -3335,37 +3397,37 @@ class DataObject implements Iterator {
 		{
 			$fields = $this->identifierField;
 		}
-		
+
 		$query		= 'SELECT ' . $this->idField . ', ' . $fields . ' FROM ' . $tablename;
 		$constraint	= $uc->__toString();
-		
+
 		if (!empty($constraint))
 		{
 			$query .= ' WHERE '. $constraint;
 		}
-		
+
 		$query .= $this->getOrderBy();
-		
+
 		if (!empty($limit))
 		{
 			$query .= ' LIMIT '.$limit;
 		}
-		
+
 		$this->debug('DataObject('.get_class($this).')::getAll : '.$query);
 //		echo 'DataObject('.get_class($this).')::getAll : '.$query.'<br>';
-		
+
 		$results = $db->GetAssoc($query);
-		
+
 		if (is_array($this->identifierField) && count($this->identifierField)>1)
 		{
-			
+
 			foreach ($results as $key => $fields)
 			{
 				$identiferField	= rtrim(implode($this->identifierFieldJoin, $fields), $this->identifierFieldJoin);
 				$results[$key]	= $identiferField;
 			}
 		}
-		
+
 		if ($this->idField == $this->getIdentifier())
 		{
 //echo 'DataObject::getAll idField='.$this->idField.' Identifier='.$this->getIdentifier().'<pre>'.print_r($results, true).'</pre><br>';
@@ -3373,138 +3435,138 @@ class DataObject implements Iterator {
 			{
 				$results[$key] = $key;
 			}
-			
+
 		}
-		
+
 		if (empty($results))
 		{
 			return array();
 		}
-		
+
 		return $results;
-		
+
 	}
 
 	function getQuery($fields = '', ConstraintChain $cc = null, $use_collection = FALSE)
 	{
-		
+
 		$db			= DB::Instance();
 		$tablename	= $this->_tablename;
-		
+
 		if ($use_collection)
 		{
 			$collection_name	= get_class($this).'Collection';
 			$coln				= new $collection_name($this);
 			$tablename			= $coln->_tablename;
 		}
-		
+
 		if (empty($cc))
 		{
 			$cc = new ConstraintChain();
 		}
-		
+
 		if ($this->isAccessControlled() && $this->countAccessConstraints('read') > 0)
 		{
 			$cc->add($this->getAccessConstraint('read'));
 		}
-		
+
 		$uc = new ConstraintChain();
-		
+
 		if ($this->isField('usercompanyid'))
 		{
 			$uc->add(new Constraint('usercompanyid', '=', EGS_COMPANY_ID));
 		}
-		
+
 		$uc->add($cc);
-		
+
 		if (empty($fields))
 		{
 			$fields = '1';
 		}
-		
+
 		if (is_array($fields) && !empty($fields))
 		{
 			$fields = implode(',', $fields);
 		}
-		
+
 		if (empty($fields))
 		{
 			$fields = '1';
 		}
-		
+
 		$query		= 'SELECT ' . $fields . ' FROM ' . $tablename;
 		$constraint	= $uc->__toString();
-		
+
 		if (!empty($constraint))
 		{
 			$query .= ' WHERE '. $constraint;
 		}
-		
+
 		return $query;
-		
+
 	}
-	
+
 	function getOrderBy()
 	{
-		
+
 		$orderstring = '';
-		
+
 		if (!empty($this->orderby))
 		{
-			
+
 			$orderby	= $this->orderby;
 			$orderdir	= $this->orderdir;
-			
+
 			if (!is_array($orderby))
 			{
 				$orderby = array($orderby);
 			}
-			
+
 			if (!is_array($orderdir))
 			{
 				$orderdir = array($orderdir);
 			}
-			
+
 			foreach ($orderby as $i => $fieldname)
 			{
-				
+
 				if (!empty($fieldname))
 				{
 					$orderstring .= $fieldname . ' ' . (!empty($orderdir[$i])?$orderdir[$i]:'ASC').', ';
 				}
 			}
-			
+
 			if (!empty($orderstring))
 			{
 				$orderstring = substr($orderstring, 0, -2);
 				$orderstring = ' ORDER BY ' . $orderstring;
 			}
-			
+
 		}
 		else
 		{
 			$orderstring = ' ORDER BY ' . $this->getIdentifier();
 		}
-		
+
 		return $orderstring;
-		
+
 	}
-	
+
 	private function getAllAsTree($cc = null, $tablename)
 	{
-		
+
 		$items = array();
 		$this->tree($items, $cc, $tablename);
-		
+
 		return $items;
-		
+
 	}
-	
+
 	private function tree(&$items = array(), $cc = null, $tablename, $parent_id = null, $spacer = '-', $indent = 0)
 	{
-		
+
 		$db = DB::Instance();
-		
+
 		if ($cc instanceof ConstraintChain)
 		{
 			$where = $cc->__toString();
@@ -3513,20 +3575,20 @@ class DataObject implements Iterator {
 		{
 			$where = '';
 		}
-		
+
 		$query = 'SELECT ' . $this->idField . ', ' . $this->getIdentifier() . ' as identifier, ' . $this->parent_field . ' FROM ' . $tablename . (empty($where)?$where:' WHERE '.$where);
-			
+
 		if (!empty($this->orderby))
 		{
 			$query .= ' ORDER BY ' . (is_array($this->orderby)?implode(',',$this->orderby):$this->orderby);
 		}
-			
+
 		$rows = $db->GetAssoc($query);
-			
+
 		$this->debug('DataObject('.get_class($this).')::tree '.$query);
 
 		$isparent = array();
-		
+
 		foreach ($rows as $id => $row)
 		{
 			if (!empty($row[$this->parent_field]))
@@ -3540,97 +3602,97 @@ class DataObject implements Iterator {
 			if (empty($row[$this->parent_field]))
 			{
 				$items[$id] = $row['identifier'];
-			
+
 				if (isset($isparent[$id]))
 				{
 					$this->getChildTree ($id, $items, '', $rows, $isparent);
 				}
 			}
 		}
-			
+
 	}
-	
+
 	private function getChildTree ($id, &$items, $level, $rows, $isparent)
 	{
-		
+
 		foreach ($isparent[$id] as $child_id => $child_row)
 		{
 			$items[$child_id] = $level.'-'.$rows[$child_id]['identifier'];
-			
+
 			if ($isparent[$child_id])
 			{
 				$this->getChildTree ($child_id, $items, $level.'-', $rows, $isparent);
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	public function getTopLevel($attribute = null)
 	{
-		
+
 		if ($attribute != null)
 		{
-			
+
 			if (!isset($this->belongsTo[$attribute]))
 			{
 				$this->debug('DataObject('.get_class($this).')::getTopLevel getTopLevel($attribute) must be called for a belongsTo relationship');
 				return FALSE;
 			}
-			
+
 			$model = DataObjectFactory::Factory($this->belongsTo[$attribute]['model']);
-			
+
 			return $model->getTopLevel();
-			
+
 		}
-		
+
 		$db		= &DB::Instance();
 		$query	= 'SELECT ' . $this->idField . ', ' . $this->getIdentifier() . ' FROM ' . $this->_tablename . ' WHERE ' . $this->parent_field . ' IS NULL';
-		
+
 		return $db->GetAssoc($query);
-		
+
 	}
-	
+
 	public function getChildren()
 	{
-		
+
 		$db		= &DB::Instance();
 		$query	= 'SELECT ' . $this->idField . ', ' . $this->getIdentifier() . ' FROM ' . $this->_tablename . ' WHERE ' . $this->parent_field . '=' . $db->qstr($this->{$this->idField});
 
 //	echo 'DataObject('.get_class($this).')::getChildren '.$query.'<br>';
-		
+
 		return $db->GetAssoc($query);
-		
+
 	}
 
 	public function getChildrenAsDOC($doc = null, $sh = null)
 	{
-		
+
 		if ($doc == null)
 		{
 			$doc_name	= get_class($this) . 'Collection';
 			$doc		= new $doc_name;
 		}
-		
+
 		if ($sh == null)
 		{
 			$sh = new SearchHandler($doc, FALSE);
 		}
-		
+
 		$sh->addConstraint(new Constraint($this->parent_field, '=', $this->{$this->idField}));
 		$doc->load($sh);
-		
+
 		return $doc;
-		
+
 	}
 
 	public function getAncestors()
 	{
-		
+
 		$db			= &DB::Instance();
 		$ancestors	= array();
 		$parent_id	= $this->{$this->parent_field};
-		
+
 		while ($parent_id !== FALSE && !empty($parent_id))
 		{
 			$ancestors[]	= $parent_id;
@@ -3639,18 +3701,18 @@ class DataObject implements Iterator {
 		}
 
 		return $ancestors;
-		
+
 	}
 
 	function getSiblings($id = null, $attribute = null)
 	{
-		
+
 		if ($attribute != null)
 		{
 			$model = DataObjectFactory::Factory($this->belongsTo[$attribute]['model']);
 			return $model->getSiblings($id);
 		}
-		
+
 		if ($id == null)
 		{
 			$parent_id = $this->parent_id;
@@ -3659,23 +3721,23 @@ class DataObject implements Iterator {
 		{
 			$parent_id = $id;
 		}
-		
+
 		$db		= &DB::Instance();
 		$query	= 'SELECT ' . $this->idField . ', ' . $this->getIdentifier() . ' FROM ' . $this->_tablename . ' WHERE ' . $this->parent_field . (!empty($parent_id)?'='.$db->qstr($parent_id):' IS NULL');
 
 		return $db->GetAssoc($query);
-		
+
 	}
 
 	function getSiblingsAsDOC($id = null, $attribute = null)
 	{
-		
+
 		if ($attribute != null)
 		{
 			$model = DataObjectFactory::Factory($this->belongsTo[$attribute]['model']);
 			return $model->getSiblings($id);
 		}
-		
+
 		if ($id == null)
 		{
 			$parent_id = $this->parent_id;
@@ -3684,58 +3746,58 @@ class DataObject implements Iterator {
 		{
 			$parent_id = $id;
 		}
-				
+
 		$doc		= new get_class($this).'Collection';
 		$db			= &DB::Instance();
 		$query		= 'SELECT ' . $this->idField . ' FROM ' . $this->_tablename . ' WHERE ' . $this->parent_field . (!empty($parent_id)?'='.$db->qstr($parent_id):' IS NULL');
 		$siblings	= $db->GetCol($query);
-		
+
 		foreach ($siblings as $sibling)
 		{
 			$do = DataObjectFactory::Factory(get_class($this));
 			$do->load($sibling);
 			$doc->add($do);
 		}
-		
+
 		return $doc;
-		
+
 	}
 
 	function getIdentifier()
 	{
-		
+
 		// Backwards compatibility - check for sql concatenation character
 		// and return the identifierField if it contains the concatenation character
-		
+
 		if (!is_array($this->identifierField))
 		{
-			
+
 			if (strpos($this->identifierField, '||'))
 			{
 				return $this->identifierField;
 			}
-			
+
 			$identifier_fields = array($this->identifierField);
-			
+
 		}
 		else
 		{
 			$identifier_fields = $this->identifierField;
 		}
-		
+
 		// We have an array of one or more fields
 		// check they are valid fields for the DO
-		
+
 		foreach ($identifier_fields as $key => $field)
 		{
-			
+
 			if (!$this->isField($field) && !isset($this->concatenations[$field]))
 			{
 				unset($identifier_fields[$key]);
 			}
-			
+
 		}
-		
+
 		// Return the valid fields with the concatenation character
 		// or if no valid fields,
 		// return the first DO field that is not the DO's idField
@@ -3746,57 +3808,59 @@ class DataObject implements Iterator {
 		}
 		else
 		{
-			
+
 			foreach ($this->getFields() as $field)
 			{
-				
+
 				if ($field->name != $this->idField)
 				{
 					return $field->name;
 				}
-				
+
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	function getDefaultOrderby()
 	{
-		
+
+	    $this->setCustomModelOrder(FILE_ROOT . 'conf/custom-model-order.yaml');
+
 		$ob			= $this->orderby;
 		$candidates	= array('position','index','title','name','subject','surname');
-		
+
 		if (empty($ob))
 		{
 
 			foreach ($candidates as $candidate)
 			{
-				
+
 				if ($this->isField($candidate))
 				{
 					$ob = $candidate;
 					break;
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		if (empty($ob))
 		{
 			$ob = $this->idField;
 		}
-		
+
 		$this->orderby = $ob;
-		
+
 		return $this->orderby;
-		
+
 	}
 
 	function getViewName()
 	{
-		
+
 		if (isset($this->_viewname))
 		{
 			return $this->_viewname;
@@ -3808,7 +3872,7 @@ class DataObject implements Iterator {
 			$this->_viewname	= $coln->_tablename;
 			return $this->_viewname;
 		}
-		
+
 	}
 
 	function setViewName($view)
@@ -3831,7 +3895,7 @@ class DataObject implements Iterator {
 	 */
 	public function setEnum($field, $options)
 	{
-		
+
 		if ($this->_valid)
 		{
 			foreach ($options as $value=>$description)
@@ -3848,7 +3912,7 @@ class DataObject implements Iterator {
 				$this->getField($field)->setFormatter(new EnumFormatter($options));
 			}
 		}
-		
+
 	}
 
 	/**
@@ -3884,7 +3948,7 @@ class DataObject implements Iterator {
 	public function getEnumKey($field, $value)
 	{
 		$key = array_search($value, $this->enums[$field]);
-		
+
 		if ($key === FALSE)
 		{
 			return '';
@@ -3893,7 +3957,7 @@ class DataObject implements Iterator {
 		{
 			return $key;
 		}
-	
+
 	}
 
 	/**
@@ -3933,28 +3997,28 @@ class DataObject implements Iterator {
 
 	protected function setDefaultFieldValues()
 	{
-		
+
 		$modulecomponent = ModuleComponent::Instance($this, 'M');
-		
+
 		if ($modulecomponent && $modulecomponent->isLoaded())
 		{
 			if (!is_null($modulecomponent->title))
 			{
 				$this->setTitle($modulecomponent->title);
 			}
-			
+
 			if (count($modulecomponent->module_defaults)>0)
 			{
 				foreach ($modulecomponent->module_defaults as $default)
 				{
-				
+
 					if ($this->isField($default->field_name) && $this->_fields[$default->field_name]->user_defaults_allowed)
 					{
 						// override existing defaults
 						$this->_fields[$default->field_name]->dropDefault();
 						$this->getField($default->field_name)->setDefault($default->default_value);
 						$this->_fields[$default->field_name]->display_default_value = $default->default_value;
-						
+
 						if ($default->enabled == 't')
 						{
 							$this->defaultDisplayFields[] = $default->field_name;
@@ -3968,34 +4032,34 @@ class DataObject implements Iterator {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	public function getDefaultFieldValue($field)
 	{
-		
+
 		$modulecomponent = DataObjectFactory::Factory('ModuleComponent');
 		$modulecomponent->loadBy(array('name','type'), array(strtolower(get_class($this)), 'M'));
-		
+
 		if ($modulecomponent)
 		{
-			
+
 			foreach ($modulecomponent->module_defaults as $default)
 			{
-				
+
 				if ($default->field_name == $field->name)
 				{
 					return $default->default_value;
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		return $field->default_value;
-		
+
 	}
-	
+
 	/**
 	 * Hides a field
 	 */
@@ -4022,26 +4086,26 @@ class DataObject implements Iterator {
 	{
 		$this->getField($field)->isHandled = TRUE;
 	}
-	
+
 	public function addConfirmationField($fieldname, $tag = null)
 	{
-		
+
 		if ($tag==null)
 		{
 			$tag='Confirm '.ucwords($fieldname);
 		}
-		
+
 		$c_fieldname = 'confirm_' . $fieldname;
-		
+
 		$ado_field = new ADOFieldObject;
 		$ado_field->type='password';
 		$ado_field->not_null=1;
-		
+
 		$this->_fields[$c_fieldname]		= new DataField($ado_field);
 		$this->_fields[$c_fieldname]->tag	= $tag;
 		$this->setDefaultValidators();
 	}
-	
+
 	public function addField($fieldname, $field)
 	{
 		$this->_fields[$fieldname] = $field;
@@ -4051,7 +4115,7 @@ class DataObject implements Iterator {
 	{
 		$this->hashes[$fieldname] = array();
 	}
-	
+
 	/**
 	* The Iterator functions.
 	* @todo 	Change name!
@@ -4064,7 +4128,7 @@ class DataObject implements Iterator {
 		$name	= $field[$this->_pointer]->name;
 		$fields	= $this->_fields;
 		$field	= $fields[$name];
-		
+
 		if ($field->type === 'bool')
 		{
 			if ($field->value == 'f')
@@ -4075,11 +4139,11 @@ class DataObject implements Iterator {
 			{
 				return 'true';
 			}
-			
+
 		}
 
 		return $field->value;
-		
+
 	}
 
 	public function next()
@@ -4105,36 +4169,36 @@ class DataObject implements Iterator {
 
 	public function getId()
 	{
-		
+
 		$idF	= $this->idField;
 		$field	= $this->_fields[$idF];
-		
+
 		return $field->value;
-		
+
 	}
 
 	protected function setAccessControlled($controlled, $cc = null, $fields=array('owner'))
 	{
-		
+
 		if (empty($fields) && (!$cc instanceof ConstraintChain))
 		{
 			// If no fields or constraint, then cannot set access control
 			$this->_accessControlled = FALSE;
 			return;
 		}
-		
+
 		$this->_accessControlled = $controlled;
-		
+
 		// Set constraint to control access
 		if (!$cc instanceof ConstraintChain)
 		{
 			$cc = new ConstraintChain();
 		}
-		
+
 		$fields = (is_array($fields)?$fields:array($fields));
-		
+
 		$db = DB::Instance();
-		
+
 		// Check each field - only register if it is a field in the object
 		foreach ($fields as $key=>$field)
 		{
@@ -4148,25 +4212,25 @@ class DataObject implements Iterator {
 			$cc->add(new Constraint($db->qstr(EGS_USERNAME), 'in', '('.implode(',', $fields).')'), 'OR');
 			$this->_accessFields=$fields;
 		}
-		
+
 		$has_role= DataObjectFactory::Factory('hasRole');
 		$roles = implode(',', $has_role->getRoleID(EGS_USERNAME));
-		
+
 		// Add constraint for specific instances of an object
 		// that belongs to a role that the user is in
 		$sql = 'select obj.object_id
                   from objectroles obj
                  where obj.role_id in ('.$roles.')
                    and obj.object_type = '.$db->qstr($this->getTableName());
-		
+
 		$sql_read	= $sql.' and obj.read is true';
 		$sql_write	= $sql.' and obj.write is true';
-		
+
 		// Read constraint
 		$this->_accessContraint['read'] = new ConstraintChain();
 		$this->_accessContraint['read']->add($cc);
 		$this->_accessContraint['read']->add(new Constraint('id', 'in', '('.$sql_read.')'), 'OR');
-		
+
 		// write constraint
 		$this->_accessContraint['write'] = new ConstraintChain();
 		$this->_accessContraint['write']->add($cc);
@@ -4178,7 +4242,7 @@ class DataObject implements Iterator {
                   from shared_roles obj
                  where obj.role_id in ('.$roles.')
                    and obj.object_type = '.$db->qstr($this->getTableName());
-		
+
 		// Read constraint
 		$cc1 = new ConstraintChain();
 		$cc1->add(new Constraint('id', 'not in', '(select object_id from objectroles)'));
@@ -4190,7 +4254,7 @@ class DataObject implements Iterator {
 		}
 		$cc1->add($cc2);
 		$this->_accessContraint['read']->add($cc1, 'OR');
-		
+
 		// write constraint
 		$cc3 = new ConstraintChain();
 		$cc3->add(new Constraint('id', 'not in', '(select object_id from objectroles)'));
@@ -4202,14 +4266,14 @@ class DataObject implements Iterator {
 		}
 		$cc3->add($cc4);
 		$this->_accessContraint['write']->add($cc3, 'OR');
-		
+
 	}
 
 	public function isAccessControlled()
 	{
 		return $this->_accessControlled;
 	}
-	
+
 	public function countAccessConstraints($accessType)
 	{
 		return count($this->getAccessConstraint($accessType)->contents);
@@ -4226,7 +4290,7 @@ class DataObject implements Iterator {
 		{
 			return new ConstraintChain();
 		}
-		
+
 	}
 
 	public function isAccessAllowed($id = null, $accessType = '')
@@ -4236,9 +4300,9 @@ class DataObject implements Iterator {
 			// Not access controlled so everyone has access.
 			return TRUE;
 		}
-		
+
 		$access_users = array();
-		
+
 		foreach (!$this->_accessFields as $field)
 		{
 			// Does current user match any of the access field values
@@ -4248,38 +4312,38 @@ class DataObject implements Iterator {
 			}
 			$access_users[$this->$field] = $this->$field;
 		}
-		
+
 		return FALSE;
-		
+
 	}
 
 	public function getAccessFields()
 	{
 		return $this->_accessFields;
 	}
-	
+
 	public function getRolePermissions ($_username='', $_module='', $_access='write')
 	{
 		// TODO: Access Control is not currently implemented
 		// code retained for future implementation but will need validating/amending
 		$roles = array();
-		
+
 		if ($this->isLoaded())
 		{
 			// Get permissions specific to this object
 			$object_role = DataObjectFactory::Factory('ObjectRole');
 			$roles = $object_role->getRoleID($this->{$this->idField}, $this->getTableName(), $_access);
 		}
-		
+
 		if (empty($roles))
 		{
 			// Get general permissions for the object type
 			$object_role = DataObjectFactory::Factory('SharedRole');
 			$roles = $object_role->getRoleID($_username, $this->getTableName(), $_access);
 		}
-		
+
 		return $roles;
-		
+
 	}
 
 	public function getUserPermissions ($_username='', $_module='', $_access='write')
@@ -4287,50 +4351,50 @@ class DataObject implements Iterator {
 		// TODO: Access Control is not currently implemented
 		// code retained for future implementation but will need validating/amending
 		$users = array();
-		
+
 		$roles = $this->getRolePermissions($_username, $_module, $_access);
-		
+
 		if (!empty($roles))
 		{
 			$has_role= DataObjectFactory::Factory('hasRole');
 			$users = $has_role->getUsers($roles);
 		}
-	
+
 		return $users;
-		
+
 	}
 
 	public function toArray()
 	{
-		
+
 		$array = array();
-		
+
 		foreach ($this->_fields as $fieldname => $field)
 		{
-			
+
 			$array[$fieldname] = array(
 				'_name'	=> $fieldname,
 				'type'	=> $field->type,
 				'value'	=> $field->value,
 				'tag'	=> $field->tag
 			);
-			
+
 		}
-		
+
 		return $array;
-		
+
 	}
-	
+
 	public function toJSON()
 	{
-		
+
 		if (function_exists('json_encode'))
 		{
 			return json_encode($this->toArray());
 		}
-		
+
 	}
-	
+
 	public function get_name()
 	{
 		return get_class($this);
@@ -4338,16 +4402,16 @@ class DataObject implements Iterator {
 
 	private function validateIdentifierField()
 	{
-		
+
 		// Check that the identifierField is one or more valid fields
 		// identifierField has a default value, if not explicitly
 		// overridden in the extended DO declaration, the default
 		// field may not exist in the specific DO table so set the
 		// default to be a valid field
-		
+
 		if (!is_array($this->identifierField))
 		{
-			
+
 			if (strpos($this->identifierField, '||'))
 			{
 				$identifier_fields = explode('||', $this->identifierField);
@@ -4356,62 +4420,62 @@ class DataObject implements Iterator {
 			{
 				$identifier_fields = array($this->identifierField);
 			}
-			
+
 		}
 		else
 		{
 			$identifier_fields = $this->identifierField;
 		}
-		
+
 		// We have an array of one or more fields
 		// check they are valid fields for the DO
-		
+
 		foreach ($identifier_fields as $key => $field)
 		{
-			
+
 			if (!$this->isField($field))
 			{
 				unset($identifier_fields[$key]);
 			}
-			
+
 		}
-		
+
 		// if no fields are valid, set the identifierField
 		// to the first DO field that is not the DO's idField
 
 		if (count($identifier_fields) == 0)
 		{
-			
+
 			foreach ($this->getFields() as $field)
 			{
-				
+
 				if ($field->name != $this->idField)
 				{
 					$this->identifierField = $field->name;
 					break;
 				}
-				
+
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	public function negate($field)
 	{
-		
+
 		$length		= FALSE;
 		$pad		= ' ';
 		$zeropad	= FALSE;
 		$formatting	= TRUE;
 		$decimals	= 0;
-		
+
 		if (is_array($field))
 		{
-			
+
 			switch (count($field))
 			{
-				
+
 				case 5:
 					$length = $field[4];
 				case 4:
@@ -4422,21 +4486,21 @@ class DataObject implements Iterator {
 					$decimals = $field[1];
 				case 1:
 					$field = $field[0];
-					
+
 			}
-			
+
 		}
-		
+
 		if ($this->isField($field))
 		{
-			
+
 			$value = bcmul($this->getField($field)->value, -1, $decimals);
-			
+
 			if (!$formatting)
 			{
 				$value = str_replace(array(',', '.'), '', $value);
 			}
-			
+
 			if ($length)
 			{
 
@@ -4444,34 +4508,34 @@ class DataObject implements Iterator {
 				{
 					$pad = '0';
 				}
-				
+
 				$value = str_pad($value, $length, $pad, STR_PAD_LEFT);
-				
+
 			}
-			
+
 			return $value;
-			
+
 		}
 		else
 		{
 			return '';
 		}
-		
+
 	}
 
 	public function numberToWords($field)
 	{
-		
+
 		$size		= '';
 		$padding	= '';
 		$type		= STR_PAD_LEFT;
-		
+
 		if (is_array($field))
 		{
-			
+
 			switch (count($field))
 			{
-				
+
 				case 4:
 					$type = $field[3];
 				case 3:
@@ -4480,34 +4544,34 @@ class DataObject implements Iterator {
 					$size = $field[1];
 				case 1:
 					$field = $field[0];
-					
+
 			}
-			
+
 		}
-		
+
 		$words	= array('zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine');
 		$amount	= '';
-		
+
 		if ($this->isField($field))
 		{
-			
+
 			$value = bcadd($this->getField($field)->value, 0, 0);
-			
+
 			if ($value < 0)
 			{
 				$value = bcmul($value, -1, 0);
 			}
-			
+
 			for ($i = 0; $i < 6; $i++)
 			{
 				$amount	= str_pad($words[bcmod($value, 10)], $size , $padding, $type) . $amount;
 				$value	= bcdiv($value, 10, 2);
 			}
-			
+
 		}
-		
+
 		return $amount;
-		
+
 	}
 
 	public function defaultsNotAllowed($field)
@@ -4517,26 +4581,26 @@ class DataObject implements Iterator {
 
 	public function toJSONArray($array)
 	{
-		
+
 		$output = array();
-		
+
 		foreach ($array as $key => $value)
 		{
 			$output[] = array('id' => $key, 'value' => $value);
 		}
-		
+
 		return($output);
-		
+
 	}
 
 	public function getLinkRules()
 	{
-		
+
 		$hasMany = array();
-		
+
 		foreach ($this->getHasMany() as $name => $detail)
 		{
-			
+
 			if (!isset($this->linkRules[$name]))
 			{
 				$hasMany[$name] = $detail;
@@ -4544,50 +4608,50 @@ class DataObject implements Iterator {
 			}
 			else
 			{
-				
+
 				$validrule	= TRUE;
 				$rules		= '';
-				
+
 				foreach ($this->linkRules[$name]['rules'] as $rule)
 				{
 					$rules .= isset($rule['logical'])?$rule['logical']:(empty($rules)?'':'&&');
 					$rules .= '($this->'.$rule['field'].$rule['criteria'].')';
 				}
-				
+
 				if (empty($rules) || eval('return ' . $rules . ';'))
 				{
 					$hasMany[$name] = array_merge($detail, $this->linkRules[$name]);
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		return $hasMany;
-	
+
 	}
-	
+
 	protected function relatedCount($related_item)
 	{
-		
+
 		if (isset($this->hasMany[$related_item]))
 		{
-			
+
 			$db				= DB::Instance();
 			$qb				= new QueryBuilder($db,$this->_templateobject);
 			$do				= $this->hasMany[$related_item]['do'];
 			$model			= DataObjectFactory::Factory($do);
-			
+
 			$collectionname	= $do . 'Collection';
 			$collection		= new $collectionname($model);
-			
+
 			if(!$this->isLoaded())
 			{
 				return $collection;
 			}
-			
+
 			$handlers = $this->searchHandlers;
-			
+
 			if (!isset($handlers[$related_item]))
 			{
 				$sh = new SearchHandler($collection, FALSE);
@@ -4596,12 +4660,12 @@ class DataObject implements Iterator {
 			{
 				$sh = $handlers[$related_item];
 			}
-			
+
 			unset($sh->fields[strtolower(get_class($this))]);
 			unset($sh->fields[strtolower(get_class($this)) . '_id']);
-			
+
 			$sh->addConstraint(new Constraint($this->hasMany[$related_item]['fkfield'], '=', $this->{$this->hasMany[$related_item]['field']}));
-			
+
 			$query = $qb
 				->select($model->_fields)
 				->from($model->_tablename)
@@ -4609,7 +4673,7 @@ class DataObject implements Iterator {
 				->groupby($sh->groupby)
 				->orderby($sh->orderby, $sh->orderdir)
 				->limit($sh->perpage, $sh->offset)->__toString();
-				
+
 			$c_query		= $qb->countQuery();
 			$num_records	= $db->GetOne($c_query);
 
@@ -4617,25 +4681,25 @@ class DataObject implements Iterator {
 			{
 				throw new Exception($db->ErrorMsg());
 			}
-			
+
 			return $num_records;
-			
+
 		}
-		
+
 		return 0;
-		
+
 	}
-	
+
 	public function version()
 	{
 		return $this->version;
 	}
-	
+
 	public function getXML($field, $key = '')
 	{
-		
+
 		$xml = simplexml_load_string(unserialize($this->$field));
-		
+
 		if (!$xml)
 		{
 			return '';
@@ -4646,99 +4710,99 @@ class DataObject implements Iterator {
 		}
 		else
 		{
-			
+
 			$data = $xml->xpath('//' . $key);
-			
+
 			if (is_array($data) && count($data) == 1)
 			{
 				return $data[0];
 			}
-			
+
 			return $data;
-			
+
 		}
-		
+
 	}
-	
+
 	public function getTitle()
 	{
-		
+
 		if (empty($this->_title))
 		{
 			return get_class($this);
 		}
-		
+
 		return $this->_title;
-		
+
 	}
-	
+
 	public function setTitle($title = '')
 	{
 		$this->_title = $title;
 	}
-	
+
 
 	public function isLatest($data, &$errors=array())
 	{
-		
+
 		if (!empty($data['lastupdated']) && !is_null($this->lastupdated) && $data['lastupdated'] !== $this->lastupdated)
 		{
 			$errors[] = 'Data has been changed by another user - please requery';
 			return FALSE;
 		}
-		
+
 		return TRUE;
-		
+
 	}
 	 //****************
 	// MAGIC FUNCTIONS
-	
+
 	// on clone, make a deep copy of this object by cloning internal member;
 	public function __clone()
 	{
-		
+
 		// if fields array is not empty...
 		if (!empty($this->_fields))
 		{
-			
+
 			// loop through each field ...
 			foreach ($this->_fields as $key => $field)
 			{
-				
+
 				// make sure it's an object ...
 				if (is_object($this->_fields[$key]))
 				{
-					
+
 					// and clone itself
 					$this->_fields[$key] = clone $this->_fields[$key];
-			
+
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		// if fields array is not empty...
 		if (!empty($this->_displayFields))
 		{
-			
+
 			// loop through each field ...
 			foreach ($this->_displayFields as $key => $display_field)
 			{
-				
+
 				// make sure it's an object ...
 				if (is_object($this->_displayFields[$key]))
 				{
-					
+
 					// and clone itself
 					$this->_displayFields[$key] = clone $this->_displayFields[$key];
-			
+
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		// if searchHandlers array is not empty...
 		if (!empty($this->searchHandlers))
 		{
@@ -4746,36 +4810,36 @@ class DataObject implements Iterator {
 			foreach ($this->searchHandlers as $shkey => $sh)
 			{
 				$this->searchHandlers[$shkey] = clone $this->searchHandlers[$shkey];
-				
+
 				$this->searchHandlers[$shkey]->constraints = clone $this->searchHandlers[$shkey]->constraints;
 			}
 		}
-		
+
 		if ($this->_policyConstraint['constraint'] instanceOf ConstraintChain)
 		{
 			$this->_policyConstraint['constraint'] = clone $this->_policyConstraint['constraint'];
 		}
-	
+
 	}
-	
-	
+
+
 	 //*******************
 	// CALLBACK FUNCTIONS
-	
+
 	public function cb_loaded() {}
-	
+
 	/*
 	 * Static Functions
 	 */
 	static function updatePositions($modelname, $id, $fieldname, $new_sequence, $current_sequence = NULL, &$errors = array())
 	{
-	
+
 		if ((!($modelname instanceof DataObject) && !is_string($modelname)) || !is_numeric($id) || !is_string($fieldname) || !is_numeric($new_sequence))
 		{
 			$errors[] = 'Update Position - Invalid Parameters';
 			return FALSE;
 		}
-		
+
 		if (is_string($modelname))
 		{
 			// get the model DataObject
@@ -4786,7 +4850,7 @@ class DataObject implements Iterator {
 			$model		= $modelname;
 			$modelname	= get_class($model);
 		}
-		
+
 		if (!$model->isLoaded())
 		{
 			$model->load($id);
@@ -4797,19 +4861,19 @@ class DataObject implements Iterator {
 			$errors[] = 'Update Position - Invalid Id';
 			return FALSE;
 		}
-		
+
 		if ($new_sequence == $current_sequence)
 		{
 			// No update required
 			return TRUE;
 		}
-		 
+
 		$collectionname = $modelname . 'Collection';
-	
+
 		$collection = new $collectionname(DataObjectFactory::Factory($modelname));
-	
+
 		$sh = new SearchHandler($collection, FALSE);
-	
+
 		if (is_null($current_sequence))
 		{
 			// This is an insert so need to increase sequences after inserted sequence
@@ -4833,30 +4897,30 @@ class DataObject implements Iterator {
 				$sh->addConstraint(new Constraint($fieldname, 'between', $new_sequence . ' and ' . $current_sequence));
 				$increment = '+1';
 			}
-	
+
 		}
-	
+
 		$db = DB::Instance();
-		
+
 		$db->StartTrans();
-		
+
 		$model->$fieldname = $new_sequence;
-		
+
 		$result = ($collection->update($fieldname, '(' . $fieldname . $increment . ')', $sh) && $model->save());
-		
+
 		if ($result === FALSE)
 		{
 			$errors[] = 'Error updating ' . $fieldname . ' : ' . $db->ErrorMsg();
-			
+
 			$db->FailTrans();
 		}
-		
+
 		$db->CompleteTrans();
-		
+
 		return $result;
-	
+
 	}
-	
+
 }
 
 // end of DataObject.php

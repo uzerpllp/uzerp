@@ -13,7 +13,8 @@
         "adodb/adodb-php": "@dev",
         "leafo/lessphp": "0.5.0",
         "riimu/kit-csrf": "2.*",
-        "symfony/http-foundation": "^3.1"
+        "symfony/http-foundation": "^3.1",
+        "symfony/yaml": "^3.1"
     },
 
     "autoload": {

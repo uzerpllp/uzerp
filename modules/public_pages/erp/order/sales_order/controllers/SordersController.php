@@ -31,6 +31,10 @@ class SordersController extends printController
             'move_new_lines' => [
                 'methods' => ['post'],
                 'xhr' => TRUE
+            ],
+            'review_line_notes' => [
+                'methods' => ['post'],
+                'xhr' => TRUE
             ]
         ];
     }
@@ -727,8 +731,19 @@ class SordersController extends printController
             );
         }
 
-        if ($order->type == 'O') {
+        $actions['review_line_notes'] = array(
+            'link' => array(
+                'modules' => $this->_modules,
+                'controller' => $this->name,
+                'action' => 'review_line_notes',
+                'id' => $id
+            ),
+            'tag' => 'View Line Notes',
+            'id' => 'view-notes',
+            'class' => 'view-inplace'
+        );
 
+        if ($order->type == 'O') {
             if ($order->status == $order->newStatus()) {
                 $actions['printAcknowledgement'] = array(
                     'link' => array(
@@ -932,17 +947,8 @@ class SordersController extends printController
         $sidebar->addList('This ' . $type, $actions);
 
         // 'Related Items' sidebar section
-        switch($order->type) {
-            case 'O': // Order
-                $this->sidebarRelatedItems($sidebar, $order);
-                break;
-            case 'Q': // Quote
-                // only display 'Show Lines' for quotes
-                $whitelist = [
-                    'lines',
-                ];
-                $this->sidebarRelatedItems($sidebar, $order, $whitelist);
-                break;
+        if ($order->type == 'O') {
+            $this->sidebarRelatedItems($sidebar, $order);
         }
 
         $this->view->register('sidebar', $sidebar);
@@ -1535,6 +1541,23 @@ class SordersController extends printController
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
         $this->view->set('page_title', $this->getPageName('', 'View item availability by date for'));
+    }
+
+    /**
+     * Show Order Lines with Notes
+     *
+     * To be called using update_page (XHR) from sales_order.js to display
+     * a list of sales order lines in place
+     */
+    public function review_line_notes(){
+        $order = $this->order_details();
+        foreach ($order->lines as $line){
+            if ($line->note != ''){
+                $notes[] = $line;
+            }
+        }
+        $this->view->set('page_title', 'Sale Order Line Notes');
+        $this->view->set('sorderlines', $notes);
     }
 
     /**

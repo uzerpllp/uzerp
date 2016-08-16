@@ -107,9 +107,9 @@ class SOrder extends SPOrder {
 
 		// Define hasMany related view rules
 		$this->linkRules = array(
-			// Enable viewing of lines
+			// Do not allow links for lines
 			'lines' => array(
-					 'actions'	=> array('link')
+					 'actions'	=> array()
 					,'rules'	=> array()
 			),
 			// Do not allow links for invoices

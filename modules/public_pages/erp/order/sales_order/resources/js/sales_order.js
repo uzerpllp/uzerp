@@ -93,6 +93,20 @@ $(document).ready(function() {
 			}
 		});
 	});
+
+	/* review notes */
+    $(document).on('click', 'a.view-inplace', function (event) {
+       	event.preventDefault(); // lets prevent the links original action, should this be inside the condition?
+
+       	if (!$(this).hasClass('hidden')) {
+
+               	var $self = $(this);
+
+                update_page($self.attr('href'), $self.parents('form').serialize());
+
+        }
+    });
+
 	
 	/* sales_order -> sorders -> new */
 	
