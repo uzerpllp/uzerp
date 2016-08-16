@@ -10,7 +10,7 @@
 			<li class="sidebar_spacer">&nbsp;</li>
 		{else}
 			{strip}
-				{if $item.tag|prettify neq 'EGS_HIDDEN_FIELD' && !empty($item.link)}
+				{if $item.tag|prettify neq 'EGS_HIDDEN_FIELD'}
 					<li class="{$item.tag|lower|replace:' ':'_'}_related">
 						{if isset($item.link.newtab)}
 							{assign var=class value='newtab'}
