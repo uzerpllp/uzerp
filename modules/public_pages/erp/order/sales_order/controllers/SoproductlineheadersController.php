@@ -1,22 +1,22 @@
 <?php
 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class soproductlineheadersController extends printController
 {
 
 	protected $version = '$Revision: 1.17 $';
-	
+
 	public function __construct($module = null, $action = null)
 	{
 		parent::__construct($module, $action);
-		
+
 		$this->_templateobject = DataObjectFactory::Factory('SOProductlineHeader');
-		
+
 		$this->uses($this->_templateobject);
 
 	}
@@ -34,12 +34,12 @@ class soproductlineheadersController extends printController
 		if (isset($this->_data['status'])) {
 			$s_data['status']=$this->_data['status'];
 		}
-		
+
 		if (!isset($this->_data['Search']) || isset($this->_data['Search']['clear']))
 		{
 			$s_data['start_date/end_date']=date(DATE_FORMAT);
 		}
-		
+
 		$this->setSearch('productlinesSearch', 'headerDefault', $s_data);
 
 		parent::index(new SOProductlineHeaderCollection($this->_templateobject));
@@ -53,7 +53,7 @@ class soproductlineheadersController extends printController
 								 ),
 					'tag'=>'view all product lines'
 				);
-				
+
 		$actions['new']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -61,7 +61,7 @@ class soproductlineheadersController extends printController
 								 ),
 					'tag'=>'new_product'
 				);
-				
+
 		$actions['plan']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -69,43 +69,43 @@ class soproductlineheadersController extends printController
 								 ),
 					'tag'=>'view_supply/demand'
 				);
-				
+
 		$sidebar->addList(
 			'Actions',
 			$actions
 		);
-				
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 
 	}
-	
+
 	public function view()
 	{
 
 		$this->setSidebarView($this->getHeader());
-		
+
 	}
 
 	public function _new()
 	{
-		
+
 		// need to store the ajax flag in a different variable and the unset the original
 		// this is to prevent any functions that are further called from returning the wrong datatype
 		$ajax = isset($this->_data['ajax']);
 		unset($this->_data['ajax']);
-		
+
 		parent::_new();
 
 		$product = $this->_uses[$this->modeltype];
-		
+
 		$prod_groups = $this->getProductGroups();
 		$this->view->set('prod_groups',$prod_groups);
-		
+
 		$glaccount   = DataObjectFactory::Factory('GLAccount');
 		$gl_accounts = $glaccount->nonControlAccounts();
 		$this->view->set('gl_accounts',$gl_accounts);
-		
+
 		if (isset($_POST[$this->modeltype]['prod_group_id']))
 		{
 			$product->prod_group_id = $_POST[$this->modeltype]['prod_group_id'];
@@ -114,7 +114,7 @@ class soproductlineheadersController extends printController
 		{
 			$product->prod_group_id = key($prod_groups);
 		}
-		
+
 		if (isset($_POST[$this->modeltype]['glaccount_id']))
 		{
 			$product->glaccount_id = $_POST[$this->modeltype]['glaccount_id'];
@@ -124,7 +124,7 @@ class soproductlineheadersController extends printController
 			$product->glaccount_id = key($gl_accounts);
 		}
 		$this->view->set('gl_centres',$this->getCentres($product->glaccount_id));
-		
+
 		$stitem_list=array(''=>'None');
 		if ($product->isLoaded())
 		{
@@ -139,17 +139,17 @@ class soproductlineheadersController extends printController
 			$order_lines	= array();
 			$invoice_lines	= array();
 		}
-		
+
 		if (!empty($this->_data['stitem_id']))
 		{
 			$stitem = $this->getItem($this->_data['stitem_id']);
 			$this->view->set('stitem',$stitem);
 			$this->view->set('description',$stitem);
-			
+
 			$product_group = $this->getProductGroups($this->_data['stitem_id']);
 			$product->prod_group_id=$this->_data['prod_group_id']=key($product_group);
 			$this->view->set('product_group',current($product_group));
-			
+
 			$this->view->set('uoms',$this->getUomList($this->_data['stitem_id']));
 		}
 		else
@@ -158,9 +158,9 @@ class soproductlineheadersController extends printController
 			$this->view->set('stitems',$stitem_list);
 			$this->view->set('uoms',$uom_list);
 		}
-			
+
 		$tax_rates = array();
-		
+
 		if ($product && $product->tax_rate_id && !empty($this->_data['stitem_id']))
 		{
 			$tax_rates[$product->tax_rate_id] = $product->tax_rate;
@@ -168,14 +168,14 @@ class soproductlineheadersController extends printController
 		else
 		{
 			$taxrate = DataObjectFactory::Factory('TaxRate');
-			
+
 			$tax_rates = $taxrate->getAll();
 		}
-		
+
 		$this->view->set('tax_rates',$tax_rates);
-		
+
 	}
-	
+
 	public function save()
 	{
 		$flash=Flash::Instance();
@@ -185,24 +185,24 @@ class soproductlineheadersController extends printController
 		{
 			sendBack();
 		}
-		
+
 		$this->loadData();
 		$header = $this->_uses[$this->modeltype];
-		
+
 		$stitem = DataObjectFactory::Factory('STItem');
-		
+
 		if (!empty($this->_data[$this->modeltype]['stitem_id']))
 		{
 			$stitem->load($this->_data[$this->modeltype]['stitem_id']);
 			$end_date = un_fix_date($stitem->obsolete_date);
-			
+
 			if (!empty($end_date) && $end_date!=$this->_data[$this->modeltype]['end_date'])
 			{
 				$this->_data[$this->modeltype]['end_date'] = $end_date;
 				$flash->addWarning('Item has obsolete date - setting end date on product');
 			}
 		}
-		
+
 		// If there is no description, use the description item code description
 		if (empty($this->_data[$this->modeltype]['description']) && $stitem->isLoaded())
 		{
@@ -213,7 +213,7 @@ class soproductlineheadersController extends printController
 		{
 			$errors[]='You must select an item &/or enter a description';
 		}
-		
+
 		if (count($errors)==0)
 		{
 			if(parent::save($this->modeltype, null, $errors))
@@ -232,26 +232,26 @@ class soproductlineheadersController extends printController
 				$errors[]='Failed to save Product';
 			}
 		}
-		
+
 		$flash->addErrors($errors);
-		
+
 		if (isset($this->_data[$this->modeltype]['id']))
 		{
 			$this->_data['id']=$this->_data[$this->modeltype]['id'];
 		}
-		
+
 		$this->refresh();
-		
+
 	}
 
 	public function viewByDates()
 	{
 
-// Need to build an array for the supplied item 
+// Need to build an array for the supplied item
 // 			- get all sales orders by date
 // 			- get all works orders by date
 //			- get stock balances for these dates
-		
+
 		$flash=Flash::Instance();
 // Id must be set
 		if (!isset($this->_data['id'])) {
@@ -266,9 +266,9 @@ class soproductlineheadersController extends printController
 		if ($stitem->load($this->_data['id'])) {
 // Get the current stock level for the item
 			$in_stock=$stitem->currentBalance();
-			
+
 			$orders=array();
-		
+
 // Get any Purchase Orders by date for the item
 			$porders=$stitem->getPOrderLines();
 			foreach ($porders as $porder) {
@@ -326,7 +326,7 @@ class soproductlineheadersController extends printController
 			ksort($orders);
 
 			$salelocations=WHLocation::getSaleLocations();
-			
+
 			if (empty($salelocations))
 			{
 				$available=0;
@@ -338,17 +338,17 @@ class soproductlineheadersController extends printController
 				$cc->add(new Constraint('whlocation_id', 'in', '('.implode(',', $salelocations).')'));
 				$available=STBalance::getBalances($cc);
 			}
-			
+
 			$balance=$available;
 //			$in_stock-=$available;
-			
+
 // Now build the manufacturing plan for the order dates
 			foreach ($orders as $key=>$row)
 			{
 				$orders[$key]['available']=$available;
 				$orders[$key]['shortfall']=0;
 				$available-=$row['required'];
-				
+
 				$balance=$balance-$row['required']+$row['on_order'];
 				if ($balance<0) {
 					$orders[$key]['shortfall']-=$balance;
@@ -368,9 +368,9 @@ class soproductlineheadersController extends printController
 		$this->view->set('itemplan',$orders);
 		$this->view->set('stitem',$stitem);
 		$this->view->set('page_title',$this->getPageName('for Stock Item','View Supply/Demand by Date'));
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$actions = array();
 
 		$actions['allcustomer']=array(
@@ -378,15 +378,15 @@ class soproductlineheadersController extends printController
 								, 'controller'=>'SLCustomers'
 								, 'action'=>'index'),
 					'tag'=>'view all customers'
-				);			
-		
+				);
+
 		$actions['allines']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view all product lines'
-				);			
+				);
 		$actions['plan']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -400,27 +400,27 @@ class soproductlineheadersController extends printController
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view quotes/orders'
-				);			
+				);
 
-		
+
 		$sidebar->addList(
 			'Actions',
 			$actions
 		);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
-	
+
 	public function viewByItems()
 	{
-		$itemplan = $this->getItemPlan(); 
-		
+		$itemplan = $this->getItemPlan();
+
 		$this->view->set('itemplan',$itemplan);
 		$this->view->set('page_title',$this->getPageName('Stock Items','View Supply/Demand by'));
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$actions = array();
 
 		$actions['allcustomer']=array(
@@ -428,8 +428,8 @@ class soproductlineheadersController extends printController
 								, 'controller'=>'SLCustomers'
 								, 'action'=>'index'),
 					'tag'=>'view all customers'
-				);			
-		
+				);
+
 		$actions['allines']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -437,29 +437,29 @@ class soproductlineheadersController extends printController
 								 ),
 					'tag'=>'view all products'
 				);
-		
+
 		$actions['allines']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>'soproductlines'
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view all product lines'
-				);			
-		
+				);
+
 		$actions['vieworder']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>'SOrders'
 								 ,'action'=>'index'
 								 ),
 					'tag'=>'view quotes/orders'
-				);			
+				);
 
-		
+
 		$sidebar->addList(
 			'Actions',
 			$actions
 		);
-		
+
 /*
 		$sidebarlist=array();
 		$sidebarlist['supplydemand']=array(
@@ -473,24 +473,24 @@ class soproductlineheadersController extends printController
 				);
 		$sidebar->addList('Reports', $sidebarlist);
 */
-				
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
-	
+
 	public function view_orders()
 	{
-		
+
 		if (isset($this->_data['Search']['productline_header_id']))
 		{
 			$this->_data['id'] = $this->_data['Search']['productline_header_id'];
 		}
-		
+
 		if (!isset($this->_data['id'])) {
 			$this->DataError();
 			sendBack();
 		}
-		
+
 		$s_data=array();
 
 // Set context from calling module
@@ -505,19 +505,19 @@ class soproductlineheadersController extends printController
 		$orders = new SOrderCollection();
 		$orders->setViewName('so_product_orders');
 		$sh = $this->setSearchHandler($orders);
-		
+
 		parent::index($orders, $sh);
-		
+
 		$this->view->set('clickcontroller', 'sorders');
 		$this->view->set('clickaction', 'view');
 		$this->view->set('related_collection', $orders);
 		$this->setTemplateName('view_related');
-		
+
 	}
 
 	public function view_invoices()
 	{
-		
+
 		if (isset($this->_data['Search']['productline_header_id']))
 		{
 			$this->_data['id'] = $this->_data['Search']['productline_header_id'];
@@ -527,58 +527,58 @@ class soproductlineheadersController extends printController
 			$this->DataError();
 			sendBack();
 		}
-		
+
 		$s_data=array();
 
 // Set context from calling module
 
 		$s_data['productline_header_id'] = $this->_data['id'];
-		
+
 		$this->setSearch('productlinesSearch', 'customerInvoices', $s_data);
 
 		$this->view();
-				
+
 // Now load the required data
 		$invoices = new SInvoiceCollection();
 		$invoices->setViewName('so_product_invoices');
 		$sh = $this->setSearchHandler($invoices);
-		
+
 		parent::index($invoices, $sh);
-		
+
 		$this->view->set('clickmodule', array('sales_invoicing'));
 		$this->view->set('clickcontroller', 'sinvoices');
 		$this->view->set('clickaction', 'view');
 		$this->view->set('related_collection', $invoices);
 		$this->setTemplateName('view_related');
-		
+
 	}
 
 /* Protected Functions
- * 
+ *
  */
 	protected function getHeader()
 	{
-		
+
 		if (!isset($this->_data) || !$this->loadData()) {
 			$this->dataError();
 			sendBack();
-		}	
-		
+		}
+
 		$so_pl_header = $this->_uses[$this->modeltype];
 		$this->view->set('SOProductlineHeader', $so_pl_header);
-		
+
 		return $so_pl_header;
 	}
-	
+
 	protected function setSidebarView($so_pl_header)
 	{
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$this->sidebarActions($sidebar, $so_pl_header, array('delete'=>false));
-		
+
 		$sidebarlist = array();
-		
+
 		$sidebarlist['all_lines']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>'soproductlines'
@@ -586,14 +586,14 @@ class soproductlineheadersController extends printController
 								 ),
 					'tag'=>'view all SO product lines'
 				);
-		
+
 		$sidebar->addList(
 			'All Actions',
 			$sidebarlist
 		);
-				
+
 		$sidebarlist = array();
-		
+
 		$sidebarlist['orders']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -602,7 +602,7 @@ class soproductlineheadersController extends printController
 								 ),
 					'tag'=>'view orders'
 				);
-		
+
 		$sidebarlist['invoices']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -611,7 +611,7 @@ class soproductlineheadersController extends printController
 								 ),
 					'tag'=>'view invoices'
 				);
-		
+
 		$sidebarlist['prices']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>'soproductlines'
@@ -620,15 +620,15 @@ class soproductlineheadersController extends printController
 								 ),
 					'tag'=>'amend prices'
 				);
-		
+
 		$sidebar->addList(
 			'this '.$so_pl_header->getTitle(),
 			$sidebarlist
 		);
-				
+
 		$sidebarlist = array();
-		
-		if (SelectorCollection::TypeDetailsExist($this->module))
+
+		if (SelectorCollection::TypeDetailsExist($this->modeltype))
 		{
 			$sidebarlist['items']=array(
 					'link'=>array('modules'=>$this->_modules
@@ -644,26 +644,26 @@ class soproductlineheadersController extends printController
 					'tag'=>'used by'
 				);
 		}
-				
+
 		$sidebar->addList(
 			'related_items',
 			$sidebarlist
 		);
-				
+
 		$this->sidebarRelatedItems($sidebar, $so_pl_header);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-				
+
 	}
-	
+
 	protected function getPageName($base=null,$action=null)
 	{
 		return parent::getPageName(($base)?$base:'SO_products',$action);
 	}
 
 /* Private Functions
- * 
+ *
  */
 	private function getItemPlan()
 	{
@@ -675,62 +675,62 @@ class soproductlineheadersController extends printController
 		{
 			$s_data['stitem_id']=$this->_data['stitem_id'];
 		}
-		
+
 		if (isset($this->_data['prod_group_id']))
 		{
 			$s_data['prod_group_id']=$this->_data['prod_group_id'];
 		}
-		
+
 		$this->setSearch('productlinesSearch', 'customerItems', $s_data);
 
 		$items = new SOProductlineHeaderCollection($this->_templateobject);
-		
+
 		$sh = $this->setSearchHandler($items);
-		
+
 		$items->getItems($sh);
-		
+
 		parent::index($items, $sh);
-		
+
 // Now get totals for Sales Orders, In Stock, Work Orders
 		$itemplan=array();
 		foreach ($items as $item)
 		{
-			
+
 			$stitem = DataObjectFactory::Factory('STItem');
-			
+
 			if ($stitem->load($item->stitem_id))
 			{
 				$itemplan[$item->stitem_id]['stitem_id']	= $item->stitem_id;
 				$itemplan[$item->stitem_id]['stitem']		= $item->stitem;
 				$itemplan[$item->stitem_id]['uom_name']		= $item->uom_name;
 				$itemplan[$item->stitem_id]['in_stock']		= $stitem->currentBalance();
-				
+
 				$itemplan[$item->stitem_id]['required']				= 0;
 				$itemplan[$item->stitem_id]['on_order']['po_value']	= 0;
 				$itemplan[$item->stitem_id]['on_order']['wo_value']	= 0;
-				
+
 				$porders = $stitem->getPOrderLines();
-				
+
 				foreach ($porders as $porder)
 				{
 					$itemplan[$item->stitem_id]['on_order']['po_value'] += round($stitem->convertToUoM($porder->stuom_id,$stitem->uom_id,$porder->os_qty),$stitem->qty_decimals);
 				}
-				
+
 				$sorders = $stitem->getSOrderLines();
-				
+
 				foreach ($sorders as $sorder) {
 					$itemplan[$item->stitem_id]['required'] += round($stitem->convertToUoM($sorder->stuom_id,$stitem->uom_id,$sorder->os_qty),$stitem->qty_decimals);
 				}
-				
+
 				$worders = $stitem->getWorkOrders();
-				
+
 				foreach ($worders as $worder)
 				{
 					$itemplan[$item->stitem_id]['on_order']['wo_value'] += round(((($worder->order_qty-$worder->made_qty)<0)?0:$worder->order_qty-$worder->made_qty),$stitem->qty_decimals);
 				}
-			
+
 				$salelocations = WHLocation::getSaleLocations();
-				
+
 				if (empty($salelocations))
 				{
 					$itemplan[$item->stitem_id]['for_sale'] = 0;
@@ -738,18 +738,18 @@ class soproductlineheadersController extends printController
 				else
 				{
 					$cc = new ConstraintChain();
-					
+
 					$cc->add(new Constraint('stitem_id', '=', $item->stitem_id));
 					$cc->add(new Constraint('whlocation_id', 'in', '('.implode(',', $salelocations).')'));
-					
+
 					$itemplan[$item->stitem_id]['for_sale'] = STBalance::getBalances($cc);
 				}
-				
+
 				$itemplan[$item->stitem_id]['in_stock']			-=$itemplan[$item->stitem_id]['for_sale'];
 				$itemplan[$item->stitem_id]['actual_shortfall']	= $itemplan[$item->stitem_id]['required']-($itemplan[$item->stitem_id]['for_sale']+$itemplan[$item->stitem_id]['in_stock']);
 				$itemplan[$item->stitem_id]['shortfall']		= $itemplan[$item->stitem_id]['actual_shortfall']-$itemplan[$item->stitem_id]['on_order']['po_value']-$itemplan[$item->stitem_id]['on_order']['wo_value'];
 				$itemplan[$item->stitem_id]['indicator']		= 'green';
-				
+
 				if ($itemplan[$item->stitem_id]['actual_shortfall'] <= 0)
 				{
 					$itemplan[$item->stitem_id]['actual_shortfall'] = 0;
@@ -758,7 +758,7 @@ class soproductlineheadersController extends printController
 				{
 					$itemplan[$item->stitem_id]['indicator'] = 'amber';
 				}
-				
+
 				if ($itemplan[$item->stitem_id]['shortfall'] <= 0)
 				{
 					$itemplan[$item->stitem_id]['shortfall'] = 0;
@@ -769,12 +769,12 @@ class soproductlineheadersController extends printController
 				}
 			}
 		}
-		
+
 		return $itemplan;
 	}
 
 /* Ajax Functions
- * 
+ *
  */
 	public function getCentres($_glaccount_id='')
 	{
@@ -783,13 +783,13 @@ class soproductlineheadersController extends printController
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['glaccount_id'])) { $_glaccount_id=$this->_data['glaccount_id']; }
 		}
-		
+
 		$account = DataObjectFactory::Factory('GLAccount');
-		
+
 		$account->load($_glaccount_id);
-		
+
 		$centre_list = $account->getCentres();
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('options', $centre_list);
@@ -800,19 +800,19 @@ class soproductlineheadersController extends printController
 		else
 		{
 			return $centre_list;
-		}	
+		}
 
 	}
-	
-	public function getItem($_stitem_id='') 
+
+	public function getItem($_stitem_id='')
 	{
-		
+
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['stitem_id'])) { $_stitem_id=$this->_data['stitem_id']; }
 		}
-		
+
 		$item = $this->_templateobject->getItem($_stitem_id);
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('value',$item);
@@ -822,12 +822,12 @@ class soproductlineheadersController extends printController
 		{
 			return $item;
 		}
-		
+
 	}
-	
-	public function getItems($_prod_group_id='') 
+
+	public function getItems($_prod_group_id='')
 	{
-		
+
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['prod_group_id'])) { $_prod_group_id=$this->_data['prod_group_id']; }
 		}
@@ -846,7 +846,7 @@ class soproductlineheadersController extends printController
 // TODO: Need an object.method for constructing subqueries, particularly correlated subqueries!
 		$sql = 'select stitem_id from so_product_lines_header where stitem_id = st_items.id';
 		$cc->add(new Constraint('', 'not exists', '('.$sql.')'));
-		
+
 		if (!$date)
 		{
 			$date = Constraint::TODAY;
@@ -856,27 +856,27 @@ class soproductlineheadersController extends printController
 			$db = DB::Instance();
 			$date = $db->DBDate($date);
 		}
-		
+
 		$cc1 = new ConstraintChain;
 		$cc1->add(new Constraint('obsolete_date', '=', 'NULL'));
 		$cc1->add(new Constraint('obsolete_date', '>', $date), 'OR');
 		$cc->add($cc1);
 
 		$stitem	= DataObjectFactory::Factory('STitem');
-		
+
 		$items	= array(''=>'None');
-		
+
 		$items	+= $stitem->getAll($cc);
-		
+
 		if(isset($this->_data['ajax'])) {
 			$this->view->set('options', $items);
 			$this->setTemplateName('select_options');
 		} else {
 			return $items;
-		}		
+		}
 	}
-	
-	public function getTaxRate($_stitem_id='') 
+
+	public function getTaxRate($_stitem_id='')
 	{
 // Used by Ajax to return Tax Rate list after selecting the item
 
@@ -884,7 +884,7 @@ class soproductlineheadersController extends printController
 		{
 			if(!empty($this->_data['stitem_id'])) { $_stitem_id=$this->_data['stitem_id']; }
 		}
-		
+
 		$tax_rate_list = array();
 		// ATTENTION: JQI: this is one of "those" functions, check the refactored condition
 		if (empty($this->_data['stitem_id']))
@@ -897,7 +897,7 @@ class soproductlineheadersController extends printController
 		{
 			$item = DataObjectFactory::Factory('STItem');
 			$item->load($_stitem_id);
-			
+
 			$tax_rate = DataObjectFactory::Factory('TaxRate');
 			$tax_rate->load($item->tax_rate_id);
 			$tax_rate_list[$tax_rate->id] = $tax_rate->description;
@@ -912,7 +912,7 @@ class soproductlineheadersController extends printController
 		{
 			return $tax_rate_list;
 		}
-		
+
 	}
 
 	public function getEndDate($_stitem_id='')
@@ -922,7 +922,7 @@ class soproductlineheadersController extends printController
 		{
 			if(!empty($this->_data['stitem_id'])) { $_stitem_id=$this->_data['stitem_id']; }
 		}
-		
+
 		$item = $this->_templateobject->getEndDate($_stitem_id);
 
 		if(isset($this->_data['ajax']))
@@ -934,17 +934,17 @@ class soproductlineheadersController extends printController
 		{
 			return un_fix_date($item);
 		}
-		
+
 	}
-	
-	public function getUomList($_stuom_id='') 
+
+	public function getUomList($_stuom_id='')
 	{
 
 		if(isset($this->_data['ajax']))
 		{
 			if(!empty($this->_data['stuom_id'])) { $_stuom_id = $this->_data['stuom_id']; }
 		}
-		
+
 		$list = $this->_templateobject->getUomList($_stuom_id);
 
 		if(isset($this->_data['ajax']))
@@ -956,17 +956,17 @@ class soproductlineheadersController extends printController
 		{
 			return $list;
 		}
-		
+
 	}
-	
+
 	function getProductGroups($_stitem_id='')
 	{
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			if(!empty($this->_data['stitem_id'])) { $_stitem_id = $this->_data['stitem_id']; }
 		}
-		
+
 		$groups=$this->_templateobject->getProductGroups($_stitem_id);
 
 		if(isset($this->_data['ajax']))
@@ -978,36 +978,36 @@ class soproductlineheadersController extends printController
 		{
 			return $groups;
 		}
-		
+
 	}
 
-	
+
 	/* consolodation functions */
-	public function getItemData() 
+	public function getItemData()
 	{
 		// store the ajax status in a different var, then unset the current one
 		// we do this because we don't want the functions we all to get confused
 		$ajax = isset($this->_data['ajax']);
 		unset($this->_data['ajax']);
-		
+
 		// set vars
 		$_stitem_id		= $this->_data['stitem_id'];
 		$_prod_group_id	= $this->_data['prod_group_id'];
-		
+
 		$stuom_id	= $this->getUomList($_stitem_id);
 		$_selected	= (isset($this->_data['stuom_id']))?$this->_data['stuom_id']:'';
 		$stuom_id	= $this->buildSelect('', 'stuom_id', $stuom_id, $_selected);
 		$output['stuom_id'] = array('data'=>$stuom_id, 'is_array'=>is_array($stuom_id));
-				
+
 		$tax_rate_id = $this->getTaxRate($_stitem_id);
 		$_selected	 = (isset($this->_data['tax_rate_id']))?$this->_data['tax_rate_id']:'';
 		$tax_rate_id = $this->buildSelect('', 'tax_rate_id', $tax_rate_id, $_selected);
 		$output['tax_rate_id'] = array('data'=>$tax_rate_id, 'is_array'=>is_array($tax_rate_id));
-				
+
 		$prod_group_id = $this->getProductGroups($_stitem_id);
 		$prod_group_id = $this->buildSelect('', 'prod_group_id', $prod_group_id);
 		$output['prod_group_id'] = array('data'=>$prod_group_id, 'is_array'=>is_array($prod_group_id));
-				
+
 		if (!empty($_stitem_id))
 		{
 			$description = $this->getItem($_stitem_id);
@@ -1018,19 +1018,19 @@ class soproductlineheadersController extends printController
 		}
 		if (!empty($description))
 		{
-			$output['description'] = array('data'=>$description, 'is_array'=>is_array($description));	
+			$output['description'] = array('data'=>$description, 'is_array'=>is_array($description));
 		}
-		
+
 		$end_date = $this->getEndDate($_stitem_id);
-		$output['end_date'] = array('data'=>$end_date, 'is_array'=>is_array($end_date));	
-		
+		$output['end_date'] = array('data'=>$end_date, 'is_array'=>is_array($end_date));
+
 		// could we return the data as an array here? save having to re use it in the new / edit?
 		// do a condition on $ajax, and return the array if false
 		$this->view->set('data',$output);
 		$this->setTemplateName('ajax_multiple');
-	
+
 	}
-		
+
 }
 
 // End of soproductlineheadersController

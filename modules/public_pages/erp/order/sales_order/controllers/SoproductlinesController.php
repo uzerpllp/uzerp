@@ -1,22 +1,22 @@
 <?php
 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class soproductlinesController extends printController
 {
 
 	protected $version='$Revision: 1.78 $';
-	
+
 	public function __construct($module=null,$action=null)
 	{
 		parent::__construct($module, $action);
-		
+
 		$this->_templateobject = DataObjectFactory::Factory('SOProductline');
-		
+
 		$this->uses($this->_templateobject);
 
 	}
@@ -31,23 +31,23 @@ class soproductlinesController extends printController
 		{
 			$s_data['slmaster_id']=$this->_data['slmaster_id'];
 		}
-		
+
 		if (isset($this->_data['status']))
 		{
 			$s_data['status']=$this->_data['status'];
 		}
-		
+
 		if (!isset($this->_data['Search']) || isset($this->_data['Search']['clear']))
 		{
 			$s_data['start_date/end_date']=date(DATE_FORMAT);
 		}
-		
+
 		$this->setSearch('productlinesSearch', 'customerDefault', $s_data);
 
 		parent::index(new SOProductlineCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
-				
+
 		$actions = array();
 
 		$actions['new']=array(
@@ -57,7 +57,7 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'new_product'
 				);
-		
+
 		$actions['all_products']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>'soproductlineheaders'
@@ -73,7 +73,7 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'new_product_line'
 				);
-		
+
 		$actions['unused']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -81,26 +81,26 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'unused lines'
 				);
-		
+
 		$sidebar->addList(
 			'Actions',
 			$actions
 		);
-				
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
+
 		$this->view->set('clickaction','view_so_product');
 		$this->view->set('linkfield','productline_header_id');
 		$this->view->set('linkvaluefield','productline_header_id');
-		
+
 	}
 
 	public function unused()
 	{
 
 		$errors = array();
-		
+
 		$s_data=array();
 
 		if (!isset($this->_data['session_data_key']))
@@ -114,7 +114,7 @@ class soproductlinesController extends printController
 		{
 			$page_data = new SessionData($this->_data['session_data_key']);
 		}
-		
+
 // Update page data if paging
 		if (isset($this->_data[$this->modeltype])
 			&& (isset($this->_data['page']) || isset($this->_data['orderby'])))
@@ -133,27 +133,27 @@ class soproductlinesController extends printController
 		}
 
 		$data = $page_data->getPageData();
-		
+
 // Set context from calling module
-		
+
 		$this->setSearch('productlinesSearch', 'customerDefault', $s_data);
 
 		$productlines = new SOProductlineCollection($this->_templateobject);
-		
+
 		$sh = $this->setSearchHandler($productlines);
-		
+
 		if (count($errors) > 0)
 		{
 			$flash = Flash::Instance();
 			$flash->addErrors($errors);
 			sendback();
 		}
-		
+
 		$sh->addConstraint(new Constraint('not exists', '', '(select 1 from so_lines where productline_id=so_productlines_overview.id)'));
 		$sh->addConstraint(new Constraint('not exists', '', '(select 1 from si_lines where productline_id=so_productlines_overview.id)'));
-		
+
 		parent::index($productlines, $sh);
-		
+
 		if (isset($this->_data['select_all']))
 		{
 			if (count($data) > 0)
@@ -173,9 +173,9 @@ class soproductlinesController extends printController
 			}
 			$data = $page_data->getPageData();
 		}
-		
+
 		$sidebar = new SidebarController($this->view);
-				
+
 		$actions = array();
 
 		$actions['all_products']=array(
@@ -193,25 +193,25 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'view all lines'
 				);
-		
+
 		$sidebar->addList(
 			'Actions',
 			$actions
 		);
-				
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
+
 		$this->view->set('collection', $productlines);
 		$this->view->set('clickaction','view_so_product');
 		$this->view->set('linkfield','productline_header_id');
 		$this->view->set('linkvaluefield','productline_header_id');
-		
+
 		// set the generic variables for the paging_select template
 		$this->view->set('session_data_key', $this->_data['session_data_key']);
 		$this->view->set('selected', $data);
 		$this->view->set('count_selected', count($data));
-		
+
 		if (count($data) > 0)
 		{
 			$this->view->set('select_all_text','Clear All');
@@ -220,35 +220,35 @@ class soproductlinesController extends printController
 		{
 			$this->view->set('select_all_text','Select All');
 		}
-		
+
 		$this->view->set('submit_text','Delete Selected');
 		$this->view->set('form_action','delete_selected');
-		
+
 		$this->setTemplateName('paging_select');
-		
+
 	}
 
 	public function delete_selected()
 	{
-		
+
 		if (!$this->checkParams('session_data_key'))
 		{
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$flash=Flash::Instance();
-		
+
 		$db = DB::Instance();
-		
+
 		$db->StartTrans();
-		
+
 		$errors=array();
-		
+
 		$session_data_key = $this->_data['session_data_key'];
-		
+
 		$page_data = new SessionData($session_data_key);
-		
+
 		foreach ($this->_data[$this->modeltype] as $id=>$fields)
 		{
 			if (!isset($fields['select']) && isset($fields['_checkbox_exists_select']))
@@ -260,49 +260,49 @@ class soproductlinesController extends printController
 				$page_data->updatePageData($id, $fields, $errors);
 			}
 		}
-			
+
 		$data = $page_data->getPageData();
 
 		// Could do with a progress bar here as the number of records could be large
 		$delete_count = 0;
-		
+
 		if (count($data) > 0)
 		{
-			
+
 			$progressBar = new Progressbar('soproductline_delete_unused');
-			
+
 			$callback = function($fields, $id) use (&$delete_count) {
-				
+
 				if ($fields['select'] == 'on')
 				{
 					$productline = DataObjectFactory::Factory('SOProductLine');
 					$productline->load($id);
-						
+
 					if (!$productline->isLoaded() || !$productline->delete($id, $errors))
 					{
 						return FALSE;
 					}
-					
+
 					$delete_count++;
 				}
-				
+
 			};
-			
+
 			if ($progressBar->process($data, $callback)===FALSE)
 			{
 				$errors[] = 'Failed to delete product line';
 			}
-			
+
 		}
 		else
 		{
 			$flash->addWarning('Nothing selected to delete');
 		}
-		
+
 		// reset timeout to 30 seconds to allow time to redisplay the page
 		// hopefully, it will be quicker than this!
 		set_time_limit(30);
-		
+
 		if (count($errors)>0)
 		{
 			$flash->addErrors($errors);
@@ -310,7 +310,7 @@ class soproductlinesController extends printController
 			$db->FailTrans();
 			$db->CompleteTrans();
 			$this->refresh();
-			
+
 		}
 		else
 		{
@@ -319,9 +319,9 @@ class soproductlinesController extends printController
 			$flash->addMessage($delete_count.' record'.get_plural_string($delete_count).' archived successfully');
 			sendTo($this->name, 'unused', $this->_modules);
 		}
-		
+
 	}
-	
+
 	public function price_uplift()
 	{
 		$this->view->set('clickaction', 'edit');
@@ -336,7 +336,7 @@ class soproductlinesController extends printController
 			&& !isset($_SESSION['price_uplift_errors']))) {
 				unset($_SESSION['price_uplift']);
 		}
-		
+
 // Set context from calling module
 		if (isset($this->_data['productline_header_id'])) {
 			$productline_header_id = $s_data['productline_header_id'] = $this->_data['productline_header_id'];
@@ -349,7 +349,7 @@ class soproductlinesController extends printController
 		{
 			$productline_header_id = '';
 		}
-		
+
 		if (!empty($productline_header_id))
 		{
 			$product = DataObjectFactory::Factory('SOProductlineHeader');
@@ -383,7 +383,7 @@ class soproductlinesController extends printController
 			$effective_date=$this->_data[$this->modeltype]['effective_date'];
 		}
 		$this->view->set('effective_date',$effective_date);
-		
+
 		if (!empty($this->_data[$this->modeltype]['decimals'])) {
 			$decimals=$this->_data[$this->modeltype]['decimals'];
 		} elseif (isset($_SESSION['price_uplift_params']['decimals'])) {
@@ -392,19 +392,19 @@ class soproductlinesController extends printController
 			$decimals=2;
 		}
 		$this->view->set('decimals',$decimals);
-		
+
 		$_SESSION['price_uplift_params']['percent']=$percent;
 		$_SESSION['price_uplift_params']['decimals']=$decimals;
 		$this->view->set('soproductline',$this->_templateobject);
 
 		$this->setSearch('productlinesSearch', 'customerPriceUplift', $s_data);
-		
+
 		$collection=new SOProductlineCollection($this->_templateobject);
 		$sh=$this->setSearchHandler($collection);
 		parent::index($collection, $sh);
-		
+
 		$selected=empty($_SESSION['price_uplift'][$collection->cur_page])?array():$_SESSION['price_uplift'][$collection->cur_page];
-		
+
 		foreach ($collection as $detail) {
 			if (!isset($selected[$detail->id])) {
 				$selected[$detail->id]['select']='true';
@@ -418,7 +418,7 @@ class soproductlinesController extends printController
 		$_SESSION['price_uplift'][$collection->cur_page]=$selected;
 
 		$this->view->set('selected', $selected);
-		
+
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList(
 			'Actions',
@@ -441,7 +441,7 @@ class soproductlinesController extends printController
 		);
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
+
 	}
 
 	public function adjust_price_uplift ()
@@ -453,7 +453,7 @@ class soproductlinesController extends printController
 			$page=$this->_data['current_page'];
 		}
 		$selected=empty($_SESSION['price_uplift'][$page])?array():$_SESSION['price_uplift'][$page];
-		
+
 		$params=array();
 		if (isset($this->_data['id'])) {
 			if (isset($this->_data['new_price'])) {
@@ -474,19 +474,19 @@ class soproductlinesController extends printController
 		$db->StartTrans();
 		$errors=array();
 		$warnings=array();
-		
+
 		if (empty($this->_data[$this->modeltype]['percent'])) {
 			$percent=0;
 		} else {
 			$percent=$this->_data[$this->modeltype]['percent'];
 		}
-		
+
 		if (empty($this->_data[$this->modeltype]['decimals'])) {
 			$errors['decimals']='You must specify the number of decimal places required';
 		} else {
 			$decimals=$this->_data[$this->modeltype]['decimals'];
 		}
-		
+
 		if (empty($this->_data[$this->modeltype]['effective_date'])) {
 			$errors['effective_date']='You must specify the effective date for the price change';
 		} else {
@@ -496,12 +496,12 @@ class soproductlinesController extends printController
 				$flash->addWarning('Start Date is before today', 'start_date');
 			}
 		}
-		
+
 		if (count($errors)==0) {
 			$count=0;
-		
+
 			$this->setSearch('productlinesSearch', 'customerPriceUplift', $s_data);
-		
+
 			$collection=new SOProductlineCollection();
 			$sh=$this->setSearchHandler($collection);
 			$sh->setFields('*');
@@ -516,7 +516,7 @@ class soproductlinesController extends printController
 			$_SESSION['price_uplift_params']['price_uplift_end_date']=$end_date;
 			$_SESSION['price_uplift_params']['price_uplift_start_date']=$start_date;
 			$_SESSION['price_uplift_params']['price_uplift_last_page']=$lastpage;
-			
+
 			$selected=empty($_SESSION['price_uplift'][$collection->cur_page])?array():$_SESSION['price_uplift'][$collection->cur_page];
 			foreach ($collection as $productline) {
 				if (!isset($selected[$productline->id])) {
@@ -535,30 +535,30 @@ class soproductlinesController extends printController
 		$flash->save();
 		exit;
 	}
-	
+
 	public function save_price_uplift_pages ()
 	{
 		$flash=Flash::Instance();
-		
+
 		$this->setSearch('productlinesSearch', 'customerPriceUplift', $s_data);
-		
+
 		$page=$this->_data['page'];
-		
+
 		$this->_data['search_id']=$_SESSION['price_uplift_params']['search_id'];
-		
+
 		$collection=new SOProductlineCollection();
-		
+
 		$sh=$this->setSearchHandler($collection);
 		$sh->setFields('*');
-		
+
 		parent::index($collection, $sh);
-		
+
 		$selected=empty($_SESSION['price_uplift'][$page])?array():$_SESSION['price_uplift'][$page];
-		
+
 		$percent=$_SESSION['price_uplift_params']['percent'];
-		
+
 		$decimals=$_SESSION['price_uplift_params']['decimals'];
-		
+
 		foreach ($collection as $productline)
 		{
 			if (!isset($selected[$productline->id]))
@@ -567,75 +567,75 @@ class soproductlinesController extends printController
 				$selected[$productline->id]['new_price']=bcmul(round(($productline->getGrossPrice()*(100+$percent)/100),$decimals),1,$decimals);
 			}
 		}
-		
+
 		$_SESSION['price_uplift'][$collection->cur_page]=$selected;
-		
+
 		echo json_encode(array('data_page'=>$page, 'cur_page'=>$collection->cur_page, 'selected'=>$selected));
 		exit;
 	}
-	
+
 	public function end_price_uplift ()
 	{
-		
+
 		$db = DB::Instance();
-		
+
 		$flash = Flash::Instance();
-		
+
 		if ($flash->hasErrors())
 		{
 			$_SESSION['price_uplift_errors'] = true;
-			
+
 			$db->FailTrans();
-			
+
 			$db->CompleteTrans();
-			
+
 			$this->refresh();
 		}
 		else
 		{
 			$count = $_SESSION['price_uplift_params']['price_uplift_updated_count'];
-			
+
 			if ($count>0)
 			{
 				$text = ($count==1)?'price':'prices';
 				$flash->addMessage($count.' new '.$text.' saved OK');
 			}
-			
+
 			$db->CompleteTrans();
-			
+
 			sendTo($this->name, 'price_uplift', $this->_modules);
 		}
-			
+
 	}
 
 	public function update_prices ()
 	{
 		$flash=Flash::instance();
-		
+
 		$errors=array();
-		
+
 		$warnings=array();
-		
+
 		$db = DB::Instance();
-		
+
 		$start_date=$_SESSION['price_uplift_params']['price_uplift_start_date'];
-		
+
 		$end_date=$_SESSION['price_uplift_params']['price_uplift_end_date'];
-		
+
 		$selected=empty($_SESSION['price_uplift'][$this->_data['page']])?array():$_SESSION['price_uplift'][$this->_data['page']];
-		
+
 		$count=0;
-		
+
 		foreach ($selected as $id=>$detail)
 		{
 			$db->StartTrans();
-			
+
 			if ($detail['select']=='true')
 			{
 				$productline = DataObjectFactory::Factory('SOProductLine');
-				
+
 				$productline->load($id);
-				
+
 				if (!$productline->isLoaded())
 				{
 					$errors[$id]='Failed to find product details '.$id;
@@ -647,7 +647,7 @@ class soproductlinesController extends printController
 				else
 				{
 					$productline->end_date = $end_date;
-					
+
 					if (!$productline->save())
 					{
 						$errors[$id] = 'Failed to close off old price ref:'.$id.' - '.$db->ErrorMsg();
@@ -655,7 +655,7 @@ class soproductlinesController extends printController
 					else
 					{
 						$test = $productline->autoHandle($productline->idField);
-						
+
 						if($test !== false)
 						{
 							$productline->id 		 = $test;
@@ -664,7 +664,7 @@ class soproductlinesController extends printController
 							$productline->end_date	 = null;
 							$productline->created	 = fix_date(date(DATE_FORMAT));
 							$productline->createdby	 = EGS_USERNAME;
-							
+
 							if (!$productline->save())
 							{
 								$errors[$id] = 'Failed to save new price ref:'.$id.' - '.$db->ErrorMsg();
@@ -678,50 +678,50 @@ class soproductlinesController extends printController
 						{
 							$errors[] = 'Error getting identifier for new price';
 						}
-						
+
 					}
 				}
-				
+
 				unset($productline);
 			}
-			
+
 			$db->CompleteTrans();
-			
+
 			$_SESSION['price_uplift_params']['price_uplift_progress_count']++;
 		}
-		
+
 		if (count($errors)>0)
 		{
 			$flash->addErrors($errors);
 		}
-		
+
 		if (count($warnings)>0)
 		{
 			$flash->addWarnings($warnings);
 		}
-		
+
 		$flash->save();
-		
+
 		$_SESSION['price_uplift_params']['price_uplift_updated_count']+=$count;
-		
+
 		echo json_encode(array('updated_count'=>$count, 'warnings'=>$warnings, 'errors'=>$errors));
 		exit;
 	}
-	
+
 	public function _new()
 	{
-		
+
 		// need to store the ajax flag in a different variable and the unset the original
 		// this is to prevent any functions that are further called from returning the wrong datatype
 		$ajax=isset($this->_data['ajax']);
 		unset($this->_data['ajax']);
-		
+
 		parent::_new();
 
 		$product=$this->_uses[$this->modeltype];
-		
+
 		$product_header = DataObjectFactory::Factory('SOProductlineHeader');
-		
+
 		if (isset($this->_data['productline_header_id']))
 		{
 			$product_header->load($this->_data['productline_header_id']);
@@ -729,7 +729,7 @@ class soproductlinesController extends printController
 		elseif (isset($this->_data['stitem_id']))
 		{
 			$product_header->loadBy('stitem_id', $this->_data['stitem_id']);
-			
+
 			if ($product_header->isLoaded())
 			{
 //				echo 'data<pre>'.print_r($_GET, true).'</pre><br>';
@@ -739,9 +739,9 @@ class soproductlinesController extends printController
 //			{
 //				echo 'Could not load header for item '.$this->_data['stitem_id'].'<br>';
 //			}
-			
+
 		}
-		
+
 		if (!$product->isLoaded())
 		{
 
@@ -751,10 +751,10 @@ class soproductlinesController extends printController
 			}
 			else
 			{
-			
+
 				$headers = $product_header->getAll();
 				$this->view->set('headers', $headers);
-		
+
 				$product->productline_header_id = key($headers);
 			}
 		}
@@ -762,13 +762,13 @@ class soproductlinesController extends printController
 		{
 			$this->_data['productline_header_id'] = $product->productline_header_id;
 		}
-		
+
 		$glaccount = DataObjectFactory::Factory('GLAccount');
-		
+
 		$gl_accounts = $glaccount->nonControlAccounts();
-		
+
 		$this->view->set('gl_accounts',$gl_accounts);
-		
+
 		if ($product->isLoaded())
 		{
 			$default_glaccount_id	= $product->glaccount_id;
@@ -780,21 +780,21 @@ class soproductlinesController extends printController
 		}
 
 		$data = $this->getHeaderData($product->productline_header_id, $default_customer);
-		
+
 		if (!$product->isLoaded())
 		{
 			$this->view->set('price', $data['price']['data']);
 			$this->view->set('discount', $data['discount']['data']);
 			$default_glaccount_id	= $data['glaccount_id']['data'];
 		}
-		
+
 		$this->view->set('gl_account', $default_glaccount_id);
 		$this->view->set('gl_centres', $this->getCentres($default_glaccount_id));
-		
+
 		$this->view->set('gross_price', $this->_templateobject->getGrossPrice());
-		
+
 	}
-	
+
 	public function save()
 	{
 		$flash=Flash::Instance();
@@ -806,11 +806,11 @@ class soproductlinesController extends printController
 		}
 
 		$productline_data = $this->_data[$this->modeltype];
-		
+
 		$header = DataObjectFactory::Factory('SOProductlineHeader');
-		
+
 		$header->load($productline_data['productline_header_id']);
-		
+
 		if (!$header->isLoaded())
 		{
 			$errors[] = 'Error loading header';
@@ -821,9 +821,9 @@ class soproductlinesController extends printController
 		{
 			// Load the customer
 			$customer = DataObjectFactory::Factory('SLCustomer');
-			
+
 			$customer->load($productline_data['slmaster_id']);
-			
+
 			if (!$customer->isLoaded())
 			{
 				$errors[] = 'Error loading customer';
@@ -838,39 +838,39 @@ class soproductlinesController extends printController
 				}
 			}
 		}
-		
-// If no description is entered, use the supplier product code		
+
+// If no description is entered, use the supplier product code
 		if (empty($productline_data['slmaster_id']) &&
 			!empty($productline_data['customer_product_code']))
 		{
 			$productline_data['customer_product_code']='';
 			$flash->addMessage('Customer Code ignored as no Customer selected');
 		}
-		
-// If there is no description, use the supplier code		
+
+// If there is no description, use the supplier code
 		if (empty($productline_data['description']) &&
 			!empty($productline_data['customer_product_code']))
 		{
 			$productline_data['description']=$productline_data['customer_product_code'];
 		}
-		
+
 // If there is no description, use the header description
 		if (empty($productline_data['description']))
 		{
 			$productline_data['description']=$header->description;
 		}
-		
-// Price is either entered directly or comes from the item		
+
+// Price is either entered directly or comes from the item
 		if (empty($productline_data['price'])) {
 			$errors[] = 'You must enter a price';
 		}
-		
+
 // If there is no description, then no customer or header has been selected
 		if (empty($productline_data['description']))
 		{
 			$errors[] = 'You must select a customer &/or enter a description';
 		}
-		
+
 // If the header has an end date, make sure the line end date is set
 // and not later than the header
 		if (!is_null($header->end_date)
@@ -882,14 +882,14 @@ class soproductlinesController extends printController
 
 // Check for overlapping lines
 		$cc = new ConstraintChain();
-		
+
 		$cc->add(New Constraint('productline_header_id', '=', $productline_data['productline_header_id']));
-		
+
 		if (!empty($productline_data['id']))
 		{
 			$cc->add(New Constraint('id', '!=', $productline_data['id']));
 		}
-		
+
 		if (empty($productline_data['slmaster_id']))
 		{
 			$cc->add(New Constraint('slmaster_id', 'is', 'NULL'));
@@ -898,7 +898,7 @@ class soproductlinesController extends printController
 		{
 			$cc->add(New Constraint('slmaster_id', '=', $productline_data['slmaster_id']));
 		}
-		
+
 		if (empty($productline_data['so_price_type_id']))
 		{
 			$cc->add(New Constraint('so_price_type_id', 'is', 'NULL'));
@@ -907,31 +907,31 @@ class soproductlinesController extends printController
 		{
 			$cc->add(New Constraint('so_price_type_id', '=', $productline_data['so_price_type_id']));
 		}
-				
+
 		$db = DB::Instance();
-		
+
 		$cc1 = new ConstraintChain();
 		$cc1->add(New Constraint('start_date', 'between', $db->qstr(fix_date($productline_data['start_date'])).' and '.$db->qstr((empty($productline_data['end_date'])?fix_date(date(DATE_FORMAT)):fix_date($productline_data['end_date'])))));
-		
+
 		$cc2 = new ConstraintChain();
 		$cc2->add(New Constraint('start_date', '<', fix_date($productline_data['start_date'])));
-		
+
 		$cc3 = new ConstraintChain();
 		$cc3->add(New Constraint('end_date', '>=', fix_date($productline_data['start_date'])));
 		$cc3->add(New Constraint('end_date', 'is', 'NULL'), 'OR');
-		
+
 		$cc2->add($cc3);
 		$cc1->add($cc2, 'OR');
 		$cc->add($cc1);
 
 		$productline = DataObjectFactory::Factory('SOProductLine');
 		$overlap = $productline->getAll($cc);
-		
+
 		if (count($overlap) > 0)
 		{
 			$errors[] = 'Current product price already exists';
 		}
-		
+
 		if (count($errors)==0)
 		{
 			if(parent::save($this->modeltype, $productline_data, $errors))
@@ -950,27 +950,27 @@ class soproductlinesController extends printController
 				$errors[]='Failed to save Product Line';
 			}
 		}
-		
+
 		$flash->addErrors($errors);
-		
+
 		if (isset($this->_data['SOProductline']['id']))
 		{
 			$this->_data['id']=$this->_data['SOProductline']['id'];
 			$this->_data['productline_header_id']=$this->_data['SOProductline']['productline_header_id'];
 		}
-		
+
 		$this->refresh();
-		
+
 	}
 
 	public function view_so_product()
 	{
-		
+
 		if (!isset($this->_data['productline_header_id']) && !isset($this->_data['Search']['productline_header_id'])) {
 			$this->DataError();
 			sendBack();
 		}
-		
+
 		$this->view->set('clickaction', 'edit');
 
 		$s_data=array();
@@ -990,23 +990,23 @@ class soproductlinesController extends printController
 		{
 			$productline_header_id = $this->_data['Search']['productline_header_id'];
 		}
-		
+
 		$this->setSearch('productlinesSearch', 'soheaderLines', $s_data);
 
 // Load the Product Header
 		$product = DataObjectFactory::Factory('SOProductlineHeader');
-		
+
 		$product->load($productline_header_id);
-		
+
 		$this->view->set('SOProductlineHeader', $product);
 
 // Load the associated lines
 		parent::index(new SOProductlineCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebarlist = array();
-		
+
 		$sidebarlist['view_all_products']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>'soproductlineheaders'
@@ -1014,7 +1014,7 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'View All Products'
 				);
-		
+
 		$sidebarlist['view_all_lines']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -1022,14 +1022,14 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'View All Product Lines'
 				);
-		
+
 				$sidebar->addList(
 			'All Products',
 			$sidebarlist
 		);
-				
+
 		$sidebarlist = array();
-		
+
 		$sidebarlist['view']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -1038,7 +1038,7 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'view'
 				);
-		
+
 		$sidebarlist['new']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -1047,7 +1047,7 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'new price'
 				);
-		
+
 		$sidebarlist['orders']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>'soproductlineheaders'
@@ -1056,7 +1056,7 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'view orders'
 				);
-		
+
 		$sidebarlist['invoices']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>'soproductlineheaders'
@@ -1065,7 +1065,7 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'view invoices'
 				);
-		
+
 		$sidebarlist['prices']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -1074,14 +1074,16 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'amend prices'
 				);
-		
+
 		$sidebar->addList(
 			'this Product',
 			$sidebarlist
 		);
-				
+
 		$sidebarlist = array();
-		
+
+		if (SelectorCollection::TypeDetailsExist($this->modeltype))
+		{
 		$sidebarlist['items']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>'soproductselectors'
@@ -1095,20 +1097,21 @@ class soproductlinesController extends printController
 								 ),
 					'tag'=>'used by'
 				);
-		
+		}
+
 		$sidebar->addList(
 			'related_items',
 			$sidebarlist
 		);
-				
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 		$this->view->set('linkmodule', $this->module);
 		$this->view->set('linkcontroller', 'soproductlineheaders');
-		
+
 	}
-	
+
 	protected function getPageName($base=null,$action=null)
 	{
 		return parent::getPageName(($base)?$base:'SO_product_lines',$action);
@@ -1123,13 +1126,13 @@ class soproductlinesController extends printController
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['glaccount_id'])) { $_glaccount_id=$this->_data['glaccount_id']; }
 		}
-		
+
 		$account = DataObjectFactory::Factory('GLAccount');
-		
+
 		$account->load($_glaccount_id);
-		
+
 		$centre_list = $account->getCentres();
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$output['glcentre_id'] = array('data'=>$centre_list,'is_array'=>true);
@@ -1139,10 +1142,10 @@ class soproductlinesController extends printController
 		else
 		{
 			return $centre_list;
-		}	
+		}
 
 	}
-	
+
 	public function getCurrency($_slmaster_id='')
 	{
 // Used by Ajax to return Currency after selecting the Supplier
@@ -1150,13 +1153,13 @@ class soproductlinesController extends printController
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['slmaster_id'])) { $_slmaster_id=$this->_data['slmaster_id']; }
 		}
-		
+
 		$customer = DataObjectFactory::Factory('SLCustomer');
-		
+
 		$customer->load($_slmaster_id);
-		
+
 		$currency='';
-		
+
 		if ($customer)
 		{
 			$currency=$customer->currency_id;
@@ -1171,20 +1174,20 @@ class soproductlinesController extends printController
 		{
 			return $currency;
 		}
-		
+
 	}
 
 	function getPriceDiscount($_prod_group_id = '', $_stitem_id = '', $_slmaster_id = '')
 	{
-		
+
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['prod_group_id'])) { $_prod_group_id=$this->_data['prod_group_id']; }
 			if(!empty($this->_data['stitem_id'])) { $_stitem_id=$this->_data['stitem_id']; }
 			if(!empty($this->_data['slmaster_id'])) { $_slmaster_id=$this->_data['slmaster_id']; }
 		}
-		
+
 		$discount = $this->_templateobject->getPriceDiscount($_prod_group_id, $_slmaster_id);
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('value',$discount);
@@ -1194,21 +1197,21 @@ class soproductlinesController extends printController
 		{
 			return $discount;
 		}
-		
+
 	}
 
 	function getProductLines($_slmaster_id='', $_productsearch='', $_so_price_type_id='', $_limit='')
 	{
-		
+
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['slmaster_id'])) { $_slmaster_id=$this->_data['slmaster_id']; }
 			if(!empty($this->_data['product_search'])) { $_productsearch=$this->_data['product_search']; }
 			if(!empty($this->_data['so_price_type_id'])) { $_so_price_type_id=$this->_data['so_price_type_id']; }
 			if(!empty($this->_data['limit'])) { $_limit=$this->_data['limit']; }
 		}
-		
+
 		$productlines = DataObjectFactory::Factory('SOProductline');
-		
+
 		if (!empty($_slmaster_id))
 		{
 			$productlist=$productlines->getCustomerLines($_slmaster_id, $_productsearch);
@@ -1217,7 +1220,7 @@ class soproductlinesController extends printController
 		{
 			$productlist=$productlines->getNonSPecific($_productsearch, $_so_price_type_id);
 		}
-		
+
 		if (!empty($_limit) && count($productlist)>$_limit)
 		{
 			$productlist=array(''=>'Refine Search - List > '.$_limit);
@@ -1230,7 +1233,7 @@ class soproductlinesController extends printController
 		{
 			$productlist=array(''=>'Select from list')+$productlist;
 		}
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('options',$productlist);
@@ -1240,17 +1243,17 @@ class soproductlinesController extends printController
 		{
 			return $productlist;
 		}
-				
+
 	}
 
 	function get_price($_productline_id='', $_slmaster_id='')
 	{
-		
+
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['productline_id'])) { $_productline_id=$this->_data['productline_id']; }
 			if(!empty($this->_data['slmaster_id'])) { $_slmaster_id=$this->_data['slmaster_id']; }
 		}
-		
+
 		if (empty($_productline_id))
 		{
 			$currency='';
@@ -1264,9 +1267,9 @@ class soproductlinesController extends printController
 		else
 		{
 			$productline = DataObjectFactory::Factory('SOProductline');
-			
+
 			$productline->load($_productline_id);
-			
+
 			if ($productline->isLoaded())
 			{
 				$currency=$productline->currency;
@@ -1274,7 +1277,7 @@ class soproductlinesController extends printController
 				$discount_percent=$productline->getPriceDiscount('', $_slmaster_id);
 				$net_price=$productline->getPrice('', '', $_slmaster_id);
 				$discount_value=bcsub($product_price, $net_price);
-				
+
 				if (empty($_slmaster_id))
 				{
 					$_slmaster_id=$productline->slmaster_id;
@@ -1282,9 +1285,9 @@ class soproductlinesController extends printController
 				if (!empty($_slmaster_id))
 				{
 					$customer = DataObjectFactory::Factory('SLCustomer');
-					
+
 					$customer->load($_slmaster_id);
-					
+
 					$tax_status_id=$customer->tax_status_id;
 				}
 				else
@@ -1300,7 +1303,7 @@ class soproductlinesController extends printController
 				$net_price='Not Found';
 			}
 		}
-					
+
 		$output['currency']=array('data'=>$currency,'is_array'=>false);
 		$output['product_price']=array('data'=>$product_price,'is_array'=>false);
 		$output['discount_percent']=array('data'=>$discount_percent,'is_array'=>false);
@@ -1308,7 +1311,7 @@ class soproductlinesController extends printController
 		$output['net_price']=array('data'=>$net_price,'is_array'=>false);
 		$output['vat']=array('data'=>$vat,'is_array'=>false);
 		$output['gross']=array('data'=>$gross,'is_array'=>false);
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('data',$output);
@@ -1318,21 +1321,21 @@ class soproductlinesController extends printController
 		{
 			return $output;
 		}
-		
+
 	}
-	
+
 	function get_price_type($_slmaster_id='')
 	{
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			if(!empty($this->_data['slmaster_id'])) { $_slmaster_id=$this->_data['slmaster_id']; }
 		}
-		
+
 		$customer = DataObjectFactory::Factory('SLCustomer');
-		
+
 		$customer->load($_slmaster_id);
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('value',$customer->so_price_type_id);
@@ -1342,38 +1345,38 @@ class soproductlinesController extends printController
 		{
 			return $customer->so_price_type_id;
 		}
-		
+
 	}
-	
+
 	/* consolodation functions */
 	function getHeaderData ($_header_id = '', $_slmaster_id = '')
 	{
-		
+
 		// store the ajax status in a different var, then unset the current one
 		// we do this because we don't want the functions we all to get confused
 		$ajax = isset($this->_data['ajax']);
 		unset($this->_data['ajax']);
-		
+
 		if($ajax)
 		{
 			if(!empty($this->_data['productline_header_id'])) { $_header_id=$this->_data['productline_header_id']; }
 			if(!empty($this->_data['slmaster_id'])) { $_slmaster_id=$this->_data['slmaster_id']; }
 		}
-		
+
 		if (!empty($_header_id))
 		{
 			$header = $this->loadHeader($_header_id);
 			$this->view->set('SOProductlineHeader', $header);
-			
+
 			$output['description']=array('data'=>$header->description,'is_array'=>false);
 			$output['discount']=array('data'=>$this->getPriceDiscount($header->prod_group_id, $header->stitem_id, $_slmaster_id),'is_array'=>false);
 			$output['price']=array('data'=>$this->_templateobject->getPrice($header->prod_group_id, $header->stitem_id, $_slmaster_id),'is_array'=>false);
 			$output['glaccount_id']=array('data'=>$header->glaccount_id,'is_array'=>false);
 			$output['start_date']=array('data'=>un_fix_date($header->start_date),'is_array'=>false);
 			$output['end_date']=array('data'=>un_fix_date($header->end_date),'is_array'=>false);
-			
+
 		}
-	
+
 		if($ajax)
 		{
 			$html = $this->view->fetch($this->getTemplateName('header_data'));
@@ -1385,21 +1388,21 @@ class soproductlinesController extends printController
 		{
 			return $output;
 		}
-	
+
 	}
-	
+
 	/* private functions */
 	private function loadHeader($_header_id = '')
 	{
 		$product=$this->_uses[$this->modeltype];
-		
+
 		if (!$product->isLoaded())
 		{
 			$product->productline_header_id = $_header_id;
 		}
 		return $product->product_detail;
 	}
-	
+
 }
 
 // End of soproductlinesController

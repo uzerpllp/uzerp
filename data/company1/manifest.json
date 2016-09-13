@@ -1,0 +1,18 @@
+{
+  "sales_order": {
+    "itemTableName": "so_product_selector",
+    "itemOverviewName": "so_product_selector",
+    "linkTableName": "so_product_line_link",
+    "title": "Product Selector",
+    "targetModel": "SOProductlineHeader",
+    "itemFields": {
+      "1": "make",
+      "2": "model",
+      "3": "year"
+    },
+    "targetFields": {
+      "1": "description"
+    }
+  }
+}
+

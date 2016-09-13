@@ -1,9 +1,10 @@
-{** 
+{**
  *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
+ *
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {* $Revision: 1.5 $ *}
+{content_wrapper title=$page_title}
 <div id="view_page" class="clearfix">
 	{with model=$target}
 		{foreach item=field from=$target_headings}
@@ -11,7 +12,7 @@
 		{/foreach}
 	{/with}
 </div>
-<div id="view_data_bottom">
+<div id="view_page_bottom" class="clearfix">
 	{advanced_search}
 	{paging}
 	<table class="datagrid" id="datagrid1" cellspacing="0" cellpadding="0">
@@ -44,5 +45,5 @@
 			{/foreach}
 		</tbody>
 	</table>
-	{paging}
 </div>
+{/content_wrapper}

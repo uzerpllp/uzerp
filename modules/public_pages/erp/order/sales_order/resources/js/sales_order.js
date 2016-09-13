@@ -45,6 +45,16 @@ function update_prices(num_pages, form_data) {
 }
 
 $(document).ready(function() {
+	/*  Sales Order - Selector */
+	
+	/*  SOrdersController -> select_products, 'Select Products View'
+	 *
+	 *  Trigger search on selection changes
+	 */
+	
+	$(document).on('change', '#search_slmaster_id, #search_prod_group_id', function () {
+		$(this).parents('form').find('#search_submit').click();
+	});
 	
 	/* Sales Order - Sidebar Confirmations */
 	
