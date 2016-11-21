@@ -16,6 +16,7 @@ class PeriodicPayment extends DataObject
         'status',
         'source',
         'company',
+        'person',
         'cb_account' => 'Bank Account',
         'currency',
         'description',

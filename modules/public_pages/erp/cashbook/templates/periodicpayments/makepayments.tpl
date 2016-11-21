@@ -19,6 +19,9 @@
 				{heading_cell field="company" }
 					Company
 				{/heading_cell}
+				{heading_cell field="person" }
+					Person
+				{/heading_cell}
 				{heading_cell field="cb_account" }
 					Bank Account
 				{/heading_cell}
@@ -65,6 +68,9 @@
 					{/grid_cell}
 					{grid_cell model=$model cell_num=3 field="company"}
 						{$model->company}
+					{/grid_cell}
+					{grid_cell model=$model cell_num=4 field="person"}
+						{$model->person}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=4 field="cb_account"}
 						{$model->cb_account}
