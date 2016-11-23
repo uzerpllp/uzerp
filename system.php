@@ -1134,7 +1134,6 @@ class system
     {
 
         // Need way of registering plugins
-        require PLUGINS_ROOT . 'Barcode/PHPBarcode.php';
         require PRINT_ROOT . 'PrintIPP.php';
         require PRINT_ROOT . 'ExtendedPrintIPP.php';
         require PRINT_ROOT . 'CupsPrintIPP.php';
