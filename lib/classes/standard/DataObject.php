@@ -3826,7 +3826,7 @@ class DataObject implements Iterator {
 	function getDefaultOrderby()
 	{
 
-	    $this->setCustomModelOrder(FILE_ROOT . 'conf/custom-model-order.yaml');
+	    $this->setCustomModelOrder(FILE_ROOT . 'conf/custom-model-order.yml');
 
 		$ob			= $this->orderby;
 		$candidates	= array('position','index','title','name','subject','surname');

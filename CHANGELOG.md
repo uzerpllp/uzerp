@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Show person in periodic payments list
 - Require confirmation on cancel and authorise Purchase Requisition actions
 - A note can be added when setting a Customer Service Failure code
+- Custom model sort override (see: http://wiki.uzerp.com/doku.php/dev_guide#custom_sort_in_views)
 
 ### Changed
 - Passwords are hashed using PHP 5.5+ Password hashing API

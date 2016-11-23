@@ -14,7 +14,7 @@ user/**
 
 # Exclude local changes to the config file
 conf/config.php
-conf/custom-model-order.yaml
+conf/custom-model-order.yml
 conf/selector-config.yml
 
 # Exclude composer installed stuff
