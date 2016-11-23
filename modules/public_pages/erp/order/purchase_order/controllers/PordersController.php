@@ -710,9 +710,11 @@ class PordersController extends printController
                     'modules' => $this->_modules,
                     'controller' => $this->name,
                     'action' => 'authoriseOrder',
-                    'id' => $id
+                    'id' => $id,
                 ),
-                'tag' => 'Authorise Order'
+                'tag' => "Authorise {$type}",
+                'class' => 'confirm',
+                'data_attr' => ['data_uz-confirm-message' => "Authorise {$type}?|This cannot be undone."]
             );
         }
 
@@ -722,9 +724,12 @@ class PordersController extends printController
                     'modules' => $this->_modules,
                     'controller' => $this->name,
                     'action' => 'cancel_order',
+                    'type' => 'confirm',
                     'id' => $id
                 ),
-                'tag' => 'Cancel ' . $type
+                'tag' => 'Cancel ' . $type,
+                'class' => 'confirm',
+                'data_attr' => ['data_uz-confirm-message' => "Cancel {$type}?|This cannot be undone."]
             );
         }
 
@@ -786,6 +791,9 @@ class PordersController extends printController
 
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
+        if ($order->type == 'R') {
+            $this->view->set('page_title', 'Purchase Requisition');
+        }
     }
 
     public function profile()
