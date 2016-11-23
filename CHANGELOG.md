@@ -2,10 +2,26 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
+
+## [1.7] - 2016-11-23
+### Fixed
+- Various SO product selector fixes
+
 ### Added
 - Print item labels from Sales Order. Requires a Report Definition called 'SOItemLabel'
 - Transfer outstanding sales order lines to a new order (cancels existing lines)
 - Stronger CSRF protection
+- Show person in periodic payments list
+- Require confirmation on cancel and authorise Purchase Requisition actions
+- A note can be added when setting a Customer Service Failure code
+
+### Changed
+- Passwords are hashed using PHP 5.5+ Password hashing API
+    - Passwords must now be at least 10 characters long
+    - A password strength meter has been added to encourage password complexity
+
+### Removed
+- Unused PHPBarcode library
 
 ## [1.6.2] - 2016-05-23
 ### Fixed
