@@ -1,9 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## Unreleased
-
-## [1.7] - 2016-11-23
+## [1.7] - Unreleased
 ### Fixed
 - Various SO product selector fixes
 
