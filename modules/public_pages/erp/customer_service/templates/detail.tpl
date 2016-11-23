@@ -36,9 +36,12 @@
 			{heading_cell field='despatch_qty' class='right'}
 				Despatch Quantity
 			{/heading_cell}
-			{heading_cell field='failurecode'}
+			{heading_cell field='cs_failure_note'}
 				Failure Code
 			{/heading_cell}
+			{heading_cell field='note'}
+                Note
+            {/heading_cell}
 			{heading_cell}
 			{/heading_cell}
 		{/heading_row}
@@ -74,6 +77,9 @@
 				{grid_cell model=$cs field='failurecode'}
 					{$cs->failurecode}
 				{/grid_cell}
+				{grid_cell model=$cs field='cs_failure_note'}
+                    {$cs->cs_failure_note}
+                {/grid_cell}
 				<td>
 					{if $cs->despatch_date>$cs->due_despatch_date || $cs->order_qty>$cs->despatch_qty}
 						{link_to module=$module controller=$controller action='updatefailure' id=$cs->id value='amend'}
