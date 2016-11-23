@@ -233,6 +233,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.7]: https://github.com/uzerpllp/uzerp/compare/1.6.2...1.7
 [1.6.2]: https://github.com/uzerpllp/uzerp/compare/1.6.1...1.6.2
 [1.6.1]: https://github.com/uzerpllp/uzerp/compare/1.6...1.6.1
 [1.6]: https://github.com/uzerpllp/uzerp/compare/1.5.2...1.6
