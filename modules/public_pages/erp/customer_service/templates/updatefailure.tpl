@@ -21,6 +21,7 @@
 					{view_data attribute='order_qty' label='Order Quantity'}
 					{view_data attribute='despatch_qty' label='Despatch Quantity'}
 					{select attribute='cs_failurecode_id' options=$failurecodes value=$cs->cs_failurecode_id label='Failure Code' nonone=true}
+					{textarea label='Note' attribute='cs_failure_note'}
 				{/with}
 			</div>
 			{submit}
