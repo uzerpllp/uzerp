@@ -75,10 +75,7 @@ VIEW;
             if (substr($row['password'], 0, 1) !== '$') {
                 $md5hash = $row['password'];
                 $newhash = password_hash($md5hash, PASSWORD_DEFAULT);
-                $this->query("WITH users AS
-                                (UPDATE users SET username='" . strtolower($row['username']) ."', password='" . $newhash .
-                                    "' WHERE username='" . $row['username'] . "')
-                                UPDATE po_auth_limits SET username='" . strtolower($row['username']) .
+                $this->query("UPDATE users SET username='" . $row['username'] ."', password='" . $newhash .
                                     "' WHERE username='" . $row['username'] . "';");
             }
         }

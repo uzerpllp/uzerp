@@ -17,7 +17,7 @@ class UsernameValidator implements FieldValidation
     {
         //Don't validate on get requests, we're possibly displaying and empty password field
         if (trim(strtolower($_SERVER['REQUEST_METHOD'])) === 'get') {
-            return $field->value;;
+            return $field->value;
         }
 
         if (preg_match('/^[a-z0-9]+$/', $field->value)) {

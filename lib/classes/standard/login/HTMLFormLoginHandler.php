@@ -25,7 +25,7 @@ class HTMLFormLoginHandler implements LoginHandler
 
     public function doLogin()
     {
-        $username = strtolower($_POST['username']);
+        $username = $_POST['username'];
         $password = $_POST['password'];
         $db = DB::Instance();
         return $this->gateway->Authenticate(array(
