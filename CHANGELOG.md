@@ -16,8 +16,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Passwords are hashed using PHP 5.5+ Password hashing API
-    - Passwords must now be at least 10 characters long
+    - New passwords must now be at least 10 characters long but existing passwords remain unchanged.
     - A password strength meter has been added to encourage password complexity
+- New usernames can only contain lower-case letters and/or numbers.
 
 ### Removed
 - Unused PHPBarcode library

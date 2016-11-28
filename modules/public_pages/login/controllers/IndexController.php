@@ -20,7 +20,6 @@ class IndexController extends Controller
 
         // Form based login
         if (isset($_POST['username'])) {
-            //Convert username to lower-case. User names always stored in DB in lowercase.
             $this->username = $_POST['username'];
         }
 
