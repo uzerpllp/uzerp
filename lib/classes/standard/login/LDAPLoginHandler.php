@@ -30,7 +30,7 @@ class LDAPLoginHandler implements LoginHandler
     public function doLogin()
     {
         // get the authenticated username
-        $username = strtolower($_SERVER['PHP_AUTH_USER']);
+        $username = $_SERVER['PHP_AUTH_USER'];
 
         $db = DB::Instance();
         $is_authorised = $this->gateway->Authenticate(array(
