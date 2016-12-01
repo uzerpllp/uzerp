@@ -3,21 +3,23 @@ All notable changes to this project will be documented in this file.
 
 ## [1.7] - Unreleased
 ### Fixed
-- Various SO product selector fixes
+- Various Sales Order product selector fixes
 
 ### Added
 - Print item labels from Sales Order. Requires a Report Definition called 'SOItemLabel'
-- Transfer outstanding sales order lines to a new order (cancels existing lines)
-- Stronger CSRF protection
-- Show person in periodic payments list
+- Transfer outstanding Sales Order lines to a new order (cancels existing lines)
+- View line notes from the Sales Order sidebar
+- Show person in Periodic Payments list
 - Require confirmation on cancel and authorise Purchase Requisition actions
 - A note can be added when setting a Customer Service Failure code
-- Custom model sort override (see: http://wiki.uzerp.com/doku.php/dev_guide#custom_sort_in_views)
+- Custom model sort (see: http://wiki.uzerp.com/doku.php/dev_guide#custom_sort_in_views) allows the default view sorting to be changed.
 
 ### Changed
-- Passwords are hashed using PHP 5.5+ Password hashing API
-    - New passwords must now be at least 10 characters long but existing passwords remain unchanged.
-    - A password strength meter has been added to encourage password complexity
+- Security
+    - Passwords are hashed using PHP 5.5+ Password hashing API
+        - New passwords must now be at least 10 characters long but existing passwords remain unchanged.
+        - A password strength meter has been added to encourage password complexity
+    - Stronger CSRF protectection
 - New usernames can only contain lower-case letters and/or numbers.
 
 ### Removed
