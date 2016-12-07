@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [1.7] - Unreleased
+## [1.7] - 2016-12-07
 ### Fixed
 - Various Sales Order product selector fixes
 
