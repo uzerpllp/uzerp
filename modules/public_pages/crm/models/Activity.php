@@ -34,7 +34,7 @@ class Activity extends DataObject
 
         $this->belongsTo('Activitytype', 'type_id', 'type');
         $this->belongsTo('User', 'assigned', 'username');
-        //$this->belongsTo('Opportunity', 'opportunity_id', 'opportunity');
+        $this->belongsTo('Opportunity', 'opportunity_id', 'opportunity');
         $this->belongsTo('Campaign', 'campaign_id', 'campaign');
         $this->belongsTo('Company', 'company_id', 'company');
         $this->belongsTo('Person', 'person_id', 'person', null, 'surname || \', \' || firstname');
