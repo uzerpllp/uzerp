@@ -89,7 +89,7 @@
 		</div>
 	{/form}
 	<div id="view_data_bottom">
-		{include file='elements/cancelForm.tpl' cancel_action='cancel_selector_save'}
+		{include file='elements/cancelForm.tpl' cancel_action='cancel'}
 	</div>
 </div>
 {/content_wrapper}

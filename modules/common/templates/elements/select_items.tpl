@@ -65,7 +65,7 @@
 			{/view_section}
 			{submit value=$button_title}
 		{/form}
-		{include file='elements/cancelForm.tpl' cancel_action='cancel_selector_save'}
+		{include file='elements/cancelForm.tpl' cancel_action='cancel'}
 	</dl>
 	<dl id="view_data_right">
 		{view_section heading="Selected $title"}
