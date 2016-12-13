@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.7.1] 2012-12-13
+### Fixed
+- Error when saving new CRM activity
+
 ## [1.7] - 2016-12-07
 ### Fixed
 - Various Sales Order product selector fixes
