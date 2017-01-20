@@ -29,8 +29,8 @@ class ExpensesController extends HrController
         // Constrain views, etc to expenses that the logged-in user/employee
         // can authorise (can be overridden by system policies).
         //
-        // If a user is not connected to an employee and has access to the
-        // HR module, they will see all expenses unless access to an employee
+        // If the logged-in user is not connected to an employee and has access
+        // to the HR module, they will see all expenses unless access to an employee
         // is explicitly denied using system policies.
         if ($this->get_employee_id() !== ''){
             $exp_auth = DataObjectFactory::Factory('ExpenseAuthoriser');
