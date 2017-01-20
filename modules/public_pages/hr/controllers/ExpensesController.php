@@ -26,6 +26,38 @@ class ExpensesController extends HrController
         $this->_templateobject = DataObjectFactory::Factory('Expense');
         $this->uses($this->_templateobject);
 
+        // Constrain views, etc to expenses that the logged-in user/employee
+        // can authorise (can be overridden by system policies).
+        //
+        // If a user is not connected to an employee and has access to the
+        // HR module, they will see all expenses unless access to an employee
+        // is explicitly denied using system policies.
+        if ($this->get_employee_id() !== ''){
+            $exp_auth = DataObjectFactory::Factory('ExpenseAuthoriser');
+            $exp_auth->loadBy('employee_id', $this->get_employee_id());
+            $user_emp = new Employee();
+            $user_emp->load($this->get_employee_id());
+            $auth_policy = $user_emp->authorisationPolicy($exp_auth);
+            $emp_collection = new EmployeeCollection('Employee');
+            $seh = new SearchHandler($emp_collection);
+            $seh->addConstraintChain($auth_policy);
+            $emp_collection->load($seh);
+
+            $ids = [];
+            foreach ($emp_collection as $emp) {
+                $ids[] = $emp->id;
+            }
+
+            $policy_constraint = new Constraint('employee_id', '=', $ids[0]);
+            if (count($ids) > 1) {
+                $policy_constraint = new Constraint('employee_id', 'in', '(' . implode(',', $ids) . ')');
+            }
+
+            $policy_chain = new ConstraintChain();
+            $policy_chain->add($policy_constraint);
+            $this->_templateobject->addPolicyConstraint($policy_chain);
+        }
+
         $this->view->set('controller', 'Expenses');
     }
 
@@ -604,8 +636,7 @@ class ExpensesController extends HrController
                     'action' => 'new',
                     'expenses_header_id' => $idValue
                 )
-            )
-            ;
+            );
         }
 
         if ($expense->Authorised()) {
