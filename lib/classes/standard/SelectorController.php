@@ -317,6 +317,19 @@ class SelectorController extends PrintController
         $this->_new();
     }
 
+    /**
+     * TODO: Implement selector delete
+     *
+     * This should delete the current level(selector) and all child
+     * selectors and any associated component relationships
+     *
+     * {@inheritDoc}
+     * @see Controller::delete()
+     */
+    public function delete() {
+        header("HTTP/1.0 404 Not Found");
+    }
+
     public function _new()
     {
         parent::_new();
