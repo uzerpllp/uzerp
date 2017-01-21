@@ -32,15 +32,15 @@ class ExpensesController extends HrController
         // If the logged-in user is not connected to an employee and has access
         // to the HR module, they will see all expenses unless access to an employee
         // is explicitly denied using system policies.
-        if ($this->get_employee_id() !== ''){
+        $user_employee = $this->get_employee_id($object=true);
+        if (! empty($user_employee)){
             $exp_auth = DataObjectFactory::Factory('ExpenseAuthoriser');
-            $exp_auth->loadBy('employee_id', $this->get_employee_id());
-            $user_emp = new Employee();
-            $user_emp->load($this->get_employee_id());
-            $auth_policy = $user_emp->authorisationPolicy($exp_auth);
+            $exp_auth->load($user_employee);
+            $exp_auth_policy = $user_employee->authorisationPolicy($exp_auth);
+
             $emp_collection = new EmployeeCollection('Employee');
             $seh = new SearchHandler($emp_collection);
-            $seh->addConstraintChain($auth_policy);
+            $seh->addConstraintChain($exp_auth_policy);
             $emp_collection->load($seh);
 
             $ids = [];
