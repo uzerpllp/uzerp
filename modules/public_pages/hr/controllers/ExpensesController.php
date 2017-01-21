@@ -39,18 +39,18 @@ class ExpensesController extends HrController
             $exp_auth_policy = $user_employee->authorisationPolicy($exp_auth);
 
             $emp_collection = new EmployeeCollection('Employee');
-            $seh = new SearchHandler($emp_collection);
-            $seh->addConstraintChain($exp_auth_policy);
-            $emp_collection->load($seh);
+            $emp_search = new SearchHandler($emp_collection);
+            $emp_search->addConstraintChain($exp_auth_policy);
+            $emp_collection->load($emp_search);
 
-            $ids = [];
+            $allowed_employee_ids = [];
             foreach ($emp_collection as $emp) {
-                $ids[] = $emp->id;
+                $allowed_employee_ids[] = $emp->id;
             }
 
-            $policy_constraint = new Constraint('employee_id', '=', $ids[0]);
-            if (count($ids) > 1) {
-                $policy_constraint = new Constraint('employee_id', 'in', '(' . implode(',', $ids) . ')');
+            $policy_constraint = new Constraint('employee_id', '=', $allowed_employee_ids[0]);
+            if (count($allowed_employee_ids) > 1) {
+                $policy_constraint = new Constraint('employee_id', 'in', '(' . implode(',', $allowed_employee_ids) . ')');
             }
 
             $policy_chain = new ConstraintChain();
