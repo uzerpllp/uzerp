@@ -25,39 +25,6 @@ class ExpensesController extends HrController
 
         $this->_templateobject = DataObjectFactory::Factory('Expense');
         $this->uses($this->_templateobject);
-
-        // Constrain views, etc to expenses that the logged-in user/employee
-        // can authorise (can be overridden by system policies).
-        //
-        // If the logged-in user is not connected to an employee and has access
-        // to the HR module, they will see all expenses unless access to an employee
-        // is explicitly denied using system policies.
-        $user_employee = $this->get_employee_id($object=true);
-        if (! empty($user_employee)){
-            $exp_auth = DataObjectFactory::Factory('ExpenseAuthoriser');
-            $exp_auth->load($user_employee);
-            $exp_auth_policy = $user_employee->authorisationPolicy($exp_auth);
-
-            $emp_collection = new EmployeeCollection('Employee');
-            $emp_search = new SearchHandler($emp_collection);
-            $emp_search->addConstraintChain($exp_auth_policy);
-            $emp_collection->load($emp_search);
-
-            $allowed_employee_ids = [];
-            foreach ($emp_collection as $emp) {
-                $allowed_employee_ids[] = $emp->id;
-            }
-
-            $policy_constraint = new Constraint('employee_id', '=', $allowed_employee_ids[0]);
-            if (count($allowed_employee_ids) > 1) {
-                $policy_constraint = new Constraint('employee_id', 'in', '(' . implode(',', $allowed_employee_ids) . ')');
-            }
-
-            $policy_chain = new ConstraintChain();
-            $policy_chain->add($policy_constraint);
-            $this->_templateobject->addPolicyConstraint($policy_chain);
-        }
-
         $this->view->set('controller', 'Expenses');
     }
 
@@ -585,12 +552,20 @@ class ExpensesController extends HrController
         $sidebarlist = array();
 
         $sidebarlist[$expense->employee_id] = array(
-            'tag' => $expense->employee,
+            'tag' => 'View My Expenses',
+            'link' => array(
+                'modules' => $this->_modules,
+                'controller' => $this->name,
+                'action' => 'view_my_expenses',
+            )
+        );
+
+        $sidebarlist['all_expenses'] = array(
+            'tag' => 'View All Expenses',
             'link' => array(
                 'modules' => $this->_modules,
                 'controller' => $this->name,
                 'action' => 'index',
-                'employee_id' => $expense->employee_id
             )
         );
 

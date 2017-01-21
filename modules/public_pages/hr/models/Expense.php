@@ -35,6 +35,38 @@ class Expense extends DataObject
         // Contruct the object
         parent::__construct($tablename);
 
+        // Constrain views, etc to expenses that the logged-in user/employee
+        // can authorise (can be overridden by system policies).
+        //
+        // If the logged-in user is not connected to an employee and has access
+        // to the HR module, they will see all expenses unless access to an employee
+        // is explicitly denied using system policies.
+        $user_employee = $this->get_user_employee();
+        if (! empty($user_employee)) {
+            $exp_auth = DataObjectFactory::Factory('ExpenseAuthoriser');
+            $exp_auth->load($user_employee);
+            $exp_auth_policy = $user_employee->authorisationPolicy($exp_auth);
+
+            $emp_collection = new EmployeeCollection('Employee');
+            $emp_search = new SearchHandler($emp_collection);
+            $emp_search->addConstraintChain($exp_auth_policy);
+            $emp_collection->load($emp_search);
+
+            $allowed_employee_ids = [];
+            foreach ($emp_collection as $emp) {
+                $allowed_employee_ids[] = $emp->id;
+            }
+
+            $policy_constraint = new Constraint('employee_id', '=', $allowed_employee_ids[0]);
+            if (count($allowed_employee_ids) > 1) {
+                $policy_constraint = new Constraint('employee_id', 'in', '(' . implode(',', $allowed_employee_ids) . ')');
+            }
+
+            $policy_chain = new ConstraintChain();
+            $policy_chain->add($policy_constraint);
+            $this->addPolicyConstraint($policy_chain);
+        }
+
         // Set specific characteristics
 
         // Define relationships
@@ -477,6 +509,25 @@ class Expense extends DataObject
         }
 
         return parent::save($debug);
+    }
+
+    /**
+     * Get the employee linked to the currently logged-in user
+     *
+     * @return DataObject|string
+     */
+    protected function get_user_employee()
+    {
+        $user = getCurrentUser();
+        if ($user && ! is_null($user->person_id)) {
+            $employee = DataObjectFactory::Factory('Employee');
+            $employee->loadBy('person_id', $user->person_id);
+            if ($employee->isLoaded()) {
+                return $employee;
+            }
+        }
+        // User is not an employee
+        return '';
     }
 }
 
