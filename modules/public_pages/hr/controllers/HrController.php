@@ -14,7 +14,7 @@ class HrController extends printController
 	/*
 	 * Get the employee id for the current user
 	 */
-	protected function get_employee_id($object=false)
+	protected function get_employee_id()
 	{
 
 		$user = getCurrentUser();
@@ -25,11 +25,10 @@ class HrController extends printController
 
 			$employee->loadBy('person_id', $user->person_id);
 
-			if ($employee->isLoaded() && $object)
+			if ($employee->isLoaded())
 			{
-			    return $employee;
+				return $employee->id;
 			}
-			return $employee->id;
 		}
 
 		// User is not an employee
