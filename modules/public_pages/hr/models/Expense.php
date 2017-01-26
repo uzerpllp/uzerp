@@ -44,7 +44,7 @@ class Expense extends DataObject
         $user_employee = $this->get_user_employee();
         if (! empty($user_employee)) {
             $exp_auth = DataObjectFactory::Factory('ExpenseAuthoriser');
-            $exp_auth->load($user_employee);
+            $exp_auth->load($user_employee->id);
             $exp_auth_policy = $user_employee->authorisationPolicy($exp_auth);
 
             $emp_collection = new EmployeeCollection('Employee');
