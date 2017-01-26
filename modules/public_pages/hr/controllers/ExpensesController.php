@@ -138,7 +138,6 @@ class ExpensesController extends HrController
 
         if (isset($this->_data['employee_id'])) {
             $employee = DataObjectFactory::Factory('Employee');
-            $employee->authorisationPolicy($employee->expense_model());
             $employee->load($this->_data['employee_id']);
 
             if (! $employee->isLoaded()) {
