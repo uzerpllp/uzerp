@@ -208,6 +208,15 @@ class ExpensesController extends HrController
 
             $sidebarlist = array();
 
+            $sidebarlist['all_expenses'] = array(
+                'tag' => 'View All Expenses',
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => $this->name,
+                    'action' => 'index',
+                )
+            );
+
             $sidebarlist['new'] = array(
                 'tag' => 'New',
                 'link' => array(
