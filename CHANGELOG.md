@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Error when cancelling Sales Order product selector actions.
 
+### Added
+- Delete action for Sales Order producut selectors.
+
 ## [1.7.1] 2012-12-13
 ### Fixed
 - Error when saving new CRM activity
