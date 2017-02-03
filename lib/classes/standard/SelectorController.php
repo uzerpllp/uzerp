@@ -250,6 +250,20 @@ class SelectorController extends PrintController
             'tag' => 'Edit'
         );
 
+        $actions['delete_' . $current->description] = array(
+            'link' => array(
+                'modules' => $this->_modules,
+                'controller' => $this->name,
+                'action' => 'delete'
+            ),
+            'tag' => 'Delete',
+            'class' => 'confirm',
+            'data_attr' => [
+                'data_uz-confirm-message' => "Delete {$current->name} and all connected selectors and component links?|This cannot be undone.",
+                'data_uz-action-id' => $current->id
+            ]
+        );
+
         // $actions['copy_'.$current->description] = array(
         // 'link'=>array('modules'=>$this->_modules
         // ,'controller'=>$this->name
@@ -315,19 +329,6 @@ class SelectorController extends PrintController
         }
 
         $this->_new();
-    }
-
-    /**
-     * TODO: Implement selector delete
-     *
-     * This should delete the current level(selector) and all child
-     * selectors and any associated component relationships
-     *
-     * {@inheritDoc}
-     * @see Controller::delete()
-     */
-    public function delete() {
-        header("HTTP/1.0 404 Not Found");
     }
 
     public function _new()
@@ -979,9 +980,8 @@ class SelectorController extends PrintController
                 'view' => ''
             ),
             'filename' => 'Item_Component_list_' . fix_date(date(DATE_FORMAT))
-        )
+        );
         // 'report' => 'CustomReport'
-        ;
 
         // simply return the options if we're only at the dialog stage
         if (strtolower($status) === "dialog") {
@@ -1398,7 +1398,7 @@ class SelectorController extends PrintController
         return false;
     }
 
-    private function getHierarchy($_parent_id = '', $_description = '')
+    protected function getHierarchy($_parent_id = '', $_description = '')
     {
         $parent = array();
 
