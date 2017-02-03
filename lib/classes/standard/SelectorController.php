@@ -254,7 +254,7 @@ class SelectorController extends PrintController
             'link' => array(
                 'modules' => $this->_modules,
                 'controller' => $this->name,
-                'action' => 'delete'
+                'action' => 'deleteSelector'
             ),
             'tag' => 'Delete',
             'class' => 'confirm',

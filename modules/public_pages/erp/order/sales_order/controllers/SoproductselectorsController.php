@@ -30,7 +30,7 @@ class SoproductselectorsController extends SelectorController
      *
      * Called via ajax
      */
-    public function delete()
+    public function deleteSelector()
     {
         if (! isset($this->_data) || ! $this->loadData()) {
             // either no id has been provided
