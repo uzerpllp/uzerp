@@ -89,5 +89,3 @@ class SoproductselectorsController extends SelectorController
         sendTo($this->name, $action, $this->_modules, $args);
     }
 }
-
-// End of SoproductselectorsController
