@@ -13,13 +13,7 @@ class SoproductselectorsController extends SelectorController
     public function __construct($module = null, $action = null)
     {
         parent::__construct($module, $action);
-
-        $this->action_checks = [
-            'delete' => [
-                'methods' => ['post'],
-                'xhr' => true
-            ]
-        ];
+        $this->setActionCheck('deleteSelector', ['post'], true);
     }
 
     /**
