@@ -13,7 +13,6 @@
  */
 class SoproductselectorsController extends SelectorController
 {
-
     protected $version = '$Revision: 1.11 $';
 
     public function __construct($module = null, $action = null)
