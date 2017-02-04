@@ -49,6 +49,7 @@ abstract class Controller
      * @protected array Checks to be made on the request that calls
      * the defined Controller action
      *
+     * @see Controller::setActionCheck
      * example:
      *
      * $this->action_checks = [
