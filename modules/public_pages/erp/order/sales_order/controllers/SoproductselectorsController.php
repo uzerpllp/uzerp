@@ -39,7 +39,6 @@ class SoproductselectorsController extends SelectorController
             sendBack();
         }
         $current = $this->_uses[$this->modeltype];
-        $parent = $this->getHierarchy($current->parent_id, $current->description);
 
         // Get all children of the current selector
         $ancestor_sql = "
@@ -80,10 +79,10 @@ class SoproductselectorsController extends SelectorController
         // send to index if this was a top level, otherwise view the parent
         $action = 'index';
         $args = [];
-        if (! empty($parent)) {
+        if ($current->parent_id !== null) {
             $action = 'view';
             $args = [
-                'id' => key($parent)
+                'id' => $current->parent_id
             ];
         }
 
