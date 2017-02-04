@@ -73,10 +73,10 @@ class SoproductselectorsController extends SelectorController
             $selectors->delete($selector_filter);
         }
 
-        // delete current selector
+        // Delete current selector
         parent::delete($this->_templateobject);
 
-        // send to index if this was a top level, otherwise view the parent
+        // Send to index if this was a top level, otherwise view the parent
         $action = 'index';
         $args = [];
         if ($current->parent_id !== null) {
@@ -86,6 +86,7 @@ class SoproductselectorsController extends SelectorController
             ];
         }
 
+        // Return JSON response
         sendTo($this->name, $action, $this->_modules, $args);
     }
 }
