@@ -22,21 +22,8 @@ class SordersController extends printController
         parent::__construct($module, $action);
 
         $this->uses(DataObjectFactory::Factory('SOrderLine'), FALSE);
-
         $this->_templateobject = DataObjectFactory::Factory('SOrder');
-
         $this->uses($this->_templateobject);
-
-        $this->action_checks = [
-            'move_new_lines' => [
-                'methods' => ['post'],
-                'xhr' => TRUE
-            ],
-            'review_line_notes' => [
-                'methods' => ['post'],
-                'xhr' => TRUE
-            ]
-        ];
     }
 
     public function index()
@@ -159,7 +146,10 @@ class SordersController extends printController
      */
     public function move_new_lines()
     {
-            $this->make_clone($clone_status='new');
+        // Only POST requests with an XHR header are allowed
+        $this->checkRequest(['post'], true);
+
+        $this->make_clone($clone_status='new');
     }
 
 
@@ -1550,6 +1540,9 @@ class SordersController extends printController
      * a list of sales order lines in place
      */
     public function review_line_notes(){
+        // Only POST requests with an XHR header are allowed
+        $this->checkRequest(['post'], true);
+
         $order = $this->order_details();
         foreach ($order->lines as $line){
             if ($line->note != ''){

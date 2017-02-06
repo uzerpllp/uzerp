@@ -111,6 +111,7 @@ class system
         // set path constants
         $this->setPathBase();
 
+        // set the http request object
         $this->request = Request::createFromGlobals();
     }
 
@@ -503,7 +504,7 @@ class system
             debug('system::display Calling function ' . get_class($controller) . '::' . $action);
             // echo 'system::display (1),'.microtime(TRUE).'<br>';
 
-            $controller->checkRequest($this->request, $action)->$action();
+            $controller->$action();
 
             // echo 'system::display (2),'.microtime(TRUE).'<br>';
 
@@ -1012,6 +1013,16 @@ class system
         }
 
         return $files;
+    }
+
+
+    /**
+     * Return the http request object
+     *
+     * @return \Symfony\Component\HttpFoundation\Request
+     */
+    public function getRequest() {
+        return $this->request;
     }
 
     function instantiate($interface, $type = 'SY')

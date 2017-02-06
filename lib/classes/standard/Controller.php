@@ -46,22 +46,6 @@ abstract class Controller
     protected $actions = array();
 
     /**
-     * @protected array Checks to be made on the request that calls
-     * the defined Controller action
-     *
-     * @see Controller::setActionCheck
-     * example:
-     *
-     * $this->action_checks = [
-     * 'move_new_lines' => [
-     * 'methods' => ['post'],
-     * 'xhr' => TRUE
-     * ]
-     * ]
-     */
-    protected $action_checks = [];
-
-    /**
      * Constructor
      *
      * Constructs a controller based on module name
@@ -121,55 +105,28 @@ abstract class Controller
     }
 
     /**
-     * Set controller action check
+     * Check the request for allowed http methods and required headers
      *
-     * @param string $action
-     *          Controller action name
-     * @param array $methods
-     *          HTTP methods, get/post, etc.
-     * @param bool $xhr
-     *          Whether to check for x-requested-with: XMLHttpRequest
-     *
-     * @see Controller::checkRequest
+     * @param array $allowed_methods
+     * @param bool $xhr_required
+     *      x-requested-with header must be present and contain 'XMLHttpRequest'
      */
-    public function setActionCheck($action, $methods, $xhr = false)
+    public function checkRequest($allowed_methods=[], $xhr_required=false)
     {
-        $this->action_checks[$action] = [
-            'methods' => $methods,
-            'xhr' => $xhr
-        ];
-    }
-
-    /**
-     * Check the request against $action_checks defined for
-     * the controller action
-     *
-     * @param Symfony\Component\HttpFoundation\Request $request
-     * @param string $action
-     *            Controller action name
-     */
-    public function checkRequest($request, $action)
-    {
+        $request = $this->_injector->getRequest();
         $request_method = strtolower($request->getMethod());
 
-        if (! empty($this->action_checks) && isset($this->action_checks[$action])) {
-            $allowed_methods = $this->action_checks[$action]['methods'];
-            $xhr_required = $this->action_checks[$action]['xhr'];
-
-            // test http method
-            if (isset($allowed_methods) && ! in_array($request_method, $allowed_methods)) {
-                header('HTTP/1.0 400 Bad Request');
-                exit('Wrong HTTP request method');
-            }
-
-            // test for XHR header
-            if (isset($xhr_required) && $xhr_required === TRUE && $request->headers->get('x-requested-with') != 'XMLHttpRequest') {
-                header('HTTP/1.0 400 Bad Request');
-                exit('Required HTTP request header missing');
-            }
+        // test http method
+        if (!empty($allowed_methods) && !in_array($request_method, $allowed_methods)) {
+            header('HTTP/1.0 400 Bad Request');
+            exit('Wrong HTTP request method');
         }
 
-        return $this;
+        // test for XHR header
+        if ($xhr_required === true && $request->headers->get('x-requested-with') != 'XMLHttpRequest') {
+            header('HTTP/1.0 400 Bad Request');
+            exit('Required HTTP request header missing');
+        }
     }
 
     public function setView($view)

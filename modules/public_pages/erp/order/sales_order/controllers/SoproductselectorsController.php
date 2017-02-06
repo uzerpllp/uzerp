@@ -18,7 +18,6 @@ class SoproductselectorsController extends SelectorController
     public function __construct($module = null, $action = null)
     {
         parent::__construct($module, $action);
-        $this->setActionCheck('deleteSelector', ['post'], true);
     }
 
     /**
@@ -31,6 +30,9 @@ class SoproductselectorsController extends SelectorController
      */
     public function deleteSelector()
     {
+        // Only POST requests with an XHR header are allowed
+        $this->checkRequest(['post'], true);
+
         if (! isset($this->_data) || ! $this->loadData()) {
             // either no id has been provided
             // or the data for the supplied id does not exist
