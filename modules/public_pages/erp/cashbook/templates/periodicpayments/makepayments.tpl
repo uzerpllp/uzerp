@@ -41,21 +41,21 @@
 					Description/<br>
 					External Reference
 				{/heading_cell}
-				{heading_cell field='right'}
+				<th class='right'>
 					Net Value
-				{/heading_cell}
-				{heading_cell field='right'}
+				</th>
+				<th class='right'>
 					Tax Value
-				{/heading_cell}
-				{heading_cell field='right'}
+				</th>
+				<th class='right'>
 					Gross Value
-				{/heading_cell}
-				{heading_cell field='pay'}
+				</th>
+				<th class='right'>
 					Pay?
-				{/heading_cell}
-				{heading_cell field='skip'}
+				</th>
+				<th class='right'>
 					Skip?
-				{/heading_cell}
+				</th>
 			{/heading_row}
 			{foreach name=datagrid item=model from=$periodicpayments}
 				{grid_row model=$model}
