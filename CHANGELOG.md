@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Error when cancelling Sales Order product selector actions.
 - Prevent users from seeing and acting on expenses of other employees that they are not authorisers for.
+- Ensure that a GL transaction cannot be saved to a closed period
+- Prepopulate correct GL Account and Centre combination when displaying the Cashbook transaction refund form.
 
 ### Added
 - Delete action for Sales Order product selectors.
