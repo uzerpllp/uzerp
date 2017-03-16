@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Fixed
 - Error when cancelling Sales Order product selector actions.
+- Prevent users from seeing and acting on expenses of other employees that they are not authorisers for.
 
 ### Added
-- Delete action for Sales Order producut selectors.
+- Delete action for Sales Order product selectors.
 
 ## [1.7.1] 2012-12-13
 ### Fixed
@@ -246,6 +247,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.7.1]: https://github.com/uzerpllp/uzerp/compare/1.7...1.7.1
 [1.7]: https://github.com/uzerpllp/uzerp/compare/1.6.2...1.7
 [1.6.2]: https://github.com/uzerpllp/uzerp/compare/1.6.1...1.6.2
 [1.6.1]: https://github.com/uzerpllp/uzerp/compare/1.6...1.6.1
