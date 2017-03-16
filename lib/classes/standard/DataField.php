@@ -314,8 +314,13 @@ class DataField {
 	 */
 	public function test($value, &$errors=array())
 	{
+        // If no errors have been added yet, set $errors to an empty array
+        // before calling validators.
+	    if (!isset($errors)) {
+            $errors = [];
+        }
 
-		if (!$this->hasValidators)
+	    if (!$this->hasValidators)
 		{
 			$this->setDefaultValidators();
 			$this->hasValidators = true;
@@ -331,7 +336,7 @@ class DataField {
 		foreach ($this->_validators as $validator)
 		{
 
-			$this->value = $validator->test($this,$errors);
+			$this->value = $validator->test($this, $errors);
 
 			if ($this->value === false)
 			{

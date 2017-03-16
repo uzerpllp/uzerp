@@ -106,6 +106,7 @@ class GLTransaction extends DataObject
             'glaccount_id' => 'glaccount_id',
             'glcentre_id' => 'glcentre_id'
         )));
+        $this->addValidator(new GLPeriodOpenModelValidator($this));
 
         // Define enumerated types
         $this->setEnum('type', array(

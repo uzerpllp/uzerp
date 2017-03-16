@@ -117,6 +117,11 @@ class CbtransactionsController extends printController
         $this->payments(__FUNCTION__);
     }
 
+    /**
+     * Display the Cashbook Refund HTML Form
+     *
+     * @return void
+     */
     public function make_refund()
     {
         if (! $this->loadData()) {
@@ -125,6 +130,7 @@ class CbtransactionsController extends printController
         }
 
         $transaction = $this->_uses[$this->modeltype];
+        $gl_transtype = $transaction->type;
 
         $transaction->transaction_date = fix_date(date(DATE_FORMAT));
 
@@ -139,17 +145,33 @@ class CbtransactionsController extends printController
         $transaction->type = 'R' . $transaction->type;
         $transaction->description = 'Refund for ref: ' . $transaction->reference;
 
-        $gltransaction = DataObjectFactory::Factory('GLTransaction');
+        // Generate a list of Non-control account id values
+        $glaccs = DataObjectFactory::Factory('GLAccount');
+        $accs = array_keys($glaccs->nonControlAccounts());
+        $acc_values = '(' . implode('),(', $accs) . ')';
 
-        $gltransaction->loadBy('docref', $transaction->reference);
-        $gltransaction->orderby = $gltransaction->idField;
+        // Retrieve the original GL Transaction related to the CB Transaction
+        $gl_transaction = DataObjectFactory::Factory('GLTransactionCollection');
+        $glt_filter = new SearchHandler($gl_transaction, false);
+        $glt_filter->addConstraint(new Constraint('docref', '=', $transaction->reference));
+        $glt_filter->addConstraint(new Constraint('source', '=', $transaction->source));
+        $glt_filter->addConstraint(new Constraint('type', '=', $gl_transtype));
+        // Using ANY here is faster than IN for a large list
+        $glt_filter->addConstraint(new Constraint('glaccount_id', '= ANY', "(VALUES {$acc_values})"));
+        $gl_transaction->load($glt_filter);
 
-        $this->_data['glaccount_id'] = $gltransaction->glaccount_id;
+        // Ensure a single GL Transaction has been loaded (should never be 0 or > 1)
+        if (iterator_count($gl_transaction) != 1) {
+            $this->dataError('Unable to load a matching GL transaction');
+        }
+        $gl_transaction->rewind();
 
         $this->payments();
 
-        $this->view->set('glaccount_id', $gltransaction->glaccount_id);
-        $this->view->set('glcentre_id', $gltransaction->glcentre_id);
+        // Set initial data for the GL Account and Centre drop-downs
+        $this->view->set('glaccount_id', $gl_transaction->current()->glaccount_id);
+        $this->view->set('gl_centres', $this->getCentres($gl_transaction->current()->glaccount_id));
+        $this->view->set('glcentre_id', $gl_transaction->current()->glcentre_id);
     }
 
     public function receive_payment()
