@@ -18,4 +18,4 @@
 			{/with}
 		</dl>
 	{/form}
-{content_wrapper}
+{/content_wrapper}
