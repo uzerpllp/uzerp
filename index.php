@@ -45,7 +45,7 @@ $system->load_essential();
 if (defined('SENTRY_DSN')) {
     // custom exception handler, sends to sentry
     set_exception_handler('sentry_exception_handler');
-    
+
     // send fatals to sentry
     try {
         $client = new Raven_Client(SENTRY_DSN, array(
@@ -88,6 +88,10 @@ function sentry_exception_handler($exception)
         $smarty->assign('support_email', SUPPORT_EMAIL);
         $email_body = "uzERP Exception logged to sentry with ID: " . $event_id;
         $smarty->assign('email_body', rawurlencode($email_body));
+        $smarty->assign('xhr', false);
+        if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            $smarty->assign('xhr', true);
+        }
         $smarty->display(STANDARD_TPL_ROOT . 'error.tpl');
     } catch (Exception $e) {
         // If something went wrong, just continue.
@@ -105,6 +109,10 @@ function uzerp_exception_handler($exception)
     $email_body = "Request: " . $_SERVER['REQUEST_URI'] . "\n";
     $email_body .= "uzERP Version: " . $config->get('SYSTEM_VERSION') . "\n\n" . $exception->getMessage();
     $smarty->assign('email_body', rawurlencode($email_body));
+    $smarty->assign('xhr', false);
+    if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        $smarty->assign('xhr', true);
+    }
     $smarty->display(STANDARD_TPL_ROOT . 'error.tpl');
 }
 
@@ -134,7 +142,7 @@ ini_set("error_log", $log);
 $system->display();
 
 if (AUDIT || get_config('AUDIT_LOGIN')) {
-    
+
     if (is_array($system->controller->_data) && isset($system->controller->_data['password'])) {
         $system->controller->_data['password'] = '********************';
     }
