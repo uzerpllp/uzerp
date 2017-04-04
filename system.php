@@ -1221,7 +1221,7 @@ class system
 
         // jQuery core
         $jsfiles[] = JS_JQUERY_CORE . "jquery-1.7.1.min.js";
-        $jsfiles[] = JS_JQUERY_CORE . "jquery-ui-1.8.16.custom.min.js";
+        $jsfiles[] = JS_JQUERY_CORE . "jquery-ui-1.9.2.custom.min.js";
 
         // jQuery functions
         $jsfiles[] = JS_JQUERY_SCRIPTS . "functions.js";
@@ -1277,7 +1277,7 @@ class system
 
         // jQuery CSS files
         $cssfiles[] = THEME_ROOT . $theme . "/lib/jquery.watermark-3.1.1/jquery.watermark.css";
-        $cssfiles[] = THEME_ROOT . $theme . "/lib/jquery-ui/jquery-ui-1.8.custom.less";
+        $cssfiles[] = THEME_ROOT . $theme . "/lib/jquery-ui/jquery-ui-1.9.custom.less";
         $cssfiles[] = THEME_ROOT . $theme . "/lib/fullcalendar/fullcalendar.css";
         $cssfiles[] = THEME_ROOT . $theme . "/lib/formalize/custom_formalize.css";
         $cssfiles[] = JS_JQUERY_PLUGINS . "collapsibleCheckboxTree" . DIRECTORY_SEPARATOR . "jquery.collapsibleCheckboxTree.css";
