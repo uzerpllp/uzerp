@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Fixed
+- Resetting user passwords now sends email notifications
 - Error when cancelling Sales Order product selector actions.
 - Prevent users from seeing and acting on expenses of other employees that they are not authorisers for.
 - Ensure that a GL transaction cannot be saved to a closed period

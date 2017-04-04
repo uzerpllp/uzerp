@@ -312,15 +312,19 @@ class User extends DataObject
 	 * The function returns the password (unhashed)
 	 * @see User;:setPassword()
 	 */
-	public function setPassword($password = null)
+	public function setPassword($password = null, &$errors = array())
 	{
 		if($password===null || $password=='')
 		{
-			$characters = array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9');
-			shuffle($characters);
-			$password = '';
-			$length=mt_rand(6,8);
-			$password = substr(join($characters), 0, $length);
+		    $factory = new RandomLib\Factory;
+		    $generator = $factory->getGenerator(new SecurityLib\Strength(SecurityLib\Strength::MEDIUM));
+
+			$password = $generator->generateString(10);;
+		}
+
+		if (strlen($password) < 10) {
+		    $errors[] = "Error setting password for user {$this->username}, new password must be at least 10 characters long";
+		    return false;
 		}
 
 		self::updatePassword($password, $this->username);
