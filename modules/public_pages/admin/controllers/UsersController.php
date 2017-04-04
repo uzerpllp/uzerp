@@ -51,6 +51,11 @@ class UsersController extends printController {
 				$user = DataObjectFactory::Factory('User');
 				$user->load($username);
 
+				if (is_null($user->email)) {
+				    $flash->addError("User: {$username} has no email address, password not changed.");
+				    continue;
+				}
+
 				$password = '';
 
 				if (isset($this->_data['password']))
@@ -69,18 +74,10 @@ class UsersController extends printController {
 						"Thank you";
 
 				$subject = 'Password reset';
-
-				$person = DataObjectFactory::Factory('Person');
-				$person->load($user->person_id);
-
-				$to			= $person->email->contactmethod;
+				$to			= $user->email;
 				$headers	= 'From: '.get_config('ADMIN_EMAIL')."\r\n".'X-Mailer: PHP/' . phpversion();
 
-				if ($to <> '')
-				{
-					mail($to, $subject, $message, $headers);
-				}
-
+				mail($to, $subject, $message, $headers);
 			}
 
 			sendBack();
