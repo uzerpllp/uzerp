@@ -205,9 +205,11 @@ class HolidayrequestsController extends HrController
 		}
 		/* Get the Holiday Entitlement Id for the required request.*/
 		
-		
-		$holidayEntitlement = DataObjectFactory::Factory('Holidayentitlement');
 		$date = fix_date(date(DATE_FORMAT));
+		$holidayEntitlement = DataObjectFactory::Factory('Holidayentitlement');
+		if (isset($this->_data['Holidayrequest']['start_date'])){
+            $date = $this->_data['Holidayrequest']['start_date'];
+		}
 		
 		$holidayEntitlement->loadEntitlement($this->_data[$this->modeltype]['employee_id'], $date);
 		$days_left = $holidayEntitlement->get_total_days_left($date, $this->_data[$this->modeltype]['employee_id']);
