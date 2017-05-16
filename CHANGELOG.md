@@ -3,10 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Fixed
-- Resetting user passwords now sends email notifications
+- Adding a holiday request now uses the correct allocation period.
+- Resetting user passwords now sends email notifications.
 - Error when cancelling Sales Order product selector actions.
 - Prevent users from seeing and acting on expenses of other employees that they are not authorisers for.
-- Ensure that a GL transaction cannot be saved to a closed period
+- Ensure that a GL transaction cannot be saved to a closed period.
 - Prepopulate correct GL Account and Centre combination when displaying the Cashbook transaction refund form.
 
 ### Added
