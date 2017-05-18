@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -13,7 +13,7 @@
 	{if $access->hasPermission('ticketing','tickets')}
 	<dt>{"other_ticket_actions"|prettify}</dt>
 		<dd>{link_to module="ticketing" controller="tickets" value="all_tickets"} &raquo;</dd>
-		<dd><img src="/themes/default/graphics/new_small.png" alt="New" />{link_to module="ticketing" controller="tickets" action="new" value="add_new_ticket"} &raquo;</dd>
+		<dd><img src="/assets/graphics/new_small.png" alt="New" />{link_to module="ticketing" controller="tickets" action="new" value="add_new_ticket"} &raquo;</dd>
 	{else}
 	<dt>{"client_ticket_actions"|prettify}</dt>
 		<dd>{link_to module="ticketing" controller="client" value="my_tickets"} &raquo;</dd>

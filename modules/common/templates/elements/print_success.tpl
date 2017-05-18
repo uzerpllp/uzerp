@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -12,13 +12,13 @@
 {if $options.pdf_preview===TRUE}
 	<ul class="pdf-preview" data-build-preview-link="{$option.pdf_preview_link}" data-pdf-location="{$options.paths.temp_file_path}" >
 		<li>Building PDF Preview...</li>
-		<li class="spinner"><img src="/themes/{$theme}/graphics/ajax_load.gif" /></li>
+		<li class="spinner"><img src="/assets/graphics/ajax_load.gif" /></li>
 	</ul>
 {/if}
 
 <p class="wait_title">Output Complete</p>
 
-<p class="wait_spinner"><img class="tick" src="/themes/{$theme}/graphics/large_tick.png" alt="Output complete, click to close" title="Output complete, click to close" /></p>
+<p class="wait_spinner"><img class="tick" src="/assets/graphics/large_tick.png" alt="Output complete, click to close" title="Output complete, click to close" /></p>
 
 <p>The document has been successfully generated.</p>
 {$options.message}

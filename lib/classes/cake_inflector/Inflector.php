@@ -1,7 +1,7 @@
 <?php
  
 /** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
@@ -13,14 +13,14 @@
  * Borrowed from Cake PHP
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc.
+ * Copyright (c) 2017, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
+ * @copyright    Copyright (c) 2017, Cake Software Foundation, Inc.
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 

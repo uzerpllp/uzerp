@@ -13,7 +13,7 @@
 $(document).ready(function() {
 
     // Password strength meter and password length warning
-	$('#User_password').strengthify({ zxcvbn: '/lib/js/zxcvbn.js', "drawMessage": true });
+	$('#User_password').strengthify({ zxcvbn: '/assets/js/vendor/zxcvbn.js', "drawMessage": true });
 	$('#User_password').on('keyup',function(){
     	var pw_len = $(this).val().length;
         

@@ -7,7 +7,7 @@
  * @package login
  * @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
  * @license GPLv3 or later
- * @copyright (c) 2000 - 2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ * @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
 class IndexController extends Controller
 {
@@ -48,10 +48,6 @@ class IndexController extends Controller
 
         $this->view->set('ajax', isset($this->_data['ajax']));
         $this->view->set('layout', 'loginpage');
-
-        if (defined('LOGIN_PAGE_THEME')) {
-            $this->view->set('theme', LOGIN_PAGE_THEME);
-        }
 
         // don't show login form for non-interactive logins
         $injector = $this->_injector;

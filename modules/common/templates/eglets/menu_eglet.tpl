@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -9,7 +9,7 @@
 			{foreach name=list_eglet item=item key=key from=$content}
 				{if count($item.sub)>0}
 					<li class="tree_div">
-						<img src="{$item.main->icons.icon}" id="image_{$key}">
+						<img src="{$item.main->icons.icon}" id="image_{$key}"/>
 						{link_to link=$item.main->link value=$item.main->title|truncate:25} &raquo;
 						<ul class="tree_sub">
 							{include file='eglets/menu_eglet.tpl' content=$item.sub}

@@ -1,7 +1,7 @@
 <?php
  
 /** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
@@ -90,13 +90,13 @@ class MatrixSearchField extends SearchField
 			// generate the value input
 			$html .= '    <input id="search:' . $this->fieldname . ':value:' . $i . '" type="text" name="Search[' . $this->fieldname . '][value][]" value="' . $value['value'][$i] . '" />';
 			
-			$html .= '	<a href="#" class="remove_matrix" id="search:' . $this->fieldname . ':delete:' . $i . '"><img src="' . THEME_URL . THEME . '/graphics/delete.png" /></a>';
+			$html .= '	<a href="#" class="remove_matrix" id="search:' . $this->fieldname . ':delete:' . $i . '"><img src="/assets/graphics/delete.png" /></a>';
 			$html .= '</p>';
 			
 		}
 		
 		$html .= '</div>';
-		$html .= '<p style="clear:both;"><a href="#" class="clone_matrix" rel="' . $this->fieldname . '"><img src="' . THEME_URL . THEME . '/graphics/add.png" style="float: left; margin-right: 5px;"/>Add a new constraint</a></p>';
+		$html .= '<p style="clear:both;"><a href="#" class="clone_matrix" rel="' . $this->fieldname . '"><img src="/assets/graphics/add.png" style="float: left; margin-right: 5px;"/>Add a new constraint</a></p>';
 		$html .= '</dd><br />';
 		
 		return $this->labelHTML() . $html;

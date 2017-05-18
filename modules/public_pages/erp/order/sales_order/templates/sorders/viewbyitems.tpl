@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -61,7 +61,7 @@
 						{$model.shortfall}
 					</td>
 					<td>
-						<img src="/themes/default/graphics/{$model.indicator}.png" alt="{$model.indicator}" />
+						<img src="/assets/graphics/{$model.indicator}.png" alt="{$model.indicator}" />
 					</td>
 				</tr>
 			{foreachelse}

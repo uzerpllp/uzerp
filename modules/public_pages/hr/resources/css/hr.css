@@ -149,7 +149,7 @@
     color: white !important;           /* text color */
 }
 
-.context-menu-item.icon-edit_request { background-image: url(/themes/default/graphics/add.png); }
-.context-menu-item.icon-cancel_request { background-image: url(/themes/default/graphics/delete.png); }
-.context-menu-item.icon-authorise_request { background-image: url(/themes/default/graphics/actions_small.png); }
-.context-menu-item.icon-decline_request { background-image: url(/themes/default/graphics/cancel.png); }
+.context-menu-item.icon-edit_request { background-image: url(/assets/graphics/add.png); }
+.context-menu-item.icon-cancel_request { background-image: url(/assets/graphics/delete.png); }
+.context-menu-item.icon-authorise_request { background-image: url(/assets/graphics/actions_small.png); }
+.context-menu-item.icon-decline_request { background-image: url(/assets/graphics/cancel.png); }

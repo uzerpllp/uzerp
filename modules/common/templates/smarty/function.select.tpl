@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -45,7 +45,7 @@
 {/if}
 
 {if isset($function_select.select.fk_link)}
-	{link_to _parentid=$function_select.select.id _class="dialog new_link" data=$function_select.select.fk_link img="/themes/default/graphics/new_small.png" alt="new"}
+	{link_to _parentid=$function_select.select.id _class="dialog new_link" data=$function_select.select.fk_link img="/assets/graphics/new_small.png" alt="new"}
 {/if}
 
 {if $function_select.display_tags === TRUE}

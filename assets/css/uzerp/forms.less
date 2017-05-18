@@ -1,0 +1,320 @@
+/**
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
+ **/
+
+/* $Revision: 1.11 $ */
+
+@media screen {
+	
+	input, select, textarea {
+		background-color: #FFF;
+		border: 1px solid #999;
+		.border-radius(2px);
+		padding: 2px;
+		color: @dark-grey;
+		width: 250px;
+		-webkit-transition: all 100ms ease-in-out;
+		-moz-transition: all 100ms ease-in-out;
+		-o-transition: all 100ms ease-in-out;
+		transition: all 100ms ease-in-out;
+	}
+		
+	input[type=submit], input[type=button] {
+		height: auto;
+		width: auto;
+	}
+	
+	textarea {
+		height: 160px;
+		width: 480px;
+	}
+	
+	input[type=checkbox], input[type=radio] {
+		height: auto;
+		width: auto;
+	}
+	
+	input[disabled], select[disabled], textarea[disabled] {
+		background-color: #EEE;
+		border-color: #DDD;
+	}
+	
+	input[readonly] {
+		background-color: #EEE;
+	}
+	
+	
+	// TEXT INPUT ICONS
+	//-----------------
+	
+	input[type=text].icon {
+		text-align: left;
+		padding-right: 20px;
+		background-position: 230px 50%;
+		background-repeat: no-repeat;
+	}
+	
+	
+	// list your 16x16 icon classes here
+	
+	input.icon.date {
+		background-image: url(/assets/graphics/date.png);
+	}
+	
+	input.icon.uz-autocomplete {
+		background-image: url(/assets/graphics/keyboard.png);
+	}
+	
+	input.icon.uz-autocomplete.ui-autocomplete-loading {
+		background-image: url(/assets/graphics/spinner.gif) !important;
+	}
+	
+	
+	// DATES
+	//------
+	
+	input.slim.datefield {
+		background-position: 130px 50%;
+		width: 150px;
+	}
+	
+	input.timefield, input.interval {
+		width: 30px;
+	}
+			
+	input.numeric {
+		text-align: right;
+		width: 70px;
+	}
+		
+	#form_page_left input,#form_page_left select,#form_page_left textarea {
+		width: 200px;
+	}
+	
+	#form_page_left input.datefield {
+		width: 175px;
+	}
+	
+	#form_page_left textarea {
+		height: 100px;
+	}
+	
+	// SEARCH
+	//--------
+	
+	.search {
+	
+		input, select {
+			clear: right;
+			float: left;
+			width: 150px;
+			margin: 0;
+		}
+		
+		.toggle-advanced-search {
+			position: absolute;
+			left: -5px;
+			top: -5px;
+			height: 20px;
+			width: 20px;
+			padding: 0;
+			.border-radius(2px);
+		}
+		
+		li span {
+			float: left;
+			padding: 5px;
+		}
+	
+	}
+	
+	// MULTI SELECT
+	//
+	
+	/* I am aware of CSS specifity but don't want to hack a load of jQ to sort it */
+	
+	a.multiSelect {
+		font-size: 13px;
+		font-family: Arial, "Liberation Sans", FreeSans, sans-serif;
+		background-color: white;
+		border: 1px solid;
+		border-color: #848484 #c1c1c1 #e1e1e1;
+		color: black;
+		border-color: #848484 #c1c1c1 #e1e1e1;
+		background-image: url('/assets/css/lib/formalize/select_arrow.gif') !important;
+		background-repeat: no-repeat;
+		background-position: right center;
+		padding-right: 20px;
+		position: relative;
+		cursor: default;
+		text-decoration: none;
+		display: -moz-inline-stack;
+		display: inline-block;
+		vertical-align: top;
+	}
+
+	a.multiSelect:link, a.multiSelect:visited, a.multiSelect:hover, a.multiSelect:active {
+		color: black;
+		text-decoration: none;
+	}
+	
+	a.multiSelect span
+	{
+		padding: 3px 3px 4px;
+		width: 119px !important;
+			
+		margin: 1px 0px 1px 3px;
+		overflow: hidden;
+		display: -moz-inline-stack;
+		display: inline-block;
+		white-space: nowrap;
+	}
+	
+	a.multiSelect.active, 
+	a.multiSelect.focus {
+		-moz-box-shadow: 0 0 1px 1px #FF4B00;
+		-webkit-box-shadow: 0 0 1px 1px #FF4B00;
+		-o-box-shadow: 0 0 1px 1px #FF4B00;
+		box-shadow: 0 0 1px 1px #FF4B00;
+		border: 1px solid #FF4B00 !important;
+	}
+	
+	.multiSelectOptions {
+		width: auto;
+		height: 180px;
+		margin-top: -1px;
+		overflow-y: auto;
+		overflow-x: hidden;
+		border: solid 1px #B2B2B2;
+		background: #FFF;
+	}
+	
+	.multiSelectOptions LABEL {
+		padding: 0px 2px;
+		display: block;
+		white-space: nowrap;
+	}
+	
+	.multiSelectOptions LABEL.optGroup
+	{
+		font-weight: bold;
+	}
+	
+	.multiSelectOptions .optGroupContainer LABEL
+	{
+		padding-left: 10px;
+	}
+	
+	.multiSelectOptions.optGroupHasCheckboxes .optGroupContainer LABEL
+	{
+		padding-left: 18px;
+	}
+	
+	.multiSelectOptions input{
+		margin-top: 4px !important;	
+		padding-right: 1px !important;
+		vertical-align: middle;
+	}
+	
+	.multiSelectOptions LABEL.checked {
+		background-color: #dce5f8;
+	}
+	
+	.multiSelectOptions LABEL.selectAll {
+		border-bottom: dotted 1px #CCC;
+	}
+	
+	.multiSelectOptions LABEL.hover {
+		background-color: #3399ff;
+		color: white;
+	}
+
+	// DATAGRID
+	//----------
+	
+	.datagrid .datefield {
+		width: 100px;
+	}
+	
+	.datagrid td.numeric {
+		text-align: right;
+	}
+			
+	// BUTTONS
+	//--------
+	
+	input[type=submit], input[type=button], button, button.ui-button, a.button {
+		cursor: pointer;
+		display: inline-block;
+		background-color: #e6e6e6;
+		background-repeat: no-repeat;
+		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), color-stop(25%, #ffffff), to(#e6e6e6));
+		background-image: -webkit-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);
+		background-image: -moz-linear-gradient(top, #ffffff, #ffffff 25%, #e6e6e6);
+		background-image: -ms-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);
+		background-image: -o-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);
+		background-image: linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e6', GradientType=0);
+		padding: 5px 14px 6px;
+		text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+		color: #333;
+		font-size: 13px;
+		line-height: normal;
+		border: 1px solid #ccc;
+		border-bottom-color: #bbb;
+		.border-radius(4px);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+		.transition(0.1s linear all);
+	}
+	
+	input[type=submit]:hover, input[type=button]:hover, button:hover, a.button:hover {
+		background-position: 0 -15px;
+		color: #333;
+		text-decoration: none;
+	}
+	
+	input[type=submit]:active, input[type=button]:active, button:active, a.button:active {
+		box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
+	}
+	
+	input[type=submit][disabled], input[type=button][disabled], button[disabled], a.button.disabled {
+		cursor: default;
+		background-image: none;
+		filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+		filter: alpha(opacity=65);
+		-khtml-opacity: 0.65;
+		-moz-opacity: 0.65;
+		opacity: 0.65;
+		.box-shadow(none);
+	}
+	
+	input[type=submit].large, input[type=button].large, button.large, a.button.large {
+		font-size: 16px;
+		line-height: normal;
+		padding: 9px 14px 9px;
+		.border-radius(6px);
+	}
+	
+	input[type=submit].small, input[type=button].small, button.small, a.button.small {
+		padding: 7px 9px 7px;
+		font-size: 11px;
+	}
+	
+	button::-moz-focus-inner, input[type=submit]::-moz-focus-inner {
+		padding: 0;
+		border: 0;
+	}
+	
+	//FORM ERRORS
+	//-----------
+	
+	label.info {
+	    background-color: #e4e42a;
+		border-radius: 5px;
+		float: left;
+		padding: 1px 5px 0;
+	}
+	
+}

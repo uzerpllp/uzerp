@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -28,7 +28,7 @@
 							{else}
 								{assign var=class value=''}
 							{/if}
-							{link_to _class="$class new_link" data=$item.new img="/themes/default/graphics/new_small.png" alt="new"}
+							{link_to _class="$class new_link" data=$item.new img="/assets/graphics/new_small.png" alt="new"}
 						{/if}
 					</li>
 				{/if}

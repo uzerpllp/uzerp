@@ -252,7 +252,7 @@ function smarty_block_grid_cell($params, $content, &$smarty, $repeat)
 		if ($model->getField($params['field'])->type=='bool')
 		{
 			$attrs['class'][] = 'icon';
-			$content='<img src="/themes/default/graphics/' . (($model->{$params['field']}=='t')?'true':'false').'.png" alt="'.(($model->{$params['field']}=='t')?'true':'false').'" />';
+			$content='<img src="/assets/graphics/' . (($model->{$params['field']}=='t')?'true':'false').'.png" alt="'.(($model->{$params['field']}=='t')?'true':'false').'" />';
 		}
 		
 		if (isset($params['class'])) 

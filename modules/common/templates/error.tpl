@@ -1,11 +1,11 @@
 {* Used to report fatal errors to the user - index.php *}
 {if !$xhr}
-{include file="file:{$smarty.const.THEME_ROOT}default/elements/head.tpl"}
+{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/head.tpl"}
 {/if}
 <div id=flash class="sod">
 	<ul id="errors">
 		<li class="logo">
-			<img src="themes/{$theme}default/graphics/logo.png" />
+			<img src="/assets/graphics/logo.png" />
 		</li>
 		<li>
 			<h1>Sorry, something went wrong in uzERP</h1>
@@ -21,4 +21,4 @@
 		</li>
 	</ul>
 </div>
-{include file="file:{$smarty.const.THEME_ROOT}default/elements/footer.tpl"}
+{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/footer.tpl"}

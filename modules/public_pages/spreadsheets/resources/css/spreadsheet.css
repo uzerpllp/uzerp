@@ -11,7 +11,7 @@ table#spreadsheet{
 }
 
 table#spreadsheet tr.search td{
-	background-image: url(/themes/default/graphics/search.png);
+	background-image: url(/assets/graphics/search.png);
 	background-position: center right;
 	background-repeat: no-repeat;
 }
@@ -21,7 +21,7 @@ table#spreadsheet tr.search td input{
 }
 
 table#spreadsheet tr.search td.control{
-	background-image: url(/themes/default/graphics/delete.png);
+	background-image: url(/assets/graphics/delete.png);
 	background-position: center center;
 }
 
@@ -35,7 +35,7 @@ table#spreadsheet td.indicator{
 	background-image: none;
 }
 table#spreadsheet td.indicator.warn{
-	background-image: url(/themes/default/graphics/warn.png);
+	background-image: url(/assets/graphics/warn.png);
 	background-repeat: no-repeat;
 	background-position: center center;
 }
@@ -94,23 +94,23 @@ text-decoration: underline;
 }
 
 ul.spreadsheet_actions li.save_action{
-	background-image: url(/themes/default/graphics/save.png);
+	background-image: url(/assets/graphics/save.png);
 }
 
 ul.spreadsheet_actions li.duplicate_action{
-	background-image: url(/themes/default/graphics/copy.png);
+	background-image: url(/assets/graphics/copy.png);
 }
 
 ul.spreadsheet_actions li.delete_action{
-	background-image: url(/themes/default/graphics/delete.png);
+	background-image: url(/assets/graphics/delete.png);
 }
 
 ul.spreadsheet_actions li.add_action{
-	background-image: url(/themes/default/graphics/add.png);
+	background-image: url(/assets/graphics/add.png);
 }
 
 ul.spreadsheet_actions li.search_action{
-	background-image: url(/themes/default/graphics/search.png);
+	background-image: url(/assets/graphics/search.png);
 }
 
 .wait input, .wait select{

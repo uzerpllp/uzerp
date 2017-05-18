@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -50,7 +50,7 @@
 						</select>
 					</td>
 					<td><input name="filter_1_value" class="filter_value" id="filter_1_value" type="text" /></td>
-					<td><img class="remove-filter" src="/themes/default/graphics/close.png" /></td>
+					<td><img class="remove-filter" src="/assets/graphics/close.png" /></td>
 				</tr>
 				<tr>
 					<td>
@@ -74,7 +74,7 @@
 						</select>
 					</td>
 					<td><input name="filter_2_value" class="filter_value" id="filter_2_value" type="text" /></td>
-					<td><img class="remove-filter" src="/themes/default/graphics/close.png" /></td>
+					<td><img class="remove-filter" src="/assets/graphics/close.png" /></td>
 				</tr>
 				<tr>
 					<td>
@@ -98,7 +98,7 @@
 						</select>
 					</td>
 					<td><input name="filter_3_value" class="filter_value" id="filter_3_value" type="text" /></td>
-					<td><img class="remove-filter" src="/themes/default/graphics/close.png" /></td>
+					<td><img class="remove-filter" src="/assets/graphics/close.png" /></td>
 				</tr>
 			</tbody>
 		</table>

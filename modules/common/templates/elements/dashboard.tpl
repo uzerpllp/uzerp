@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -7,8 +7,6 @@
 {if isset($eglets)}
 
 	<!-- dashboard specific resources -->
-	<script type="text/javascript" src="/resource.php?js&group=uzlet"></script>
-	<link rel="stylesheet" type="text/css" href="/resource.php?css&group=uzlet" />
 	{assign var='uzletid' value=0}
 	{foreach name=dashboard key=name item=eglet from=$eglets}
 		{assign var='uzletid' value=$uzletid+1}

@@ -1,6 +1,10 @@
 # gedit backups
 *~
 
+# npm/gulp
+node_modules/
+dist/
+
 # These should go in /var on production systems, but we'll leave them for now
 data/cache/**
 data/resource_cache/**

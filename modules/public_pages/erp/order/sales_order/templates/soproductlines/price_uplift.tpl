@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -132,12 +132,12 @@
 		{submit id='saveprices' value='Save Prices'}
 	{/form}
 	<div id='dialog' style="display:none;">
-		<img src="{$smarty.const.THEME_URL}default/graphics/spinner.gif" />
+		<img src="/assets/graphics/spinner.gif" />
 		<p>Calculating number of prices to be amended</p>
 		<div id='dialogprogressbar'></div>
 	</div>
 	<div id='updatedialog' style="display:none;">
-		<img src="{$smarty.const.THEME_URL}default/graphics/spinner.gif" />
+		<img src="{/assets/graphics/spinner.gif" />
 		<p>Updating prices</p>
 		<div id='updateprogressbar'></div>
 	</div>

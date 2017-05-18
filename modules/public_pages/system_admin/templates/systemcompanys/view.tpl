@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -10,7 +10,6 @@
 			<dl id="view_data_left">
 				{view_data attribute="company" value=$company->name}
 				{view_data attribute="access_enabled"}
-				{view_data attribute="theme"}
 				{view_data attribute="audit_enabled"}
 				{view_data attribute="debug_enabled"}
 				{view_data attribute="published"}

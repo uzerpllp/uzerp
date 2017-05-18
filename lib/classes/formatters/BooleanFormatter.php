@@ -1,7 +1,7 @@
 <?php
  
 /** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
@@ -18,7 +18,7 @@ class BooleanFormatter implements FieldFormatter {
 		
 		if ($this->is_html)
 		{
-			$value = '<img src="/themes/default/graphics/'.(($value=='t')?'true':'false').'.png" alt="'.$value.'" />';
+			$value = '<img src="/assets/graphics/'.(($value=='t')?'true':'false').'.png" alt="'.$value.'" />';
 		}
 		else
 		{

@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -18,7 +18,6 @@
 					{input type='hidden'  attribute='company_id' }
 					{select attribute='access_enabled' }
 					{input type='checkbox' attribute='audit_enabled'}
-					{input attribute='theme'}
 					{input attribute='info_message'}
 					{if !is_null($model->logo_file_id)}
 						{input type='checkbox' attribute='delete_logo' label='Delete Current Logo'}

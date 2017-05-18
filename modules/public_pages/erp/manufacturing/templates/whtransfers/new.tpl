@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -105,7 +105,7 @@
 								<input type="text" data-field="remarks" name="WHTransferLine[{$count}][remarks]" id="remarks{$rowid}" size="50" value="{$submodel->remarks}" />
 							</td>
 							<td align="center">
-								<a class="uz-grid-remove-row" href="JavaScript:void(0);"><img src="/themes/{$theme}/graphics/delete.png" /></a>
+								<a class="uz-grid-remove-row" href="JavaScript:void(0);"><img src="/assets/graphics/delete.png" /></a>
 							</td>
 						</tr>
 						<script type="text/javascript">
@@ -143,7 +143,7 @@
 						<input type="text" data-field="remarks" name="WHTransferLine[_REPLACE_][remarks]" id="remarks" size="50" />
 					</td>
 					<td align="center">
-						<a class="uz-grid-remove-row" href="JavaScript:void(0);"><img src="/themes/{$theme}/graphics/delete.png" /></a>
+						<a class="uz-grid-remove-row" href="JavaScript:void(0);"><img src="/assets/graphics/delete.png" /></a>
 					</td>
 				</tr>
 			{/with}

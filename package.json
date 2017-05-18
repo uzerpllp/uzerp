@@ -1,0 +1,16 @@
+{
+  "name": "uzERP",
+  "version": "1.7.1",
+  "devDependencies": {
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-clean": "^0.3.2",
+    "gulp-clean-css": "^3.0.4",
+    "gulp-concat": "^2.6.1",
+    "gulp-hash": "^4.1.1",
+    "gulp-less": "^3.3.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.1.2",
+    "gulp-wrap": "^0.13.0",
+    "merge-stream": "^1.0.1"
+  }
+}

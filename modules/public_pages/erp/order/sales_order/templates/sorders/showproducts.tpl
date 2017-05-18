@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -47,7 +47,7 @@
 							{input type='text' attribute='qty' tags=none nolabel=true value=1 class='numeric' number=$productline->id rowid=$productline->id}
 						</td>
 						<td width=10px>
-							<button class="remove" rel="{$productline->id}"><img alt="remove" src='{$smarty.const.THEME_URL}{$theme}/graphics/cancel.png'"/></button>
+							<button class="remove" rel="{$productline->id}"><img alt="remove" src='/assets/graphics/cancel.png'"/></button>
 						</td>
 					</tr>
 				{foreachelse}

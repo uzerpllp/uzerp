@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -15,7 +15,7 @@
 				{/showhidediv_body}
 			{/showhidediv}
 		{else}
-			<img src={$smarty.const.THEME_URL}{$theme}/graphics/menu_noexpand.png>
+			<img src="/assets/graphics/menu_noexpand.png">
 			{$model->getFormatted('type')} &nbsp; {$model->permission} &nbsp; Title: {$model->title} &nbsp; Description: {$model->description}
 		{/if}
 	</li>

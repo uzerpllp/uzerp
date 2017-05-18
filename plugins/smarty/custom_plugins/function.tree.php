@@ -45,9 +45,9 @@ function getTree($tree, $smarty)
 
 				if ($permission->display == 't')
 				{
-					$output .= '<img src="' . THEME_URL . THEME . '/graphics/true.png" />';
+					$output .= '<img src="/assets/graphics/true.png" />';
 				} else {
-					$output .= '<img src="' . THEME_URL . THEME . '/graphics/false.png" />';
+					$output .= '<img src="/assets/graphics/false.png" />';
 				}
 				
 				$output .= $permission->permission . ' - ' . $permission->title;

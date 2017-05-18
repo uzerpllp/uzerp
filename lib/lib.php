@@ -1,7 +1,7 @@
 <?php
 
 /**
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
  *
  *	Released under GPLv3 license; see LICENSE.
  **/
@@ -17,12 +17,6 @@ showtime('post-library-load');
 //set_error_handler("systemError");
 //set_error_handler("systemError", E_ERROR);
 
-//default layout (that can be over-written later)
-if (!isset($theme))
-{
-	$theme = 'default';
-}
-
 //date format
 //@todo move to user preferences
 $dateFormat		= "d/m/Y";
@@ -34,9 +28,10 @@ define('DATE_TIME_FORMAT', $dateTimeFormat);
 define ('DB_DATE_FORMAT', "Y-m-d");
 define ('DB_DATE_TIME_FORMAT', "Y-m-d H:i");
 
-define('PUBLISH_HOST', 'tech2.severndelta.co.uk');
-define('PUBLISH_PORT', 8091);
-define('PUBLISH_URL', '_rpc/RPC2.php');
+// TODO: Remove these constatnts as they don't seem to be used [SB]
+//define('PUBLISH_HOST', 'tech2.severndelta.co.uk');
+//define('PUBLISH_PORT', 8091);
+//define('PUBLISH_URL', '_rpc/RPC2.php');
 
 define('SEARCH_SESSION_IDLE', 20);
 

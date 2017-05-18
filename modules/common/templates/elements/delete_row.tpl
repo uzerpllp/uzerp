@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -10,4 +10,4 @@
 {if empty($delete_action)}
 	{assign var=delete_action value='delete'}
 {/if}
-{link_to _class="delete_row" module=$module controller=$clickcontroller action=$delete_action id=$model->id img="/themes/default/graphics/delete.png" alt="delete"}
+{link_to _class="delete_row" module=$module controller=$clickcontroller action=$delete_action id=$model->id img="/assets/graphics/delete.png" alt="delete"}

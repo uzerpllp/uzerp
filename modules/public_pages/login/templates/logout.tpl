@@ -4,17 +4,19 @@
  * @package login
  * @author Steve Blamey <blameys@blueloop.net>
  * @license GPLv3 or later
- * @copyright (c) 2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ * @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
  **}
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
     <head>
         <title>Login</title>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" type="text/css" media="all" href="/resource.php?css&file=themes/{$theme}/css/reset.css" />
-        <link rel="stylesheet" type="text/css" media="all" href="/resource.php?css&file=modules/public_pages/login/resources/css/login.less" />
-        <script type="text/javascript" src="/resource.php?js"></script>
-        <script type="text/javascript" src="/resource.php?js&file=modules/public_pages/login/resources/js/login.js"></script>
+		<link rel="stylesheet" type="text/css" href="/{$login_css}" />
+		{if $user_css}
+		<link rel="stylesheet" type="text/css" href="/{$user_css}" />
+		{/if}
+		<script type="text/javascript" src="/assets/js/vendor/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="/{$module_js}"></script>
     </head>
     <body>
         {if isset($info_message) && $info_message}

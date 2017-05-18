@@ -1,7 +1,7 @@
 <?php
 
 /** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
@@ -83,15 +83,15 @@ class SimpleMenuEGlet extends SimpleListEGlet
 		
 		foreach ($icons as $key=>$value)
 		{
-			if (file_exists(THEME_ROOT.THEME.'/graphics/'.$key.'.png'))
+			if (file_exists(FILE_ROOT.'assets/graphics/'.$key.'.png'))
 			{
-				$icons[$key]=THEME_URL.THEME.'/graphics/'.$key.'.png';
+				$icons[$key]='assets/graphics/'.$key.'.png';
 			}
 		}
 		
-		if (file_exists(THEME_ROOT.THEME.'/graphics/menu_noexpand.png'))
+		if (file_exists(FILE_ROOT.'assets/graphics/menu_noexpand.png'))
 		{
-			$icons['menu_noexpand']=THEME_URL.THEME.'/graphics/menu_noexpand.png';
+			$icons['menu_noexpand']='assets/graphics/menu_noexpand.png';
 		}
 		
 		$permission=DataObjectFactory::Factory('Permission');

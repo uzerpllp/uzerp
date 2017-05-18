@@ -1,7 +1,7 @@
 <?php
  
 /** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
@@ -167,9 +167,9 @@ class Permission extends DataObject {
 	function getIcon($type, $name)
 	{
 		
-		if (file_exists(THEME_ROOT . THEME . '/graphics/' . $name . '_small.png'))
+		if (file_exists(FILE_ROOT . 'assets/graphics/' . $name . '_small.png'))
 		{
-			return THEME_URL . THEME . '/graphics/' . $name . '_small.png';
+			return '/assets/graphics/' . $name . '_small.png';
 		}
 		else
 		{
@@ -177,9 +177,9 @@ class Permission extends DataObject {
 			$types		= $this->getEnumOptions('type');
 			$type_name	= strtolower($types[$type]);
 			
-			if (file_exists(THEME_ROOT . THEME . '/graphics/' . $type_name . 's_small.png'))
+			if (file_exists(FILE_ROOT . 'assets/graphics/' . $type_name . 's_small.png'))
 			{
-				return THEME_URL . THEME . '/graphics/' . $type_name . 's_small.png';
+				return '/assets/graphics/' . $type_name . 's_small.png';
 			}
 			
 		}

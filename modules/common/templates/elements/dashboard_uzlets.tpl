@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -9,7 +9,7 @@
 	<div id="uzlet_{$uzlet.id}">
 		<div class="eglet">
 			{view_section heading=$uzlet.title|prettify expand="open"}
-				<img src="{$smarty.const.THEME_URL}default/graphics/spinner.gif" />
+				<img src="/assets/graphics/spinner.gif" />
 				Loading....
 			{/view_section}
 		</div>

@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -33,10 +33,10 @@
 					{$document->note}
 				</td>
 				<td width=10 align=center>
-					{link_to module=$module controller="attachments" action="edit" id=$document->id img="/themes/default/graphics/position.png" alt="Replace" _class="delete_row"}
+					{link_to module=$module controller="attachments" action="edit" id=$document->id img="/assets/graphics/position.png" alt="Replace" _class="delete_row"}
 				</td>
 				<td width=10 align=center>
-					{link_to module=$module controller="attachments" action="delete" id=$document->id img="/themes/default/graphics/delete.png" alt="delete" _class="delete_row"}
+					{link_to module=$module controller="attachments" action="delete" id=$document->id img="/assets/graphics/delete.png" alt="delete" _class="delete_row"}
 				</td>
 			</tr>
 		{/foreach}

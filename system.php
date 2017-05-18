@@ -7,7 +7,7 @@
  * @package uzerp
  * @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
  * @license GPLv3 or later
- * @copyright (c) 2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ * @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
 
 require 'vendor/autoload.php';
@@ -23,8 +23,6 @@ class system
     const DAY_START_MINUTES = '0';
 
     const DAY_LENGTH = '8';
-
-    const _THEME = 'default';
 
     /*
      * The AccessObject object for this user request
@@ -378,16 +376,33 @@ class system
 
             $this->checkPermission();
         }
+       
+        // Find css/js
+        $css = glob('dist/css/main*.css');
+                
+        if($this->module == 'login') {
+            $logincss = glob('dist/css/login-*.css');
+            $this->view->set('login_css', $logincss[0]);
+        }
 
+        $jsdir = self::findModulePath(PUBLIC_MODULES, $this->modules['module'], FALSE);
+        $jsdir .= DIRECTORY_SEPARATOR . 'resources/js';
+        $jsdir = str_replace(FILE_ROOT . 'modules/public_pages' , 'dist/js/modules', $jsdir);
+        $modulejs = glob("{$jsdir}/*.js");
+        
+        $js = glob('dist/js/scripts*.js');
+        
         // output standard arrays to smarty
-        $this->view->set("module_css", $this->get_css());
-        $this->view->set("module_js", $this->get_js());
         $this->view->set('current_user', $this->user);
-
+        $this->view->set('main_css', $css[0]);
+        if (file_exists('user/theme.css')) {
+            $this->view->set('user_css', 'user/theme.css');
+        }
+        $this->view->set('main_js', $js[0]);
+        $this->view->set('module_js', $modulejs[0]);
+        
         $action = $this->action;
         $controller = $this->controller;
-
-        $theme = '';
 
         if (defined('EGS_COMPANY_ID') && EGS_COMPANY_ID !== 'null' && EGS_COMPANY_ID > 0) {
 
@@ -399,7 +414,6 @@ class system
                 define('SYSTEM_COMPANY', $sc->company);
                 define('COMPANY_ID', $sc->company_id);
 
-                $theme = $sc->theme;
                 $this->available = ($sc->access_enabled == 'NONE') ? FALSE : TRUE;
                 $this->audit = ($sc->audit_enabled == 't' ? TRUE : FALSE);
                 $this->debug = ($sc->debug_enabled == 't' ? TRUE : FALSE);
@@ -445,18 +459,6 @@ class system
 
         $db = DB::Instance();
         $db->debug(DEBUG);
-
-        if (defined('LOGIN_PAGE_THEME') && $this->modules['module'] == 'login') {
-            $theme = LOGIN_PAGE_THEME;
-        }
-
-        if (! empty($theme)) {
-            define('THEME', $theme);
-        } else {
-            define('THEME', 'default');
-        }
-
-        $this->view->set('theme', THEME);
 
         if (! defined('EGS_CURRENCY')) {
             define('EGS_CURRENCY', 'GBP');
@@ -856,165 +858,6 @@ class system
         $this->controller->setData($_POST);
     }
 
-    public function get_uzlet_resources($type)
-    {
-        $cache = Cache::Instance();
-        $files = $cache->get(array(
-            'uzlet_' . $type
-        ));
-
-        $extentions = array(
-            '.uzlet.' . $type
-        );
-
-        // we need to include less if the type is css
-        if ($type === 'css') {
-            $extentions[] = '.uzlet.less';
-        }
-
-        // go and fetch the data and populate the cache
-        if ($files === FALSE) {
-
-            // if the cache result was false, make double sure
-            // we're working with an array form this point one
-
-            $files = array();
-
-            if (file_exists(PUBLIC_MODULES)) {
-
-                $it = new RecursiveDirectoryIterator(PUBLIC_MODULES);
-
-                // loop through each file found
-                foreach (new RecursiveIteratorIterator($it) as $file) {
-
-                    foreach ($extentions as $extention) {
-
-                        // but only include it if the file ends with .uzlet.$type
-                        if (substr($file, - strlen($extention)) === $extention) {
-                            $files[] = str_replace(FILE_ROOT, '', $file);
-                        }
-                    }
-                }
-
-                $cache->add(array(
-                    'uzlet_' . $type
-                ), $files);
-            }
-        }
-
-        return $files;
-    }
-
-    public function get_css()
-    {
-        $cache_id = array(
-            'resources',
-            'css',
-            $this->modules['module']
-        );
-
-        $cache = Cache::Instance();
-        $files = $cache->get($cache_id);
-
-        // go and fetch the data and populate the cache
-        if ($files === FALSE) {
-
-            // START FETCHING FILES
-
-            $files = array();
-            $dirs = array();
-
-            $dirs['shared'] = self::findModulePath(PUBLIC_MODULES, 'shared', FALSE);
-            $dirs['module'] = self::findModulePath(PUBLIC_MODULES, $this->modules['module'], FALSE);
-            $dirs['module'] .= DIRECTORY_SEPARATOR . 'resources/css';
-
-            foreach ($dirs as $dir) {
-
-                if (file_exists($dir)) {
-
-                    $it = new RecursiveDirectoryIterator($dir);
-
-                    // loop through each file found
-                    foreach (new RecursiveIteratorIterator($it) as $file) {
-
-                        if (is_css($file)) {
-                            $files[] = str_replace(FILE_ROOT, '', $file);
-                        }
-                    }
-                }
-            }
-
-            // loop through discovered files, remove sibling less => css files
-            foreach ($files as $key => $css) {
-
-                if (get_file_extension($css) === 'less') {
-
-                    // build the 'wanted' path and search in the array for it
-                    $find_path = str_replace('.less', '.css', $css);
-                    $matching_key = array_search($find_path, $files);
-
-                    // if a key is found, delete it
-                    if ($matching_key !== FALSE) {
-                        unset($files[$matching_key]);
-                    }
-                }
-            }
-
-            // END
-
-            $cache->add($cache_id, $files);
-        }
-
-        return $files;
-    }
-
-    public function get_js()
-    {
-        $cache_id = array(
-            'resources',
-            'js',
-            $this->modules['module']
-        );
-
-        $cache = Cache::Instance();
-        $files = $cache->get($cache_id);
-
-        // go and fetch the data and populate the cache
-        if ($files === FALSE) {
-
-            // START FETCHING FILES
-
-            $files = array();
-            $dirs = array();
-
-            $dirs['module'] = self::findModulePath(PUBLIC_MODULES, $this->modules['module'], FALSE);
-            $dirs['module'] .= DIRECTORY_SEPARATOR . 'resources/js';
-
-            foreach ($dirs as $dir) {
-
-                if (file_exists($dir)) {
-
-                    $it = new RecursiveDirectoryIterator($dir);
-
-                    // loop through each file found
-                    foreach (new RecursiveIteratorIterator($it) as $file) {
-
-                        // but only include it's a js file and isn't the uzlet file
-                        if (is_js($file) && substr($file, - 9) !== '.uzlet.js') {
-                            $files[] = str_replace(FILE_ROOT, '', $file);
-                        }
-                    }
-                }
-            }
-
-            // END
-
-            $cache->add($cache_id, $files);
-        }
-
-        return $files;
-    }
-
 
     /**
      * Return the http request object
@@ -1196,101 +1039,11 @@ class system
         define('STANDARD_TPL_ROOT', COMMON_MODULES . TEMPLATES_NAME);
         define('STANDARD_EGLET_TPL_ROOT', COMMON_MODULES . TEMPLATES_NAME . EGLETS_NAME);
         define('SHARED_TPL_ROOT', PUBLIC_MODULES . 'shared' . DIRECTORY_SEPARATOR . TEMPLATES_NAME);
-        define('THEME_ROOT', FILE_ROOT . 'themes' . DIRECTORY_SEPARATOR);
-        define('THEME_URL', 'themes' . DIRECTORY_SEPARATOR);
+        define('BASE_TPL_ROOT', COMMON_MODULES . TEMPLATES_NAME . 'base' . DIRECTORY_SEPARATOR);
         define('USER_ROOT', FILE_ROOT);
         define('PRINT_ROOT', PLUGINS_ROOT . 'printIPP' . DIRECTORY_SEPARATOR);
         define('PDF_ROOT', PLUGINS_ROOT . 'ezpdf' . DIRECTORY_SEPARATOR);
         define('SMARTY_CUSTOM_PLUGINS', PLUGINS_ROOT . 'smarty' . DIRECTORY_SEPARATOR . 'custom_plugins' . DIRECTORY_SEPARATOR);
-        define('JS_ROOT', FILE_ROOT . 'lib/js' . DIRECTORY_SEPARATOR);
-        define('JS_LIB_ROOT', JS_ROOT . 'lib' . DIRECTORY_SEPARATOR);
-        define('JS_JQUERY_ROOT', JS_ROOT . 'jquery' . DIRECTORY_SEPARATOR);
-        define('JS_JQUERY_CORE', JS_JQUERY_ROOT . 'core' . DIRECTORY_SEPARATOR);
-        define('JS_JQUERY_SCRIPTS', JS_JQUERY_ROOT . 'scripts' . DIRECTORY_SEPARATOR);
-        define('JS_JQUERY_PLUGINS', JS_JQUERY_ROOT . 'plugins' . DIRECTORY_SEPARATOR);
-    }
-
-    public function getResources($theme = 'default')
-    {
-
-        // javascript resources
-        $jsfiles = array();
-
-        // JavaScript console fix
-        $jsfiles[] = JS_JQUERY_SCRIPTS . "console.js";
-
-        // jQuery core
-        $jsfiles[] = JS_JQUERY_CORE . "jquery-1.7.1.min.js";
-        $jsfiles[] = JS_JQUERY_CORE . "jquery-ui-1.9.2.custom.min.js";
-
-        // jQuery functions
-        $jsfiles[] = JS_JQUERY_SCRIPTS . "functions.js";
-        $jsfiles[] = JS_JQUERY_SCRIPTS . "ajax.js";
-        $jsfiles[] = JS_JQUERY_SCRIPTS . "print_dialog.js";
-        $jsfiles[] = JS_JQUERY_SCRIPTS . "rules.js";
-
-        // jQuery plugins
-        $jsfiles[] = JS_JQUERY_PLUGINS . "uiBlock" . DIRECTORY_SEPARATOR . "uiBlock.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "superfish-1.4.8" . DIRECTORY_SEPARATOR . "hoverIntent.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "superfish-1.4.8" . DIRECTORY_SEPARATOR . "superfish.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "jquery.multiSelect-1.2.2" . DIRECTORY_SEPARATOR . "jquery.bgiframe.min.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "jquery.multiSelect-1.2.2" . DIRECTORY_SEPARATOR . "jquery.multiSelect.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "jquery.watermark-3.1.1" . DIRECTORY_SEPARATOR . "jquery.watermark.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "uz-collection" . DIRECTORY_SEPARATOR . "jquery.uz-grid.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "uz-collection" . DIRECTORY_SEPARATOR . "jquery.uz-validation.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "uz-collection" . DIRECTORY_SEPARATOR . "jquery.uz-autocomplete.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "uz-collection" . DIRECTORY_SEPARATOR . "jquery.uz-constrains.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "uz-collection" . DIRECTORY_SEPARATOR . "charts" . DIRECTORY_SEPARATOR . "uz-chart.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "uz-collection" . DIRECTORY_SEPARATOR . "charts" . DIRECTORY_SEPARATOR . "jquery.uz-pie-chart.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "uz-collection" . DIRECTORY_SEPARATOR . "charts" . DIRECTORY_SEPARATOR . "jquery.uz-line-chart.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "uz-collection" . DIRECTORY_SEPARATOR . "charts" . DIRECTORY_SEPARATOR . "jquery.uz-bar-chart.js";
-        // $jsfiles[] = JS_JQUERY_PLUGINS . "fullcalendar" . DIRECTORY_SEPARATOR . "fullcalendar.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "fullcalendar" . DIRECTORY_SEPARATOR . "fullcalendar.min.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "fullcalendar" . DIRECTORY_SEPARATOR . "gcal.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "contextMenu" . DIRECTORY_SEPARATOR . "jquery.contextMenu.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "contextMenu" . DIRECTORY_SEPARATOR . "jquery.ui.position.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "collapsibleCheckboxTree" . DIRECTORY_SEPARATOR . "jquery.collapsibleCheckboxTree.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "tabby" . DIRECTORY_SEPARATOR . "tabby.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "scrollTo" . DIRECTORY_SEPARATOR . "jquery.scrollTo-1.4.2-min.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "tinysort" . DIRECTORY_SEPARATOR . "jquery.tinysort.min.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "jqPagination" . DIRECTORY_SEPARATOR . "js" . DIRECTORY_SEPARATOR . "jqPagination.jquery.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "nestedSortable" . DIRECTORY_SEPARATOR . "jquery.ui.nestedSortable.js";
-        // the glob.js file should be first... but it won't work in that configuration
-        $jsfiles[] = JS_JQUERY_PLUGINS . "wijmo" . DIRECTORY_SEPARATOR . "external" . DIRECTORY_SEPARATOR . "raphael.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "wijmo" . DIRECTORY_SEPARATOR . "jquery.wijmo.wijchartcore.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "wijmo" . DIRECTORY_SEPARATOR . "jquery.wijmo.wijpiechart.min.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "wijmo" . DIRECTORY_SEPARATOR . "jquery.wijmo.wijlinechart.min.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "wijmo" . DIRECTORY_SEPARATOR . "jquery.wijmo.wijbarchart.min.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "wijmo" . DIRECTORY_SEPARATOR . "external" . DIRECTORY_SEPARATOR . "jquery.glob.min.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "jquery.tableScroll" . DIRECTORY_SEPARATOR . "jquery.tablescroll.js";
-        $jsfiles[] = JS_JQUERY_PLUGINS . "strengthify" . DIRECTORY_SEPARATOR . "jquery.strengthify.js";
-
-        // css resources
-        $cssfiles = array();
-
-        // Standard CSS files
-        $cssfiles[] = THEME_ROOT . $theme . "/css/reset.css";
-        $cssfiles[] = THEME_ROOT . $theme . "/css/screen.less";
-        $cssfiles[] = THEME_ROOT . $theme . "/css/forms.less";
-        $cssfiles[] = THEME_ROOT . $theme . "/css/print.less";
-        $cssfiles[] = THEME_ROOT . $theme . "/css/calendar.less";
-
-        // jQuery CSS files
-        $cssfiles[] = THEME_ROOT . $theme . "/lib/jquery.watermark-3.1.1/jquery.watermark.css";
-        $cssfiles[] = THEME_ROOT . $theme . "/lib/jquery-ui/jquery-ui-1.9.custom.less";
-        $cssfiles[] = THEME_ROOT . $theme . "/lib/fullcalendar/fullcalendar.css";
-        $cssfiles[] = THEME_ROOT . $theme . "/lib/formalize/custom_formalize.css";
-        $cssfiles[] = JS_JQUERY_PLUGINS . "collapsibleCheckboxTree" . DIRECTORY_SEPARATOR . "jquery.collapsibleCheckboxTree.css";
-        $cssfiles[] = JS_JQUERY_PLUGINS . "jqPagination" . DIRECTORY_SEPARATOR . "css" . DIRECTORY_SEPARATOR . "style.css";
-        // $cssfiles[] = JS_JQUERY_PLUGINS . "jquery.tableScroll" . DIRECTORY_SEPARATOR . "jquery.tablescroll.css";
-        $cssfiles[] = JS_JQUERY_PLUGINS . "contextMenu" . DIRECTORY_SEPARATOR . "jquery.contextMenu.css";
-        $cssfiles[] = JS_JQUERY_PLUGINS . "strengthify" . DIRECTORY_SEPARATOR . "strengthify.css";
-
-        // return resources
-        return array(
-            'css' => $cssfiles,
-            'js' => $jsfiles
-        );
     }
 
     /*

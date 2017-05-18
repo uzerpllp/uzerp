@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -24,7 +24,7 @@
 					</td>
 					{/foreach}
 					<td width=10px align='center'>
-						<button class="item_remove" rel="{$key}" style="padding: 0px 2px 0px;"><img alt="remove" src='{$smarty.const.THEME_URL}{$theme}/graphics/cancel.png'" height=10px/></button>
+						<button class="item_remove" rel="{$key}" style="padding: 0px 2px 0px;"><img alt="remove" src='/assets/graphics/cancel.png'" height=10px/></button>
 					</td>
 				</tr>
 			{foreachelse}

@@ -44,11 +44,11 @@ function smarty_block_showhidediv($params, $content, &$smarty)
 	else 
 	{
 		$images = array(
-			'open_nofocus'		=> THEME_URL . THEME . '/graphics/menu_open_nofocus.png',
-			'open_focus'		=> THEME_URL . THEME . '/graphics/menu_open_focus.png',
-			'closed_nofocus'	=> THEME_URL . THEME . '/graphics/menu_closed_nofocus.png',
-			'closed_focus'		=> THEME_URL . THEME . '/graphics/menu_closed_focus.png',
-			'noexpand'			=> THEME_URL . THEME . '/graphics/menu_noexpand.png'
+			'open_nofocus'		=> '/assets/graphics/menu_open_nofocus.png',
+			'open_focus'		=> '/assets/graphics/menu_open_focus.png',
+			'closed_nofocus'	=> '/assets/graphics/menu_closed_nofocus.png',
+			'closed_focus'		=> '/assets/graphics/menu_closed_focus.png',
+			'noexpand'		=> '/assets/graphics/menu_noexpand.png'
 		);
 	}
 	

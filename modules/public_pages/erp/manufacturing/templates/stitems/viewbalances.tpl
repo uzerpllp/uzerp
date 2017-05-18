@@ -1,5 +1,5 @@
 {** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -48,9 +48,9 @@
 				{/grid_cell}
 				<td>
 					{if $model->supply_demand=='t'}
-						<img src="/themes/default/graphics/true.png" alt="true" />
+						<img src="/assets/graphics/true.png" alt="true" />
 					{else}
-						<img src="/themes/default/graphics/false.png" alt="false" />
+						<img src="/assets/graphics/false.png" alt="false" />
 					{/if}
 				</td>
 			{/grid_row}

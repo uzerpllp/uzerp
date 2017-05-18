@@ -8,7 +8,7 @@
  * @package login
  * @author uzERP LLP
  * @license GPLv3 or later
- * @copyright (c) 2000 - 2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ * @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
 interface LoginHandler
 {
