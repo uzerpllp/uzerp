@@ -23,7 +23,7 @@ conf/selector-config.yml
 
 # Exclude composer installed stuff
 composer.lock
-vendor/
+vendor/**
 
 # Exclude PHP APC monitor
 apc.php

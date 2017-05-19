@@ -1,0 +1,133 @@
+.pagination {
+	float: left;
+	border: 1px solid #CDCDCD;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+.pagination a {
+	display: block;
+	float: left;
+	height: 20px;
+	width: 20px;
+	background-color: rgb(0,50,75);
+	color: #555555;
+	text-align: center;
+	text-decoration: none;
+	font-family: Times, 'Times New Roman', Georgia, Palatino; /* ATTN: need a better font stack */
+	font-weight: bold;
+	font-size: 16px;
+	outline: none;
+	vertical-align: middle;
+	
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(221,221,221)),
+		color-stop(1, rgb(243,243,243))
+	);
+	background-image: -moz-linear-gradient(
+		center bottom,
+		rgb(221,221,221) 0%,
+		rgb(243,243,243) 100%	
+	);
+	
+}
+
+.pagination a:hover, .pagination a:focus, .pagination a:active {
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, #CECECE),
+		color-stop(1, #E4E4E4)
+	);
+	background-image: -moz-linear-gradient(
+		center bottom,
+		#CECECE 0%,
+		#E4E4E4 100%	
+	);
+}
+
+.pagination a:first-child {
+	border-radius: 2px 0 0 2px;
+	-moz-border-radius: 2px 0 0 2px;
+	-webkit-border-radius: 2px 0 0 2px;
+}
+
+.pagination a:last-child {
+	border-radius: 0 2px 2px 0;
+	-moz-border-radius: 0 2px 2px 0;
+	-webkit-border-radius: 0 2px 2px 0;
+}
+
+.pagination a {
+	border-right: 1px solid #CDCDCD; 
+	border-left: 1px solid #CDCDCD;   
+}
+
+.pagination a:first-child {
+	border: none;
+}
+
+.pagination a:last-child {
+	border: none;
+}
+
+.pagination input[type=text] {
+	font-size: 12px;
+	line-height: 16px;
+	border: none;
+	float: left;
+	text-align: center;
+	height: 20px;
+	outline: none;
+	vertical-align: middle;
+	width: 120px;
+	padding: 0;
+	margin: 0;
+}
+
+.pagination input[type=text]:focus, .pagination input[type=text]:active {
+	box-shadow: none;
+	border: none !important;
+}
+
+/* gigantic class for demo purposes */
+
+.gigantic.pagination {
+	margin: 30px 0;
+}
+
+.gigantic.pagination a {
+	height: 60px;
+	width: 60px;
+	font-size: 50px;
+	line-height: 50px;
+}
+
+.gigantic.pagination input {
+	width: 300px;
+	height: 60px;
+	font-size: 30px;
+}
+
+/* log element for demo purposes */
+
+.log {
+	display: none;
+	background-color: #EDEDED;
+	border: 1px solid #B4B4B4;
+	height: 300px;
+	width: 524px;
+	overflow: auto;
+	margin-left: 0;
+	list-style: none;
+	padding: 10px;
+	li {
+		margin-top: 0;
+		margin-bottom: 5px;
+	}
+}
