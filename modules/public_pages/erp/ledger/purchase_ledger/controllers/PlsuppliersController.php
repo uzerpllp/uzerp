@@ -125,7 +125,7 @@ class PlsuppliersController extends LedgerController
 		$this->view->set('companies', $supplier_list);
 		
 		$gl_account = DataObjectFactory::Factory('GLAccount');
-		$gl_accounts=$gl_account->getAll();
+		$gl_accounts=$gl_account->nonControlAccounts();
 		$this->view->set('gl_accounts',$gl_accounts);
 		
 		$gl_centres=$this->getCentres(key($gl_accounts));
@@ -138,12 +138,17 @@ class PlsuppliersController extends LedgerController
 	public function save_journal()
 	{
 		$flash = Flash::Instance();
-		
 		$errors = array();
-		
 		$result = false;
+		
+		$gl_account = DataObjectFactory::Factory('GLAccount');
+		$allowed_accounts = $gl_account->nonControlAccounts();
+		$post_allowed = array_key_exists($data['glaccount_id'], $allowed_accounts);
+		if (!$post_allowed){
+		    $errors[] = 'Cannot post journal to a control account';
+		}
 
-		if ($this->checkParams('PLTransaction'))
+		if ($this->checkParams('PLTransaction') && $post_allowed)
 		{
 			$data=$this->_data['PLTransaction'];
 

@@ -587,7 +587,7 @@ class SlcustomersController extends LedgerController
         $this->view->set('people', $this->getPeople($customer->company_id));
 
         $gl_account = DataObjectFactory::Factory('GLAccount');
-        $gl_accounts = $gl_account->getAll();
+        $gl_accounts = $gl_account->nonControlAccounts();
         $this->view->set('gl_accounts', $gl_accounts);
 
         if (isset($this->_data['glaccount_id'])) {
@@ -605,10 +605,17 @@ class SlcustomersController extends LedgerController
         $flash = Flash::Instance();
         $errors = array();
         $result = false;
-
-        if ($this->checkParams('SLTransaction')) {
-            $data = $this->_data['SLTransaction'];
-
+        $data = $this->_data['SLTransaction'];
+        
+        $gl_account = DataObjectFactory::Factory('GLAccount');
+        $allowed_accounts = $gl_account->nonControlAccounts();
+        
+        $post_allowed = array_key_exists($data['glaccount_id'], $allowed_accounts);
+        if (!$post_allowed){
+            $errors[] = 'Cannot post journal to a control account';
+        }
+        
+        if ($this->checkParams('SLTransaction') && $post_allowed) {
             if ($data['net_value'] != 0) {
                 $customer = $this->getCustomer($data['slmaster_id']);
 
