@@ -9,9 +9,18 @@ All notable changes to this project will be documented in this file.
 - Prevent users from seeing and acting on expenses of other employees that they are not authorisers for.
 - Ensure that a GL transaction cannot be saved to a closed period.
 - Prepopulate correct GL Account and Centre combination when displaying the Cashbook transaction refund form.
+- Prevent posting of Sales and Purchase Ledger journals to control accounts
+- Prevent posting of invoice templates
 
 ### Added
 - Delete action for Sales Order product selectors.
+
+### Changed
+- Javascript and less/css is now complied at build time
+    - Use grunt.js to build static assets
+    - Remove /theme and /data/resource_c directories
+    - Remove resource.php and let web server serve static assets 
+    - Create /user/theme.css for custom colours, etc.
 
 ## [1.7.1] 2012-12-13
 ### Fixed
