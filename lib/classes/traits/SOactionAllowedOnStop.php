@@ -24,12 +24,16 @@ trait SOactionAllowedOnStop
             // Get module preferences
             $system_prefs = SystemPreferences::instance();
             $pref = $system_prefs->getPreferenceValue('disable-orders-stopped', 'sales_order');
+            
+            if ($pref === 'off' || $pref === '') {
+                return true;
+            }
 
             if (get_class($customer) != 'SLCustomer') {
                 throw new Exception('SordersController::actionAllowedOnStop: Invalid parameter value, function requires SLCustomer instance.');
             }
 
-            if ($customer->accountStopped() and $pref === 'on') {
+            if ($customer->accountStopped() && $pref === 'on') {
                 return false;
             }
 
