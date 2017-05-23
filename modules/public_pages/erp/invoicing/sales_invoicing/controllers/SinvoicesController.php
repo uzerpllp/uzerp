@@ -971,6 +971,7 @@ class SinvoicesController extends printController
         $sh = $this->setSearchHandler($collection);
 
         $sh->addConstraint(new Constraint('line_count', '>', '0'));
+        $sh->addConstraint(new Constraint('transaction_type', '!=', 'T'));
 
         parent::index($collection, $sh);
 
