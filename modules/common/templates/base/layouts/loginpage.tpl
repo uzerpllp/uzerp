@@ -18,8 +18,8 @@ LOGIN_TIMEOUT
 		{/if}
     	<script type="text/javascript" src="/assets/js/vendor/jquery-1.7.1.min.js"></script>
     	<script type="text/javascript" src="/{$module_js}"></script>
-		</head>
-	<body>
+	</head>
+	<body class="module-{$module|replace:'_':'-'} controller-{$controller|replace:'_':'-'}{if $action} action-{$action|ltrim:'_'|replace:'_':'-'}{/if}">
 		{if isset($info_message) && $info_message}
 			{include file="file:{$smarty.const.STANDARD_TPL_ROOT}elements/info_message.tpl"}
 		{/if }

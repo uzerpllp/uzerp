@@ -3,12 +3,11 @@
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* $Revision: 1.12 $ *}
 <!DOCTYPE html>
 <meta charset="UTF-8">
 <html>
 	{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/head.tpl"}
-	<body>
+	<body class="module-{$module|replace:'_':'-'} controller-{$controller|replace:'_':'-'}{if $action} action-{$action|ltrim:'_'|replace:'_':'-'}{/if}">
 		{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/header.tpl"}
 		{if isset($sideBarTemplateName)}
 			<div id="content_with_sidebar">

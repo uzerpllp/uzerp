@@ -1,6 +1,7 @@
 {* Used to report fatal errors to the user - index.php *}
 {if !$xhr}
 {include file="file:{$smarty.const.BASE_TPL_ROOT}elements/head.tpl"}
+<body>
 {/if}
 <div id=flash class="sod">
 	<ul id="errors">
@@ -21,4 +22,7 @@
 		</li>
 	</ul>
 </div>
+{if !$xhr}
 {include file="file:{$smarty.const.BASE_TPL_ROOT}elements/footer.tpl"}
+</body>
+{/if}
