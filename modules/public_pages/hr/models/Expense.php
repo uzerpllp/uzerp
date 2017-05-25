@@ -248,7 +248,12 @@ class Expense extends DataObject
     {
         return 'C';
     }
-
+    
+    function statusAuthorised()
+    {
+        return 'A';
+    }
+    
     function statusAwaitingPayment()
     {
         return 'O';
@@ -467,12 +472,15 @@ class Expense extends DataObject
             $result = $this->save();
         }
 
-        if (! $result) {
+        if (! $result || $errors) {
             $message = $db->ErrorMsg();
 
             if (! empty($message)) {
                 $errors[] = $message;
+                
             }
+            
+            $result = false;
 
             $db->FailTrans();
         }

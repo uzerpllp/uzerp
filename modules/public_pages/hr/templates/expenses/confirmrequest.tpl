@@ -21,7 +21,7 @@
 				{view_data attribute='tax_value'}
 				{view_data attribute='gross_value'}
 				{view_data attribute='description'}
-				{select attribute='status' label='New Status'}
+				
 			{/view_section}
 		{/with}
 		{submit}

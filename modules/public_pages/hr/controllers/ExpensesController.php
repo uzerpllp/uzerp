@@ -98,8 +98,8 @@ class ExpensesController extends HrController
         }
 
         $errors = array();
-
         $this->_data[$this->modeltype]['authorised_date'] = date(DATE_FORMAT);
+        $this->_data[$this->modeltype]['status'] = Expense::statusAuthorised();
 
         if (! Expense::updateStatus($this->_data[$this->modeltype], $errors)) {
             $flash->addErrors($errors);
@@ -341,9 +341,15 @@ class ExpensesController extends HrController
         } else {
             $flash->addErrors($errors);
             $flash->addError('Failed to pay Expense Claim');
+            sendBack();
         }
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        // Redirect back to expense view from form 
+        sendTo(
+            'expenses',
+            'view',
+            'hr',
+            ['id' => $expense->id]);
     }
 
     public function post()
@@ -366,7 +372,7 @@ class ExpensesController extends HrController
             $flash->addError('Failed to post Expenses');
         }
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        sendBack();
     }
 
     public function print_expense($status = 'generate')
