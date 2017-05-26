@@ -91,6 +91,7 @@ class ExpensesController extends HrController
 
     public function confirmSaveRequest()
     {
+        $this->checkRequest(['post']);
         $flash = Flash::Instance();
 
         if (! $this->checkParams($this->modeltype)) {
@@ -112,6 +113,7 @@ class ExpensesController extends HrController
 
     public function delete()
     {
+        $this->checkRequest(['post'], true);
         $flash = Flash::Instance();
         if (! $this->checkParams('id')) {
             sendBack();
@@ -121,7 +123,12 @@ class ExpensesController extends HrController
 
         $expense->update($this->_data['id'], 'status', $expense->cancel());
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        // Redirect back to expense view from form
+        sendTo(
+            'expenses',
+            'index',
+            ['hr',]);
+        //sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
     }
 
     public function _new()
@@ -244,8 +251,8 @@ class ExpensesController extends HrController
 
     public function save()
     {
+        $this->checkRequest(['post']);
         $flash = Flash::Instance();
-
         $errors = array();
 
         if (! $this->checkParams($this->modeltype)) {
@@ -325,6 +332,7 @@ class ExpensesController extends HrController
 
     public function savepayment()
     {
+        $this->checkRequest(['post']);
         if (! $this->loadData()) {
             $this->dataError();
             sendBack();
@@ -354,6 +362,7 @@ class ExpensesController extends HrController
 
     public function post()
     {
+        $this->checkRequest(['post'], true);
         if (! $this->loadData()) {
             $this->dataError();
             sendBack();
@@ -602,8 +611,12 @@ class ExpensesController extends HrController
                     'modules' => $this->_modules,
                     'controller' => $this->name,
                     'action' => 'delete',
-                    $idField => $idValue
-                )
+                    'type' => 'confirm',
+                    'id' => $idValue
+                ),
+                'class' => 'confirm',
+                'data_attr' => ['data_uz-confirm-message' => "Cancel Expense Claim?|This cannot be undone.",
+                    'data_uz-action-id' => $idValue]
             );
         }
 
@@ -636,7 +649,10 @@ class ExpensesController extends HrController
                     'controller' => $this->name,
                     'action' => 'post',
                     $idField => $idValue
-                )
+                ),
+                'class' => 'confirm',
+                'data_attr' => ['data_uz-confirm-message' => "Post Expense Claim?|This cannot be undone.",
+                    'data_uz-action-id' => $idValue]
             );
         }
 
