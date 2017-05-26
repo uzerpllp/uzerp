@@ -1653,7 +1653,7 @@ class SlcustomersController extends LedgerController
             $this->_data['ajax_call'] = '';
         }
 
-        $fields = split(',', $this->_data['fields']);
+        $fields = explode(',', $this->_data['fields']);
 
         $customer = $this->getCustomer($this->_data['id']);
 

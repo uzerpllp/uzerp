@@ -1396,7 +1396,7 @@ class PlsuppliersController extends LedgerController
 	{
 	// this function will only ever be called via an AJAX request, no paramters needed
 		
-		$fields=split(',',$this->_data['fields']);
+		$fields = explode(',',$this->_data['fields']);
 				
 		$supplier = $this->getSupplier();
 				

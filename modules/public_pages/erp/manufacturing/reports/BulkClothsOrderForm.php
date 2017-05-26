@@ -64,8 +64,8 @@ class BulkClothsOrderForm extends PrintObject {
 											)
 										);	
 		// Display only the product code (stitems)										
-		if(ereg(' - ', $MFWorkorders->stitem)) {
-			$stitem=split(" - ",$MFWorkorders->stitem);										
+		if(preg_match('# - #', $MFWorkorders->stitem)) {
+			$stitem = preg_split('# - #', $MFWorkorders->stitem);										
 		} else {
 			$stitem[0]=$MFWorkorders->stitem;										
 		}

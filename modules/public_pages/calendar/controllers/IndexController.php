@@ -68,7 +68,7 @@ class IndexController extends Controller {
 		$userPreferences = UserPreferences::instance();
 		$calendars=unserialize($userPreferences->getPreferenceValue('display-calendar-filter','calendar'));
 
-		$data=split("_",$this->_data['change_cal']);
+		$data = preg_split("/_/", $this->_data['change_cal']);
 
 		if($data[1]=="true") {
 			$calendars[$data[0]]['status']='on';
