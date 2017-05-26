@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Prepopulate correct GL Account and Centre combination when displaying the Cashbook transaction refund form.
 - Prevent posting of Sales and Purchase Ledger journals to control accounts.
 - Prevent posting of invoice templates.
+- Replace functions removed in PHP7.
 
 ### Added
 - Delete action for Sales Order product selectors.
