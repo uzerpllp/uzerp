@@ -220,7 +220,8 @@ gulp.task('watch', function() {
         ],
         gulp.series(
             'clean-styles',
-            'dev-styles'
+            'dev-styles',
+	    'login-styles'
         )
     );
 });
