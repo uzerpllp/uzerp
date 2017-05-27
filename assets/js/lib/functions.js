@@ -224,7 +224,12 @@ function dialogButton (options) {
 		// so that the dialog is closed and returns to the calling form
 		options.url += 'refresh=';
 	}
-
+	
+	// disable the dialog buttons to prevent double-click
+	$('.ui-dialog.ui-dialog-buttons .ui-button').attr("disabled", true);
+	
+	$('.ui-dialog #flash').html('<div class="ui-dialog-uzloading">Processing...</div>');
+	
 	$.ajax({
 		type:'POST',
 		url: '/?' + options.url + '&ajax=&dialog=',
@@ -260,6 +265,7 @@ function dialogButton (options) {
 					}
 					else {
 						form_dialog.html(data);
+						$('.ui-dialog.ui-dialog-buttons .ui-button').attr("disabled", false);
 					}
 				}
 				
