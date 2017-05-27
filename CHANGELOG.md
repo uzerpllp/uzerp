@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.8] 2017-05-27
 ### Fixed
 - Adding a holiday request now uses the correct allocation period.
 - Resetting user passwords now sends email notifications.
@@ -26,7 +26,7 @@ All notable changes to this project will be documented in this file.
 ### Removed
 - Manual status change on HR expense actions.
 
-## [1.7.1] 2012-12-13
+## [1.7.1] 2016-12-13
 ### Fixed
 - Error when saving new CRM activity
 
@@ -264,6 +264,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.8]: https://github.com/uzerpllp/uzerp/compare/1.7.1...1.8
 [1.7.1]: https://github.com/uzerpllp/uzerp/compare/1.7...1.7.1
 [1.7]: https://github.com/uzerpllp/uzerp/compare/1.6.2...1.7
 [1.6.2]: https://github.com/uzerpllp/uzerp/compare/1.6.1...1.6.2
