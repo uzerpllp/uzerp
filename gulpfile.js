@@ -32,7 +32,7 @@ var jsFiles = [
         'assets/js/vendor/superfish-1.4.8/superfish.js',
         'assets/js/vendor/jquery.multiSelect-1.2.2/jquery.bgiframe.min.js',
         'assets/js/vendor/jquery.multiSelect-1.2.2/jquery.multiSelect.js',
-        //'lib/js/jquery/plugins/jquery.watermark-3.1.1/jquery.watermark.js',
+        'assets/js/vendor/jquery.watermark-3.1.1/jquery.watermark.js',
         'assets/js/lib/uz-collection/jquery.uz-grid.js',
         'assets/js/lib/uz-collection/jquery.uz-validation.js',
         'assets/js/lib/uz-collection/jquery.uz-autocomplete.js',
@@ -73,7 +73,7 @@ var jsFiles = [
     
     cssFiles = [
         // jQuery CSS files
-        //`${less_source_libs}/jquery.watermark-3.1.1/jquery.watermark.css`,
+        `${less_source_libs}/jquery.watermark-3.1.1/jquery.watermark.css`,
         `${less_source_libs}/fullcalendar/fullcalendar.css`,
         'assets/js/vendor/collapsibleCheckboxTree/jquery.collapsibleCheckboxTree.css',
         'assets/js/vendor/jqPagination/css/style.css',
