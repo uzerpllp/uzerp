@@ -1,6 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.8.1] 2017-06-08
+### Fixed
+- Allow gulp to be run using 'npm run gulp'
+
+### Added
+- Add jquery.watermark.js, used by autocomplete fields
+
+### Changed
+- Replace clear_memcached.php script with flush_memcached.php
+
 ## [1.8] 2017-05-27
 ### Fixed
 - Adding a holiday request now uses the correct allocation period.
@@ -264,6 +274,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.8.1]: https://github.com/uzerpllp/uzerp/compare/1.8...1.8.1
 [1.8]: https://github.com/uzerpllp/uzerp/compare/1.7.1...1.8
 [1.7.1]: https://github.com/uzerpllp/uzerp/compare/1.7...1.7.1
 [1.7]: https://github.com/uzerpllp/uzerp/compare/1.6.2...1.7
