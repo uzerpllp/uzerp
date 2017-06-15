@@ -134,6 +134,9 @@ class pogoodsreceivedSearch extends BaseSearch {
 		$orderlines = new POrder();
 		$cc=new ConstraintChain();	
 		$cc->add(new Constraint('status', 'in', "('A','O','P')"));
+		// Only select orders. there may be requistions with status 'P'
+		// where an order line has been cancelled by the owner.
+		$cc->add(new Constraint('type', '=', "O"));
 		$orderlines->orderby='order_number';
 		$options=array('0'=>'All');
 		$orderlines=$orderlines->getAll($cc);

@@ -413,7 +413,8 @@ class PoreceivedlinesController extends printController
 					
 					$linestatuses = array();
 					
-					if ($porder->isLoaded())
+					// Test that the order is loaded and is not a requisition
+					if ($porder->isLoaded() && $porder->type == 'O')
 					{
 						$linestatuses = $porder->getLineStatuses();
 						

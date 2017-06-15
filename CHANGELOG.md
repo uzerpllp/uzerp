@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+### Fixed
+- Prevent further GRNs being created for part received purchase orders that have reverted to requisitions.
+
 ## [1.8.1] 2017-06-08
 ### Fixed
 - Allow gulp to be run using 'npm run gulp'
