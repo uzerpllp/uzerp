@@ -7,9 +7,9 @@
  * @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
  **}
 <!DOCTYPE html>
-<meta charset="UTF-8">
 <html>
     <head>
+        <meta charset="utf-8" />
         <title>Login</title>
 		<link rel="stylesheet" type="text/css" href="/{$login_css}" />
 		{if $user_css}

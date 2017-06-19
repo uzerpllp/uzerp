@@ -5,6 +5,7 @@
  **}
 {* $Revision: 1.20 $ *}
 <head>
+        <meta charset="utf-8" />
 	<meta content="{$csrf_token}" name="csrf-token" />
 	<title>{$config.BASE_TITLE} {$config.SYSTEM_VERSION}</title>
 	

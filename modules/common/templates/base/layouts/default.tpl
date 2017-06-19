@@ -4,7 +4,6 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 <!DOCTYPE html>
-<meta charset="UTF-8">
 <html>
 	{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/head.tpl"}
 	<body class="module-{$module|replace:'_':'-'} controller-{$controller|replace:'_':'-'}{if $action} action-{$action|ltrim:'_'|replace:'_':'-'}{/if}">
