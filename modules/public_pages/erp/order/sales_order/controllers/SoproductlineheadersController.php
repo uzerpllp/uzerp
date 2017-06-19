@@ -213,11 +213,30 @@ class soproductlineheadersController extends printController
 		{
 			$errors[]='You must select an item &/or enter a description';
 		}
+		
+		// Update descriptions on productlines
+		if (isset($this->_data[$this->modeltype]['cascade_description_change'])
+		    && $this->_data[$this->modeltype]['cascade_description_change'] === 'on'){
+		    
+		    $product_lines = new SOProductlineCollection(new SOProductLine());
+    		$sh = new SearchHandler($product_lines, false);
+    		$sh->addConstraint(new Constraint('productline_header_id', '=', $header->id));
+    		
+    		$updated_product_lines = $product_lines->update(['description'], [$this->_data[$this->modeltype]['description']], $sh);
+    		if ( $updated_product_lines === false){
+    		    $errors[] = 'Error updating product lines : ' . $db->ErrorMsg();
+    		}
+		}
 
 		if (count($errors)==0)
 		{
 			if(parent::save($this->modeltype, null, $errors))
 			{
+			    // Replace the default 'success' message
+			    // inserted by Controller::save
+			    $flash->clearMessages();
+			    $flash->addMessage('Product updated');
+				
 				if (isset($this->_data['saveform']))
 				{
 					sendTo($this->name, 'view', $this->_modules, array('id' => $this->saved_model->id));
