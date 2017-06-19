@@ -35,6 +35,10 @@ class SOProductlineHeader extends DataObject
 		
 		// Register non-persistent attributes
 		
+	    // Used on edit form to indicate that the description should be copied
+	    // to the SOProductLine.
+		$this->setAdditional('cascade_description_change', 'bool');
+		
 		// Contruct the object
 		parent::__construct($tablename);
 		
