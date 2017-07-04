@@ -25,15 +25,28 @@
 				{view_data attribute='orderline_id' label='Sales Order Line'}
 			{/with}
 		</dl>
+		{if $documentation}
 		<dl id="view_data_left">
-			{view_section heading="Documentation"}
+			{view_section heading="Print Documentation"}
 				{foreach item=name from=$documentation}
+					{if $name->name == ''}
+					<dt></dt>
+					<dd>No documentation available for this order</dd>
+					{break}
+					{/if}
 					<dt></dt>
 					<dd>
 						{link_to module='manufacturing' controller='mfworkorders' action='printSingleAction' printaction='printSingleReport' id=$transaction->id report=$name->class_name value=$name->name}
 					</dd>
+					{if $name@last}
+					<dt></dt>
+					<dd>
+						{link_to module='manufacturing' controller='mfworkorders' action='printaction' printaction='printdocumentation' id=$transaction->id value='All documents'}
+				    </dd>
+				    {/if}
 				{/foreach}
 			{/view_section}
 		</dl>
+		{/if}
 	</div>
 {/content_wrapper}

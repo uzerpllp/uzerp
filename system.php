@@ -966,7 +966,10 @@ class system
 
         $autoloader = &AutoLoader::Instance();
         $autoloader->addPath($autoloader_paths);
+        if (file_exists(SITE_CLASSES)) {
+            $autoloader->addPath(self::scanDirectories(SITE_CLASSES, '', FALSE));
 
+        }
         $moduleobject = DataObjectFactory::Factory('ModuleObject');
         $moduleobject->loadBy('name', 'common');
 
@@ -1044,6 +1047,7 @@ class system
         define('PRINT_ROOT', PLUGINS_ROOT . 'printIPP' . DIRECTORY_SEPARATOR);
         define('PDF_ROOT', PLUGINS_ROOT . 'ezpdf' . DIRECTORY_SEPARATOR);
         define('SMARTY_CUSTOM_PLUGINS', PLUGINS_ROOT . 'smarty' . DIRECTORY_SEPARATOR . 'custom_plugins' . DIRECTORY_SEPARATOR);
+        define('SITE_CLASSES', FILE_ROOT . 'user' . DIRECTORY_SEPARATOR . 'classes');
     }
 
     /*
