@@ -25,28 +25,34 @@
 				{view_data attribute='orderline_id' label='Sales Order Line'}
 			{/with}
 		</dl>
-		{if $documentation}
 		<dl id="view_data_left">
+		{form controller=$controller action='printdocumentation'}
+			<input type="hidden" name="id" value="{$transaction->id}">
 			{view_section heading="Print Documentation"}
-				{foreach item=name from=$documentation}
+                {include file='elements/select_printer.tpl'}
+                <dt>Output Type:</dt>
+                <dd>
+                	<input type="radio" name="type" value="print" checked> Print&nbsp;&nbsp;
+                	<input type="radio" name="type" value="view"> View<br>
+                </dd>
+            	{foreach item=name from=$documentation}
 					{if $name->name == ''}
-					<dt></dt>
-					<dd>No documentation available for this order</dd>
+					<dt></dt><dd>No documentation available for this order</dd>
 					{break}
 					{/if}
+					{if $name@first}
+					<dt>Available Documents:</dt>
+					{else}
 					<dt></dt>
+					{/if}
 					<dd>
-						{link_to module='manufacturing' controller='mfworkorders' action='printSingleAction' printaction='printSingleReport' id=$transaction->id report=$name->class_name value=$name->name}
+						<input type="checkbox" class="checkbox" id="document-{$name->id}" name="doc_selection[]" value="{$name->id}">
+						<label for="document-{$name->id}">{$name->name}</label>
 					</dd>
-					{if $name@last}
-					<dt></dt>
-					<dd>
-						{link_to module='manufacturing' controller='mfworkorders' action='printaction' printaction='printdocumentation' id=$transaction->id value='All documents'}
-				    </dd>
-				    {/if}
 				{/foreach}
 			{/view_section}
+			{submit value='Output'}
+		{/form}
 		</dl>
-		{/if}
 	</div>
 {/content_wrapper}

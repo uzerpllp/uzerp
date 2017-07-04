@@ -513,6 +513,9 @@ class MfworkordersController extends ManufacturingController
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 		
+		$this->view->set('printers', $this->selectPrinters());
+		$this->view->set('default_printer', $this->getDefaultPrinter());
+		
 	}
 	
 	public function resetStatus()
@@ -916,86 +919,6 @@ class MfworkordersController extends ManufacturingController
 				,array('id' => $id,'stitem_id' => $stitem_id));
 	}
 	
-	public function printSingleAction ()
-	{
-		$flash = Flash::Instance();
-		
-        $data['report'] = $this->_data['report'];
-
-		$userPreferences = UserPreferences::instance(EGS_USERNAME);
-        $defaultPrinter=$userPreferences->getPreferenceValue('default_printer', 'shared');
-  
-        if(empty($defaultPrinter))
-        {
-        	// Use normal print action
-        	parent::printAction();
-        	$this->printtype	= array('pdf'	=> 'PDF');
-			$this->printaction	= array('Print'	=>' Print');
-        }
-        else
-        {
-        	// Overide print action
-        	$data['id']			 = $this->_data['id'];
-        	$data['printtype']	 = 'pdf';
-        	$data['printaction'] = 'Print';
-        	$data['printer']	 = $defaultPrinter;
-        	
-			sendTo($this->name, $this->_data['printaction'], $this->_modules,$data);
-        }
-        
-		$errors = array();
-		
-		$this->printSingleReport($data,$errors);
-
-		if (count($errors)>0)
-		{
-			$flash->addErrors($errors);
-		}
-		else
-		{
-			$flash->addMessage('Print Works Order Paperwork Completed');
-		}
-		
-	}
-	
-	public function printSingleReport(&$errors = array())
-	{
-		$flash = Flash::Instance();
-		// load mfwo
-		if (!$this->loadData())
-		{
-			$this->dataError();
-			sendBack();
-		}
-		
-		$MFWorkorders = $this->_uses[$this->modeltype];
-
-		$data = $this->_data;
-		
-		// load report
-		$report = new $data['report']($this);
-		
-		$data['filename'] = get_class($report).'_'.$data['id'];
-		
-		$args = array(
-						'model'	=>	$MFWorkorders,
-						'data'	=>	$data,
-						'bulk'	=>	FALSE
-					);
-		
-		$response = $report->buildReport($args);
-					
-		if($response->status!==true)
-		{
-			$flash->addError(get_class($report).": ".$response->message);
-		}
-		else
-		{
-			$flash->addMessage(get_class($report)." printed successfully");
-		}
-		
-		sendBack();
-	}
 	
 	public function view_Transactions ()
 	{
@@ -1116,13 +1039,13 @@ class MfworkordersController extends ManufacturingController
         	$data['printtype']	 = 'pdf';
         	$data['printaction'] = 'Print';
         	$data['printer']	 = $defaultPrinter;
-			sendTo($this->name, $this->_data['printaction'], $this->_modules,$data);
+        	
+			sendTo($this->name, $this->_data['printaction'], $this->_modules, $data);
         }
 	}
 		
 	public function printdocumentation()
 	{
-
 		$flash = Flash::Instance();
 
 		if (isset($this->_data['cancel']))
@@ -1138,17 +1061,28 @@ class MfworkordersController extends ManufacturingController
 			$this->dataError();
 			sendBack();
 		}
+
+		// If this is a post request, check that the user
+		// has selected some documents to print
+		$request = $this->_injector->getRequest();
+		if ( strtolower($request->getMethod()) == 'post' && !isset($this->_data['doc_selection'])) {
+		    $flash->addError('No document selected for output');
+		    sendBack();
+		}
 		
 		$worksorder = $this->_uses[$this->modeltype];
 		
 		$data = $this->_data;
 		
 		$docs_count = unserialize($worksorder->documentation);
-		
+		if ($this->_data['doc_selection']) {
+		    $docs_count = $this->_data['doc_selection'];
+		}
+	
 		$merge_file_name = 'mfworksorders_documentation_'.$data['id'].'_'.date('H_i_s_d_m_Y').'.pdf';
 			
 		// Need to check to see if array count is equal to, or less than 1, and if array element 0 is null
-		if((count($docs_count)<=1) && ($docs_count[0]==''))
+		if(count($docs_count)==0 || $docs_count[0]=='')
 		{
 			$errors[] = 'No Documents Assigned to Works Order';
 		}
@@ -1160,23 +1094,27 @@ class MfworkordersController extends ManufacturingController
 				
 				foreach ($documents as $document)
 				{
-					// when we fire the construct, pass the printController as the report does
-					// not extend another model
-					$model = new $document->class_name($this);
-					
-					$args = array(
-						'model'				=>	$worksorder,
-						'data'				=>	$data,
-						'merge_file_name'	=>	$merge_file_name
-					);
-					
-					//$response=$model->buildReport($worksorder,$data);
-					$response = $model->buildReport($args);
-					
-					if($response->status!==true)
-					{
-						$errors[] = $document->class_name.": ".$response->message;
-					}
+				    if (!isset($this->_data['doc_selection']) || in_array($document->id, $this->_data['doc_selection'])) {
+    					// when we fire the construct, pass the printController as the report does
+    					// not extend another model
+    					$model = new $document->class_name($this);
+    					
+    					$args = array(
+    						'model'				=>	$worksorder,
+    						'data'				=>	$data,
+    						'merge_file_name'	=>	$merge_file_name,
+    					    'type' => $this->_data['type'],
+    					    'printtype'	 => 'pdf'
+    					);
+    					
+    					//$response=$model->buildReport($worksorder,$data);
+    					$response = $model->buildReport($args);
+    					
+    					if($response->status!==true)
+    					{
+    						$errors[] = $document->class_name.": ".$response->message;
+    					}
+				    }
 				}
 			}
 			else
@@ -1195,39 +1133,28 @@ class MfworkordersController extends ManufacturingController
 			// construct file path, print the file and add a success message
 			$merge_file_path = $this->get_filetype_path('tmp').$merge_file_name;
 			
-			$this->output_file_to_printer($merge_file_path, $data['printer']);
+			if (!isset($this->_data['type']) || $this->_data['type'] === 'print') {
+    			$this->output_file_to_printer($merge_file_path, $data['printer']);
+			} else { 	
+    			header("Content-type:application/pdf");
+    			
+    			// It will be called downloaded.pdf
+    			header("Content-Disposition:inline;filename='downloaded.pdf'");
+    			header('Content-Transfer-Encoding: binary');
+    			header('Content-Length: ' . filesize($merge_file_path));
+    			header('Accept-Ranges: bytes');
+    			
+    			// The PDF source is in original.pdf
+    			@readfile($merge_file_path);
+			}
 			
-			$flash->addMessage('Print Works Order Completed');
-			
+			$flash->addMessage('Works Order Documentation Completed');
 		}
 		
 		sendBack();
 				
 	}
 
-	public function printdocument($report, $data, &$errors = array())
-	{
-
-		$data['filename'] = get_class($report).'_'.$data['id'];
-
-		if ($report->setPrintParams($data, $errors))
-		{
-			if ($report->constructPrint())
-			{
-				return true;
-			}
-			else
-			{
-				$errors[] = 'Print '.get_class($report).' Report Failed';
-			}
-		}
-		else
-		{
-			$errors[] = 'Failed to set print parameters';
-		}
-		
-		return false;
-	}
 	
 /* Obsolete?
 	public function getBalance() {
