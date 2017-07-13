@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Prevent further GRNs being created for part received purchase orders that have reverted to requisitions.
 
+### Added
+- Site specific Works Order document injector classes are loaded from user/classes
+- WOOperationsReport injector class, e.g. to produce a route card document with operations (define a report definition with Name = wo_operations). Add the class in Setup > System Admin > Injector Classes, as required.
+- Site specific modules can be created in user/modules
+
+### Changed
+- Works Order documents can be selected, then printed or viewed
+- Works Order documents can be sent to a selected printer
+
 ## [1.8.1] 2017-06-08
 ### Fixed
 - Allow gulp to be run using 'npm run gulp'
