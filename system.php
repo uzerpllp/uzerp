@@ -387,7 +387,12 @@ class system
 
         $jsdir = self::findModulePath(PUBLIC_MODULES, $this->modules['module'], FALSE);
         $jsdir .= DIRECTORY_SEPARATOR . 'resources/js';
-        $jsdir = str_replace(FILE_ROOT . 'modules/public_pages' , 'dist/js/modules', $jsdir);
+        if (!strpos($jsdir, 'user/modules')) {
+            $jsdir = str_replace(FILE_ROOT . 'modules/public_pages' , 'dist/js/modules', $jsdir);
+        } else {
+            // Serve user module js from module directory
+            $jsdir = str_replace(FILE_ROOT , '', $jsdir);
+        }
         $modulejs = glob("{$jsdir}/*.js");
         
         $js = glob('dist/js/scripts*.js');
@@ -1034,6 +1039,7 @@ class system
         define('DATA_USERS_URL', DATA_URL . 'users' . DIRECTORY_SEPARATOR);
         define('COMMON_MODULES', FILE_ROOT . 'modules' . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR);
         define('PUBLIC_MODULES', FILE_ROOT . 'modules' . DIRECTORY_SEPARATOR . 'public_pages' . DIRECTORY_SEPARATOR);
+        define('USER_MODULES', FILE_ROOT . 'user' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR);
         define('TEMPLATES_NAME', 'templates' . DIRECTORY_SEPARATOR);
         define('CONTROLLERS_NAME', 'controllers' . DIRECTORY_SEPARATOR);
         define('EGLETS_NAME', 'eglets' . DIRECTORY_SEPARATOR);

@@ -166,7 +166,8 @@ class ModuleobjectsController extends Controller {
 		
 		$data = $this->_data[$this->modeltype];
 		
-		if (empty($data['location']) || strpos(FILE_ROOT.$data['location'], PUBLIC_MODULES) === FALSE)
+		if (empty($data['location']) || strpos(FILE_ROOT.$data['location'], PUBLIC_MODULES) || strpos(FILE_ROOT.$data['location'], USER_MODULES)=== FALSE
+		)
 		{
 			$errors[] = 'Cannot find module';
 		}
