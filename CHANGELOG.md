@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Prevent further GRNs being created for part received purchase orders that have reverted to requisitions.
 
+- Product selector fixes
+    - Show all currently linked targets when ammending component list
+    - Allow scrolling of component list
+    - Return to the item being edited after saving links
+
+
 ### Added
 - Site specific Works Order document injector classes are loaded from user/classes
 - WOOperationsReport injector class, e.g. to produce a route card document with operations (define a report definition with Name = wo_operations). Add the class in Setup > System Admin > Injector Classes, as required.
