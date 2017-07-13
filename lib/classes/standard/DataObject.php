@@ -62,6 +62,9 @@ class DataObject implements Iterator {
 
 	//	Where the identifierField is an array of fields this is the string used when concatenating the fields
 	public	$identifierFieldJoin	= ' - ';
+	
+	//  These fields will be removed on insert. The DB will fill them using a predefined sequence.
+	protected   $sequenceFields = array();
 
 	// which field should be used to order overviews
 	public		$orderby;
@@ -1258,6 +1261,11 @@ class DataObject implements Iterator {
 		if (isset($data[$this->idField]) && $data[$this->idField] == 'NULL')
 		{
 			unset($data[$this->idField]);
+		}
+
+		// Remove fields with sequences. Values filled by the DB on insert
+		foreach ($this->sequenceFields as $seq) {
+		    unset($data[$seq]);
 		}
 
 		// Need a method of checking whether insert is allowed
