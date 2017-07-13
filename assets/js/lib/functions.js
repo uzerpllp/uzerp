@@ -143,6 +143,9 @@ function check_if_table_needs_scroll_bar() {
 			$('#included_file').parent().css({ 'overflow-y': 'auto' });
 		}
 	}
+	
+	// Scroll selected targets in modules/common/templates/elements/selected_targets.tpl
+	$('#targets').height($('.tablescroll').height() + $('#data_grid_header').height());
 
 }
 

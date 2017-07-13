@@ -679,10 +679,11 @@ class SelectorController extends PrintController
             $selected_target_name = $this->targetModel . 'Collection';
             $target = new $this->targetModel();
             $targets = new $selected_target_name($target);
-            $sh = new SearchHandler($targets);
+            $sh = new SearchHandler($targets, false);
 
             if (count($target_ids) > 0) {
-                $sh->addConstraint(new Constraint($target->idField, 'IN', '(' . implode(',', array_keys($target_ids)) . ')'));
+                $values = '(' . implode('),(', array_keys($target_ids)) . ')';
+                $sh->addConstraint(new Constraint($target->idField, '= ANY', "(VALUES {$values})"));
 
                 $rows = $targets->load($sh, null, RETURN_ROWS);
                 foreach ($rows as $data) {
@@ -880,7 +881,7 @@ class SelectorController extends PrintController
             unset($_SESSION['selected_items']);
             unset($_SESSION['selected_targets']);
             $flash->addMessage(count($selectedlinks) . " relationships saved successfully");
-            sendTo($this->name, 'index', $this->_modules);
+            sendTo($this->name, 'view', $this->module, ['id' => array_keys($selected_items)[0]]);
         } else {
             $db->FailTrans();
             $db->CompleteTrans();

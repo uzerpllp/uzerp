@@ -5,7 +5,7 @@
  **}
 {* $Revision: 1.4 $ *}
 {with model=$model}
-	<table class="datagrid" id="datagrid2" cellspacing="0" cellpadding="0">
+	<table class="datagrid selected-items" id="datagrid2" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
 				{foreach key=name item=tag from=$selected_target_headings}
@@ -14,7 +14,7 @@
 				<th width=10px></th>
 			</tr>
 		</thead>
-		<tbody style="height: auto; width:auto;">
+		<tbody >
 			{foreach key=key item=target from=$selected_targets}
 				<tr>
 					<input type="hidden" name="selected_targets[]" value="{$key}" />

@@ -93,7 +93,7 @@
 			<input type="hidden" id="target_link" value="{$link}" />
 			<input type="hidden" id="targets_text">
 			<div id="view_data_bottom">
-				<div id="targets">
+				<div id="targets" style="overflow: auto;">
 					{include file="elements/selected_targets.tpl"}
 				</div>
 			</div>
