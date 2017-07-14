@@ -626,7 +626,14 @@ class SelectorController extends PrintController
             $sh = new SearchHandler($items, false);
             $sh->addConstraint(new Constraint($item->description . '_id', '=', $item->id));
             $items->load($sh);
-            $_SESSION['selected_targets']['data'] = array();
+            
+            // We may be here becuase the user cleared an item search.
+            // Only create the session array if there are no targets,
+            // otherwise the user's new selections will keep disapearing
+            if (empty($_SESSION['selected_targets']['data']) || empty($this->_data['search_id'])) {
+                $_SESSION['selected_targets']['data'] = [];
+            }
+
             $idField = $items->getModel()->idField;
             $items_data = $items->getArray();
             if (! empty($items_data)) {
@@ -1206,7 +1213,7 @@ class SelectorController extends PrintController
         echo $html;
         exit();
     }
-
+    
     /*
      * Protected Functions
      */
