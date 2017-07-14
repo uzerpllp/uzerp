@@ -144,6 +144,8 @@ function check_if_table_needs_scroll_bar() {
 		}
 	}
 	
+	// Scroll selected targets in modules/common/templates/elements/selected_targets.tpl
+	$('#targets').height($('#view_page').height() - $('#selected-items-header').height() - 5);
 }
 
 function refresh_current_page (url) {

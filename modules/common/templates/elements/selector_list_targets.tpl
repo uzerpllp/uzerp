@@ -62,7 +62,8 @@
 		{include file='elements/cancelForm.tpl' cancel_action='cancel'}
 	</dl>
 	<dl id="view_data_right">
-		{view_section heading="Selected Items"}
+		<div id="selected-items-header">
+			{view_section heading="Selected Items"}
 			<div id="view_data_bottom">
 				<table class="datagrid" id="datagrid1" cellspacing="0" cellpadding="0">
 					<thead>
@@ -88,12 +89,13 @@
 					</tbody>
 				</table>
 			</div>
-		{/view_section}
+			{/view_section}
 		{view_section dont_prettify="true" heading="Selected $title [<a href='#' class='remove_all'>Remove All</a>]"}		
 			<input type="hidden" id="target_link" value="{$link}" />
 			<input type="hidden" id="targets_text">
+		</div>
 			<div id="view_data_bottom">
-				<div id="targets" style="overflow: auto;">
+				<div id="targets" style="overflow-y: auto;">
 					{include file="elements/selected_targets.tpl"}
 				</div>
 			</div>
