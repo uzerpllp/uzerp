@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.8.2] 2017-07-14
 ### Fixed
 - Prevent further GRNs being created for part received purchase orders that have reverted to requisitions.
 
@@ -293,6 +293,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.8.2]: https://github.com/uzerpllp/uzerp/compare/1.8.1...1.8.2
 [1.8.1]: https://github.com/uzerpllp/uzerp/compare/1.8...1.8.1
 [1.8]: https://github.com/uzerpllp/uzerp/compare/1.7.1...1.8
 [1.7.1]: https://github.com/uzerpllp/uzerp/compare/1.7...1.7.1
