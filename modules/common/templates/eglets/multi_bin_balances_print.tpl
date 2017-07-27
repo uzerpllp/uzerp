@@ -1,12 +1,11 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
-{* $Revision: 1.8 $ *}
 <div id="eglet-manufacturing-multi_bin_balances_print">
 	<form action="/?module=manufacturing&controller=WHLocations&action=printMultipleBalance" method="POST">
-		
+		<input type="hidden" name="csrf_token" id="csrf_token_id" value="{$csrf_token}" />
 		<dl id="view_data_left" style="width: 240px;">
 			<p>
 				<label for="WHStore_store">Store:</label><br />
@@ -32,7 +31,7 @@
 				<select name="WHBin_bins[]" id="WHBin_bins" multiple="multiple" style="width: 235px; height: 185px;">
 				</select>
 			</p>
-	
+
 		</dl>
 	</form>
 	<script type="text/javascript">

@@ -1,12 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+- Multi Bin Balances Print uzLET now sends a CSRF token with its form data.
+
 ## [1.8.2] 2017-07-14
 ### Fixed
 - Prevent further GRNs being created for part received purchase orders that have reverted to requisitions.
 
 - Product selector fixes
-    - Show all currently linked targets when ammending component list
+    - Show all currently linked targets when amending component list
     - Allow scrolling of component list
     - Return to the item being edited after saving links
 
@@ -77,7 +80,7 @@ All notable changes to this project will be documented in this file.
     - Passwords are hashed using PHP 5.5+ Password hashing API
         - New passwords must now be at least 10 characters long but existing passwords remain unchanged.
         - A password strength meter has been added to encourage password complexity
-    - Stronger CSRF protectection
+    - Stronger CSRF protection
 - New usernames can only contain lower-case letters and/or numbers.
 
 ### Removed
@@ -124,8 +127,8 @@ All notable changes to this project will be documented in this file.
 - Add a notes field to sales order line input. Not printed on outputs by default
 - Purchase orders can be linked to a sales order
 - Purchase order delivery address can be sourced from a linked sales order, for output only
-- Despatch notes can be creted for non-stock product lines
-- Products can be marked as 'not despatchable', i.e. thier product lines can't be added to despatch notes
+- Despatch notes can be created for non-stock product lines
+- Products can be marked as 'not despatchable', i.e. their product lines can't be added to despatch notes
 - Sales order lines can be released and added to a despatch note for the sales order sidebar
 - Purchase order schedule document print
 - Site-wide preference to list all purchase orders, instead of only those raised by the logged in user.
