@@ -376,10 +376,10 @@ class system
 
             $this->checkPermission();
         }
-       
+
         // Find css/js
         $css = glob('dist/css/main*.css');
-                
+
         if($this->module == 'login') {
             $logincss = glob('dist/css/login-*.css');
             $this->view->set('login_css', $logincss[0]);
@@ -394,18 +394,19 @@ class system
             $jsdir = str_replace(FILE_ROOT , '', $jsdir);
         }
         $modulejs = glob("{$jsdir}/*.js");
-        
+
         $js = glob('dist/js/scripts*.js');
-        
+
         // output standard arrays to smarty
         $this->view->set('current_user', $this->user);
         $this->view->set('main_css', $css[0]);
-        if (file_exists('user/theme.css')) {
-            $this->view->set('user_css', 'user/theme.css');
+        if (file_exists('user') && is_dir('user') && count(glob('user/theme*.css')) >= 1) {
+            $user_css = glob('user/theme*.css');
+            $this->view->set('user_css', $user_css[0]);
         }
         $this->view->set('main_js', $js[0]);
         $this->view->set('module_js', $modulejs[0]);
-        
+
         $action = $this->action;
         $controller = $this->controller;
 

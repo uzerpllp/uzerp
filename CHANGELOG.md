@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Move Sentry client config into uzERP config file.
+- Allow user theme.css to have a suffix for browser cache-busting. e.g. add the date to the fielname when changed -- theme-20170727.css.
 
 
 ## [1.8.2] 2017-07-14
