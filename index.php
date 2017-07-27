@@ -48,10 +48,7 @@ if (defined('SENTRY_DSN')) {
 
     // send fatals to sentry
     try {
-        $client = new Raven_Client(SENTRY_DSN, array(
-            'curl_method' => 'async',
-            'verify_ssl' => FALSE
-        ));
+        $client = new Raven_Client(SENTRY_DSN, unserialize(SENTRY_CONFIG));
         $client->tags_context(array(
             'source' => 'fatal'
         ));
@@ -68,10 +65,7 @@ if (defined('SENTRY_DSN')) {
 function sentry_exception_handler($exception)
 {
     try {
-        $client = new Raven_Client(SENTRY_DSN, array(
-            'curl_method' => 'async',
-            'verify_ssl' => FALSE
-        ));
+        $client = new Raven_Client(SENTRY_DSN, unserialize(SENTRY_CONFIG));
         $client->tags_context(array(
             'source' => 'exception'
         ));

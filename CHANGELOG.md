@@ -2,7 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+### Fixed
 - Multi Bin Balances Print uzLET now sends a CSRF token with its form data.
+
+### Changed
+- Move Sentry client config into uzERP config file.
+
 
 ## [1.8.2] 2017-07-14
 ### Fixed
