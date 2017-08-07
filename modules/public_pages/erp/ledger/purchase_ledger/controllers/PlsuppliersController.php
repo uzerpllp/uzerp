@@ -1,9 +1,9 @@
 <?php
 
-/** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class PlsuppliersController extends LedgerController
@@ -11,15 +11,15 @@ class PlsuppliersController extends LedgerController
 
 	protected $version='$Revision: 1.102 $';
 	protected $_templateobject;
-	
+
 	public function __construct($module=null,$action=null)
 	{
-		
+
 		parent::__construct($module, $action);
-		
+
 		$this->uses(DataObjectFactory::Factory('CBTransaction'));
 		$this->uses(DataObjectFactory::Factory('PLTransaction'));
-		
+
 		$this->_templateobject = DataObjectFactory::Factory('PLSupplier');
 		$this->uses($this->_templateobject, true);
 
@@ -36,66 +36,66 @@ class PlsuppliersController extends LedgerController
 		$s_data['currency_id']='';
 		$s_data['remittance_advice']='';
 		$s_data['order_method']='';
-		$s_data['payment_type_id']='';		
-		
+		$s_data['payment_type_id']='';
+
 		$this->setSearch('PLSupplierSearch', 'useDefault', $s_data);
-		
+
 		$this->view->set('clickaction', 'view');
-		
+
 		parent::index(new PLSupplierCollection($this->_templateobject));
-		
+
 		$sidebarlist=$this->indexSidebar();
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		foreach ($sidebarlist as $name=>$data)
 		{
 			$sidebar->addList($name,$data);
 		}
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
+
 	}
-	
+
 	public function _new()
 	{
 		parent::_new();
 
 		$supplier = $this->_uses[$this->modeltype];
-		
+
 		if ($supplier->isLoaded())
 		{
 			$this->view->set('transaction_count',$supplier->transactions->count());
-			
+
 			$emails=$this->getEmailAddresses($supplier->company_id);
-			
+
 			unset($emails['']);
-			
+
 			$this->view->set('emails',$emails);
 		}
 		elseif (isset($this->_data['company_id']))
 		{
 			$supplier->company_id = $this->_data['company_id'];
-			
+
 			$this->view->set('payee', $supplier->name);
 		}
 		else
 		{
 			$unassigned_list=$supplier->getUnassignedCompanies();
-			
+
 			if (count($unassigned_list)>0)
 			{
 				$this->view->set('company_list',$unassigned_list);
-				
+
 				$emails=$this->getEmailAddresses(key($unassigned_list));
-				
+
 				unset($emails['']);
-				
+
 				$this->view->set('emails',$emails);
-				
+
 				$this->view->set('payee',current($unassigned_list));
-				
+
 				$supplier->company_id = key($unassigned_list);
 			}
 			else
@@ -105,34 +105,34 @@ class PlsuppliersController extends LedgerController
 				sendBack();
 			}
 		}
-		
+
 		$this->view->set('payment_addresses', $supplier->getRemittanceAddresses());
 		$this->view->set('receive_actions',WHAction::getReceiveActions());
-		
+
 	}
 
 	public function getSupplierList ()
 	{
 		return $this->getOptions($this->_uses['PLTransaction'], 'plmaster_id', 'getSupplierList', 'getOptions', array('use_collection'=>true));
-		
+
 	}
-	
+
 	public function enter_journal()
 	{
-				
+
 		$supplier = $this->_uses[$this->modeltype];
 		$supplier_list=$this->getSupplierList();
 		$this->view->set('companies', $supplier_list);
-		
+
 		$gl_account = DataObjectFactory::Factory('GLAccount');
 		$gl_accounts=$gl_account->nonControlAccounts();
 		$this->view->set('gl_accounts',$gl_accounts);
-		
+
 		$gl_centres=$this->getCentres(key($gl_accounts));
 		$this->view->set('centres',$gl_centres);
-		
+
 		$this->sidebar(__FUNCTION__);
-		
+
 	}
 
 	public function save_journal()
@@ -140,7 +140,8 @@ class PlsuppliersController extends LedgerController
 		$flash = Flash::Instance();
 		$errors = array();
 		$result = false;
-		
+		$data = $this->_data['PLTransaction'];
+
 		$gl_account = DataObjectFactory::Factory('GLAccount');
 		$allowed_accounts = $gl_account->nonControlAccounts();
 		$post_allowed = array_key_exists($data['glaccount_id'], $allowed_accounts);
@@ -150,20 +151,18 @@ class PlsuppliersController extends LedgerController
 
 		if ($this->checkParams('PLTransaction') && $post_allowed)
 		{
-			$data=$this->_data['PLTransaction'];
-
 			if ($data['net_value']!=0)
 			{
 				$supplier = $this->getSupplier($data['plmaster_id']);
-				
+
 				$data['currency_id']	 = $supplier->currency_id;
 				$data['payment_term_id'] = $supplier->payment_term_id;
 
 				$db = DB::Instance();
 				$data['our_reference'] = $db->GenID('pl_journals_id_seq');
-			
+
 				$result = PLTransaction::saveTransaction($data,$errors);
-				
+
 				if ($result!==false)
 				{
 					$flash->addMessage('Journal saved');
@@ -174,7 +173,7 @@ class PlsuppliersController extends LedgerController
 				$errors[] = 'Zero value not allowed';
 			}
 		}
-		
+
 		if ($result!==false)
 		{
 			if (isset($this->_data['saveAnother']))
@@ -182,80 +181,80 @@ class PlsuppliersController extends LedgerController
 				$this->context['plmaster_id'] = $data['plmaster_id'];
 				$this->saveAnother();
 			}
-			
+
 			sendTo($this->name
 				,'view'
 				,$this->_modules
 				,array('id'=>$data['plmaster_id']));
-			
+
 		}
-		
+
 		$flash->addErrors($errors);
-		
+
 		if (isset($data['plmaster_id']) && !empty($data['plmaster_id']))
 		{
 			$this->_data['plmaster_id'] = $data['plmaster_id'];
 		}
-		
+
 		$this->refresh();
-		
+
 	}
 
 	public function make_payment()
 	{
 		$this->cashbook_payment(__FUNCTION__);
-		
+
 		$this->view->set('type', 'P');
-		
+
 	}
 
 	public function receive_refund()
 	{
 		$this->cashbook_payment(__FUNCTION__);
-		
+
 		$this->view->set('type', 'RP');
-		
+
 	}
 
 	public function save_payment()
 	{
-		
+
 		$flash = Flash::Instance();
-		
+
 		$errors = array();
 
 		if (!$this->checkParams('CBTransaction'))
 		{
 			sendBack();
 		}
-		
+
 		$data = $this->_data['CBTransaction'];
 
 		if (isset($this->_data['PLTransaction']['plmaster_id']))
 		{
 			$data['plmaster_id'] = $this->_data['PLTransaction']['plmaster_id'];
-			
+
 			$company = DataObjectFactory::Factory('PLSupplier');
 			$company->load($data['plmaster_id']);
-			
+
 			if (!$company->isLoaded())
 			{
 				$this->dataError('Cannot find Supplier');
 				sendBack();
 			}
-			
+
 			$data['payment_term_id'] = $company->payment_term_id;
 		}
-			
+
 		if ($data['net_value']>0)
 		{
-			
+
 			$result = PLTransaction::saveTransaction($data, $errors);
-			
+
 			if ($result!==false)
 			{
 				$flash->addMessage('Payment saved');
-				
+
 				if (isset($this->_data['saveAnother']))
 				{
 					$this->context['plmaster_id'] = $data['plmaster_id'];
@@ -278,16 +277,16 @@ class PlsuppliersController extends LedgerController
 		{
 			$errors[]='Payment must be greater than zero';
 		}
-		
+
 		$flash->addErrors($errors);
-		
+
 		if (isset($data['plmaster_id']) && !empty($data['plmaster_id']))
 		{
 			$this->_data['plmaster_id']=$data['plmaster_id'];
 		}
-		
+
 		$this->refresh();
-		
+
 	}
 
 	public function periodicpayments ()
@@ -296,59 +295,59 @@ class PlsuppliersController extends LedgerController
 				,'index'
 				,'cashbook'
 				,array('source'=>'PP'));
-		
+
 	}
-	
+
 	public function allocate()
 	{
-		
+
 		if (!$this->loadData())
 		{
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$supplier = $this->_uses[$this->modeltype];
 
 		$transaction	= DataObjectFactory::Factory('PLTransaction');
 		$transactions	= new PLTransactionCollection($transaction, 'pl_allocation_overview');
-		
+
 		$sh = new SearchHandler($transactions,false);
 
 		$db=DB::Instance();
 		$sh->addConstraint(new Constraint('status','in','('.$db->qstr($transaction->open()).','.$db->qstr($transaction->partPaid()).')'));
 		$sh->addConstraint(new Constraint('plmaster_id','=',$supplier->id));
-		
+
 		$sh->setOrderby(array('supplier', 'our_reference'));
 		$transactions->load($sh);
-		
+
 		$this->view->set('allocated_total',0);
-		
+
 		$this->view->set('transactions',$transactions);
 		$this->view->set('no_ordering',true);
-		
+
 	}
-	
+
 	public function save_allocation()
 	{
-		
+
 		if (!$this->loadData())
 		{
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$db=DB::Instance();
 		$db->StartTrans();
-		
+
 		$flash = Flash::Instance();
-		
+
 		$errors=array();
 
 		$transactions = array();
-		
+
 		$allocated_total=0.00;
-		
+
 		foreach ($this->_data['PLTransaction'] as $id=>$data)
 		{
 			if (isset($data['allocate']))
@@ -357,27 +356,27 @@ class PlsuppliersController extends LedgerController
 				$transactions[$id]	= bcadd($data['os_value'], 0);
 				$allocated_total	= bcadd($allocated_total, $data['os_value']);
 			}
-			
+
 			// Save settlement discount if present?
 			if ($data['settlement_discount']>0 && isset($data['include_discount']))
 			{
 				// Add back the settlement discount to the transaction value
 				$transactions[$id]	= bcadd($data['settlement_discount'], $transactions[$id]);
 				// Create GL Journal for settlement discount
-				
+
 				// TODO: Check if need to create a PL transaction for the discount
 				// and add id=>value pair to $transactions
 				$pltransaction = DataObjectFactory::Factory('PLTransaction');
-				
+
 				$pltransaction->load($id);
-				
+
 				$discount = array();
-				
+
 				$discount['gross_value'] = $discount['net_value'] = $data['settlement_discount'];
-				
+
 				$discount['glaccount_id']	= $data['pl_discount_glaccount_id'];
 				$discount['glcentre_id']	= $data['pl_discount_glcentre_id'];
-				
+
 				$discount['transaction_date']	= date(DATE_FORMAT);
 				$discount['tax_value']			= '0.00';
 				$discount['source']				= 'P';
@@ -392,7 +391,7 @@ class PlsuppliersController extends LedgerController
 				$discount['plmaster_id']		= $pltransaction->plmaster_id;
 
 				$pldiscount = PLTransaction::Factory($discount, $errors, 'PLTransaction');
-				
+
 				if ($pldiscount && $pldiscount->save('', $errors) && $pldiscount->saveGLTransaction($discount, $errors))
 				{
 					$transactions[$pldiscount->{$pldiscount->idField}]	= bcadd($discount['net_value'], 0);
@@ -402,11 +401,11 @@ class PlsuppliersController extends LedgerController
 					$errors[] = 'Errror saving PL Transaction Discount : '.$db->ErrorMsg();
 					$flash->addErrors($errors);
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		if(count($transactions)==0)
 		{
 			$flash->addError('You must select at least one transaction');
@@ -427,101 +426,101 @@ class PlsuppliersController extends LedgerController
 					  ,array('id'=>$this->_data['id']));
 			}
 		}
-		
-		$flash->addErrors($errors);	
+
+		$flash->addErrors($errors);
 		$db->FailTrans();
 		$db->CompleteTrans();
-		
+
 		$this->allocate();
 		$this->view->set('allocated_total', $allocated_total);
-		
+
 		$this->setTemplatename('allocate');
 	}
 
 	public function inquery_transactions()
 	{
-		
+
 		if (!$this->loadData())
 		{
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$supplier = $this->_uses[$this->modeltype];
-		
+
 		$transaction	= DataObjectFactory::Factory('PLTransaction');
 		$transactions	= new PLTransactionCollection($transaction);
-		
+
 		$db = DB::Instance();
 		$transactions->orderby=array('supplier', 'our_reference');
-		
+
 		$sh = $this->setSearchHandler($transactions);
 		$sh->addConstraint(new Constraint('status', '=', $transaction->Query()));
 		$sh->addConstraint(new Constraint('plmaster_id', '=', $supplier->id));
-		
+
 		parent::index($transactions, $sh);
-		
+
 		$this->view->set('ledger_account', $supplier);
 		$this->view->set('collection', $transactions);
-		
+
 		$this->view->set('clickaction', 'view');
 		$this->view->set('clickcontroller', 'pltransactions');
 		$this->view->set('invoice_module', 'purchase_invoicing');
 		$this->view->set('invoice_controller', 'pinvoices');
-		
+
 		$this->_templateName = $this->getTemplateName('view_ledger_trans');
-		
+
 	}
-	
+
 	public function outstanding_transactions()
 	{
-		
+
 		if (!$this->loadData())
 		{
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$supplier = $this->_uses[$this->modeltype];
-		
+
 		$category = DataObjectFactory::Factory('LedgerCategory');
 		$categories = $category->checkCompanyUsage($supplier->company_id);
-		
+
 		// Check for Sales Ledger account and Contra Control account
 		$glparams = DataObjectFactory::Factory('GLParams');
-		
+
 		// Does this PL Supplier also have a SL Customer account
 		// and does the Contras Control Account also exist
 		// if so, then allow contras
 		$can_contra = (isset($categories['SL']['exists'])
 						&& $categories['SL']['exists']
 						&& $glparams->contras_control_account() != FALSE);
-		
+
 		$this->view->set('can_contra', $can_contra);
-		
+
 		$transaction	= DataObjectFactory::Factory('PLTransaction');
 		$transactions	= new PLTransactionCollection($transaction);
-		
+
 		$db = DB::Instance();
 		$transactions->orderby=array('supplier', 'our_reference');
-		
+
 		$sh = $this->setSearchHandler($transactions);
 		$sh->addConstraint(new Constraint('status', 'in', '(' . $db->qstr($transaction->open()) . ',' . $db->qstr($transaction->partPaid()) . ')'));
 		$sh->addConstraint(new Constraint('plmaster_id', '=', $supplier->id));
-		
+
 		parent::index($transactions, $sh);
-		
+
 		if ($can_contra)
 		{
 			// create session object to handle paged data input
 			$contras_sessionobject = new SessionData('pl_contras');
-			
+
 			if (!$contras_sessionobject->PageDataExists())
 			{
 				// session object does not exist so register it
 				$contras_sessionobject->registerPageData(array('os_value', 'contra'));
 			}
-			
+
 			// Check for form input due to paging or ordering
 			if (isset($this->_data['PLTransaction']))
 			{
@@ -539,9 +538,9 @@ class PlsuppliersController extends LedgerController
 			}
 
 			$contras_data = $contras_sessionobject->getPageData($errors);
-			
+
 			$contra_total = 0;
-			
+
 			foreach ($contras_data as $value)
 			{
 				if (isset($value['contra']) && $value['contra'])
@@ -549,24 +548,24 @@ class PlsuppliersController extends LedgerController
 					$contra_total += $value['os_value'];
 				}
 			}
-			
+
 			$this->view->set('contra_total', $contra_total);
-			
+
 			$this->view->set('page_data', $contras_data);
 		}
-		
+
 		$this->view->set('ledger_account', $supplier);
 		$this->view->set('collection', $transactions);
-		
+
 		$this->view->set('clickaction', 'view');
 		$this->view->set('clickcontroller', 'pltransactions');
 		$this->view->set('invoice_module', 'purchase_invoicing');
 		$this->view->set('invoice_controller', 'pinvoices');
-		
+
 		$this->_templateName = $this->getTemplateName('view_ledger_trans');
-		
+
 	}
-	
+
 	public function save_contras()
 	{
 		if (!$this->loadData())
@@ -574,28 +573,28 @@ class PlsuppliersController extends LedgerController
 			$this->dataError();
 			sendBack();
 		}
-	
+
 		$db = DB::Instance();
 		$db->StartTrans();
-	
+
 		$flash = Flash::Instance();
-	
+
 		$errors = array();
-	
+
 		$transactions = array();
-	
+
 		$contras_sessionobject = new SessionData('pl_contras');
-		
+
 		foreach ($this->_data['PLTransaction'] as $id=>$data)
 		{
 			$data['contra'] = (isset($data['contra']) && $data['contra']=='on');
 			$contras_sessionobject->updatePageData($id, $data, $errors);
 		}
-		
+
 		$contra_total = (isset($this->_data['contra_total']))?$this->_data['contra_total']:'0.00';
-		
+
 		$contra_sum = 0;
-		
+
 		foreach ($contras_sessionobject->getPageData($errors) as $id=>$data)
 		{
 			if (isset($data['contra']) && $data['contra'] == 'on')
@@ -604,9 +603,9 @@ class PlsuppliersController extends LedgerController
 				$transactions[$id]	= bcadd($data['os_value'], 0);
 				$contra_sum			= bcadd($contra_sum, $data['os_value']);
 			}
-				
+
 		}
-		
+
 		if(count($transactions)==0)
 		{
 			$errors[] = 'You must select at least one transaction';
@@ -615,7 +614,7 @@ class PlsuppliersController extends LedgerController
 		{
 			$pl_journal_seq = $db->GenID('pl_journals_id_seq');
 			$sl_journal_seq = $db->GenID('sl_journals_id_seq');
-			
+
 			// Create the PL and SL contra journals
 			$pltransaction = DataObjectFactory::Factory('PLTransaction');
 
@@ -624,12 +623,12 @@ class PlsuppliersController extends LedgerController
 			$plcontra = array();
 
 			$plcontra['gross_value'] = $plcontra['net_value'] = bcmul($contra_sum, -1);
-			
+
 			$glparams = DataObjectFactory::Factory('GLParams');
-			
+
 			$plcontra['glaccount_id']		= $glparams->contras_control_account();
 			$plcontra['glcentre_id']		= $glparams->balance_sheet_cost_centre();
-			
+
 			$plcontra['transaction_date']	= date(DATE_FORMAT);
 			$plcontra['tax_value']			= '0.00';
 			$plcontra['source']				= 'P';
@@ -638,14 +637,14 @@ class PlsuppliersController extends LedgerController
 			$plcontra['currency_id']		= $this->_data['PLSupplier']['currency_id'];
 			$plcontra['rate']				= $this->_data['PLSupplier']['rate'];
 			$plcontra['payment_term_id']	= $this->_data['PLSupplier']['payment_term_id'];
-			
+
 			$slcontra = $plcontra;
-			
+
 			$plcontra['plmaster_id']		= $this->_data['PLSupplier']['id'];
 			$plcontra['description']		= 'Contra Purchase Ledger - SL Ref:'.$sl_journal_seq;
-			
+
 			$pltrans = PLTransaction::Factory($plcontra, $errors, 'PLTransaction');
-						
+
 			if ($pltrans && $pltrans->save('', $errors) && $pltrans->saveGLTransaction($plcontra, $errors))
 			{
 				$transactions[$pltrans->{$pltrans->idField}]	= bcadd($plcontra['net_value'], 0);
@@ -655,82 +654,82 @@ class PlsuppliersController extends LedgerController
 				$errors[] = 'Errror saving PL Transaction Contra : '.$db->ErrorMsg();
 				$flash->addErrors($errors);
 			}
-			
+
 			$slcontra['source']			= 'S';
 			$slcontra['our_reference']	= $sl_journal_seq;
 			$slcontra['description']	= 'Contra Sales Ledger - PL Ref:'.$pl_journal_seq;
 			$slcontra['gross_value']	= $slcontra['net_value'] = bcmul($contra_sum, -1);
-			
+
 			$customer = DataObjectFactory::Factory('SLCustomer');
 			$customer->loadBy('company_id', $this->_data['PLSupplier']['company_id']);
-			
+
 			if ($customer->isLoaded())
 			{
 				$slcontra['slmaster_id'] = $customer->{$customer->idField};
-				
+
 				$sltrans = SLTransaction::Factory($slcontra, $errors, 'SLTransaction');
 			}
 			else
 			{
 				$sltrans = FALSE;
 			}
-			
+
 			if (!$sltrans || !$sltrans->save('', $errors) || !$sltrans->saveGLTransaction($slcontra, $errors))
 			{
 				$errors[] = 'Errror saving SL Transaction Contra : '.$db->ErrorMsg();
 				$flash->addErrors($errors);
 			}
-			
+
 		}
 		else
 		{
 			$errors[] = 'Transactions sum mismatch Sum: '.$contra_sum.' Control Total: '.$contra_total;
 		}
-		
+
 		if (count($errors)>0
 			|| !PLTransaction::allocatePayment($transactions, $this->_data['id'], $errors)
 			|| !PLAllocation::saveAllocation($transactions, null, $errors))
 		{
 			$db->FailTrans();
 		}
-		
+
 		if ($db->CompleteTrans())
 		{
 			$contras_sessionobject->clear();
-			
+
 			$flash->addMessage('Contra Transactions matched');
-			
+
 			sendTo($this->name
 				  ,'view'
 				  ,$this->_modules
 				  ,array('id'=>$this->_data['id']));
 		}
-	
+
 		$flash->addErrors($errors);
-	
+
 		$this->outstanding_transactions();
-	
+
 	}
-	
+
 	public function all_transactions()
 	{
-		
+
 		if (!$this->loadData())
 		{
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$supplier = $this->_uses[$this->modeltype];
-		
+
 		$transactions = new PLTransactionCollection();
 
 		$sh = $this->setSearchHandler($transactions);
-		
+
 		$sh->addConstraint(new Constraint('plmaster_id','=',$supplier->id));
-		
+
 		parent::index($transactions, $sh);
-				
+
 		$this->view->set('collection',$transactions);
 		$this->view->set('master_id', 'plmaster_id');
 
@@ -738,7 +737,7 @@ class PlsuppliersController extends LedgerController
 		$this->view->set('clickcontroller','pltransactions');
 		$this->view->set('invoice_module','purchase_invoicing');
 		$this->view->set('invoice_controller','pinvoices');
-		
+
 		$this->_templateName=$this->getTemplateName('view_ledger_trans');
 	}
 
@@ -748,12 +747,12 @@ class PlsuppliersController extends LedgerController
 		$errors=array();
 		$flash=Flash::Instance();
 		$db=DB::Instance();
-		
+
 		if (!$this->checkParams($this->modeltype))
 		{
 			sendBack();
 		}
-		
+
 		$company = DataObjectFactory::Factory('Company');
 		$company->load($this->_data[$this->modeltype]['company_id']);
 
@@ -772,7 +771,7 @@ class PlsuppliersController extends LedgerController
 		{
 			$this->_data[$this->modeltype]['email_remittance_id']=NULL;
 		}
-		
+
 		if(parent::save_model($this->modeltype, $this->_data[$this->modeltype], $errors))
 		{
 			sendTo($this->name, 'view', $this->_modules,array('id'=>$this->saved_model->id));
@@ -790,24 +789,24 @@ class PlsuppliersController extends LedgerController
 		{
 			$this->_data['id']=$this->_data[$this->modeltype]['id'];
 		}
-		
+
 		$this->refresh();
-		
+
 	}
 
 	public function view()
 	{
-		
+
 		if (!$this->loadData())
 		{
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$supplier=$this->_uses[$this->modeltype];
 
 		$flash=Flash::Instance();
-		
+
 		if(!$supplier->isLoaded())
 		{
 			$flash->addError('Error getting supplier');
@@ -815,12 +814,12 @@ class PlsuppliersController extends LedgerController
 				,'index'
 				,$this->_modules);
 		}
-		
+
 		$idField = $supplier->idField;
 		$idValue = $supplier->$idField;
-		
+
 		$sidebar=new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -862,7 +861,7 @@ class PlsuppliersController extends LedgerController
 				)
 			)
 		);
-		
+
 		$sidebarlist = array(
 				$supplier->name => array(
 					'tag'	=> $supplier->name,
@@ -936,7 +935,7 @@ class PlsuppliersController extends LedgerController
 									)
 				),
 		);
-				
+
 		if ($supplier->canDelete())
 		{
 			$sidebarlist['delete'] = array(
@@ -947,9 +946,9 @@ class PlsuppliersController extends LedgerController
 									,$idField		=> $idValue
 					)
 			);
-				
+
 		}
-		
+
 		if (!is_null($supplier->date_inactive))
 		{
 			$sidebarlist['inactive'] = array(
@@ -960,7 +959,7 @@ class PlsuppliersController extends LedgerController
 									,$idField		=> $idValue
 					)
 			);
-				
+
 		}
 		elseif (!$supplier->hasCurrentActivity())
 		{
@@ -972,13 +971,13 @@ class PlsuppliersController extends LedgerController
 									,$idField		=> $idValue
 					)
 			);
-				
+
 		}
-		
+
 		$sidebar->addList(
 			'currently_viewing', $sidebarlist
 		);
-		
+
 		$sidebar->addList(
 			'reports',
 			array(
@@ -994,7 +993,7 @@ class PlsuppliersController extends LedgerController
 				)
 			)
 		);
-		
+
 		$sidebar->addList(
 			'related_items',
 			array(
@@ -1083,9 +1082,9 @@ class PlsuppliersController extends LedgerController
 		$this->view->set('billing_address',$address);
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
+
 	}
-	
+
 	public function make_active()
 	{
 		if (!$this->loadData())
@@ -1093,41 +1092,41 @@ class PlsuppliersController extends LedgerController
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$customer=$this->_uses[$this->modeltype];
-		
+
 		$flash = Flash::Instance();
-		
-		$customer->date_inactive = null;		
-		
+
+		$customer->date_inactive = null;
+
 		$db = DB::Instance();
 		$db->StartTrans();
-		
+
 		if (!$customer->save())
 		{
 			$flash->addError('Error making customer inactive: '.$db->ErrorMsg());
 			$db->FailTrans();
 		}
-		
+
 		$db->CompleteTrans();
-			
+
 		sendBack();
-		
-	}	
+
+	}
 
 	public function make_inactive()
 	{
-		
+
 		if (!$this->loadData())
 		{
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$supplier=$this->_uses[$this->modeltype];
 
 		$flash = Flash::Instance();
-		
+
 		// Check to make sure no-one has updated the customer
 		if ($supplier->hasCurrentActivity())
 		{
@@ -1136,10 +1135,10 @@ class PlsuppliersController extends LedgerController
 		else
 		{
 			$supplier->date_inactive = fix_date(date(DATE_FORMAT));
-			
+
 			$db = DB::Instance();
 			$db->StartTrans();
-			
+
 			if (!$supplier->save())
 			{
 				$flash->addError('Error making supplier inactive: '.$db->ErrorMsg());
@@ -1150,12 +1149,12 @@ class PlsuppliersController extends LedgerController
 				// Now close off any open PO Product Lines for the Supplier
 				$poproductline	= DataObjectFactory::Factory('POProductline');
 				$poproductlines = new POProductlineCollection($poproductline);
-				
+
 				$sh = new SearchHandler($poproductlines, FALSE);
-				
+
 				$sh->addConstraintChain($poproductline->currentConstraint());
 				$sh->addConstraint(new Constraint('plmaster_id', '=', $supplier->id));
-				
+
 				if ($poproductlines->update('end_date', $supplier->date_inactive, $sh) !== FALSE)
 				{
 					$flash->addMessage('Supplier marked as inactive');
@@ -1165,17 +1164,17 @@ class PlsuppliersController extends LedgerController
 					$flash->addError('Error closing off supplier product lines: '.$db->ErrorMsg());
 					$db->FailTrans();
 				}
-				
+
 			}
-			
+
 			$db->CompleteTrans();
-			
+
 		}
-		
+
 		sendBack();
-		
+
 	}
-	
+
 	public function viewcontact_methods ()
 	{
 
@@ -1183,20 +1182,20 @@ class PlsuppliersController extends LedgerController
 		{
 			sendBack();
 		}
-		
+
 		$flash=Flash::Instance();
-		
+
 		$errors=array();
-		
+
 		$supplier=$this->_uses[$this->modeltype];
 		$supplier->load($this->_data['id']);
-		
+
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('payment', 'is', true));
-		
+
 		$this->view->set('contactdetails',$supplier->companydetail->getContactMethods('', $cc));
 	}
-	
+
 	/*
 	 * Ajax functions
 	 */
@@ -1207,32 +1206,32 @@ class PlsuppliersController extends LedgerController
 		{
 			if(!empty($this->_data['cb_account_id'])) { $_cb_account_id=$this->_data['cb_account_id']; }
 		}
-		
+
 		$rate = '';
-		
+
 		$glparams = DataObjectFactory::Factory('GLParams');
-		
+
 		$supplier = $this->getSupplier($_supplier_id);
-			
+
 		if ($supplier->isLoaded()
 			&& $glparams->base_currency() != $supplier->currency_id)
 		{
 			$rate = $supplier->currency_detail->rate;
 		}
-		
+
 		if (empty($rate) && !empty($_cb_account_id))
 		{
-			
+
 			$cb_account = DataObjectFactory::Factory('CBAccount');
 			$cb_account->load($_cb_account_id);
-			
+
 			if ($cb_account->isLoaded()
 				&& $glparams->base_currency() != $cb_account->currency_id)
 			{
 				$rate = $cb_account->currency_detail->rate;
 			}
 		}
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('value',$rate);
@@ -1242,13 +1241,13 @@ class PlsuppliersController extends LedgerController
 		{
 			return $rate;
 		}
-		
+
 	}
-	
+
 	public function getBankAccountId($_id = '')
 	{
 		// Used by Ajax to return Currency after selecting the Supplier
-		
+
 		$value='';
 
 		$supplier = $this->getSupplier($_id);
@@ -1257,7 +1256,7 @@ class PlsuppliersController extends LedgerController
 		{
 			$value = $supplier->cb_account_id;
 		}
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('value',$value);
@@ -1268,37 +1267,37 @@ class PlsuppliersController extends LedgerController
 			return $value;
 		}
 	}
-	
+
 	public function getbankAccounts($_supplier_id = '')
 	{
 		// Used by Ajax to return list of allowed bank accounts after selecting the Customer
-		
+
 		$cbaccounts = array();
 		$cbaccount_id = '';
-		
+
 		$supplier = $this->getSupplier($_supplier_id);
-		
+
 		if ($supplier->isLoaded())
 		{
 			$currency_id	= $supplier->currency_id;
 			$cbaccount_id	= $supplier->cb_account_id;
-			
+
 			$cc = new ConstraintChain();
-			
+
 			$glparams = DataObjectFactory::Factory('GLParams');
 			$base_currency_id = $glparams->base_currency();
-			
+
 			if ($currency_id != $base_currency_id)
 			{
 				$cc->add(new Constraint('currency_id', 'in', '('.$currency_id.','.$base_currency_id.')'));
 			}
-			
+
 			$cbaccount = DataObjectFactory::Factory('CBAccount');
-			
+
 			$cbaccounts = $cbaccount->getAll($cc);
-			
+
 		}
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('value',$cbaccount_id);
@@ -1310,22 +1309,22 @@ class PlsuppliersController extends LedgerController
 		{
 			return $cbaccounts;
 		}
-		
+
 	}
-	
+
 	public function getCurrencyId($_id = '')
 	{
 		// Used by Ajax to return Currency after selecting the Supplier
 
 		$currency='';
-		
+
 		$supplier = $this->getSupplier($_id);
 
 		if ($supplier->isLoaded())
 		{
 			$currency = $supplier->currency_id;
 		}
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('value',$currency);
@@ -1336,20 +1335,20 @@ class PlsuppliersController extends LedgerController
 			return $currency;
 		}
 	}
-	
+
 	public function getCurrency($_id = '')
 	{
 // Used by Ajax to return Currency after selecting the Supplier
-		
+
 		$currency='';
 
 		$supplier = $this->getSupplier($_id);
-		
+
 		if ($supplier->isLoaded())
 		{
 			$currency=$supplier->currency;
 		}
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('value',$currency);
@@ -1360,16 +1359,16 @@ class PlsuppliersController extends LedgerController
 			return $currency;
 		}
 	}
-	
+
 	public function getCompanyName($_id = '')
 	{
 		// Used by Ajax to return Company Name after selecting the Supplier
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			if(!empty($this->_data['id'])) { $_id=$this->_data['id']; }
 		}
-		
+
 		$name='';
 		if (!empty($_id))
 		{
@@ -1380,7 +1379,7 @@ class PlsuppliersController extends LedgerController
 				$name=$company->name;
 			}
 		}
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('value',$name);
@@ -1391,38 +1390,38 @@ class PlsuppliersController extends LedgerController
 			return $name;
 		}
 	}
-	
+
 	public function getCustomerData()
 	{
 	// this function will only ever be called via an AJAX request, no paramters needed
-		
+
 		$fields = explode(',',$this->_data['fields']);
-				
+
 		$supplier = $this->getSupplier();
-				
+
 		foreach($fields as $key=>$value)
 		{
 			$temp=$supplier->$value;
 			$output[$value]=array('data'=>$temp,'is_array'=>is_array($temp));
 		}
-		
+
 		$accounts = $this->getBankAccounts();
 		$output['cb_account_id']=array('data'=>$accounts,'is_array'=>is_array($accounts));
-		
+
 		$this->view->set('data',$output);
 		$this->setTemplateName('ajax_multiple');
-		
+
 	}
-	
+
 	public function getEmailAddresses($_id = '')
 	{
 		// Used by Ajax to return Email Addresses after selecting the Supplier
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			if(!empty($this->_data['id'])) { $_id=$this->_data['id']; }
 		}
-		
+
 		$emails=array(''=>'None');
 		if (!empty($_id)) {
 			$company = DataObjectFactory::Factory('Company');
@@ -1435,7 +1434,7 @@ class PlsuppliersController extends LedgerController
 				}
 			}
 		}
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('options',$emails);
@@ -1446,20 +1445,20 @@ class PlsuppliersController extends LedgerController
 			return $emails;
 		}
 	}
-	
+
 	public function getPaymentTypeId($_id = '')
 	{
 		// Used by Ajax to return Payment Type after selecting the Supplier
-		
+
 		$payment_type='';
-		
+
 		$supplier = $this->getSupplier($_id);
-			
+
 		if ($supplier->isLoaded())
 		{
 			$payment_type = $supplier->payment_type_id;
 		}
-			
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('value',$payment_type);
@@ -1470,27 +1469,27 @@ class PlsuppliersController extends LedgerController
 			return $payment_type;
 		}
 	}
-	
+
 	public function getRemittanceAddresses($_company_id = '')
 	{
 		// Used by Ajax to return Payment Type after selecting the Supplier
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			if(!empty($this->_data['id'])) { $_company_id = $this->_data['id']; }
 		}
-		
+
 		$addresses = array();
-		
+
 		if (!empty($_company_id))
 		{
 			$supplier = $this->_uses[$this->modeltype];
-			
+
 			$supplier->company_id = $_company_id;
-			
+
 			$addresses = $supplier->getRemittanceAddresses();
 		}
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('options', $addresses);
@@ -1500,17 +1499,17 @@ class PlsuppliersController extends LedgerController
 		{
 			return $addresses;
 		}
-		
+
 	}
-	
+
 	/*
 	 * Private functions
 	 */
 	private function cashbook_payment($current_type = __FUNCTION__)
 	{
-		
+
 		$supplier_list=$this->getSupplierList();
-		
+
 		if(isset($this->_data['plmaster_id']))
 		{
 			$supplier_id = $this->_data['plmaster_id'];
@@ -1521,79 +1520,79 @@ class PlsuppliersController extends LedgerController
 		}
 
 		$supplier = $this->getSupplier($supplier_id);
-		
+
 		if (!$supplier->isLoaded())
 		{
 			$flash = Flash::Instance();
 			$flash->addError('Error loading Supplier details');
-			sendBack();	
+			sendBack();
 		}
-		
+
 		$this->_data['currency_id']= $supplier->currency_id;
-		
+
 		$this->view->set('master_value', $supplier_id);
 		$this->view->set('company_id', $supplier->company_id);
 		$this->view->set('currency', $supplier->currency);
 		$this->view->set('payment_type', $supplier->payment_type_id);
-		
+
 		if (is_null($supplier->cb_account_id))
 		{
 			$cbaccount = CBAccount::getPrimaryAccount();
 			$supplier->cb_account_id = $cbaccount->{$cbaccount->idField};
 		}
-		
+
 		$this->view->set('bank_account', $supplier->cb_account_id);
 		$this->view->set('bank_accounts', $this->getbankAccounts($supplier_id));
 		$this->view->set('rate', $this->getAccountRate($supplier->id, $supplier->cb_account_id));
 		$this->view->set('companies', $supplier_list);
-		
+
 		$this->sidebar($current_type);
 		$this->_templateName=$this->getTemplateName('enter_payment');
-		
+
 	}
-	
+
 	private function getSupplier($_supplier_id = '')
 	{
-		
+
 		$supplier = $this->_uses[$this->modeltype];
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			if(!empty($this->_data['plmaster_id'])) { $_supplier_id = $this->_data['plmaster_id']; }
 		}
-		
+
 		if (!empty($_supplier_id))
 		{
 			if ($supplier->isLoaded())
 			{
 				$supplier = DataObjectFactory::Factory('PLSupplier');
 			}
-			
+
 			$supplier->load($_supplier_id);
 		}
 		elseif (!$supplier->isLoaded())
 		{
 			$this->loadData();
-			
+
 			$supplier = $this->_uses[$this->modeltype];
 		}
-		
+
 		return $supplier;
-		
+
 	}
-	
+
 	private function sidebar($current_type)
 	{
-		
+
 		$this->view->set('source', 'P');
 		$this->view->set('Transaction', $this->_uses['PLTransaction']);
 		$this->view->set('master_id', 'plmaster_id');
 		$this->view->set('master_label', 'Supplier');
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebarlist = array();
-		
+
 		$sidebarlist['all'] = array(
 					'tag'	=> 'View all suppliers',
 					'link'	=> array('modules'		=> $this->_modules
@@ -1601,7 +1600,7 @@ class PlsuppliersController extends LedgerController
 									,'action'		=> 'index'
 									)
 					);
-		
+
 		if ($current_type != 'make_payment')
 		{
 			$sidebarlist['make_payment'] = array(
@@ -1612,7 +1611,7 @@ class PlsuppliersController extends LedgerController
 									)
 					);
 		}
-		
+
 		if ($current_type != 'receive_refund')
 		{
 			$sidebarlist['receive_refund'] = array(
@@ -1623,7 +1622,7 @@ class PlsuppliersController extends LedgerController
 									)
 					);
 		}
-		
+
 		if ($current_type != 'enter_journal')
 		{
 			$sidebarlist[$type] = array(
@@ -1634,18 +1633,18 @@ class PlsuppliersController extends LedgerController
 									)
 					);
 		}
-		
+
 		$sidebar->addList('Actions', $sidebarlist);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-	
+
 	}
-	
+
 	private function indexSidebar()
 	{
 		$sidebarlist=array();
-		
+
 		$sidebarlist['actions']['all']=array(
 					'tag' => 'View All Suppliers',
 					'link'=>array('modules'		=> $this->_modules
@@ -1696,11 +1695,11 @@ class PlsuppliersController extends LedgerController
 									,'action'		=> 'index'
 									)
 					);
-		
+
 		return $sidebarlist;
-				
+
 	}
-	
+
 	/*
 	 * Protected functions
 	 */
@@ -1712,7 +1711,7 @@ class PlsuppliersController extends LedgerController
 	/* output functions */
 	public function suggestedPayments($status='generate')
 	{
-		
+
 		// build options array
 		$options=array('type'		=>	array('pdf'=>'',
 											  'xml'=>''
@@ -1725,34 +1724,34 @@ class PlsuppliersController extends LedgerController
 					   'filename'	=>	'suggestedpPayments_'.fix_date(date(DATE_FORMAT)),
 					   'report'		=>	'PL_SuggestedPayments'
 				);
-		  	
+
 		if(strtolower($status)=="dialog")
 		{
 			return $options;
 		}
-		
+
 		// load the model
 		$supplier_id='';
 		$suppliers = new PLSupplierCollection($this->_templateobject);
-		
+
 		if (isset($this->_data['id']))
 		{
 			$supplier_id=$this->_data['id'];
 		}
 		$suppliers->paymentsList($supplier_id);
-		
+
 		// generate the xml and add it to the options array
 		$options['xmlSource']=$this->generateXML(array('model'=>$suppliers,
 													   'relationship_whitelist'=>array('transactions')
 													  )
 												);
-		
+
 		// execute the print output function, echo the returned json for jquery
 		echo $this->constructOutput($this->_data['print'],$options);
 		exit;
-		
+
 	}
-	
+
 }
 
 // End of PlsuppliersController
