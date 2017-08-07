@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Multi Bin Balances Print uzLET now sends a CSRF token with its form data.
+- Javascript error when adding a new Periodic Payment.
 
 ### Changed
 - Move Sentry client config into uzERP config file.
