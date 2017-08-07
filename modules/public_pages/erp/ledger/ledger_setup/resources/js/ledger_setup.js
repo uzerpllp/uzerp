@@ -12,9 +12,9 @@
  */
 
 $(document).ready(function(){
-
-	/* ledger_setup -> periodicpayments -> new */
+	var action = '';
 	
+	/* ledger_setup -> periodicpayments -> new */
 
 	$("#ledger_setup-periodicpayments-new").ready(function(){
 		
