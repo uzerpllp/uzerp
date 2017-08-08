@@ -1,7 +1,7 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* 	$Revision: 1.3 $ *}
 {content_wrapper}
@@ -22,7 +22,7 @@
 				{else}
 					{select attribute='stitem_id' label='Stock Item' nonone=true options=$stitems}
 				{/if}
-				{input type='text' attribute='description' value=$description}{input type='checkbox' attribute="cascade_description_change" label="Update Product-line descriptions" value=true}
+				{input type='text' attribute='description' value=$description}{input type='checkbox' attribute="cascade_description_change" label="Update Product-line descriptions" value=false}
 				{select attribute='stuom_id' options=$uoms label='UoM'}
 				{select attribute='tax_rate_id' options=$tax_rates label='Tax Rate'}
 				{select attribute='glaccount_id' options=$gl_accounts label='GL Account'}
