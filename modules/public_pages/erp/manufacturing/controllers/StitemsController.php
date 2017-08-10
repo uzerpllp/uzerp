@@ -169,6 +169,12 @@ class StitemsController extends printController {
 			{
 				$product_data['prod_group_id'] = 'prod_group_id';
 			}
+
+			// Indicate that the user wants the description change cascaded to all
+		    // linked products and product lines
+			if (isset($this->_data[$this->modeltype]['cascade_description_change']) && $this->_data[$this->modeltype]['cascade_description_change'] === 'on') {
+			     $product_data['description'] = 'description';
+			}
 		}
 
 		if ((!$update_cost) && ($stitem->isLoaded()))
@@ -212,12 +218,21 @@ class StitemsController extends printController {
 					{
 						foreach ($product_data as $field=>$value)
 						{
-							$product->$field = $this->saved_model->$value;
+						    if ($value == 'description'){
+						         $product->description = $this->saved_model->item_code . ' - ' . $this->saved_model->description;
+						    } else {
+							     $product->$field = $this->saved_model->$value;
+						    }
 						}
 						if (!$product->save())
 						{
 							$errors[]='Error updating '.$type.' Product : '.$db->ErrorMsg();
 							$db->FailTrans();
+						}
+
+						// Update productline descriptions if requested
+						if (isset($this->_data[$this->modeltype]['cascade_description_change']) && $this->_data[$this->modeltype]['cascade_description_change'] === 'on' && count($errors) == 0) {
+						      $product->updateProductlineDescriptions($errors);
 						}
 					}
 				}

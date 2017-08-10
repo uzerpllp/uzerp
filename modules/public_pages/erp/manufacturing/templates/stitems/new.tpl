@@ -1,7 +1,7 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.17 $ *}
 {content_wrapper}
@@ -40,6 +40,9 @@
 			    </dl>
 			    <dl class="float-right">
 					{input type='text'  attribute='description' }
+					{if $self.action == 'edit'}
+						{input type='checkbox' attribute="cascade_description_change" label="Update Product/Product Line descriptions" value=false help="bob"}
+					{/if}
 					{if $inuse}
 						{view_data  attribute='type_code_id' label='Type Code'}
 						{view_data  attribute='comp_class' }
