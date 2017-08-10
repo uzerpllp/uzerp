@@ -5,361 +5,305 @@
  *
  *	Released under GPLv3 license; see LICENSE.
  **/
-
 class SOProductlineHeader extends DataObject
 {
 
-	protected $version = '$Revision: 1.10 $';
+    protected $version = '$Revision: 1.10 $';
 
-	protected $defaultDisplayFields = array(
-		'gl_account',
-		'gl_centre',
-		'stitem',
-		'uom_name',
-		'description',
-		'start_date',
-		'end_date',
-		'tax_rate',
-		'product_group',
-		'glaccount_id',
-		'glcentre_id',
-		'latest_cost',
-		'std_cost',
-		'stitem_id',
-		'stuom_id',
-		'prod_group_id'
-	);
+    protected $defaultDisplayFields = array(
+        'gl_account',
+        'gl_centre',
+        'stitem',
+        'uom_name',
+        'description',
+        'start_date',
+        'end_date',
+        'tax_rate',
+        'product_group',
+        'glaccount_id',
+        'glcentre_id',
+        'latest_cost',
+        'std_cost',
+        'stitem_id',
+        'stuom_id',
+        'prod_group_id'
+    );
 
-	public function __construct($tablename = 'so_product_lines_header')
-	{
+    public function __construct($tablename = 'so_product_lines_header')
+    {
 
-		// Register non-persistent attributes
+        // Register non-persistent attributes
 
-		// Contruct the object
-		parent::__construct($tablename);
+        // Contruct the object
+        parent::__construct($tablename);
 
-		// Set specific characteristics
-		$this->idField			= 'id';
-		$this->identifierField	= 'description';
-		$this->orderby			= 'description';
-		$this->setTitle('SO Product');
+        // Set specific characteristics
+        $this->idField = 'id';
+        $this->identifierField = 'description';
+        $this->orderby = 'description';
+        $this->setTitle('SO Product');
 
-		// Define relationships
-		$this->belongsTo('STItem', 'stitem_id', 'stitem');
-		$this->belongsTo('STuom', 'stuom_id', 'uom_name');
-		$this->belongsTo('GLAccount', 'glaccount_id', 'gl_account');
-		$this->belongsTo('GLCentre', 'glcentre_id', 'gl_centre');
-		$this->belongsTo('TaxRate', 'tax_rate_id', 'tax_rate');
-		$this->belongsTo('STProductgroup', 'prod_group_id', 'product_group');
-		$this->hasOne('STItem', 'stitem_id', 'item_detail');
+        // Define relationships
+        $this->belongsTo('STItem', 'stitem_id', 'stitem');
+        $this->belongsTo('STuom', 'stuom_id', 'uom_name');
+        $this->belongsTo('GLAccount', 'glaccount_id', 'gl_account');
+        $this->belongsTo('GLCentre', 'glcentre_id', 'gl_centre');
+        $this->belongsTo('TaxRate', 'tax_rate_id', 'tax_rate');
+        $this->belongsTo('STProductgroup', 'prod_group_id', 'product_group');
+        $this->hasOne('STItem', 'stitem_id', 'item_detail');
 
-		$this->hasMany('SOProductLine', 'lines', 'productline_header_id');
+        $this->hasMany('SOProductLine', 'lines', 'productline_header_id');
 
-		// Define field formats
+        // Define field formats
 
-		// set formatters
+        // set formatters
 
-		// Define validation
-		$this->validateUniquenessOf('stitem_id', NULL, TRUE);
-		$this->validateUniquenessOf('description');
+        // Define validation
+        $this->validateUniquenessOf('stitem_id', NULL, TRUE);
+        $this->validateUniquenessOf('description');
 
-		// Define enumerated types
+        // Define enumerated types
 
-		// set defaults
+        // set defaults
 
-		// Set link rules for 'belongs to' to appear in related view controller sidebar
-
-	}
+        // Set link rules for 'belongs to' to appear in related view controller sidebar
+    }
 
     /*
      * Update descriptions on linked productlines
      */
-	public function updateProductlineDescriptions(&$errors) {
-	    $db = DB::Instance();
-	    $db->StartTrans();
-	    $product_lines = new SOProductlineCollection(new SOProductLine());
-	    $sh = new SearchHandler($product_lines, false);
-	    $sh->addConstraint(new Constraint('productline_header_id', '=', $this->id));
-	    $product_lines->load($sh);
-
-	    if ($product_lines->count() > 0) {
-	        $updated_product_lines = $product_lines->update(
-	            ['description'],
-	            [$this->description],
-	            $sh);
-	        if ($updated_product_lines === false) {
-	            $errors[] = 'Error updating product lines : ' . $db->ErrorMsg();
-	            $db->FailTrans();
-	        }
-	    }
-    	$db->CompleteTrans();
-	}
-
-	public function getProductGroups ($stitem_id='')
-	{
-
-		if (empty($stitem_id) && $this->isLoaded())
-		{
-			$stitem_id=$this->stitem_id;
-		}
-
-		if (empty($stitem_id))
-		{
-			$pg = DataObjectFactory::Factory('STProductgroup');
-
-			return $pg->getAll();
-		}
-		else
-		{
-			$this->loadSTItem($stitem_id);
-
-			return array($this->item_detail->prod_group_id=>$this->item_detail->product_group);
-		}
-
-	}
-
-	public function getProductGroup()
-	{
-
-		if (is_null($this->stitem_id))
-		{
-			return $this->prod_group_id;
-		}
-		else
-		{
-			return $this->item_detail->prod_group_id;
-		}
-
-	}
-
-	public function getUomList ($stitem_id='')
-	{
-
-		if ($this->isLoaded() && empty($stitem_id))
-		{
-			$stitem_id=$this->stitem_id;
-		}
-
-		$this->loadSTItem($stitem_id);
-
-		return $this->item_detail->getUomList();
-
-	}
-
-	public function getEndDate ($stitem_id='')
-	{
-
-		if ($this->isLoaded() && empty($stitem_id))
-		{
-			$stitem_id=$this->stitem_id;
-		}
+    public function updateProductlineDescriptions(&$errors)
+    {
+        $db = DB::Instance();
+        $db->StartTrans();
+        $product_lines = new SOProductlineCollection(new SOProductLine());
+        $sh = new SearchHandler($product_lines, false);
+        $sh->addConstraint(new Constraint('productline_header_id', '=', $this->id));
+        $product_lines->load($sh);
+
+        if ($product_lines->count() > 0) {
+            $updated_product_lines = $product_lines->update(['description'], [$this->description], $sh);
+            if ($updated_product_lines === false) {
+                $errors[] = 'Error updating product lines : ' . $db->ErrorMsg();
+                $db->FailTrans();
+            }
+        }
+        $db->CompleteTrans();
+    }
+
+    public function getProductGroups($stitem_id = '')
+    {
+        if (empty($stitem_id) && $this->isLoaded()) {
+            $stitem_id = $this->stitem_id;
+        }
+
+        if (empty($stitem_id)) {
+            $pg = DataObjectFactory::Factory('STProductgroup');
+
+            return $pg->getAll();
+        } else {
+            $this->loadSTItem($stitem_id);
+
+            return array(
+                $this->item_detail->prod_group_id => $this->item_detail->product_group
+            );
+        }
+    }
+
+    public function getProductGroup()
+    {
+        if (is_null($this->stitem_id)) {
+            return $this->prod_group_id;
+        } else {
+            return $this->item_detail->prod_group_id;
+        }
+    }
+
+    public function getUomList($stitem_id = '')
+    {
+        if ($this->isLoaded() && empty($stitem_id)) {
+            $stitem_id = $this->stitem_id;
+        }
+
+        $this->loadSTItem($stitem_id);
+
+        return $this->item_detail->getUomList();
+    }
+
+    public function getEndDate($stitem_id = '')
+    {
+        if ($this->isLoaded() && empty($stitem_id)) {
+            $stitem_id = $this->stitem_id;
+        }
+
+        if (empty($stitem_id)) {
+            return null;
+        } else {
+            $this->loadSTItem($stitem_id);
+
+            return $this->item_detail->obsolete_date;
+        }
+    }
+
+    public function getPrice($stitem_id = '')
+    {
+        if ($this->isLoaded() && empty($stitem_id)) {
+            $stitem_id = $this->stitem_id;
+        }
+
+        if (empty($stitem_id)) {
+            return 0;
+        } else {
+            $this->loadSTItem($stitem_id);
+
+            return $this->item_detail->price;
+        }
+    }
+
+    public function getItem($stitem_id = '')
+    {
+        if ($this->isLoaded() && empty($stitem_id)) {
+            $stitem_id = $this->stitem_id;
+        }
+
+        if (empty($stitem_id)) {
+            return '';
+        } else {
+            $this->loadSTItem($stitem_id);
+
+            return $this->item_detail->getIdentifierValue();
+        }
+    }
 
-		if (empty($stitem_id))
-		{
-			return null;
-		}
-		else
-		{
-			$this->loadSTItem($stitem_id);
+    public function checkOrderlines($_productlines = array())
+    {
+        $order_items = array();
 
-			return $this->item_detail->obsolete_date;
-		}
+        if (! is_array($_productlines)) {
+            $_productlines = array(
+                $_productlines
+            );
+        }
 
-	}
+        if (count($_productlines) > 0) {
+            $orderline = DataObjectFactory::Factory('SOrderline');
 
-	public function getPrice($stitem_id='')
-	{
-		if ($this->isLoaded() && empty($stitem_id))
-		{
-			$stitem_id=$this->stitem_id;
-		}
+            $cc = new ConstraintChain();
+            $cc->add(new Constraint('productline_id', 'in', '(' . implode(',', $_productlines) . ')'));
 
-		if (empty($stitem_id))
-		{
-			return 0;
-		}
-		else
-		{
-			$this->loadSTItem($stitem_id);
+            $order_items = $orderline->getAll($cc);
+        }
 
-			return $this->item_detail->price;
-		}
+        return $order_items;
+    }
 
-	}
+    public function checkInvoicelines($_productlines = array())
+    {
+        $invoice_items = array();
 
-	public function getItem ($stitem_id='')
-	{
+        if (! is_array($_productlines)) {
+            $_productlines = array(
+                $_productlines
+            );
+        }
 
-		if ($this->isLoaded() && empty($stitem_id))
-		{
-			$stitem_id=$this->stitem_id;
-		}
+        if (count($_productlines) > 0) {
 
-		if (empty($stitem_id))
-		{
-			return '';
-		}
-		else
-		{
-			$this->loadSTItem($stitem_id);
+            $cc = new ConstraintChain();
+            $cc->add(new Constraint('productline_id', 'in', '(' . implode(',', $_productlines) . ')'));
 
-			return $this->item_detail->getIdentifierValue();
-		}
+            $invoiceline = DataObjectFactory::Factory('SInvoiceline');
 
-	}
+            $invoice_items = $invoiceline->getAll($cc, true, true);
+        }
 
-	public function checkOrderlines ($_productlines = array())
-	{
+        return $invoice_items;
+    }
 
-		$order_items = array();
+    public function getLineIds($_productline_header_id = '')
+    {
+        if ($this->isLoaded() && empty($_productline_header_id)) {
+            $_productline_header_id = $this->id;
+        }
 
-		if (!is_array($_productlines))
-		{
-			$_productlines = array($_productlines);
-		}
+        if (empty($_productline_header_id)) {
+            return false;
+        }
 
-		if (count($_productlines) > 0)
-		{
-			$orderline = DataObjectFactory::Factory('SOrderline');
+        $product_line = DataObjectFactory::Factory('SOProductline');
 
-			$cc = new ConstraintChain();
-			$cc->add(new Constraint('productline_id', 'in', '('.implode(',', $_productlines).')'));
+        $product_line->identifierField = 'id';
 
-			$order_items = $orderline->getAll($cc);
+        $cc = new ConstraintChain();
 
-		}
+        $cc->add(new Constraint('productline_header_id', '=', $_productline_header_id));
 
-		return $order_items;
-	}
+        return $product_line->getAll($cc);
+    }
 
-	public function checkInvoicelines ($_productlines = array())
-	{
+    public function end_lines()
+    {
+        $productlines = new SOProductlineCollection(DataObjectFactory::Factory('SOProductline'));
+        $sh = new SearchHandler($productlines, FALSE);
 
-		$invoice_items = array();
+        $sh->addConstraint(new Constraint('productline_header_id', '=', $this->id));
 
-		if (!is_array($_productlines))
-		{
-			$_productlines = array($_productlines);
-		}
+        $cc = new ConstraintChain();
+        $cc->add(new Constraint('end_date', 'is', 'NULL'));
+        $cc->add(new Constraint('end_date', '>', $this->end_date), 'OR');
 
-		if (count($_productlines) > 0)
-		{
+        $sh->addConstraint($cc);
 
-			$cc = new ConstraintChain();
-			$cc->add(new Constraint('productline_id', 'in', '('.implode(',', $_productlines).')'));
+        return $productlines->update('end_date', $this->end_date, $sh);
+    }
 
-			$invoiceline = DataObjectFactory::Factory('SInvoiceline');
+    public function save()
+    {
+        $db = DB::Instance();
+        $flash = Flash::Instance();
 
-			$invoice_items = $invoiceline->getAll($cc, true, true);
+        $db->StartTrans();
 
-		}
+        $result = parent::save();
 
-		return $invoice_items;
+        if (! $result) {
+            $flash->addError('Error saving product : ' . $db->ErrorMsg());
+            $db->FailTrans();
+        } else {
+            // Check for current orders/invoices that use this product lines
 
-	}
+            if (! is_null($this->end_date) && $this->end_date != 'null') {
+                $result = $this->end_lines();
 
-	public function getLineIds ($_productline_header_id = '')
-	{
+                // $result contains number of lines closed off;
+                // this may be zero, which is valid if there are no lines
+                // or all lines have been closed previously
+                if ($result !== false) {
+                    $flash->addMessage('Closed off ' . $result . ' open price' . (($result > 1) ? 's' : '') . ' at product end date');
+                } else {
+                    $flash->addError('Error checking end dates on prices : ' . $db->ErrorMsg());
+                    $db->FailTrans();
+                }
+            }
+        }
 
-		if ($this->isLoaded() && empty($_productline_header_id))
-		{
-			$_productline_header_id = $this->id;
-		}
+        $db->CompleteTrans();
 
-		if (empty($_productline_header_id))
-		{
-			return false;
-		}
+        // As above, $result will contain the number of lines updated (which could be zero)
+        // or will set to FALSE on error. Need to return TRUE or FALSE, with zero lines being TRUE!
+        return ($result !== false);
+    }
 
-		$product_line = DataObjectFactory::Factory('SOProductline');
-
-		$product_line->identifierField = 'id';
-
-		$cc = new ConstraintChain();
-
-		$cc->add(new Constraint('productline_header_id', '=', $_productline_header_id));
-
-		return $product_line->getAll($cc);
-
-	}
-
-	public function end_lines()
-	{
-
-		$productlines = new SOProductlineCollection(DataObjectFactory::Factory('SOProductline'));
-		$sh = new SearchHandler($productlines, FALSE);
-
-		$sh->addConstraint(new Constraint('productline_header_id', '=', $this->id));
-
-		$cc = new ConstraintChain();
-		$cc->add(new Constraint('end_date', 'is', 'NULL'));
-		$cc->add(new Constraint('end_date', '>', $this->end_date), 'OR');
-
-		$sh->addConstraint($cc);
-
-		return $productlines->update('end_date', $this->end_date, $sh);
-
-	}
-
-	public function save()
-	{
-		$db		= DB::Instance();
-		$flash	= Flash::Instance();
-
-		$db->StartTrans();
-
-		$result = parent::save();
-
-		if (!$result)
-		{
-			$flash->addError('Error saving product : '.$db->ErrorMsg());
-			$db->FailTrans();
-		}
-		else
-		{
-			// Check for current orders/invoices that use this product lines
-
-			if (!is_null($this->end_date) && $this->end_date!='null')
-			{
-				$result = $this->end_lines();
-
-				// $result contains number of lines closed off;
-				// this may be zero, which is valid if there are no lines
-				// or all lines have been closed previously
-				if ($result !== false)
-				{
-					$flash->addMessage('Closed off '.$result.' open price'.(($result>1)?'s':'').' at product end date');
-				}
-				else
-				{
-					$flash->addError('Error checking end dates on prices : '.$db->ErrorMsg());
-					$db->FailTrans();
-				}
-			}
-		}
-
-		$db->CompleteTrans();
-
-		// As above, $result will contain the number of lines updated (which could be zero)
-		// or will set to FALSE on error. Need to return TRUE or FALSE, with zero lines being TRUE!
-		return ($result !== false);
-
-	}
-
-	/*
-	 * Private Functions
-	 */
-	private function loadSTItem($stitem_id)
-	{
-
-		if (!is_null($this->stitem_id) && $this->stitem_id==$stitem_id)
-		{
-			return;
-		}
-		$this->stitem_id=$stitem_id;
-
-	}
-
+    /*
+     * Private Functions
+     */
+    private function loadSTItem($stitem_id)
+    {
+        if (! is_null($this->stitem_id) && $this->stitem_id == $stitem_id) {
+            return;
+        }
+        $this->stitem_id = $stitem_id;
+    }
 }
 
 // end of SOProductlineHeader
