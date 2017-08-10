@@ -71,6 +71,30 @@ class SOProductlineHeader extends DataObject
 
 	}
 
+    /*
+     * Update descriptions on linked productlines
+     */
+	public function updateProductlineDescriptions(&$errors) {
+	    $db = DB::Instance();
+	    $db->StartTrans();
+	    $product_lines = new SOProductlineCollection(new SOProductLine());
+	    $sh = new SearchHandler($product_lines, false);
+	    $sh->addConstraint(new Constraint('productline_header_id', '=', $this->id));
+	    $product_lines->load($sh);
+
+	    if ($product_lines->count() > 0) {
+	        $updated_product_lines = $product_lines->update(
+	            ['description'],
+	            [$this->description],
+	            $sh);
+	        if ($updated_product_lines === false) {
+	            $errors[] = 'Error updating product lines : ' . $db->ErrorMsg();
+	            $db->FailTrans();
+	        }
+	    }
+    	$db->CompleteTrans();
+	}
+
 	public function getProductGroups ($stitem_id='')
 	{
 

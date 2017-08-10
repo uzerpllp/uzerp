@@ -217,23 +217,7 @@ class poproductlineheadersController extends printController
 
         // Update descriptions on productlines
         if (isset($this->_data[$this->modeltype]['cascade_description_change']) && $this->_data[$this->modeltype]['cascade_description_change'] === 'on' && count($errors) == 0) {
-
-            $product_lines = new POProductlineCollection(new POProductLine());
-            $sh = new SearchHandler($product_lines, false);
-            $sh->addConstraint(new Constraint('productline_header_id', '=', $header->id));
-            $product_lines->load($sh);
-
-            if ($product_lines->count() > 0) {
-                $updated_product_lines = $product_lines->update([
-                    'description'
-                ], [
-                    $this->_data[$this->modeltype]['description']
-                ], $sh);
-                if ($updated_product_lines === false) {
-                    $errors[] = 'Error updating product lines : ' . $db->ErrorMsg();
-                    $db->FailTrans();
-                }
-            }
+            $this->saved_model->updateProductlineDescriptions($errors);
         }
         $db->CompleteTrans();
 
