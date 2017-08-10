@@ -24,7 +24,7 @@
 				{/if}
 				{input type='text' attribute='description' value=$description}
 				{if $self.action == 'edit'}
-					{input type='checkbox' attribute="cascade_description_change" label="Update Product-line descriptions" value=false help="bob"}
+					{input type='checkbox' attribute="cascade_description_change" label="Update Product-line descriptions" value=false}
 				{/if}
 				{select attribute='stuom_id' options=$uoms label='UoM'}
 				{select attribute='tax_rate_id' options=$tax_rates label='Tax Rate'}
