@@ -79,7 +79,10 @@ class POProductlineHeader extends DataObject
         $db->StartTrans();
         $product_lines = new POProductlineCollection(new POProductLine());
         $sh = new SearchHandler($product_lines, false);
-        $sh->addConstraint(new Constraint('productline_header_id', '=', $this->id));
+        $cc = new ConstraintChain();
+        $cc->add(new Constraint('productline_header_id', '=', $this->id));
+        $cc->add(currentDateConstraint());
+        $sh->addConstraintChain($cc);
         $product_lines->load($sh);
 
         if ($product_lines->count() > 0) {

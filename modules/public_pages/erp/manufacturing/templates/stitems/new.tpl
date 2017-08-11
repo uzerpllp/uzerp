@@ -40,8 +40,8 @@
 			    </dl>
 			    <dl class="float-right">
 					{input type='text'  attribute='description' }
-					{if $self.action == 'edit'}
-						{input type='checkbox' attribute="cascade_description_change" label="Update Product/Product Line descriptions" value=false help="bob"}
+					{if $self.action == 'edit' && ($model->getSOProductlineHeader()->isLoaded() || $model->getPOProductlineHeader()->isLoaded())}
+						{input type='checkbox' attribute="cascade_description_change" label="Update Product & Product Line descriptions" value=false}
 					{/if}
 					{if $inuse}
 						{view_data  attribute='type_code_id' label='Type Code'}
