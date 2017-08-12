@@ -159,7 +159,8 @@ class StitemsController extends printController
 
             // Indicate that the user wants the description change cascaded to all
             // linked products and product lines
-            if (isset($this->_data[$this->modeltype]['cascade_description_change']) && $this->_data[$this->modeltype]['cascade_description_change'] === 'on') {
+            if ((isset($this->_data[$this->modeltype]['cascade_description_change_so']) && $this->_data[$this->modeltype]['cascade_description_change_so'] === 'on')
+                || (isset($this->_data[$this->modeltype]['cascade_description_change_po']) && $this->_data[$this->modeltype]['cascade_description_change_po'] === 'on')) {
                 $product_data['description'] = 'description';
             }
         }
@@ -202,7 +203,11 @@ class StitemsController extends printController
                         }
 
                         // Update productline descriptions if requested
-                        if (isset($this->_data[$this->modeltype]['cascade_description_change']) && $this->_data[$this->modeltype]['cascade_description_change'] === 'on' && count($errors) == 0) {
+                        if (isset($this->_data[$this->modeltype]['cascade_description_change_so']) && $this->_data[$this->modeltype]['cascade_description_change_so'] === 'on' && $type == 'SO' && count($errors) == 0) {
+                            $product->updateProductlineDescriptions($errors);
+                        }
+
+                        if (isset($this->_data[$this->modeltype]['cascade_description_change_po']) && $this->_data[$this->modeltype]['cascade_description_change_po'] === 'on' && $type == 'PO' && count($errors) == 0) {
                             $product->updateProductlineDescriptions($errors);
                         }
                     }
