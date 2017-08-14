@@ -1,9 +1,9 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
-{* 	$Revision: 1.19 $ *}	
+{* 	$Revision: 1.19 $ *}
 {content_wrapper}
 	{form controller="companys" action="save"}
 		{with model=$Company->party}
@@ -40,6 +40,10 @@
 							{select attribute="type_id"}
 						{/view_section}
 					{/if}
+					{view_section heading="Additional"}
+							{input type='text'  attribute='text1' label='Text 1'}
+							{input type='text'  attribute='text2' label='Text 2'}
+					{/view_section}
 				</dl>
 				<dl id="view_data_right">
 					{view_section heading="contact_details"}

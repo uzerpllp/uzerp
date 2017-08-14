@@ -1,9 +1,9 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
-{* 	$Revision: 1.14 $ *}	
+{* 	$Revision: 1.14 $ *}
 {content_wrapper}
 	<div id="view_page" class="clearfix">
 		<dl class="float-left">
@@ -32,6 +32,10 @@
 				{view_data attribute="company_industry"}
 				{view_data attribute="company_type"}
 			{/if}
+			{view_section heading="Additional"}
+				{view_data attribute='text1' label='Text 1'}
+				{view_data attribute='text2' label='Text 2'}
+			{/view_section}
 		{/with}
 		</dl>
 		<dl class="float-right">
@@ -39,7 +43,7 @@
 				{with model=$Company->main_address->address}
 					{view_data attribute="street1"}
 					{view_data attribute="street2"}
-					{view_data attribute="street3"}	
+					{view_data attribute="street3"}
 					{view_data attribute="town"}
 					{view_data attribute="county"}
 					{view_data attribute="postcode"}
