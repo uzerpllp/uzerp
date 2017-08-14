@@ -6,12 +6,14 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Multi Bin Balances Print uzLET now sends a CSRF token with its form data.
 - Javascript error when adding a new Periodic Payment.
-- Posting supplier journal always fails with 'Cannot post journal to a control account'
+- Posting supplier journal always fails with 'Cannot post journal to a control account'.
+
+### Added
+- Update linked product and productline descriptions when editing Stock Item or SO/PO Product.
 
 ### Changed
 - Move Sentry client config into uzERP config file.
 - Allow user theme.css to have a suffix for browser cache-busting. e.g. add the date to the filename when changed -- theme-20170727.css.
-
 
 ## [1.8.2] 2017-07-14
 ### Fixed
