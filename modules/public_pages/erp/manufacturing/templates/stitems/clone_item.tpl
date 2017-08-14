@@ -1,7 +1,7 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.4 $ *}
 {content_wrapper}
@@ -34,6 +34,19 @@
 						<dt><label for="STItem_copy_uom_conversions">Copy UoM Conversions</label>:</dt>
 						<dd>
 							<input type="checkbox" id="STItem_copy_uom_conversions" name="STItem[copy_uom_conversions]">
+						</dd>
+					{/if}
+					{if $model->so_products->count()>0}
+						<dt><label for="STItem_copy_so_products">Copy SO products</label>:</dt>
+						<dd>
+							<input type="checkbox" id="STItem_copy_so_products" name="STItem[copy_so_products]">
+						</dd>
+					{/if}
+
+					{if $model->so_products->count()>0}
+						<dt><label for="STItem_copy_so_product_prices">Copy SO products</label>:</dt>
+						<dd>
+							<input type="checkbox" id="STItem_copy_so_product_prices" name="STItem[copy_so_product_prices]">
 						</dd>
 					{/if}
 		    	</dl>

@@ -297,9 +297,20 @@ class StitemsController extends printController
                         $cc->add(currentDateConstraint());
                     }
 
-                    $children = $do->getAll($cc);
 
-                    if (! empty($children)) {
+                    if (isset($so_product_id) && !is_null($so_product_id) && $do_name == 'SOProductLine') {
+                        $do = DataObjectFactory::Factory($do_name);
+                        $cc = new ConstraintChain();
+                        $cc->add(new Constraint('productline_header_id', '=', $so_product_id));
+                        if ($do->isField('start_date') && $do->isField('end_date')) {
+                            $cc->add(currentDateConstraint());
+                        }
+                        $children = $do->getAll($cc);
+                    } else {
+                        $children = $do->getAll($cc);
+                    }
+
+                    if (!empty($children)) {
                         foreach ($children as $child_id => $value) {
                             $child = DataObjectFactory::Factory($do_name);
 
@@ -314,7 +325,11 @@ class StitemsController extends printController
                                     $errors[] = 'Error getting identifier for new item';
                                 }
 
-                                $child->stitem_id = $stitem_id;
+                                if (isset($so_product_id) && !is_null($so_product_id) && $do_name == 'SOProductLine') {
+                                    $child->productline_header_id = $new_so_product_id;
+                                } else {
+                                    $child->stitem_id = $stitem_id;
+                                }
 
                                 $db->StartTrans();
 
@@ -326,6 +341,12 @@ class StitemsController extends printController
                                 }
 
                                 $db->CompleteTrans();
+
+                                if ($do_name == 'SOProductLineHeader') {
+                                    $so_product_id = $child_id;
+                                    $new_so_product_id = $test;
+                                }
+
                             } else {
                                 $errors[] = 'Failed to load ' . $do_name;
                                 break;
