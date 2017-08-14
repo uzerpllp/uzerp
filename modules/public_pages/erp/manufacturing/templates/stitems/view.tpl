@@ -1,7 +1,7 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.7 $ *}
 {content_wrapper}
@@ -19,6 +19,7 @@
 					{view_data label='Unit of Measure' attribute='uom_name'}
 					{view_data attribute='balance' label='Total Balance'}
 					{view_data attribute='currentBalance()' label='Available Balance'}
+					{view_data attribute='pickableBalance()' label='Pickable Stock'}
 					{view_data attribute='qty_decimals'}
 					{view_data attribute='batch_size' }
 					{view_data attribute='lead_time' }
