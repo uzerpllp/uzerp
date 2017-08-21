@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
     - Update linked product and productline descriptions when editing Stock Item or SO/PO Product.
     - Clone sales products and product lines with stock item
 - Free-text fields on Company Contact record (text1, text2), for user use.
+- Show pickable stock balance when viewing an item
 
 ### Changed
 - Move Sentry client config into uzERP config file.
