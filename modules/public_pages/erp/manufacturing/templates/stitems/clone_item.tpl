@@ -37,17 +37,21 @@
 						</dd>
 					{/if}
 					{if $model->so_products->count()>0}
-						<dt><label for="STItem_copy_so_products">Copy SO products</label>:</dt>
+						<dt><label for="STItem_copy_so_products">Copy SO product</label>:</dt>
 						<dd>
 							<input type="checkbox" id="STItem_copy_so_products" name="STItem[copy_so_products]">
 						</dd>
 					{/if}
 
 					{if $model->so_products->count()>0}
-						<dt><label for="STItem_copy_so_product_prices">Copy SO products</label>:</dt>
+						<dt><label for="STItem_copy_so_product_prices">Copy SO product lines</label>:</dt>
 						<dd>
 							<input type="checkbox" id="STItem_copy_so_product_prices" name="STItem[copy_so_product_prices]">
 						</dd>
+					{/if}
+
+					{if $model->so_products->count()>0}
+						{input type='date' attribute='pstart_date' label='Product Start Date' value=$smarty.now class="compulsory"}
 					{/if}
 		    	</dl>
 			</div>

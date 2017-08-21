@@ -302,6 +302,7 @@ class StitemsController extends printController
                         $do = DataObjectFactory::Factory($do_name);
                         $cc = new ConstraintChain();
                         $cc->add(new Constraint('productline_header_id', '=', $so_product_id));
+                        $cc->add(new Constraint('slmaster_id', '=', 'NULL'));
                         if ($do->isField('start_date') && $do->isField('end_date')) {
                             $cc->add(currentDateConstraint());
                         }
@@ -325,8 +326,15 @@ class StitemsController extends printController
                                     $errors[] = 'Error getting identifier for new item';
                                 }
 
+                                if ($do_name == 'SOProductLineHeader') {
+                                    $child->start_date = $this->_data[$this->modeltype]['pstart_date'];
+                                    $child->description = $this->_data[$this->modeltype]['description'];
+                                }
+
                                 if (isset($so_product_id) && !is_null($so_product_id) && $do_name == 'SOProductLine') {
                                     $child->productline_header_id = $new_so_product_id;
+                                    $child->description = $this->_data[$this->modeltype]['description'];
+                                    $child->start_date = $this->_data[$this->modeltype]['pstart_date'];
                                 } else {
                                     $child->stitem_id = $stitem_id;
                                 }
