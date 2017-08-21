@@ -13,6 +13,22 @@
 
 $(document).ready(function(){
 
+    /* manufacturing -> stitems -> clone_item */
+    
+    // Ensure copy product is selected with copy product lines
+    $('#STItem_copy_so_product_prices').on('click', function() {
+        if(this.checked) {
+            $('#STItem_copy_so_products').attr('checked', true);
+        }
+    });
+    
+    // Uncheck copy product lines when copy product us unchecked
+    $('#STItem_copy_so_products').on('click', function() {
+        if($('#STItem_copy_so_product_prices').prop("checked")) {            
+            $('#STItem_copy_so_product_prices').attr('checked', false);
+        }
+    });
+
 	/* manufacturing -> stitems -> new */
 
 	$("#STItem_comp_class","#manufacturing-stitems-new").live('change',function() {

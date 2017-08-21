@@ -253,6 +253,10 @@ class StitemsController extends printController
 
         $this->_data[$this->modeltype]['item_code'] = strtoupper($this->_data[$this->modeltype]['item_code']);
 
+        if ($this->_data[$this->modeltype]['copy_so_product_prices'] == 'on' && !isset($this->_data[$this->modeltype]['copy_so_products'])) {
+            $errors[] = 'Cannot copy prices without product';
+        }
+
         if ($stitem->item_code == $this->_data[$this->modeltype]['item_code']) {
             $errors[] = 'The Item Code must be Unique';
         } else {
@@ -390,6 +394,7 @@ class StitemsController extends printController
 
         $db->CompleteTrans();
 
+        $flash->addMessage('New item saved');
         sendTo($this->name, 'view', $this->_modules, array(
             'id' => $stitem_id
         ));
