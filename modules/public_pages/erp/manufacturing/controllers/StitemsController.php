@@ -257,6 +257,10 @@ class StitemsController extends printController
             $errors[] = 'Cannot copy prices without product';
         }
 
+        if (empty($this->_data[$this->modeltype]['pstart_date']) && (isset($this->_data[$this->modeltype]['copy_so_products']) || isset($this->_data[$this->modeltype]['copy_so_product_prices']))) {
+            $errors[] = 'A start date must be specified';
+        }
+
         if ($stitem->item_code == $this->_data[$this->modeltype]['item_code']) {
             $errors[] = 'The Item Code must be Unique';
         } else {
@@ -269,7 +273,6 @@ class StitemsController extends printController
             $stitem->std_ohd = 0;
             $stitem->std_osc = 0;
             $stitem->created = $stitem->autoHandle('created');
-            ;
             $stitem->createdby = $stitem->autoHandle('createdby');
 
             $test = $stitem->autoHandle($stitem->idField);
