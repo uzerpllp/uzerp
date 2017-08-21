@@ -9,7 +9,9 @@ All notable changes to this project will be documented in this file.
 - Posting supplier journal always fails with 'Cannot post journal to a control account'.
 
 ### Added
-- Update linked product and productline descriptions when editing Stock Item or SO/PO Product.
+- Product Management improvements
+    - Update linked product and productline descriptions when editing Stock Item or SO/PO Product.
+    - Clone sales products and product lines with stock item
 - Free-text fields on Company Contact record (text1, text2), for user use.
 
 ### Changed
