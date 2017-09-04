@@ -1,15 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.9] 2017-09-04
 
 ### Fixed
+
 - Multi Bin Balances Print uzLET now sends a CSRF token with its form data.
 - Javascript error when adding a new Periodic Payment.
 - Posting supplier journal always fails with 'Cannot post journal to a control account'.
 - Use customer currency in aged analysis on statements.
 
 ### Added
+
 - Product Management improvements
     - Update linked product and productline descriptions when editing Stock Item or SO/PO Product.
     - Clone sales products and product lines with stock item
@@ -17,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Show pickable stock balance when viewing an item
 
 ### Changed
+
 - Move Sentry client config into uzERP config file.
 - Allow user theme.css to have a suffix for browser cache-busting. e.g. add the date to the filename when changed -- theme-20170727.css.
 
@@ -312,6 +315,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.9]: https://github.com/uzerpllp/uzerp/compare/1.8.2...1.9
 [1.8.2]: https://github.com/uzerpllp/uzerp/compare/1.8.1...1.8.2
 [1.8.1]: https://github.com/uzerpllp/uzerp/compare/1.8...1.8.1
 [1.8]: https://github.com/uzerpllp/uzerp/compare/1.7.1...1.8
