@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Multi Bin Balances Print uzLET now sends a CSRF token with its form data.
 - Javascript error when adding a new Periodic Payment.
 - Posting supplier journal always fails with 'Cannot post journal to a control account'.
+- Use customer currency in aged analysis on statements.
 
 ### Added
 - Product Management improvements
