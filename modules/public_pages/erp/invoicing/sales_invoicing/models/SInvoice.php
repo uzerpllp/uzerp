@@ -74,7 +74,7 @@ class SInvoice extends Invoice
         $this->belongsTo('SOrder', 'sales_order_id', 'sales_order_number');
         $this->belongsTo('Currency', 'currency_id', 'currency');
         $this->belongsTo('Currency', 'twin_currency_id', 'twin');
-        $this->belongsTo('PaymentTerm', 'payment_term_id', 'payment');
+        $this->belongsTo('PaymentTerm', 'payment_term_id', 'payment_terms');
         $this->belongsTo('TaxStatus', 'tax_status_id', 'tax_status');
         $this->belongsTo('Person', 'person_id', 'person', null, "surname || ', ' || firstname");
         $this->belongsTo('Project', 'project_id', 'project');
