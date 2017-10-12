@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+- Correct payment terms belongsTo reference on SInvoice model. Prevents database error when adding display field.
+
 ## [1.9] 2017-09-04
 
 ### Fixed
