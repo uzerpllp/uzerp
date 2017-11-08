@@ -1168,7 +1168,7 @@ class GLTransaction extends DataObject
             $result = $glbalance->save();
 
             if ($result === false) {
-                $errors[] = 'Error updating GL Balance : ' . $$db->ErrorMsg();
+                $errors[] = 'Error updating GL Balance : ' . $db->ErrorMsg();
                 $db->FailTrans();
             }
         }

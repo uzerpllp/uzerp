@@ -416,7 +416,7 @@ class GltransactionheadersController extends printController
 
 		$header = $this->_uses[$this->modeltype];
 
-		//$errors = array();
+		$errors = array();
 
 		$flash = Flash::Instance();
 
