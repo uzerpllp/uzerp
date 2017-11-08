@@ -1,9 +1,9 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
-{* 	$Revision: 1.20 $ *}	
+{* 	$Revision: 1.20 $ *}
 {content_wrapper}
 	{advanced_search}
 	{form controller="porders" action="saveInvoice"}
@@ -20,55 +20,55 @@
 	{data_table class="uz-grid-table"}
 		<thead>
 			<tr>
-				<th class=right>Order Number</th>
-				<th class=right>GR Number</th>
-				<th class=right>Delivery Note</th>
+				<th>Order Number</th>
+				<th>GR Number</th>
+				<th>Delivery Note</th>
 				<th>Date Received</th>
-				<th width=25%>Description</th>
+				<th width="25%">Description</th>
 				<th>Item Code</th>
-				<th class=right>Qty Received</th>
-				<th class=right>UoM</th>
-				<th class=right>Order Value</th>
-				<th class=right>Currency</th>
-				<th class=right>Invoice Value</th>
-				<th align=center>Create Invoice?</th>
+				<th class="right">Qty Received</th>
+				<th class="right">UoM</th>
+				<th class="right">Order Value</th>
+				<th class="right">Currency</th>
+				<th class="right">Invoice Value</th>
+				<th align="center">Create Invoice?</th>
 			</tr>
 		</thead>
 		<tbody>
 			{foreach name=datagrid item=model from=$poreceivedlines}
 				{assign var=rowid value=$model->id}
 				<tr rel="{$rowid}" data-row-id="{$rowid}">
-					<td align=right>
+					<td>
 						{link_to module='purchase_order' controller='POrders' action='view' id=$model->order_id value=$model->order_number}
 					</td>
-					<td align=right>
+					<td>
 						{$model->gr_number}
 					</td>
-					<td align=right>
+					<td>
 						{$model->delivery_note}
 					</td>
 					<td>
 						{$model->received_date}
 					</td>
-					<td width=25%>
+					<td width="25%">
 						{$model->order_line->description}
 					</td>
 					<td>
 						{$model->stitem}
 					</td>
-					<td align=right>
+					<td align="right">
 						{$model->received_qty}
 					</td>
-					<td align=right>
+					<td align="right">
 						{$model->uom_name}
 					</td>
-					<td right>
+					<td align="right">
 						{$model->net_value}
 					</td>
-					<td align=right>
+					<td align="right">
 						{$model->currency}
 					</td>
-					
+
 					{if $selected_rows.$rowid !='' }
 						{assign var=net_value value=$selected_rows.$rowid}
 						{assign var=checked value=true}
@@ -76,8 +76,8 @@
 						{assign var=net_value value=$model->net_value }
 						{assign var=checked value=false}
 					{/if}
-					
-					<td align=right>
+
+					<td align="right">
 						{input type="hidden" attribute="previousvalue_$rowid" value=$net_value }
 						{input model=$model class="net_value numeric" type="text" attribute="saved_net_value" rowid="$rowid" number="$rowid" value=$net_value tags='none' nolabel=true}
 					</td>
@@ -91,10 +91,10 @@
 				</tr>
 			{/foreach}
 			<tr>
-				<td colspan=11></td>
+				<td colspan="11"></td>
 			</tr>
 			<tr>
-				<td colspan=10 align="right">
+				<td colspan="10" align="right">
 					Invoice Net Total
 				</td>
 				<td>
