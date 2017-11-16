@@ -26,6 +26,7 @@ var jsFiles = [
         'assets/js/lib/ajax.js',
         'assets/js/lib/print_dialog.js',
         'assets/js/lib/rules.js',
+	'assets/js/lib/click-info.js',
         // jQuery plugins
         'assets/js/vendor/uiBlock/uiBlock.js',
         'assets/js/vendor/superfish-1.4.8/hoverIntent.js',

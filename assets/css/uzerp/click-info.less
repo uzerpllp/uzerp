@@ -1,0 +1,77 @@
+/*
+* Display of additional information using jQueryUI tooltips
+* see: assets/js/lib/click-info.js)
+*/
+
+.click-info {
+    vertical-align: middle;
+    padding-left: 3px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  padding-left: 3px;
+  background-color: #333;
+
+  border-radius: 100%;  
+  -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
+  animation: sk-scaleout 1.0s infinite ease-in-out;
+}
+
+@-webkit-keyframes sk-scaleout {
+  0% { -webkit-transform: scale(0) }
+  100% {
+    -webkit-transform: scale(1.0);
+    opacity: 0;
+  }
+}
+
+@keyframes sk-scaleout {
+  0% { 
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 100% {
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+    opacity: 0;
+  }
+}
+
+.ui-tooltip-content, .ui-tooltip-content strong{
+    color: #fff;
+}
+
+.ui-tooltip-content {
+    margin: 5px;
+    line-height: 20px;
+}
+
+.ui-tooltip {
+    background: #666;
+    border: 4px solid #666;
+}
+
+.ui-tooltip:after, .ui-tooltip:before {
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.ui-tooltip:after {
+    border-color: rgba(102, 102, 102, 0);
+    border-top-color: #666;
+    border-width: 5px;
+    margin-left: -5px;
+}
+.ui-tooltip:before {
+    border-color: rgba(102, 102, 102, 0);
+    border-top-color: #666;
+    border-width: 11px;
+    margin-left: -11px;
+}
