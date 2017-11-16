@@ -62,7 +62,7 @@ class DataObject implements Iterator {
 
 	//	Where the identifierField is an array of fields this is the string used when concatenating the fields
 	public	$identifierFieldJoin	= ' - ';
-	
+
 	//  These fields will be removed on insert. The DB will fill them using a predefined sequence.
 	protected   $sequenceFields = array();
 
@@ -144,6 +144,7 @@ class DataObject implements Iterator {
 	 *
 	 */
 	protected $linkRules = array();
+	public $clickInfoData = false;
 
 	/**
 	 * Constructor
