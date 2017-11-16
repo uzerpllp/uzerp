@@ -1694,6 +1694,47 @@ abstract class Controller
         echo json_encode(empty($this->_data['monitor_name']) ? 0 : $_SESSION[$this->_data['monitor_name']]);
         exit();
     }
+
+
+    /**
+     */
+    public function clickInfo()
+    {
+        $this->checkRequest([
+            'get'
+        ], true);
+
+        $do = $this->_uses[$this->modeltype];
+        if (! $do->clickInfoData) {
+            header("HTTP/1.0 404 Not Found");
+            exit();
+        }
+
+        if (! $this->loadData()) {
+            $this->dataError();
+            sendBack();
+        }
+
+        $do = $this->_uses[$this->modeltype];
+
+        $payload = [];
+        foreach ($do->clickInfoData['fields'] as $field){
+            $data = $do->$field['name'];
+            if ($data !== null) {
+                $payload[$field['label']] = $data;
+            }
+        }
+        foreach ($do->clickInfoData['methods'] as $method){
+            $m = $method['name'];
+            $data = $do->$m();
+            if ($data !== null) {
+                $payload[$method['label']] = $data;
+            }
+        }
+        header('Content-type: application/json');
+        echo json_encode($payload);
+        exit();
+    }
 }
 
 // End of Controller
