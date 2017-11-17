@@ -1,7 +1,7 @@
 <?php
 
 /**
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
  *
  *	Released under GPLv3 license; see LICENSE.
  **/
@@ -9,7 +9,7 @@
 class GLTransactionHeader extends DataObject
 {
 
-	protected $version = '$Revision: 1.5 $';
+	protected $version = '$Revision: 1.4 $';
 
 	protected $defaultDisplayFields = array('docref'			=> 'Doc.Ref'
 											,'transaction_date'	=> 'Date'
@@ -148,12 +148,6 @@ class GLTransactionHeader extends DataObject
 		return $this->$method($sh, $ignore_accruals);
 	}
 
-	/**
-	 * Save Journal Transactions to the General Ledger
-	 *
-	 * @param array $errors textual error messages
-	 * @return boolean true on success, false otherwise
-	 */
 	public function post(&$errors = array())
 	{
 		$db = db::Instance();
@@ -174,27 +168,32 @@ class GLTransactionHeader extends DataObject
 
 		// Get all un-posted transactions
 		$this->NewTransactions();
+
 		$sh = new SearchHandler($this->transactions, false);
+
 		$sh->addConstraint($this->childConstraint());
+
 		$unposted = $this->transactions->load($sh, null, RETURN_ROWS);
 
 		// Save transactions to GL Transactions
 		$db->startTrans();
 
-		foreach ($unposted as $transaction) {
+		foreach ($unposted as $transaction)
+		{
 			unset($transaction['id']);
 
 			$transaction['transaction_date'] = un_fix_date($this->transaction_date);
 			$transaction['glperiods_id'] = $this->glperiods_id;
 
 			GLTransaction::setTwinCurrency($transaction);
+
 			$gltransaction = GLTransaction::Factory($transaction, $errors);
 
-			if (!$gltransaction || !$gltransaction->save())
+			if ($gltransaction == false || !$gltransaction->save())
 			{
 				$errors[] = 'Error saving journal transaction : '.$db->ErrorMsg();
 			}
-			elseif (!$gltransaction->updateBalance($errors))
+			elseif ($gltransaction == false || !$gltransaction->updateBalance($errors))
 			{
 				$errors[] = 'Error updating GL balance : '.$db->ErrorMsg();
 			}
@@ -204,13 +203,19 @@ class GLTransactionHeader extends DataObject
 				$transaction['glperiods_id'] = $this->accrual_period_id;
 				$transaction['comment'] = 'Reverse '.$transaction['comment'];
 				$transaction['value'] = bcmul($transaction['value'], -1);
-				$gltransaction = GLTransaction::Factory($transaction);
 
-				if (!$gltransaction->save())
+				$gltransaction = GLTransaction::Factory($transaction, $errors);
+
+				if ($gltransaction == false || !$gltransaction->save())
 				{
 					$errors[] = 'Error saving journal transaction : '.$db->ErrorMsg();
 				}
+				elseif ($gltransaction == false || !$gltransaction->updateBalance($errors))
+				{
+					$errors[] = 'Error updating GL balance : '.$db->ErrorMsg();
+				}
 			}
+
 		}
 
 		// Update the header status if no errors so far
