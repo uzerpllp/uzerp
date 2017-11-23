@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- Posted accrual journals not updating GL balances (regression).
 - Correct payment terms belongsTo reference on SInvoice model. Prevents database error when adding display field.
 - Show item description when creating invoice from GRN.
 
