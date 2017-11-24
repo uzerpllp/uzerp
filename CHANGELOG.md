@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.9.1] 2017-11-24
 
 ### Fixed
 - Posted accrual journals not updating GL balances (regression).
@@ -322,6 +322,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.9.1]: https://github.com/uzerpllp/uzerp/compare/1.9...1.9.1
 [1.9]: https://github.com/uzerpllp/uzerp/compare/1.8.2...1.9
 [1.8.2]: https://github.com/uzerpllp/uzerp/compare/1.8.1...1.8.2
 [1.8.1]: https://github.com/uzerpllp/uzerp/compare/1.8...1.8.1
