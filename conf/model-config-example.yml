@@ -11,3 +11,11 @@ Activity:
         - 'enddate'
     orderdir:
         - 'ASC'
+
+STItem:
+    ClickInfo:
+        fields:
+            text1: 'MF Category'
+            lead_time: 'Lead Time'
+        methods:
+            pickableBalance: 'Sales Stock'

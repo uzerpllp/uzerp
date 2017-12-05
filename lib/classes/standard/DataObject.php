@@ -196,6 +196,8 @@ class DataObject implements Iterator {
 		}
 
 		$this->getDefaultOrderby();
+		$this->loadModelConfig(FILE_ROOT . 'conf/model-config.yml');
+		$this->setClickInfo();
 
 		$this->setPolicyConstraint(get_class($this));
 
@@ -203,63 +205,86 @@ class DataObject implements Iterator {
 	}
 
     /**
-     * Set a custom orderby and orderdir from a YAML file
+     * Load custom model configuration from a yaml file
      *
-     * Setting an order in the YAML file will override
-     * the order set on the Model
-     *
-     * Example YAML:
-     *
-     *      ---
-     *      SOrder:
-     *          orderby:
-     *              - 'customer'
-     *              - 'order_number'
-     *          orderdir:
-     *              - 'DESC'
-     *              - 'DESC'
-     *
-     * @param string $yaml_file
-     * @throws ParseException
+     * @param string $yaml_file File name to load
      */
-    public function setCustomModelOrder($yaml_file = NULL) {
-        if (is_null($yaml_file)) {
-            return;
+	protected function loadModelConfig($yaml_file = NULL) {
+	    if (is_null($yaml_file)) {
+	        return;
+	    }
+
+	    $cache = Cache::Instance();
+	    $cache_id = 'model-config';
+	    $model_config	= $cache->get($cache_id);
+	    $flash = Flash::Instance();
+
+	    try {
+	        // if the cache key is empty, load it from the file
+	        if ($model_config === FALSE && file_exists($yaml_file)) {
+	            $model_config = Yaml::parse(file_get_contents($yaml_file));
+	            $cache->add($cache_id, $model_config);
+	        }
+	    } catch (ParseException $e) {
+	        $flash->addError('Unable to use model settings from ' . $yaml_file . ': ' . $e->getMessage());
+	    }
+	}
+
+	/**
+     * Get part of the custom model configuration by keyword
+     *
+     * @param string $key Keyword index of configuration part
+     */
+	protected function getModelConfig($key) {
+	    $cache = Cache::Instance();
+	    $cache_id = 'model-config';
+	    $model = get_class($this);
+	    $model_config = $cache->get($cache_id);
+
+	    if (isset($model_config[$model][$key])) {
+	        return $model_config[$model][$key];
+	    }
+	}
+
+	/**
+	 * Set configuration for ClickInfo
+	 *
+	 * Shows popover information against the field in UI data drids
+	 */
+	protected function setClickInfo() {
+	    $click_info = $this->getModelConfig('ClickInfo');
+
+        if (isset($click_info)) {
+            $click_info_data = [];
+            foreach($click_info['fields'] as $field => $label){
+                $click_info_data['fields'][$field] = $label;
+            }
+            foreach($click_info['methods'] as $method => $label){
+                $click_info_data['methods'][$method] = $label;
+            }
+            $this->clickInfoData = $click_info_data;
         }
+	}
 
-        // Load model sort overrides from YAML file
-        $cache = Cache::Instance();
-        $cache_id = 'custom_model_order';
+	/**
+	 * Set custom model ordering
+	 *
+	 * @throws ParseException
+	 */
+    protected function setCustomModelOrder() {
         $model = get_class($this);
-        $custom_order	= $cache->get($cache_id);
-        $flash = Flash::Instance();
+        $custom_order = $this->getModelConfig('ModelOrder');
 
-        try {
-            // if the cache key is empty, load it from the file
-            if ($custom_order === FALSE && file_exists($yaml_file)) {
-                $custom_order = Yaml::parse(file_get_contents($yaml_file));
-                foreach ($custom_order as $mod_order) {
-                    if (count(array_diff($mod_order['orderdir'], ['ASC', 'DESC'])) > 0) {
-                        throw new ParseException('invalid order direction specified');
-                    }
-                }
-                $cache->add($cache_id, $custom_order);
+        if (isset($custom_order)) {
+            $this->getDisplayFields();
+            if (count(array_diff($custom_order['orderby'], array_keys($this->_fields))) == 0) {
+                $this->orderby			= $custom_order['orderby'];
+                $this->orderdir			= $custom_order['orderdir'];
+                $this->orderoverride = TRUE;
+            } else {
+                $fields = implode(', ', array_diff($custom_order['orderby'], array_keys($this->_fields)));
+                throw new Exception("field(s) '${fields}' not found in ${model} model display fields");
             }
-
-            // if the current model matches a custom sort...
-            if (isset($custom_order[$model])) {
-                $this->getDisplayFields();
-                if (count(array_diff($custom_order[$model]['orderby'], array_keys($this->_fields))) == 0) {
-                    $this->orderby			= $custom_order[$model]['orderby'];
-                    $this->orderdir			= $custom_order[$model]['orderdir'];
-                    $this->orderoverride = TRUE;
-                } else {
-                    $fields = implode(', ', array_diff($custom_order[$model]['orderby'], array_keys($this->_fields)));
-                    throw new ParseException("field(s) '${fields}' not found in ${model} model display fields");
-                }
-            }
-        } catch (ParseException $e) {
-            $flash->addError('Unable to use custom model sort from ' . $yaml_file . ': ' . $e->getMessage());
         }
     }
 
@@ -3834,8 +3859,7 @@ class DataObject implements Iterator {
 
 	function getDefaultOrderby()
 	{
-
-	    $this->setCustomModelOrder(FILE_ROOT . 'conf/custom-model-order.yml');
+	    $this->setCustomModelOrder();
 
 		$ob			= $this->orderby;
 		$candidates	= array('position','index','title','name','subject','surname');

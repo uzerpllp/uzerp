@@ -1718,17 +1718,16 @@ abstract class Controller
         $do = $this->_uses[$this->modeltype];
 
         $payload = [];
-        foreach ($do->clickInfoData['fields'] as $field){
-            $data = $do->$field['name'];
+        foreach ($do->clickInfoData['fields'] as $name => $label){
+            $data = $do->$name;
             if ($data !== null) {
-                $payload[$field['label']] = $data;
+                $payload[$label] = $data;
             }
         }
-        foreach ($do->clickInfoData['methods'] as $method){
-            $m = $method['name'];
-            $data = $do->$m();
+        foreach ($do->clickInfoData['methods'] as $method => $label){
+            $data = $do->$method();
             if ($data !== null) {
-                $payload[$method['label']] = $data;
+                $payload[$label] = $data;
             }
         }
         header('Content-type: application/json');
