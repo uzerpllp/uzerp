@@ -25,9 +25,9 @@ class SoCostsTable extends UzerpMigration
             ->addColumn('time', 'decimal', ['scale'=>2,'default'=>0])
             ->addColumn('time_period', 'char')
             ->addColumn('usercompanyid', 'biginteger')
-            ->addColumn('lastupdated', 'timestamp', ['with time zone'=>FALSE, 'default'=>'CURRENT_TIMESTAMP'])
-            ->addColumn('alteredby', 'char' ['null' => true])
-            ->addColumn('created', 'timestamp', ['with time zone'=>FALSE, 'default'=>'CURRENT_TIMESTAMP'])
+            ->addColumn('lastupdated', 'timestamp', ['default'=>'CURRENT_TIMESTAMP'])
+            ->addColumn('alteredby', 'char', ['null' => true])
+            ->addColumn('created', 'timestamp', [ 'default'=>'CURRENT_TIMESTAMP'])
             ->addColumn('createdby', 'char', ['null' => true])
             ->addForeignKey('alteredby', 'users', 'username', ['constraint' => 'so_costs_alteredby_fkey','delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'])
             ->addForeignKey('createdby', 'users', 'username', ['constraint' => 'so_costs_createdby_fkey','delete'=> 'NO_ACTION', 'update'=> 'NO_ACTION'])
@@ -35,5 +35,6 @@ class SoCostsTable extends UzerpMigration
             ->addForeignKey('usercompanyid', 'system_companies', 'id', ['constraint' => 'so_costs_usercompanyid_fkey','delete'=> 'CASCADE', 'update'=> 'CASCADE'])
             ->addIndex(['product_header_id'], ['unique' => true,'name' => 'so_costs_so_product_header_id_key'])
             ->create();
+       $this->query("ALTER TABLE so_costs OWNER TO \"www-data\"");
     }
 }
