@@ -17,6 +17,7 @@ class SoCostsAddModuleComponentsAndPermissions extends UzerpMigration
     {
         // Add module_component rows
         $module = $this->fetchRow("SELECT id FROM modules WHERE name = 'costing'");
+        //var_dump( $module);
         $module_component_data = array(
             array(
                 'name' => 'socostscontroller',
@@ -25,7 +26,7 @@ class SoCostsAddModuleComponentsAndPermissions extends UzerpMigration
                 'location' => 'modules/public_pages/erp/costing/controllers/SocostsController.php',
                 'module_id' => $module['id'],
                 'createdby' => 'admin',
-                'title' => 'Sales Order Product Header Costs'
+                'title' => 'Sales Order Product Header Costs Controller'
             ),
             array(
                 'name' => 'socost',
@@ -34,16 +35,16 @@ class SoCostsAddModuleComponentsAndPermissions extends UzerpMigration
                 'location' => 'modules/public_pages/erp/costing/models/SOCost.php',
                 'module_id' => $module['id'],
                 'createdby' => 'admin',
-                'title' => 'Sales Order Product Header Costs'
+                'title' => 'Sales Order Product Header Costs Model'
             ),
             array(
                 'name' => 'socostcollection',
                 'type' => 'M',
                 'controller' => 'moduleobjects',
-                'location' => 'modules/public_pages/erp/order/purchase_order/controllers/SetupController.php',
+                'location' => 'modules/public_pages/erp/costing/models/SOCostCollection.php',
                 'module_id' => $module['id'],
                 'createdby' => 'admin',
-                'title' => 'modules/public_pages/erp/costing/models/SOCostCollection.php'
+                'title' => 'Sales Order Product Header Costs Collection'
             )
         );
         $table = $this->table('module_components');
@@ -58,7 +59,7 @@ class SoCostsAddModuleComponentsAndPermissions extends UzerpMigration
             array(
                 'permission' => 'socosts',
                 'type' => 'c',
-                'title' => 'Product Costs',
+                'title' => 'SO Product Costs',
                 'position' => 2,
                 'display' => TRUE,
                 'parent_id' => $permission_parent_id['id'],
