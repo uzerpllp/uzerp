@@ -6,7 +6,7 @@
  * @copyright (c) 2000-2017 uzERP LLP (support@uzerp.com). All rights reserved.
  **/
 
-class SocostsController extends Controller{
+class SocostsController extends printController{
 
     protected $version = '$Revision: 1.9 $';
     protected $_templateobject;
@@ -18,8 +18,12 @@ class SocostsController extends Controller{
 
     }
 
-     public function index(){
-        //global $smarty, $module, $submodule;
+    public function index(){
+        
+        $errors=array();
+
+        $this->setSearch('socostsSearch', 'useDefault');
+
         $this->view->set('clickaction', 'edit');
 
         parent::index(new SOCostCollection($this->_templateobject));
