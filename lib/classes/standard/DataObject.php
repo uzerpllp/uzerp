@@ -209,7 +209,7 @@ class DataObject implements Iterator {
      *
      * @param string $yaml_file File name to load
      */
-	protected function loadModelConfig($yaml_file = NULL) {
+	private function loadModelConfig($yaml_file = NULL) {
 	    if (is_null($yaml_file)) {
 	        return;
 	    }
@@ -235,7 +235,7 @@ class DataObject implements Iterator {
      *
      * @param string $key Keyword index of configuration part
      */
-	protected function getModelConfig($key) {
+	private function getModelConfig($key) {
 	    $cache = Cache::Instance();
 	    $cache_id = 'model-config';
 	    $model = get_class($this);
@@ -251,7 +251,7 @@ class DataObject implements Iterator {
 	 *
 	 * Shows popover information against the field in UI data drids
 	 */
-	protected function setClickInfo() {
+	private function setClickInfo() {
 	    $click_info = $this->getModelConfig('ClickInfo');
 
         if (isset($click_info)) {
@@ -269,20 +269,27 @@ class DataObject implements Iterator {
 	/**
 	 * Set custom model ordering
 	 *
-	 * @throws ParseException
+	 * @throws Exception
 	 */
-    protected function setCustomModelOrder() {
+    private function setCustomModelOrder() {
         $model = get_class($this);
         $custom_order = $this->getModelConfig('ModelOrder');
 
         if (isset($custom_order)) {
+            $sort_fields = [];
+            $sort_directions = [];
+            foreach ($custom_order as $field => $order_direction ) {
+                $sort_fields[] = $field;
+                $sort_directions[] = $order_direction;
+            }
+
             $this->getDisplayFields();
-            if (count(array_diff($custom_order['orderby'], array_keys($this->_fields))) == 0) {
-                $this->orderby			= $custom_order['orderby'];
-                $this->orderdir			= $custom_order['orderdir'];
+            if (count(array_diff($sort_fields, array_keys($this->_fields))) == 0) {
+                $this->orderby			= $sort_fields;
+                $this->orderdir			= $sort_directions;
                 $this->orderoverride = TRUE;
             } else {
-                $fields = implode(', ', array_diff($custom_order['orderby'], array_keys($this->_fields)));
+                $fields = implode(', ', array_diff($sort_fields, array_keys($this->_fields)));
                 throw new Exception("field(s) '${fields}' not found in ${model} model display fields");
             }
         }
