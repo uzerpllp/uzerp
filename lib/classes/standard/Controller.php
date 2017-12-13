@@ -1697,25 +1697,27 @@ abstract class Controller
 
 
     /**
+     * Returns JSON response for popover display in UI data grids
+     *
+     * @see: DataObject::setClickInfo
      */
     public function clickInfo()
     {
-        $this->checkRequest([
-            'get'
-        ], true);
+        // Only get requests with XHR header allowed
+        $this->checkRequest(['get'], true);
 
         $do = $this->_uses[$this->modeltype];
+
+        // If no clickInfoData is defined the visitor has no business here
         if (! $do->clickInfoData) {
             header("HTTP/1.0 404 Not Found");
             exit();
         }
 
-        if (! $this->loadData()) {
-            $this->dataError();
-            sendBack();
+        if (!$this->loadData()) {
+            $error['Error'] = 'Failed to load data';
+            json_reply($error);
         }
-
-        $do = $this->_uses[$this->modeltype];
 
         $payload = [];
         foreach ($do->clickInfoData['fields'] as $name => $label){
@@ -1730,9 +1732,7 @@ abstract class Controller
                 $payload[$label] = $data;
             }
         }
-        header('Content-type: application/json');
-        echo json_encode($payload);
-        exit();
+        json_reply($payload);
     }
 }
 
