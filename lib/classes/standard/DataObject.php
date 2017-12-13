@@ -209,7 +209,7 @@ class DataObject implements Iterator {
      *
      * @param string $yaml_file File name to load
      */
-	private function loadModelConfig($yaml_file = NULL) {
+	private function loadModelConfig($yaml_file = null) {
 	    if (is_null($yaml_file)) {
 	        return;
 	    }
@@ -221,7 +221,7 @@ class DataObject implements Iterator {
 
 	    try {
 	        // if the cache key is empty, load it from the file
-	        if ($model_config === FALSE && file_exists($yaml_file)) {
+	        if ($model_config === false && file_exists($yaml_file)) {
 	            $model_config = Yaml::parse(file_get_contents($yaml_file));
 	            $cache->add($cache_id, $model_config);
 	        }
@@ -249,7 +249,9 @@ class DataObject implements Iterator {
 	/**
 	 * Set configuration for ClickInfo
 	 *
-	 * Shows popover information against the field in UI data drids
+	 * Define fields and method results to be displayed
+	 *
+	 * @see Controller::clickInfo(
 	 */
 	private function setClickInfo() {
 	    $click_info = $this->getModelConfig('ClickInfo');
