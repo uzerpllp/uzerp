@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Click info provides a way of showing additional information to the user in uzERP’s grids without having to click through to the underlying data view. See: https://doc.uzerp.com/Setup/Model-Customisation#model-customisation_click-info.
 - Enable tagging of reports.
+- Add costs for SO Products that are not linked to a Stock Item, allows margin reporting against non-stocked products.
 
 ## [1.9.1] 2017-11-24
 
