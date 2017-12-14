@@ -1,41 +1,34 @@
 <?php
 
 /**
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *  Controller Class
  *
- *	Released under GPLv3 license; see LICENSE.
- **/
+ *  @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
+ *  @license GPLv3 or later
+ *  @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *  uzERP is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ */
 abstract class Controller
 {
 
     protected $version = '$Revision: 1.120 $';
-
     private $_action;
-
     protected $_uses = array();
-
     public static $accessControlled = false;
-
     public $_data = array();
-
     public $_templateName;
-
     public $modeltype;
-
     protected $saved_models = array();
-
     protected $saved_model = false;
-
     protected $relatedFields;
-
     protected $search;
-
     protected $sidebar;
-
     protected $name;
-
     protected $context = array();
-
     protected $_templateobject;
 
     /*
