@@ -255,14 +255,18 @@ class DataObject implements Iterator {
 	 */
 	private function setClickInfo() {
 	    $click_info = $this->getModelConfig('ClickInfo');
-
+        $model_fields = array_keys($this->getFields());
         if (isset($click_info)) {
             $click_info_data = [];
             foreach($click_info['fields'] as $field => $label){
-                $click_info_data['fields'][$field] = $label;
+                if (array_key_exists($field, $model_fields)) {
+                    $click_info_data['fields'][$field] = $label;
+                }
             }
             foreach($click_info['methods'] as $method => $label){
-                $click_info_data['methods'][$method] = $label;
+                if (method_exists($this, $method)) {
+                    $click_info_data['methods'][$method] = $label;
+                }
             }
             $this->clickInfoData = $click_info_data;
         }
