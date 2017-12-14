@@ -1,7 +1,7 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.13 $ *}
 {content_wrapper}
@@ -25,6 +25,7 @@
 				{view_data attribute='orderline_id' label='Sales Order Line'}
 			{/with}
 		</dl>
+		{if $transaction->status == 'R'}
 		<dl id="view_data_left">
 		{form controller=$controller action='printdocumentation'}
 			<input type="hidden" name="id" value="{$transaction->id}">
@@ -53,6 +54,7 @@
 			{/view_section}
 			{submit value='Output'}
 		{/form}
+		{/if}
 		</dl>
 	</div>
 {/content_wrapper}
