@@ -1,16 +1,7 @@
 ---
-SOrder:
-    orderby:
-        - 'order_date'
-        - 'order_number'
-    orderdir:
-        - 'DESC'
-        - 'DESC'
 Activity:
-    orderby:
-        - 'enddate'
-    orderdir:
-        - 'ASC'
+    ModelOrder:
+        enddate: 'ASC'
 
 STItem:
     ClickInfo:
