@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Remove the ability to print work order documents for an unreleased work order.
+- All cookies have flags set based on values from php.ini, e.g. secure, HttpOnly.
 
 ### Added
 - Click info provides a way of showing additional information to the user in uzERP’s grids without having to click through to the underlying data view. See: https://doc.uzerp.com/Setup/Model-Customisation#model-customisation_click-info.
