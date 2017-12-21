@@ -362,7 +362,18 @@ class system
 
         $this->setAction();
 
+        $cookie_params = session_get_cookie_params();
         $csrf = new \Riimu\Kit\CSRF\CSRFHandler();
+        // Use CSRF cookie storage and set the secure flag
+        // to the current value of session.cookie_secure in php.ini
+        $storage = new \Riimu\Kit\CSRF\Storage\CookieStorage(
+            $name = 'csrf_token',
+            $expire = 0,
+            $path = $cookie_params['path'],
+            $domain = $cookie_params['domain'],
+            $secure = $cookie_params['secure']
+        );
+        $csrf->setStorage($storage);
 
         // check that the csrf token is valid
         if (!$this->csrfValid()) {
@@ -373,7 +384,6 @@ class system
         $this->view->set('csrf_token', $csrf_token);
 
         if (isLoggedIn()) {
-
             $this->checkPermission();
         }
 
