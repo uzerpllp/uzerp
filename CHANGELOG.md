@@ -12,6 +12,9 @@ All notable changes to this project will be documented in this file.
 - Enable tagging of reports.
 - Add costs for SO Products that are not linked to a Stock Item, allows margin reporting against non-stocked products.
 
+## Changed
+- Useful utility files moved to /utils directory.
+
 ## [1.9.1] 2017-11-24
 
 ### Fixed
