@@ -73,7 +73,8 @@ class IndexController extends Controller
         }
 
         if (isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'true') {
-            setcookie("username", $this->username, time() + 3600);
+            $params = session_get_cookie_params();
+            setcookie("username", $this->username, time() + 3600, $params['path'], $params['domain'], $params['secure'], isset($params['httponly']));
         }
 
         $available = SystemCompanySettings::Get('access_enabled');
