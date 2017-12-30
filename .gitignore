@@ -4,7 +4,6 @@
 # npm/gulp
 node_modules/
 dist/
-package-lock.json
 
 # These should go in /var on production systems, but we'll leave them for now
 data/cache/**

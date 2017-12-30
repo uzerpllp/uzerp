@@ -1,17 +1,17 @@
 // gulpfile.js for uzERP
-// 
+//
 // Steve Blamey <blameys@blueloop.net>
 // License GPLv3 or later
 // Copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
 
 var gulp = require('gulp');
-var concat = require('gulp-concat');  
-var rename = require('gulp-rename');  
+var concat = require('gulp-concat');
+var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var less = require('gulp-less');
 var minify = require('gulp-clean-css');
 var merge = require('merge-stream');
-var hash = require('gulp-hash');
+var hash = require('gulp-hash-filename');
 var clean = require('gulp-clean');
 var wrap = require('gulp-wrap');
 
@@ -63,15 +63,15 @@ var jsFiles = [
         // uzLET js
         'modules/public_pages/**/resources/js/*.uzlet.js'
     ],
-    
+
     cssHead = [
         'assets/css/reset.css',
     ];
-    
+
     lessHead = [
         `${less_source}/theme.less`,
     ];
-    
+
     cssFiles = [
         // jQuery CSS files
         `${less_source_libs}/jquery.watermark-3.1.1/jquery.watermark.css`,
@@ -82,7 +82,7 @@ var jsFiles = [
         'assets/js/vendor/strengthify/strengthify.css',
         'modules/public_pages/**/resources/css/**/*.css',
     ];
-    
+
     lessFiles = [
         'modules/public_pages/**/*.less',
         '!modules/public_pages/login/resources/css/login.less'
@@ -90,7 +90,6 @@ var jsFiles = [
 
     jsDest = 'dist/js';
     cssDest = 'dist/css';
-    
 
 gulp.task('clean-scripts', function () {
   return gulp.src(['dist/js/**/*.js',], {read: false})
@@ -104,16 +103,17 @@ gulp.task('clean-styles', function () {
 });
 
 
-gulp.task('scripts', function() {  
-    return gulp.src(jsFiles)
+gulp.task('scripts', function() {
+    var stream =  gulp.src(jsFiles)
         .pipe(concat('scripts.js'))
         .pipe(rename('scripts.min.js'))
         .pipe(hash())
         .pipe(uglify())
         .pipe(gulp.dest(jsDest));
+    return stream;
 });
 
-gulp.task('dev-scripts', function() {  
+gulp.task('dev-scripts', function() {
     return gulp.src(jsFiles)
 	    .pipe(wrap('// <%= file.path %>\n<%= contents %>'))
         .pipe(concat('scripts.js'))
@@ -138,11 +138,11 @@ gulp.task('dev-module-scripts', function () {
 gulp.task('styles', function() {
     var cssHeadStream = gulp.src(cssHead)
         .pipe(concat('css-head.css'));
-        
+
     var lessHeadStream = gulp.src(lessHead)
         .pipe(less())
         .pipe(concat('less-head.less'));
-        
+
     var cssStream = gulp.src(cssFiles)
         .pipe(concat('css-files.css'));
 
@@ -164,12 +164,12 @@ gulp.task('dev-styles', function() {
     var cssHeadStream = gulp.src(cssHead)
 	    .pipe(wrap('/* <%= file.path %> */\n<%= contents %>'))
         .pipe(concat('css-head.css'));
-        
+
     var lessHeadStream = gulp.src(lessHead)
 	    .pipe(wrap('/* <%= file.path %> */\n<%= contents %>'))
         .pipe(less())
         .pipe(concat('less-head.less'));
-        
+
     var cssStream = gulp.src(cssFiles)
     	.pipe(wrap('/* <%= file.path %> */\n<%= contents %>'))
         .pipe(concat('css-files.css'));
@@ -188,7 +188,7 @@ gulp.task('dev-styles', function() {
 });
 
 
-gulp.task('login-styles', function() {  
+gulp.task('login-styles', function() {
     return gulp.src('modules/public_pages/login/resources/css/login.less')
         .pipe(less({paths: [`${less_source}`,]}))
         .pipe(hash())
