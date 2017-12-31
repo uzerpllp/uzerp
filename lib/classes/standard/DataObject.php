@@ -296,7 +296,7 @@ class DataObject implements Iterator
             $model_fields = array_keys($this->getFields());
             $click_info_data = [];
             foreach ($click_info['fields'] as $field => $label) {
-                if (array_key_exists($field, $model_fields)) {
+                if (in_array($field, $model_fields)) {
                     $click_info_data['fields'][$field] = $label;
                 }
             }
