@@ -1,6 +1,8 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
 ## [1.10] 2017-12-30
 
 ### Fixed
