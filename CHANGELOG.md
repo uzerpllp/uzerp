@@ -1,7 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.10.1] 2018-01-03
+
+### Fixed
+
+- Minor bug fixes.
 
 ## [1.10] 2017-12-30
 
@@ -338,6 +342,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.10.1]: https://github.com/uzerpllp/uzerp/compare/1.10...1.10.1
 [1.10]: https://github.com/uzerpllp/uzerp/compare/1.9.1...1.10
 [1.9.1]: https://github.com/uzerpllp/uzerp/compare/1.9...1.9.1
 [1.9]: https://github.com/uzerpllp/uzerp/compare/1.8.2...1.9
