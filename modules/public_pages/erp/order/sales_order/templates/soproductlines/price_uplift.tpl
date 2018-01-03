@@ -3,7 +3,7 @@
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* 	$Revision: 1.11 $ *}
+{* $Revision: 1.11 $ *}
 {content_wrapper}
 	{advanced_search}
 	{form controller="soproductlines" action="price_uplift"}
@@ -137,7 +137,7 @@
 		<div id='dialogprogressbar'></div>
 	</div>
 	<div id='updatedialog' style="display:none;">
-		<img src="{/assets/graphics/spinner.gif" />
+		<img src="/assets/graphics/spinner.gif" />
 		<p>Updating prices</p>
 		<div id='updateprogressbar'></div>
 	</div>
