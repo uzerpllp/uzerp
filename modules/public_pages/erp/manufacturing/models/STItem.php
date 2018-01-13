@@ -95,6 +95,10 @@ class STItem extends DataObject
 		$this->setEnum('abc_class',array( 'A'=>'A'
                                          ,'B'=>'B'
                                          ,'C'=>'C'));
+		$this->setEnum('cost_basis', [
+		    'VOLUME' => 'Volume',
+		    'TIME' => 'Time'
+		]);
 
 		// Define link rules for related items
 		$this->linkRules=array('balances'=>array('actions'=>array('link')
@@ -410,40 +414,66 @@ class STItem extends DataObject
 				continue;
 			}
 
-			// if values are NULL or 0
-			if(is_null($operation->uptime_target) || $operation->uptime_target<=0
-				|| is_null($operation->quality_target) || $operation->quality_target<=0
-				|| is_null($operation->volume_target) || $operation->volume_target<=0)
-			{
-					return -1;
+			if ($this->cost_basis == 'VOLUME') {
+    			// if values are NULL or 0
+    			if(is_null($operation->uptime_target) || $operation->uptime_target<=0
+    				|| is_null($operation->quality_target) || $operation->quality_target<=0
+    				|| is_null($operation->volume_target) || $operation->volume_target<=0)
+    			{
+    					return -1;
+    			}
+
+    			$cost = $mfresource->resource_rate * $operation->resource_qty;
+
+    			switch ($operation->volume_period) {
+    				case 'S':
+    					$cost /= 3600;
+    					//echo ' / 3600';
+    					break;
+    				case 'M':
+    					$cost /= 60;
+    					//echo ' / 60';
+    					break;
+    			}
+
+    			$cost *= (100 / $operation->uptime_target);
+
+    			$cost /= $operation->volume_target;
+
+    			$uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
+
+    			$cost = $uom;
+
+    			$cost *= (100 / $operation->quality_target);
+
+    			$operation->latest_lab = round($cost, $this->cost_decimals);
+
+    			$this->latest_lab = add($this->latest_lab, $operation->latest_lab);
+			} else {
+			    // Time based calculation
+			    if(is_null($operation->volume_target) || $operation->volume_target <= 0) {
+			        return -1;
+			    }
+
+			    $operation_time = $operation->volume_target;
+			    $cost = $mfresource->resource_rate * $operation->resource_qty;
+			    $cost *= $operation_time;
+
+			    switch ($operation->volume_period) {
+			        case 'S':
+			            $cost /= 3600;
+			            break;
+			        case 'M':
+			            $cost /= 60;
+			            break;
+			    }
+
+			    $uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
+			    $cost = $uom;
+
+			    $operation->latest_lab = round($cost, $this->cost_decimals);
+			    $this->latest_lab = add($this->latest_lab, $operation->latest_lab);
 			}
-
-			$cost = $mfresource->resource_rate * $operation->resource_qty;
-
-			switch ($operation->volume_period) {
-				case 'S':
-					$cost /= 3600;
-					//echo ' / 3600';
-					break;
-				case 'M':
-					$cost /= 60;
-					//echo ' / 60';
-					break;
-			}
-
-			$cost *= (100 / $operation->uptime_target);
-
-			$cost /= $operation->volume_target;
-
-			$uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
-
-			$cost = $uom;
-
-			$cost *= (100 / $operation->quality_target);
-
-			$operation->latest_lab = round($cost, $this->cost_decimals);
-
-			$this->latest_lab = add($this->latest_lab, $operation->latest_lab);
 		}
 
 		foreach ($children as $key => $child)
@@ -486,37 +516,64 @@ class STItem extends DataObject
 				continue;
 			}
 
-			if(is_null($operation->uptime_target) || $operation->uptime_target<=0
-				|| is_null($operation->quality_target) || $operation->quality_target<=0
-				|| is_null($operation->volume_target) || $operation->volume_target<=0)
-			{
-					return -1;
+			if ($this->cost_basis == 'VOLUME') {
+    			if(is_null($operation->uptime_target) || $operation->uptime_target<=0
+    				|| is_null($operation->quality_target) || $operation->quality_target<=0
+    				|| is_null($operation->volume_target) || $operation->volume_target<=0)
+    			{
+    					return -1;
+    			}
+
+    			$cost = $mfcentre->centre_rate;
+
+    			switch ($operation->volume_period) {
+    				case 'S':
+    					$cost /= 3600;
+    					//echo ' / 3600';
+    					break;
+    				case 'M':
+    					$cost /= 60;
+    					//echo ' / 60';
+    					break;
+    			}
+
+    			$cost *= (100 / $operation->uptime_target);
+
+    			$cost /= $operation->volume_target;
+
+    			$uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
+    			$cost = $uom;
+
+    			$cost *= (100 / $operation->quality_target);
+
+    			$operation->latest_ohd = round($cost, $this->cost_decimals);
+    			$this->latest_ohd += $operation->latest_ohd;
+			} else {
+			    // Time based costing
+			    if(is_null($operation->volume_target) || $operation->volume_target <= 0) {
+			        return -1;
+			    }
+
+			    $operation_time = $operation->volume_target;
+			    $cost = $mfcentre->centre_rate * $operation_time;
+
+			    switch ($operation->volume_period) {
+			        case 'S':
+			            $cost /= 3600;
+			            //echo ' / 3600';
+			            break;
+			        case 'M':
+			            $cost /= 60;
+			            //echo ' / 60';
+			            break;
+			    }
+
+			    $uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
+			    $cost = $uom;
+
+			    $operation->latest_ohd = round($cost, $this->cost_decimals);
+			    $this->latest_ohd += $operation->latest_ohd;
 			}
-
-			$cost = $mfcentre->centre_rate;
-
-			switch ($operation->volume_period) {
-				case 'S':
-					$cost /= 3600;
-					//echo ' / 3600';
-					break;
-				case 'M':
-					$cost /= 60;
-					//echo ' / 60';
-					break;
-			}
-
-			$cost *= (100 / $operation->uptime_target);
-
-			$cost /= $operation->volume_target;
-
-			$uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
-			$cost = $uom;
-
-			$cost *= (100 / $operation->quality_target);
-
-			$operation->latest_ohd = round($cost, $this->cost_decimals);
-			$this->latest_ohd += $operation->latest_ohd;
 		}
 
 		foreach ($children as $key => $child)
