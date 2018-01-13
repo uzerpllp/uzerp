@@ -1,0 +1,5 @@
+When the cost_basis is TIME, various fields need to be hidden and have their
+titles changed.
+
+The cost_basis of an item can only be selected when the comp_class is 'Manufactured'
+and only affects labour and overhead costs.
