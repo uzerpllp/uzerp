@@ -1,0 +1,3 @@
+The std_cost and latest_cost columns are defined in the mfoperations table
+but are not calculated by uzERP. Defining these as extra fields and calculating
+the cost on the model allows them to be displayed on the cost sheet, etc.
