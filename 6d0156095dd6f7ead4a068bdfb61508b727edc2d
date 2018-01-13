@@ -1,0 +1,6 @@
+Moved the print button into the body of the the page, from the sidebar.
+The body is ajaxed from the search and the button target needs to change
+to reflect the current cost type, latest or standard.
+
+Fixed the report definition to choose the correct cost values based
+on the selected type.
