@@ -1,0 +1,6 @@
+Using phinx change() to add the cost_basis column to st_items so that the column
+will be removed on rollback.
+
+Using up() and down() functions to make mfoperations volume_target 'not null'
+using SQL. phinx doesn't handle the 'numeric' data type and that must be specified
+when using phinx's changeColumn function.
