@@ -1,0 +1,2 @@
+Note that the XSL contains both single and double quotes. To get this into postgres,
+the XSL is delimited using NOWDOC and single quotes are doubled-up.
