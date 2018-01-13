@@ -108,6 +108,11 @@ class StitemsController extends printController
             $stitem->load($data['id']);
         }
 
+
+        if ($data['comp_class'] !== 'M') {
+            $data['cost_basis'] = 'VOLUME';
+        }
+
         if ($data['comp_class'] == 'B') {
             $data['latest_cost'] = $data['latest_mat'];
             $data['latest_lab'] = 0;

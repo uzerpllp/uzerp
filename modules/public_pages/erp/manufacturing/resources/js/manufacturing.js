@@ -12,6 +12,10 @@
  */
 
 $(document).ready(function(){
+    if ( $("#STItem_comp_class","#manufacturing-stitems-new").val() != 'M') {
+        $('#cost_basis_container').hide();
+    };
+
 
     /* manufacturing -> stitems -> clone_item */
     
@@ -39,6 +43,14 @@ $(document).ready(function(){
 		}
 	});
 	
+	$("#STItem_comp_class","#manufacturing-stitems-new").live('change',function() {
+		if($(this).val()=='M') {
+			$('#cost_basis_container').show();
+		} else {
+			$('#cost_basis_container').hide();
+		}
+	});
+
 	/* manufacturing -> mfwostructures -> new */
 	
 	$("#MFWOStructure_ststructure_id","#manufacturing-mfwostructures-new").live('change',function(){

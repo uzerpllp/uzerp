@@ -1,7 +1,7 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.7 $ *}
 {content_wrapper}
@@ -15,11 +15,18 @@
 			{select label='Stock Item' attribute='stitem_id' options=$stitems}
 			{select label='Work Centre' attribute='mfcentre_id' }
 			{input type='text'  attribute='remarks' }
-			{input type='text'  attribute='volume_target' }
 			{select attribute=volume_uom_id options=$uom_list selected=$model->volume_uom_id}
-			{select label='Per' attribute='volume_period' }
-			{input type='text'  label="Quality Target(%)" attribute='quality_target' }
-			{input type='text'  label="Uptime Target(%)" attribute='uptime_target' }
+			{if $model->cost_basis == 'VOLUME'}
+				{input type='text'  attribute='volume_target' }
+				{select label='Per' attribute='volume_period' }
+				{input type='text'  label="Quality Target(%)" attribute='quality_target' }
+				{input type='text'  label="Uptime Target(%)" attribute='uptime_target' }
+			{else}
+				{input type='text'  attribute='volume_target' label='Time' class='compulsory' }
+				{select label='Per' attribute='volume_period' label='Time Units' }
+			{/if}
+
+
 			{select label='Resource' attribute='mfresource_id' }
 			{input type='text'  attribute='resource_qty' }
 		{/with}

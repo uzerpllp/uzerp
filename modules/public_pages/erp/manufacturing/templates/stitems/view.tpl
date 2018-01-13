@@ -34,6 +34,9 @@
 			</dl>
 			<dl id="view_data_right">
 				{view_section heading="Costing"}
+					{if $model->comp_class == 'M'}
+						{view_data attribute='cost_basis'}
+					{/if}
 					{view_data attribute='cost_decimals'}
 				{/view_section}
 				{view_section heading="Standard Cost"}
