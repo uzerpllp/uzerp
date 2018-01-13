@@ -1,16 +1,16 @@
 <?php
- 
-/** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+
+/**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class MfoperationsController extends ManufacturingController {
 
 	protected $version='$Revision: 1.14 $';
 	protected $_templateobject;
-	
+
 	public function __construct($module=null,$action=null) {
 		parent::__construct($module, $action);
 		$this->_templateobject = new MFOperation();
@@ -34,22 +34,22 @@ class MfoperationsController extends ManufacturingController {
 					,$this->_modules);
 			return;
 		}
-		
+
 		$s_data['start_date/end_date'] = date(DATE_FORMAT);
 		$s_data['stitem_id'] = $stitem_id;
-		
+
 		$this->view->set('stitem_id', $stitem_id);
 		$transaction = new STItem();
 		$transaction->load($stitem_id);
 		$this->view->set('transaction',$transaction);
 		$obsolete = $transaction->isObsolete();
-		
+
 		$this->setSearch('operationsSearch', 'useDefault', $s_data);
 
 		self::showParts();
-				
+
 		$this->view->set('clickaction','view');
-		
+
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList(
 			'Actions',
@@ -119,11 +119,11 @@ class MfoperationsController extends ManufacturingController {
 
 	public function _new() {
 		parent::_new();
-		
+
 		$mfoperation=$this->_uses[$this->modeltype];
-		
+
 		$stitem = new STItem();
-		
+
 		if ($mfoperation->isLoaded())
 		{
 			$this->_data['stitem_id'] = $mfoperation->stitem_id;
@@ -139,7 +139,7 @@ class MfoperationsController extends ManufacturingController {
 		{
 			$stitem_id = $this->_data['stitem_id'];
 		}
-		
+
 		$stitem->load($stitem_id);
 		if (!empty($this->_data['stitem_id']))
 		{
@@ -147,37 +147,42 @@ class MfoperationsController extends ManufacturingController {
 		}
 
 		$this->getItemData($stitem_id);
-		
+
 		$this->view->set('no_ordering',true);
-		
+
 	}
-		
+
 	public function save() {
 
 		$flash=Flash::Instance();
-		
+
 		if (!$this->checkParams('MFOperation')) {
 			sendBack();
 		}
 		$data=$this->_data['MFOperation'];
-		
+
 		$db = DB::Instance();
 		$db->StartTrans();
 		$errors = array();
-	
-		if(!($data['volume_target']>0)){;
+		$source_stitem = new STItem;
+		$source_stitem->load($data['stitem_id']);
+
+		if($source_stitem->cost_basis == 'VOLUME' && !($data['volume_target'] > 0)){;
 			$errors[]='Volume target must be a number greater than zero';
 		}
-		if(!($data['uptime_target']>0)){;
+		if($source_stitem->cost_basis == 'TIME' && !($data['volume_target'] > 0)){;
+		$errors[]='Time must be a number greater than zero';
+		}
+		if($source_stitem->cost_basis == 'VOLUME' && !($data['uptime_target']>0)){;
 			$errors[]='Uptime target must be a number greater than zero';
 		}
-		if(!($data['quality_target']>0)){;
+		if($source_stitem->cost_basis == 'VOLUME' && !($data['quality_target']>0)){;
 			$errors[]='Quality target must be a number greater than zero';
 		}
 		if(!($data['resource_qty']>0)){;
 			$errors[]='Resource quantity must be a number greater than zero';
 		}
-		
+
 		if (count($errors)==0 && parent::save_model('MFOperation')) {
 			$stitem = new STItem;
 			if ($stitem->load($this->saved_model->stitem_id)) {
@@ -229,7 +234,7 @@ class MfoperationsController extends ManufacturingController {
 		}
 
 	}
-	
+
 	public function view(){
 		$id=$this->_data['id'];
 		$object=&$this->_uses['MFOperation'];
@@ -237,7 +242,7 @@ class MfoperationsController extends ManufacturingController {
 		$transaction= new MFOperation();
 		$transaction->load($id);
 		$this->view->set('transaction',$transaction);
-		
+
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList(
 			'Actions',
@@ -290,7 +295,7 @@ class MfoperationsController extends ManufacturingController {
 		);
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
+
 	}
 
 	public function showParts() {
@@ -298,8 +303,8 @@ class MfoperationsController extends ManufacturingController {
 	}
 
 	/* Ajax functions
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public function getItemData($_stitem_id='')
 	{
@@ -325,7 +330,7 @@ class MfoperationsController extends ManufacturingController {
 		{
 			$this->view->set('uom_list',$uom_list);
 		}
-		
+
 		$errors = array();
 		$s_data = array('stitem_id' => $_stitem_id, 'start_date/end_date' => date(DATE_FORMAT));
 		$this->search = structuresSearch::useDefault($s_data, $errors);
@@ -337,19 +342,19 @@ class MfoperationsController extends ManufacturingController {
 			$html=$this->view->fetch($this->getTemplateName('show_parts'));
 			$output['show_parts']=array('data'=>$html,'is_array'=>is_array($html));
 		}
-		
-		
+
+
 // ****************************************************************************
 // Finally, if this is an ajax call, set the return data area
 		if ($ajax) {
 			$this->view->set('data',$output);
 			$this->setTemplateName('ajax_multiple');
 		}
-	
+
 	}
-	
+
 	/* Protected Functions
-	 * 
+	 *
 	 */
 	protected function getPageName($base=null,$action=null) {
 		return parent::getPageName((empty($base)?'operations':$base), $action);

@@ -56,6 +56,14 @@
 						{select attribute='comp_class' }
 					{/if}
 					{select attribute='abc_class' }
+					{if $inuse && $model->comp_class=='M'}
+						{view_data  attribute='cost_basis' }
+						{input type='hidden' attribute='cost_basis' }
+					{else if !$inuse || $model->comp_class=='M'}
+						<div id="cost_basis_container">
+						{select attribute='cost_basis' }
+						</div>
+					{/if}
 					{if !$inuse || $model->comp_class=='B'}
 						<div id="latest_mat_container">
 							{input type='text' label='Materials Cost' attribute='latest_mat' }
