@@ -1,49 +1,49 @@
 <?php
 
-/** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+/**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class HolidayextradaysController extends Controller
 {
 
 	protected $version='$Revision: 1.7 $';
-	
+
 	protected $_templateobject;
 
 	public function __construct($module=null,$action=null)
 	{
 		parent::__construct($module, $action);
-		
+
 		$this->_templateobject = DataObjectFactory::Factory('Holidayextraday');
-		
+
 		$this->uses($this->_templateobject);
 	}
 
 	public function index()
 	{
 		$this->view->set('clickaction', 'edit');
-		
+
 		parent::index(new HolidayextradayCollection($this->_templateobject));
 	}
 
 	public function delete()
 	{
 		$flash = Flash::Instance();
-		
+
 		parent::delete($this->modeltype);
-		
+
 		sendTo($_SESSION['refererPage']['controller']
 			  ,$_SESSION['refererPage']['action']
 			  ,$_SESSION['refererPage']['modules']
 			  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
 	}
-	
+
 	public function save()
-	{	
-		
+	{
+
 		$flash=Flash::Instance();
 	//$this->_data['Holidayextraday']['authorisedby']=EGS_USERNAME;
 
@@ -68,20 +68,20 @@ class HolidayextradaysController extends Controller
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$holidayExtraDay = $this->_uses[$this->modeltype];
-		
+
 		$entitlement = DataObjectFactory::Factory('Holidayentitlement');
-		$entitlement->load($holidayExtraDay-> entitlement_period_id);
+		$entitlement->load($holidayExtraDay->entitlement_period_id);
 
 		$employee = DataObjectFactory::Factory('Employee');
 		$employee->load($holidayExtraDay->employee_id);
 		$this->view->set('employee',$employee);
-		
-		$currently_viewing = $employee->person.': '.$entitlement->start_date.'-'.$entitlement->end_date;
-		
+
+		$currently_viewing = $employee->employee . ': ' . $entitlement->start_date . '-' . $entitlement->end_date;
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'currently_viewing',
 			array(
@@ -101,7 +101,7 @@ class HolidayextradaysController extends Controller
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
@@ -116,9 +116,9 @@ class HolidayextradaysController extends Controller
 		else
 		{
 			$flash = Flash::Instance();
-			
+
 			$flash->addError('You do not have permission to edit a Holiday Extra Day!');
-			
+
 			sendTo();
 		}
 	}
@@ -130,19 +130,19 @@ class HolidayextradaysController extends Controller
 			$employee = DataObjectFactory::Factory('Employee');
 			$employee->load($this->_data['employee_id']);
 			$this->view->set('employee', $employee);
-			
+
 			parent::_new();
 		}
 		else
 		{
 			$flash = Flash::Instance();
-			
+
 			$flash->addError('You do not have permission to add a Holiday Extra Day!');
-			
-			sendTo();	
+
+			sendTo();
 		}
 	}
-	
+
 }
 
 // End of HolidayextradaysController
