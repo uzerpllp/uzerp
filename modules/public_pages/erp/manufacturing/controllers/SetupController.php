@@ -29,6 +29,7 @@ class SetupController extends MasterSetupController
         $this->preferences->registerPreference([
             'name' => 'default-cost-basis',
             'display_name' => $this->module_preferences['default-cost-basis']['title'],
+            'group_title' => 'Stock Item Costing',
             'type' => 'select',
             'data' => [
                 [
@@ -41,6 +42,7 @@ class SetupController extends MasterSetupController
                 ]
             ],
             'value' => (empty($defaultCostBasis) || $defaultCostBasis == 'VOLUME') ? 'VOLUME' : 'TIME',
+            'default' => 'VOLUME',
             'position' => 1
         ]);
 
@@ -48,7 +50,7 @@ class SetupController extends MasterSetupController
             'name' => 'use-only-default-cost-basis',
             'display_name' => $this->module_preferences['use-only-default-cost-basis']['title'],
             'type' => 'checkbox',
-            'status' => (empty($useOnlyCostBasis) || $useOnlyCostBasis == 'off') ? 'off' : 'on',
+            'status' => (empty($useOnlyCostBasis) || $useOnlyCostBasis == 'on') ? 'on' : 'off',
             'default' => 'on',
             'position' => 2
         ]);

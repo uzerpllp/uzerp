@@ -19,6 +19,21 @@ class StitemsController extends printController
         $this->_templateobject = DataObjectFactory::Factory('STItem');
 
         $this->uses($this->_templateobject);
+
+        // Get module preferences
+        $system_prefs = SystemPreferences::instance();
+        $this->module_prefs = $system_prefs->getModulePreferences($this->module);
+
+        // Fix empty prefs
+        if (! isset($this->module_prefs['default-cost-basis'])) {
+            $this->module_prefs['default-cost-basis'] = 'VOLUME';
+        }
+        if (! isset($this->module_prefs['use-only-default-cost-basis'])) {
+            $this->module_prefs['use-only-default-cost-basis'] = 'on';
+        }
+
+        // Make module preferences available to smarty
+        $this->view->set('module_prefs', $this->module_prefs);
     }
 
     public function index()
@@ -90,6 +105,12 @@ class StitemsController extends printController
 
         $flash = Flash::Instance();
 
+        // Check cost basis preferences
+        if (! $this->costBasisValid($this->_data[$this->modeltype]['cost_basis'])) {
+            $flash->addError('Cost basis not allowed by module settings');
+            sendBack();
+        }
+
         $db = DB::Instance();
 
         $db->StartTrans();
@@ -108,9 +129,9 @@ class StitemsController extends printController
             $stitem->load($data['id']);
         }
 
-
+        // Set the cost basis for items with a non-manufactured comp_class
         if ($data['comp_class'] !== 'M') {
-            $data['cost_basis'] = 'VOLUME';
+            $data['cost_basis'] = $this->module_prefs['default-cost-basis'];
         }
 
         if ($data['comp_class'] == 'B') {
@@ -164,8 +185,7 @@ class StitemsController extends printController
 
             // Indicate that the user wants the description change cascaded to all
             // linked products and product lines
-            if ((isset($this->_data[$this->modeltype]['cascade_description_change_so']) && $this->_data[$this->modeltype]['cascade_description_change_so'] === 'on')
-                || (isset($this->_data[$this->modeltype]['cascade_description_change_po']) && $this->_data[$this->modeltype]['cascade_description_change_po'] === 'on')) {
+            if ((isset($this->_data[$this->modeltype]['cascade_description_change_so']) && $this->_data[$this->modeltype]['cascade_description_change_so'] === 'on') || (isset($this->_data[$this->modeltype]['cascade_description_change_po']) && $this->_data[$this->modeltype]['cascade_description_change_po'] === 'on')) {
                 $product_data['description'] = 'description';
             }
         }
@@ -258,7 +278,7 @@ class StitemsController extends printController
 
         $this->_data[$this->modeltype]['item_code'] = strtoupper($this->_data[$this->modeltype]['item_code']);
 
-        if ($this->_data[$this->modeltype]['copy_so_product_prices'] == 'on' && !isset($this->_data[$this->modeltype]['copy_so_products'])) {
+        if ($this->_data[$this->modeltype]['copy_so_product_prices'] == 'on' && ! isset($this->_data[$this->modeltype]['copy_so_products'])) {
             $errors[] = 'Cannot copy prices without product';
         }
 
@@ -309,8 +329,7 @@ class StitemsController extends printController
                         $cc->add(currentDateConstraint());
                     }
 
-
-                    if (isset($so_product_id) && !is_null($so_product_id) && $do_name == 'SOProductLine') {
+                    if (isset($so_product_id) && ! is_null($so_product_id) && $do_name == 'SOProductLine') {
                         $do = DataObjectFactory::Factory($do_name);
                         $cc = new ConstraintChain();
                         $cc->add(new Constraint('productline_header_id', '=', $so_product_id));
@@ -323,7 +342,7 @@ class StitemsController extends printController
                         $children = $do->getAll($cc);
                     }
 
-                    if (!empty($children)) {
+                    if (! empty($children)) {
                         foreach ($children as $child_id => $value) {
                             $child = DataObjectFactory::Factory($do_name);
 
@@ -343,7 +362,7 @@ class StitemsController extends printController
                                     $child->description = $this->_data[$this->modeltype]['description'];
                                 }
 
-                                if (isset($so_product_id) && !is_null($so_product_id) && $do_name == 'SOProductLine') {
+                                if (isset($so_product_id) && ! is_null($so_product_id) && $do_name == 'SOProductLine') {
                                     $child->productline_header_id = $new_so_product_id;
                                     $child->description = $this->_data[$this->modeltype]['description'];
                                     $child->start_date = $this->_data[$this->modeltype]['pstart_date'];
@@ -366,7 +385,6 @@ class StitemsController extends printController
                                     $so_product_id = $child_id;
                                     $new_so_product_id = $test;
                                 }
-
                             } else {
                                 $errors[] = 'Failed to load ' . $do_name;
                                 break;
@@ -1828,6 +1846,21 @@ class StitemsController extends printController
     protected function getPageName($base = null, $action = null)
     {
         return parent::getPageName((empty($base) ? 'Stock Items' : $base), $action);
+    }
+
+    /**
+     * Check that a cost basis is valid with the current module settings
+     *
+     * @return boolean
+     */
+    protected function costBasisValid($cost_basis)
+    {
+        if (($this->module_prefs['use-only-default-cost-basis'] == 'on' &&
+                $this->module_prefs['default-cost-basis'] !== $cost_basis) &&
+                $this->_data[$this->modeltype]['comp_class'] == 'M') {
+            return false;
+        }
+        return true;
     }
 
     /**
