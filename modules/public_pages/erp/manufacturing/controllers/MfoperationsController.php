@@ -167,6 +167,7 @@ class MfoperationsController extends ManufacturingController {
 		$source_stitem = new STItem;
 		$source_stitem->load($data['stitem_id']);
 
+		// Validation
 		if($source_stitem->cost_basis == 'VOLUME' && !($data['volume_target'] > 0)){;
 			$errors[]='Volume target must be a number greater than zero';
 		}
@@ -240,8 +241,11 @@ class MfoperationsController extends ManufacturingController {
 		$object=&$this->_uses['MFOperation'];
 		$object->load($id);
 		$transaction= new MFOperation();
+		$stitem = new STItem();
 		$transaction->load($id);
+		$stitem->load($transaction->stitem_id);
 		$this->view->set('transaction',$transaction);
+		$this->view->set('stitem', $stitem);
 
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList(

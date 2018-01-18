@@ -11,7 +11,7 @@
 			{view_data model=$transaction attribute="start_date"}
 			{view_data model=$transaction attribute="end_date"}
 			{view_data model=$transaction attribute="remarks"}
-			{if $transaction->cost_basis == 'VOLUME'}
+			{if $stitem->cost_basis == 'VOLUME'}
 				{view_data model=$transaction attribute="volume_target"}
 				{view_data model=$transaction attribute="volume_period"}
 				{view_data model=$transaction label="Quality Target(%)" attribute="quality_target"}
