@@ -16,15 +16,16 @@ class MFOperation extends DataObject {
 											,'stitem_id'
 											,'mfcentre_id'
 											,'mfresource_id'
-											,'volume_period'
+                                            ,'volume_target' => 'Volume Target/Time'
+											,'volume_period' => 'Volume Period/Time Unit'
 											,'volume_uom_id'
 											,'volume_uom'
 											,'quality_target'
 											,'uptime_target'
-											,'volume_target'
 											,'resource_qty'
 											,'resource'
 											);
+
 
 	function __construct($tablename='mf_operations') {
 		parent::__construct($tablename);
