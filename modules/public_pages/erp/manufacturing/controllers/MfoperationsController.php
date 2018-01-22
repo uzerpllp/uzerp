@@ -258,6 +258,13 @@ class MfoperationsController extends ManufacturingController {
 												 ,'id'=>$transaction->stitem_id
 												 )
 								 ),
+			    'operations' => array('tag' => 'Show All Operations'
+			        ,'link' => array('modules'=>$this->_modules
+			            ,'controller'=>$this->name
+			            ,'action'=>'index'
+			            ,'stitem_id'=>$transaction->stitem_id
+			        )
+			    ),
 				'resources' => array('tag' => 'Show Resource detail'
 									,'link' => array('modules'=>$this->_modules
 													,'controller'=>'MFResources'
@@ -364,5 +371,9 @@ class MfoperationsController extends ManufacturingController {
 		return parent::getPageName((empty($base)?'operations':$base), $action);
 	}
 
+
+	function view_stock_item() {
+	    $this->index();
+	}
 }
 ?>
