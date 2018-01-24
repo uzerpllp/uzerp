@@ -16,14 +16,22 @@
 			{select label='Work Centre' attribute='mfcentre_id' }
 			{input type='text'  attribute='remarks' }
 			{select attribute=volume_uom_id options=$uom_list selected=$model->volume_uom_id}
-			{if $model->cost_basis == 'VOLUME'}
+			{if $stitem->cost_basis == 'VOLUME'}
 				{input type='text'  attribute='volume_target' }
-				{select label='Per' attribute='volume_period' }
+				{if $action !== 'edit'}
+				{select label='Per' attribute='volume_period' value=$module_prefs['default-operation-units']}
+				{else}
+				{select label='Per' attribute='volume_period'}
+				{/if}
 				{input type='text'  label="Quality Target(%)" attribute='quality_target' }
 				{input type='text'  label="Uptime Target(%)" attribute='uptime_target' }
 			{else}
 				{input type='text'  attribute='volume_target' label='Time' class='compulsory' }
-				{select label='Per' attribute='volume_period' label='Time Units' }
+				{if $action !== 'edit'}
+				{select attribute='volume_period' label='Time Units' value=$module_prefs['default-operation-units']}
+				{else}
+				{select attribute='volume_period' label='Time Units'}
+				{/if}
 			{/if}
 
 
@@ -31,6 +39,9 @@
 			{input type='text'  attribute='resource_qty' }
 		{/with}
 		{submit}
+		{if $action !== 'edit'}
+		{submit value='Save and Add Another' name='saveadd' id='saveadd'}
+		{/if}
 	{/form}
 	{include file='elements/cancelForm.tpl' action="cancel"}
 	<div id='show_parts'>
