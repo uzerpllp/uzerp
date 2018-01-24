@@ -6,6 +6,8 @@
  *  Preferences are stored in the module record (table 'modules')
  *  in the settings field
  *
+ *  @see ManufacturingController::getPreferences()
+ *
  *  @package manufacturing
  *  @author Steve Blamey <blameys@blueloop.net>
  *  @license GPLv3 or later
