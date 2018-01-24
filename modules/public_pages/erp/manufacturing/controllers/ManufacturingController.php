@@ -248,6 +248,29 @@ class ManufacturingController extends printController {
 
 	}
 
+	/**
+	 * Return the module (system) preferences
+	 *
+	 * @return array
+	 */
+	public static function getPreferences() {
+	    // Get module preferences
+	    $system_prefs = SystemPreferences::instance();
+	    $module_prefs = $system_prefs->getModulePreferences('manufacturing');
+
+	    // Fix any empty prefs
+	    if (! isset($module_prefs['default-operation-units'])) {
+	        $module_prefs['default-operation-units'] = 'H';
+	    }
+	    if (! isset($module_prefs['default-cost-basis'])) {
+	        $module_prefs['default-cost-basis'] = 'VOLUME';
+	    }
+	    if (! isset($module_prefs['use-only-default-cost-basis'])) {
+	        $module_prefs['use-only-default-cost-basis'] = 'on';
+	    }
+	    return $module_prefs;
+	}
+
 	/*
 	 * Protected Functions
 	 */
