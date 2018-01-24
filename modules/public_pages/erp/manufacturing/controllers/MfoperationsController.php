@@ -16,22 +16,8 @@ class MfoperationsController extends ManufacturingController {
 		$this->_templateobject = new MFOperation();
 		$this->uses($this->_templateobject);
 
-		// Get module preferences
-		$system_prefs = SystemPreferences::instance();
-		$this->module_prefs = $system_prefs->getModulePreferences($this->module);
-
-		// Fix empty prefs
-		if (! isset($this->module_prefs['default-operation-units'])) {
-		    $this->module_prefs['default-operation-units'] = 'H';
-		}
-		if (! isset($this->module_prefs['default-cost-basis'])) {
-		    $this->module_prefs['default-cost-basis'] = 'VOLUME';
-		}
-		if (! isset($this->module_prefs['use-only-default-cost-basis'])) {
-		    $this->module_prefs['use-only-default-cost-basis'] = 'on';
-		}
-
-		// Make module preferences available to smarty
+ 		// Get module preferences
+        $this->module_prefs = ManufacturingController::getPreferences();
 		$this->view->set('module_prefs', $this->module_prefs);
 	}
 
