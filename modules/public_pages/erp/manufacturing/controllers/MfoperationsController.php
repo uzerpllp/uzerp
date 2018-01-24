@@ -15,6 +15,24 @@ class MfoperationsController extends ManufacturingController {
 		parent::__construct($module, $action);
 		$this->_templateobject = new MFOperation();
 		$this->uses($this->_templateobject);
+
+		// Get module preferences
+		$system_prefs = SystemPreferences::instance();
+		$this->module_prefs = $system_prefs->getModulePreferences($this->module);
+
+		// Fix empty prefs
+		if (! isset($this->module_prefs['default-operation-units'])) {
+		    $this->module_prefs['default-operation-units'] = 'H';
+		}
+		if (! isset($this->module_prefs['default-cost-basis'])) {
+		    $this->module_prefs['default-cost-basis'] = 'VOLUME';
+		}
+		if (! isset($this->module_prefs['use-only-default-cost-basis'])) {
+		    $this->module_prefs['use-only-default-cost-basis'] = 'on';
+		}
+
+		// Make module preferences available to smarty
+		$this->view->set('module_prefs', $this->module_prefs);
 	}
 
 	public function index(){
@@ -141,6 +159,7 @@ class MfoperationsController extends ManufacturingController {
 		}
 
 		$stitem->load($stitem_id);
+		$this->view->set('stitem', $stitem);
 		if (!empty($this->_data['stitem_id']))
 		{
 			$this->view->set('page_title', $this->getPageName('Operation for '.$stitem->getIdentifierValue()));
@@ -223,17 +242,29 @@ class MfoperationsController extends ManufacturingController {
 			$db->FailTrans();
 		}
 		$db->CompleteTrans();
-		if (count($errors) == 0) {
+		if (count($errors) == 0 && !isset($this->_data['saveadd'])) {
 			sendTo($this->name
 					,'index'
 					,$this->_modules
 					,array('stitem_id' => $data['stitem_id']));
+		} elseif (count($errors) == 0 && isset($this->_data['saveadd'])) {
+		    sendTo($this->name
+		        ,'new'
+		        ,$this->_modules
+		        ,array('stitem_id' => $data['stitem_id']));
 		} else {
 			$flash->addErrors($errors);
 			$this->_data['stitem_id']= $data['stitem_id'];
 			$this->refresh();
 		}
 
+	}
+
+	public function edit() {
+	    $stitem = new STItem();
+	    $stitem->load($this->_data['stitem_id']);
+	    $this->view->set('stitem', $stitem);
+	    parent::edit();
 	}
 
 	public function view(){
