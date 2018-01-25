@@ -76,7 +76,8 @@ class ModulePreferences {
 		foreach ($fields as $preference)
 		{
 		    if (isset($preference['group_title'])) {
-		        $html .= '<dt></dt><dd><h2>' . htmlentities($preference['group_title']) . '</h2></dd>';
+		        $this->view->set('group_title', htmlentities($preference['group_title']));
+		        $html .= $this->view->fetch('smarty/function.grouptitle');
 		    }
 			switch($preference['type'])
 			{
