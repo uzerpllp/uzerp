@@ -525,7 +525,6 @@ class StcostsController extends printController {
 					 ,$type.'_lab'=>0
 					 ,$type.'_osc'=>0
 					 ,$type.'_ohd'=>0
-					 ,$type.'_cost'=>0
 		);
 
 		foreach ($mfstructures as $mfstructure)
@@ -560,6 +559,9 @@ class StcostsController extends printController {
 				}
 			}
 		}
+
+        // Calculate report totals from category sub-totals
+		$totals[$type.'_cost'] = $totals[$type.'_mat'] + $totals[$type.'_lab'] + $totals[$type.'_osc'] + $totals[$type.'_ohd'];
 
 		$title = 'Latest Cost Sheet';
 		if($type == 'std') {
