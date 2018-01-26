@@ -15,8 +15,9 @@
 			{select label='Stock Item' attribute='stitem_id' options=$stitems}
 			{select label='Work Centre' attribute='mfcentre_id' }
 			{input type='text'  attribute='remarks' }
-			{select attribute=volume_uom_id options=$uom_list selected=$model->volume_uom_id}
+
 			{if $stitem->cost_basis == 'VOLUME'}
+				{select attribute=volume_uom_id options=$uom_list selected=$model->volume_uom_id}
 				{input type='text'  attribute='volume_target' }
 				{if $action !== 'edit'}
 				{select label='Per' attribute='volume_period' value=$module_prefs['default-operation-units']}
@@ -26,6 +27,7 @@
 				{input type='text'  label="Quality Target(%)" attribute='quality_target' }
 				{input type='text'  label="Uptime Target(%)" attribute='uptime_target' }
 			{else}
+				{select attribute=volume_uom_id options=$uom_list selected=$model->volume_uom_id label='UOM'}
 				{input type='text'  attribute='volume_target' label='Time' class='compulsory' }
 				{if $action !== 'edit'}
 				{select attribute='volume_period' label='Time Units' value=$module_prefs['default-operation-units']}
