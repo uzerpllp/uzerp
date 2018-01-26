@@ -371,9 +371,8 @@ class MfoperationsController extends ManufacturingController {
 			$output['show_parts']=array('data'=>$html,'is_array'=>is_array($html));
 		}
 
-
-// ****************************************************************************
-// Finally, if this is an ajax call, set the return data area
+        // ****************************************************************************
+        // Finally, if this is an ajax call, set the return data area
 		if ($ajax) {
 			$this->view->set('data',$output);
 			$this->setTemplateName('ajax_multiple');
@@ -381,16 +380,21 @@ class MfoperationsController extends ManufacturingController {
 
 	}
 
+    /**
+     * Redirect __call to the index action
+     *
+     * @see Controller::__call()
+     */
+    public function view_stock_item()
+    {
+        $this->index();
+    }
+
 	/* Protected Functions
 	 *
 	 */
 	protected function getPageName($base=null,$action=null) {
 		return parent::getPageName((empty($base)?'operations':$base), $action);
-	}
-
-
-	function view_stock_item() {
-	    $this->index();
 	}
 }
 ?>
