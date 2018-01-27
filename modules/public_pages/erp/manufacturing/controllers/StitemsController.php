@@ -123,6 +123,11 @@ class StitemsController extends printController
             $data['cost_basis'] = $this->module_prefs['default-cost-basis'];
         }
 
+        // Update the cost, some operations may be batch ops
+        if ($stitem->isLoaded() && ($stitem->batch_size != $data['batch_size'])) {
+            $update_cost = true;
+        }
+
         if ($data['comp_class'] == 'B') {
             $data['latest_cost'] = $data['latest_mat'];
             $data['latest_lab'] = 0;
@@ -130,6 +135,7 @@ class StitemsController extends printController
             $data['latest_ohd'] = 0;
 
             if ($stitem->isLoaded()) {
+
                 $old_costs = array(
                     $stitem->latest_cost,
                     $stitem->latest_mat,

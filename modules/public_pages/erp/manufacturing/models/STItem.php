@@ -468,6 +468,12 @@ class STItem extends DataObject
 			            break;
 			    }
 
+			    // Divide by batch size before unit-of-measure conversion.
+			    // Batch size is in the item's UOM.
+			    if ($operation->batch_op == 't' && (!is_null($this->batch_size) && $this->batch_size > 0)) {
+			        $cost /= $this->batch_size;
+			    }
+
 			    $uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
 			    $cost = $uom;
 
@@ -566,6 +572,10 @@ class STItem extends DataObject
 			            $cost /= 60;
 			            //echo ' / 60';
 			            break;
+			    }
+
+			    if ($operation->batch_op == 't' && (!is_null($this->batch_size) && $this->batch_size > 0)) {
+			        $cost /= $this->batch_size;
 			    }
 
 			    $uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
