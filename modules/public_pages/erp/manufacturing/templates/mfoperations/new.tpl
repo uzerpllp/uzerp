@@ -39,6 +39,7 @@
 
 			{select label='Resource' attribute='mfresource_id' }
 			{input type='text'  attribute='resource_qty' }
+			{input type='checkbox' attribute='batch_op' }
 		{/with}
 		{submit}
 		{if $action !== 'edit'}
