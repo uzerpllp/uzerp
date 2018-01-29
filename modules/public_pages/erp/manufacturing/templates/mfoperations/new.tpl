@@ -6,6 +6,7 @@
 {* $Revision: 1.7 $ *}
 {content_wrapper}
 	{form controller="mfoperations" action="save"}
+	<dl>
 		{with model=$models.MFOperation legend="MFOperation Details"}
 			{input type='hidden'  attribute='id' }
 			{include file='elements/auditfields.tpl' }
@@ -41,12 +42,17 @@
 			{input type='text'  attribute='resource_qty' }
 			{input type='checkbox' attribute='batch_op' }
 		{/with}
-		{submit}
-		{if $action !== 'edit'}
-		{submit value='Save and Add Another' name='saveadd' id='saveadd'}
-		{/if}
+
+		<dt class="submit"></dt>
+		<dd class="submit">
+			<input class="formsubmit uz-validate" value="Save" name="saveform" id="saveform" type="submit">
+			<input class="formsubmit uz-validate" value="Save and Add Another" name="saveadd" id="saveadd" type="submit">
+			<a href="{$cancel_link}">Cancel</a>
+		</dd>
+	</dl>
 	{/form}
-	{include file='elements/cancelForm.tpl' action="cancel"}
+
+
 	<div id='show_parts'>
 		{include file='./show_parts.tpl' action="cancel"}
 	</div>
