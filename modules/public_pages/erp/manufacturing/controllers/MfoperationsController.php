@@ -52,7 +52,7 @@ class MfoperationsController extends ManufacturingController {
 
 		self::showParts();
 
-		$this->view->set('clickaction','view');
+		$this->view->set('clickaction','edit');
 
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList(
@@ -124,7 +124,8 @@ class MfoperationsController extends ManufacturingController {
 	public function _new() {
 		parent::_new();
 
-		$mfoperation=$this->_uses[$this->modeltype];
+        $mfoperation = new MFOperation();
+        $mfoperation->load($this->_data['id']);
 
 		$stitem = new STItem();
 
@@ -154,6 +155,12 @@ class MfoperationsController extends ManufacturingController {
 		$this->getItemData($stitem_id);
 
 		$this->view->set('no_ordering',true);
+        $cancel_url = link_to(array_merge($this->_modules, [
+            'controller' => $this->name,
+            'action' => 'index',
+            'stitem_id' => $this->_data['stitem_id']
+        ]), false, false);
+        $this->view->set('cancel_link', $cancel_url);
 
 	}
 
@@ -224,33 +231,31 @@ class MfoperationsController extends ManufacturingController {
 		} else {
 			$errors[] = 'Could not save operation';
 		}
+        $cancel_url = link_to(array_merge($this->_modules, [
+            'controller' => $this->name,
+            'action' => 'index',
+            'stitem_id' => $data['stitem_id']
+        ]), false, false);
+        $this->view->set('cancel_link', $cancel_url);
+
 		if (count($errors)>0) {
 			$db->FailTrans();
 		}
 		$db->CompleteTrans();
-		if (count($errors) == 0 && !isset($this->_data['saveadd'])) {
-			sendTo($this->name
-					,'index'
-					,$this->_modules
-					,array('stitem_id' => $data['stitem_id']));
-		} elseif (count($errors) == 0 && isset($this->_data['saveadd'])) {
-		    sendTo($this->name
-		        ,'new'
-		        ,$this->_modules
-		        ,array('stitem_id' => $data['stitem_id']));
-		} else {
-			$flash->addErrors($errors);
-			$this->_data['stitem_id']= $data['stitem_id'];
-			$this->refresh();
-		}
+        if (count($errors) == 0 && ! isset($this->_data['saveadd'])) {
+            sendTo($this->name, 'index', $this->_modules, array(
+                'stitem_id' => $data['stitem_id']
+            ));
+        } elseif (count($errors) == 0 && isset($this->_data['saveadd'])) {
+            sendTo($this->name, 'new', $this->_modules, array(
+                'stitem_id' => $data['stitem_id']
+            ));
+        } else {
+            $flash->addErrors($errors);
+            $this->_data['stitem_id'] = $data['stitem_id'];
+            $this->refresh();
+        }
 
-	}
-
-	public function edit() {
-	    $stitem = new STItem();
-	    $stitem->load($this->_data['stitem_id']);
-	    $this->view->set('stitem', $stitem);
-	    parent::edit();
 	}
 
 	public function view(){
@@ -379,16 +384,6 @@ class MfoperationsController extends ManufacturingController {
 		}
 
 	}
-
-    /**
-     * Redirect __call to the index action
-     *
-     * @see Controller::__call()
-     */
-    public function view_stock_item()
-    {
-        $this->index();
-    }
 
 	/* Protected Functions
 	 *
