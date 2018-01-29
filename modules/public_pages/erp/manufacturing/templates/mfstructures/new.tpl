@@ -1,11 +1,12 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.10 $ *}
 {content_wrapper}
 	{form controller="mfstructures" action="save"}
+		<dl>
 		{with model=$models.MFStructure legend="MFStructure Details"}
 			{input type='hidden'  attribute='id' }
 			{include file='elements/auditfields.tpl' }
@@ -24,10 +25,14 @@
 			{input type='text'  attribute='remarks' }
 			{input type='text'  attribute='waste_pc' }
 		{/with}
-		{submit}
-		{submit value='Save and Add Another' name='saveadd' id='saveadd'}
+		<dt class="submit"></dt>
+		<dd class="submit">
+			<input class="formsubmit uz-validate" value="Save" name="saveform" id="saveform" type="submit">
+			<input class="formsubmit uz-validate" value="Save and Add Another" name="saveadd" id="saveadd" type="submit">
+			<a href="{$cancel_link}">Cancel</a>
+		</dd>
+		</dl>
 	{/form}
-	{include file='elements/cancelForm.tpl'}
 	{if $mfstructures->count()>0}
 		<p><strong>Current Structure</strong></p>
 		{data_table}
