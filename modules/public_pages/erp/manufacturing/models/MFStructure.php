@@ -22,6 +22,7 @@ class MFStructure extends DataObject
 
 	function __construct($tablename = 'mf_structures')
 	{
+	    $this->orderby = ['line_no'];
 
 		// Register non-persistent attributes
 	    $this->setAdditional('latest_cost', 'numeric');
