@@ -12,6 +12,9 @@
 				{heading_cell field="op_no"}
 					Op No.
 				{/heading_cell}
+				{heading_cell field="remarks"}
+					Remarks
+				{/heading_cell}
 				{heading_cell field="start_date"}
 					Start Date
 				{/heading_cell}
@@ -46,6 +49,9 @@
 				{heading_cell field="resource_qty"}
 					Resource Qty
 				{/heading_cell}
+				{heading_cell field="mfcentre"}
+					Work Centre
+				{/heading_cell}
 				{heading_cell field="resource"}
 					Resource
 				{/heading_cell}
@@ -55,16 +61,19 @@
 					{grid_cell model=$model cell_num=2 field="op_no"}
 						{$model->op_no}
 					{/grid_cell}
+					{grid_cell model=$model cell_num=3 field="remarks"}
+						{$model->remarks}
+					{/grid_cell}
 					{grid_cell model=$model cell_num=3 field="start_date"}
 						{$model->start_date}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=4 field="end_date"}
 						{$model->end_date}
 					{/grid_cell}
-					{grid_cell model=$model cell_num=6 field="volume_target"}
+					{grid_cell model=$model cell_num=5 field="volume_target"}
 						{$model->volume_target}
 					{/grid_cell}
-					{grid_cell model=$model cell_num=5 field="volume_uom"}
+					{grid_cell model=$model cell_num=6 field="volume_uom"}
 						{$model->volume_uom}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=7 field="volume_period"}
@@ -78,10 +87,13 @@
 						{$model->uptime_target}
 					{/grid_cell}
 					{/if}
-					{grid_cell model=$model cell_num=11 field="resource_qty"}
+					{grid_cell model=$model cell_num=10 field="resource_qty"}
 						{$model->resource_qty}
 					{/grid_cell}
-					{grid_cell model=$model cell_num=10 field="resource"}
+					{grid_cell model=$model cell_num=11 field="mfcentre"}
+						{$model->mfcentre}
+					{/grid_cell}
+					{grid_cell model=$model cell_num=12 field="resource"}
 						{$model->resource}
 					{/grid_cell}
 				{/grid_row}
