@@ -564,7 +564,7 @@ class StitemsController extends printController
         // MF Structures, operations and costing
         $sidebarlist = [];
         $sidebarlist['Structure'] = array(
-            'tag' => 'View Structurea',
+            'tag' => 'View Structures',
             'link' => array(
                 'modules' => $this->_modules,
                 'controller' => 'mfstructures',
@@ -582,7 +582,7 @@ class StitemsController extends printController
             )
         );
         $sidebarlist['OutsideOperations'] = array(
-            'tag' => 'Outside Operations',
+            'tag' => 'View Outside Operations',
             'link' => array(
                 'modules' => $this->_modules,
                 'controller' => 'mfoutsideoperations',
