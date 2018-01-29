@@ -498,7 +498,6 @@ $(document).ready(function () {
 			}
 
 			var link = '/?' + makeQueryString($_GET) + '&ajax=';
-	alert(link);
 			uz_print_dialog({
 				url: link,
 				data: form_data + "&index_key=" + randomString() + "&index_link=" + Base64.encode(form.attr('action') + '&ajax=') + "&Search[print]=print"
