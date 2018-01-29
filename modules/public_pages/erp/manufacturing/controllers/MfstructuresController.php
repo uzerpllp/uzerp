@@ -6,7 +6,7 @@
  *	Released under GPLv3 license; see LICENSE.
  **/
 
-class MfstructuresController extends Controller
+class MfstructuresController extends PrintController
 {
 
 	protected $version='$Revision: 1.25 $';
@@ -110,7 +110,7 @@ class MfstructuresController extends Controller
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 
-		$this->view->set('clickaction', 'view');
+		$this->view->set('clickaction', 'edit');
 		$this->view->set('clickcontroller', 'MFStructures');
 		$this->view->set('no_ordering', true);
 	}
@@ -320,7 +320,7 @@ class MfstructuresController extends Controller
 
 		if (isset($_POST[$this->modeltype]['ststructure_id']))
 		{
-			$ststructure_id = $_POST[$this->modeltype]['$ststructure_id'];
+			$ststructure_id = $_POST[$this->modeltype]['ststructure_id'];
 		}
 		elseif (isset($this->_data['ststructure_id']))
 		{
@@ -336,8 +336,9 @@ class MfstructuresController extends Controller
 		$this->view->set('clickaction','edit');
 		$ststructure->load($ststructure_id);
 
+		$uom_temp_list = array();
 		$uom_temp_list = STuomconversion::getUomList($ststructure_id, $ststructure->uom_id);
-		$uom_temp_list +=SYuomconversion::getUomList($ststructure->uom_id);
+		$uom_temp_list += SYuomconversion::getUomList($ststructure->uom_id);
 
 		$uom = DataObjectFactory::Factory('STuom');
 		$uom->load($ststructure->uom_id);
@@ -348,6 +349,13 @@ class MfstructuresController extends Controller
 
 		$this->view->set('uom_id',$ststructure->uom_id);
 		$this->view->set('uom_list',$uom_list);
+
+		$cancel_url = link_to(array_merge($this->_modules, [
+		    'controller' => $this->name,
+		    'action' => 'index',
+		    'stitem_id' => $stitem_id
+		]), false, false);
+		$this->view->set('cancel_link', $cancel_url);
 
 	}
 
@@ -364,7 +372,7 @@ class MfstructuresController extends Controller
 
 		if ($this->_data[$this->modeltype]['qty']<=0)
 		{
-			$flash->addError('Quantity must be greater than zero');
+		    $errors[] = 'Quantity must be greater than zero';
 			$db->FailTrans();
 		}
 		elseif (parent::save($this->modeltype,'',$errors))
@@ -765,17 +773,6 @@ class MfstructuresController extends Controller
 			return $items_list;
 		}
 	}
-
-    /**
-     * Redirect __call to the index action
-     *
-     * @see Controller::__call()
-     */
-    public function view_stock_item()
-    {
-        $this->index();
-    }
-
 }
 
 // End of MfstructuresController
