@@ -335,17 +335,19 @@ class MfoperationsController extends ManufacturingController {
 		parent::index(new MFOperationCollection(new MFOperation));
 	}
 
-	/* Ajax functions
+	// Ajax functions
+
+	/**
+	 * Return UOMs and Operations based on Stock Item
 	 *
-	 *
+	 * @param string $_stitem_id
 	 */
 	public function getItemData($_stitem_id='')
 	{
-// Used by Ajax to get the From/To Locations/Bins based on Stock Item
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['stitem_id'])) { $_stitem_id=$this->_data['stitem_id']; }
 		} else {
-// if this is Save and Add Another then need to get $_POST values to set context
+            // if this is Save and Add Another then need to get $_POST values to set context
 			$_stitem_id=isset($_POST[$modeltype]['stitem_id'])?$_POST[$modeltype]['stitem_id']:$_stitem_id;
 		}
 
@@ -376,7 +378,6 @@ class MfoperationsController extends ManufacturingController {
 			$output['show_parts']=array('data'=>$html,'is_array'=>is_array($html));
 		}
 
-        // ****************************************************************************
         // Finally, if this is an ajax call, set the return data area
 		if ($ajax) {
 			$this->view->set('data',$output);
@@ -385,9 +386,8 @@ class MfoperationsController extends ManufacturingController {
 
 	}
 
-	/* Protected Functions
-	 *
-	 */
+	// Protected Functions
+
 	protected function getPageName($base=null,$action=null) {
 		return parent::getPageName((empty($base)?'operations':$base), $action);
 	}
