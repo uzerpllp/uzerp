@@ -346,9 +346,9 @@ class MfoperationsController extends ManufacturingController {
 	{
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['stitem_id'])) { $_stitem_id=$this->_data['stitem_id']; }
-		} else {
-            // if this is Save and Add Another then need to get $_POST values to set context
-			$_stitem_id=isset($_POST[$modeltype]['stitem_id'])?$_POST[$modeltype]['stitem_id']:$_stitem_id;
+		} elseif (isset($this->_data['MFOperation']['stitem_id'])) {
+            // if this is Save and Add Another then need to get _POST values to set context
+		    $this->_data['MFOperation']['stitem_id'];
 		}
 
 		// store the ajax status in a different var, then unset the current one
