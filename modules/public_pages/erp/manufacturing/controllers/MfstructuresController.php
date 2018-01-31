@@ -258,9 +258,9 @@ class MfstructuresController extends PrintController
 		$mfstructure = $this->_uses[$this->modeltype];
 
 		$stitem_id = '';
-		if (isset($_POST[$this->modeltype]['stitem_id']))
+		if (isset($this->_data[$this->modeltype]['stitem_id']))
 		{
-			$stitem_id = $_POST[$this->modeltype]['stitem_id'];
+			$stitem_id = $this->_data[$this->modeltype]['stitem_id'];
 		}
 		elseif ($mfstructure->isLoaded())
 		{
@@ -299,9 +299,9 @@ class MfstructuresController extends PrintController
 
 		$start_date = date(DATE_FORMAT);
 
-		if (isset($_POST[$this->modeltype]['start_date']))
+		if (isset($this->_data[$this->modeltype]['start_date']))
 		{
-			$start_date = $_POST[$this->modeltype]['start_date'];
+			$start_date = $this->_data[$this->modeltype]['start_date'];
 		}
 		elseif (isset($this->_data['start_date']))
 		{
@@ -318,9 +318,9 @@ class MfstructuresController extends PrintController
 			sendBack();
 		}
 
-		if (isset($_POST[$this->modeltype]['ststructure_id']))
+		if (isset($this->_data[$this->modeltype]['ststructure_id']))
 		{
-			$ststructure_id = $_POST[$this->modeltype]['ststructure_id'];
+			$ststructure_id = $this->_data[$this->modeltype]['ststructure_id'];
 		}
 		elseif (isset($this->_data['ststructure_id']))
 		{
