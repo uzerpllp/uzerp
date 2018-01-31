@@ -562,53 +562,57 @@ class StitemsController extends printController
         $sidebar->addList('This Item', $sidebarlist);
 
         // MF Structures, operations and costing
-        $sidebarlist = [];
-        $sidebarlist['Structure'] = array(
-            'tag' => 'View Structures',
-            'link' => array(
-                'modules' => $this->_modules,
-                'controller' => 'mfstructures',
-                'action' => 'index',
-                'stitem_id' => $id
-            )
-        );
-        $sidebarlist['Operations'] = array(
-            'tag' => 'View Operations',
-            'link' => array(
-                'modules' => $this->_modules,
-                'controller' => 'mfoperations',
-                'action' => 'index',
-                'stitem_id' => $id
-            )
-        );
-        $sidebarlist['OutsideOperations'] = array(
-            'tag' => 'View Outside Operations',
-            'link' => array(
-                'modules' => $this->_modules,
-                'controller' => 'mfoutsideoperations',
-                'action' => 'index',
-                'stitem_id' => $id
-            )
-        );
-        $sidebarlist['cost_sheet'] = array(
-            'tag' => 'View Cost Sheet',
-            'link' => array(
-                'module' => 'costing',
-                'controller' => 'STCosts',
-                'action' => 'costSheet',
-                'stitem_id' => $id
-            )
-        );
-        $sidebarlist['cost_history'] = array(
-            'tag' => 'View Cost History',
-            'link' => array(
-                'module' => 'costing',
-                'controller' => 'STCosts',
-                'action' => 'index',
-                'stitem_id' => $id
-            )
-        );
-        $sidebar->addList('Stucture and Operations', $sidebarlist);
+        if ($transaction->comp_class == 'M' || $transaction->comp_class == 'S') {
+            $sidebarlist = [];
+            $sidebarlist['Structure'] = array(
+                'tag' => 'View Structures',
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => 'mfstructures',
+                    'action' => 'index',
+                    'stitem_id' => $id
+                )
+            );
+            if ($transaction->comp_class !== 'S') {
+                $sidebarlist['Operations'] = array(
+                    'tag' => 'View Operations',
+                    'link' => array(
+                        'modules' => $this->_modules,
+                        'controller' => 'mfoperations',
+                        'action' => 'index',
+                        'stitem_id' => $id
+                    )
+                );
+            }
+            $sidebarlist['OutsideOperations'] = array(
+                'tag' => 'View Outside Operations',
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => 'mfoutsideoperations',
+                    'action' => 'index',
+                    'stitem_id' => $id
+                )
+            );
+            $sidebarlist['cost_sheet'] = array(
+                'tag' => 'View Cost Sheet',
+                'link' => array(
+                    'module' => 'costing',
+                    'controller' => 'STCosts',
+                    'action' => 'costSheet',
+                    'stitem_id' => $id
+                )
+            );
+            $sidebarlist['cost_history'] = array(
+                'tag' => 'View Cost History',
+                'link' => array(
+                    'module' => 'costing',
+                    'controller' => 'STCosts',
+                    'action' => 'index',
+                    'stitem_id' => $id
+                )
+            );
+            $sidebar->addList('Stucture and Operations', $sidebarlist);
+        }
 
         //Related Items
         $this->sidebarRelatedItems($sidebar, $transaction, [
