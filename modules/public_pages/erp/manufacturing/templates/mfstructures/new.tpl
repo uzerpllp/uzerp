@@ -26,7 +26,7 @@
 			{input type='text'  attribute='waste_pc' }
 		{/with}
 		<dt class="submit"></dt>
-		<dd class="submit">
+		<dd class="submit form-buttons-inline">
 			<input class="formsubmit uz-validate" value="Save" name="saveform" id="saveform" type="submit">
 			<input class="formsubmit uz-validate" value="Save and Add Another" name="saveadd" id="saveadd" type="submit">
 			<a href="{$cancel_link}">Cancel</a>
