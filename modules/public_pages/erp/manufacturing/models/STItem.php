@@ -11,22 +11,27 @@ class STItem extends DataObject
 
 	protected $version='$Revision: 1.45 $';
 
-	protected $defaultDisplayFields = array('item_code'
-											,'description'
-											,'product_group'=>'Product Group'
-											,'type_code'=>'Type Code'
-											,'alpha_code'
-											,'comp_class'
-											,'abc_class'
-											,'ref1'
-											,'balance'
-											,'uom_name'
-											,'latest_cost'
-											,'std_cost'
-											,'prod_group_id'
-											,'type_code_id'
-											,'uom_id'
-											);
+    protected $defaultDisplayFields = [
+        'item_code',
+        'description',
+        'product_group' => 'Product Group',
+        'type_code' => 'Type Code',
+        'alpha_code',
+        'comp_class',
+        'abc_class',
+        'ref1',
+        'balance',
+        'uom_name',
+        'latest_cost',
+        'std_cost',
+        'prod_group_id',
+        'type_code_id',
+        'uom_id'
+    ];
+
+    protected $hidden = [
+        'cost_basis' => 1
+    ];
 
 //	protected $parent;
 //	protected $parent_structure;
