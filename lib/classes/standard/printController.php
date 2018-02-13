@@ -91,7 +91,7 @@ class printController extends Controller
         // If selection of display fields is disabled, don't set them up
         if (! $this->search->disable_field_selection) {
             foreach ($model->getFields() as $fieldname => $field) {
-                if ($fieldname != 'id' && $fieldname != 'usercompanyid' && substr($fieldname, - 3) != '_id' && ! isset($model->belongsToField[$fieldname])) {
+                if ($fieldname != 'id' && $fieldname != 'usercompanyid' && substr($fieldname, - 3) != '_id' && ! isset($model->belongsToField[$fieldname]) && ! $model->isHidden($fieldname)) {
                     $display_fields[$fieldname] = $field->tag;
                 }
             }
