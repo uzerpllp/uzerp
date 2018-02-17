@@ -416,6 +416,7 @@ class StcostsController extends printController {
 			}
 		};
 
+		set_time_limit(120);
 		if ($progressBar->process($stitem_ids, $callback)===FALSE)
 		{
 			$errors[] = 'Could not re-calculate stock item costs';
