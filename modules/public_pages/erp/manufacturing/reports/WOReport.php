@@ -39,34 +39,39 @@ abstract class WOReport
         if (! isset($args['model']) || ! isset($args['data'])) {
             return FALSE;
         }
-        
+
         $this->args = $args;
-        
+
         // set a few vars
         $MFWorkorders = $args['model'];
         $this->data = $this->args['data'];
-        
+        $model_func = [];
+
+        // specify functions we want to execute, value will act like a field
+        $model_func['MFWOStructure'] = ['requiredQty'];
+
         // get operations from the st_item
         $operations = new MFOperationCollection();
         $sh = new SearchHandler($operations, false);
         $sh->addConstraint(new Constraint('stitem_id', '=', $MFWorkorders->stitem_id));
         $sh->setOrderby('op_no', 'asc');
-        
+
         $operations->load($sh);
-        
+
         $xml = $this->controller->generateXML([
             'model' => [
                 $MFWorkorders,
                 $operations
-            ]
+            ],
+            'call_model_func' => $model_func
         ]);
-        
+
         $this->data['printtype'] = $args['printtype'];
         $this->options = [
             'report' => $xsl, // set xsl source for MfworkordersController::printdocumentation()
             'xmlSource' => $xml
         ];
-        
+
         if (isset($args['merge_file_name'])) {
             $this->options['merge_file_name'] = $args['merge_file_name'];
         }
@@ -79,7 +84,7 @@ abstract class WOReport
      * by the caller.
      *
      * @see MfworkordersController
-     * @param array $args            
+     * @param array $args
      */
     abstract public function buildReport($args);
 }
