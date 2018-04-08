@@ -194,6 +194,12 @@ class SorderlinesController extends printController
         $errors = array();
 
         $data = $this->_data['SOrderLine'];
+        $action = $this->_data['original_action'];
+
+        if ( $action === 'edit' && isset($data['productline_id'])) {
+            $flash->addError('Product change not allowed, please cancel the line and add a new one.');
+            sendBack();
+        }
 
         if (empty($data['order_id'])) {
             $errors[] = 'Order header not defined';
