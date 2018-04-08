@@ -1,7 +1,7 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.7 $ *}
 {content_wrapper}
@@ -13,7 +13,7 @@
 				{include file='elements/auditfields.tpl' }
 			{/with}
 			{with model=$models.SOrderLine  legend="Sales Order Line Details"}
-				{if isset($display_fields.product_search)}
+				{if isset($display_fields.product_search) && $action != 'edit'}
 					<input type='hidden' id=prod_search_limit name=limit value={$config.AUTOCOMPLETE_SELECT_LIMIT}>
 				{else}
 					<input type='hidden' id=prod_search_limit name=limit value=0>
@@ -30,10 +30,14 @@
 				<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 				{input type='date' attribute="due_delivery_date"}
 				{input type='date' attribute="due_despatch_date"}
-				{if isset($display_fields.product_search)}
+				{if isset($display_fields.product_search) && $action != 'edit'}
 					{input type='text' attribute="product_search" value=$product_search}
 				{/if}
-				{select attribute="productline_id" label='product' options=$productline_options nonone=true}
+				{if $action != 'edit'}
+					{select attribute="productline_id" label='product' options=$productline_options nonone=true}
+				{else}
+					{view_data attribute="productline_id" label='product'}
+				{/if}
 				{input type="hidden" attribute="item_description" }
 				{input type="text" attribute="description" }
 				{input type="text" attribute="revised_qty" label="Quantity" class="order_qty numeric" }
