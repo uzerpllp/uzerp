@@ -1,7 +1,7 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* 	$Revision: 1.12 $ *}
 {content_wrapper class="clearfix uz-grid" }
@@ -23,7 +23,7 @@
 				{/if}
 				{view_data attribute="status"}
 				{if $model->status==$model->newStatus()}
-					{if isset($display_fields.product_search)}
+					{if isset($display_fields.product_search) && $action != 'edit'}
 						<input type='hidden' id=prod_search_limit name=limit value={$config.AUTOCOMPLETE_SELECT_LIMIT}>
 					{else}
 						<input type='hidden' id=prod_search_limit name=limit value=0>
@@ -31,10 +31,14 @@
 					{* The following is a hack to prevent date picker showing on dialog open *}
 					<span class="ui-helper-hidden-accessible"><input type="text"/></span>
 					{input type='date' attribute="due_delivery_date"}
-					{if isset($display_fields.product_search)}
+					{if isset($display_fields.product_search)  && $action != 'edit'}
 						{input type='text' attribute="product_search" value=$product_search}
 					{/if}
-					{select attribute="productline_id" label='product' options=$productline_options nonone=true}
+    				{if $action != 'edit'}
+    					{select attribute="productline_id" label='product' options=$productline_options nonone=true}
+    				{else}
+    					{view_data attribute="productline_id" label='product'}
+    				{/if}
 					{input type="text" attribute="description" }
 					{input type="text" attribute="revised_qty" label="Quantity" class="order_qty numeric" }
 					{if $model->id!=''}
