@@ -38,6 +38,30 @@ class StcostsController extends printController {
 		$this->view->set('linkfield', 'stitem_id');
 		$this->view->set('linkvaluefield', 'stitem_id');
 
+		$sidebar = new SidebarController($this->view);
+        $sidebarlist = array();
+        $sidebarlist['allItems'] = [
+            'tag' => 'Recalc Latest Costs',
+            'link' => array_merge($this->_modules, [
+                'controller' => $this->name,
+                'action' => 'recalclatestcosts'
+            ]),
+            'class' => 'confirm',
+            'data_attr' => ['data_uz-confirm-message' => "Start cost recalculation?|This cannot be undone."]
+        ];
+        $sidebarlist['viewItem'] = [
+            'tag' => 'Costs Roll Over',
+            'link' => array_merge($this->_modules, [
+                'controller' => $this->name,
+                'action' => 'rollover'
+            ]),
+            'class' => 'confirm',
+            'data_attr' => ['data_uz-confirm-message' => "Start latest costs roll to standard costs?|This cannot be undone."]
+        ];
+		$sidebar->addList('Cost Changes',$sidebarlist);
+		$this->view->register('sidebar',$sidebar);
+		$this->view->set('sidebar',$sidebar);
+
 		parent::index(new STCostCollection($this->_templateobject));
 	}
 
@@ -233,213 +257,32 @@ class StcostsController extends printController {
 
 	public function rollOver()
 	{
-		$flash = Flash::Instance();
-
-		$db = DB::Instance();
-
-		$db->StartTrans();
-
-		$errors = array();
-
-		$stitem_ids = array_keys(STItem::nonObsoleteItems());
-
-		$progressBar = new Progressbar('costs_rollover');
-
-		$callback = function($stitem_id, $id) {
-
-			$stitem = DataObjectFactory::Factory('STItem');
-
-			if (!$stitem->load($stitem_id) || !$stitem->rollOver())
-			{
-				return FALSE;
-			}
-
-		};
-
-		if ($progressBar->process($stitem_ids, $callback)===FALSE)
-		{
-			$errors[] = 'Could not roll-over stock items';
-
-			$db->FailTrans();
-
+	    $flash = Flash::Instance();
+		try {
+		    $job = new uzJobCostRollOver(EGS_USERNAME, EGS_COMPANY_ID, 'uzJobRecalcLatestCosts');
+            $job_id = $job->push();
+            $message = uzJobMessages::Factory(EGS_USERNAME, EGS_COMPANY_ID);
+            $message->storeMessageToken($job_id);
+            $flash->addMessage("Stock items cost roll-over job queued");
+		} catch (uzJobException $e) {
+		    $flash->addError($e->getMessage());
 		}
-
-		// Reset the time limit to complete
-		set_time_limit(30);
-
-		if (count($errors) == 0)
-		{
-			if ((!MFStructure::globalRollOver()) ||
-				(!MFOperation::globalRollOver()) ||
-				(!MFOutsideOperation::globalRollOver()))
-			{
-				$errors[] = 'Could not roll-over stock items';
-				$db->FailTrans();
-			}
-		}
-
-		$db->CompleteTrans();
-
-		if (count($errors) == 0)
-		{
-			$flash->addMessage('Stock items rolled-over');
-
-			sendTo('Index'
-					,'index'
-					,$this->_modules);
-		}
-		else
-		{
-			$flash->addErrors($errors);
-			sendBack();
-		}
+    	sendBack();
 	}
 
 	public function recalcLatestCosts()
 	{
-
-		$flash = Flash::Instance();
-
-		$db = DB::Instance();
-
-		$db->StartTrans();
-
-		$errors = array();
-
-		$stitems_done = array();
-
-		$stitem_ids = array_keys(STItem::nonObsoleteItems());
-
-		$max_depth = 5;
-		$max_parents = 5;
-
-		$progressBar = new Progressbar('recalclatestcosts');
-
-		$callback = function($stitem_id, $id) use (&$stitems_done, &$errors) {
-
-			if (in_array($stitem_id, $stitems_done))
-			{
-				return;
-			}
-
-			$stitem = DataObjectFactory::Factory('STItem');
-
-			if (!$stitem->load($stitem_id))
-			{
-				return FALSE;
-			}
-
-			$parent = null;
-
-			$num_parents = 0;
-
-			do
-			{
-				if ($parent)
-				{
-					$stitem = $parent;
-				}
-
-				$parent = null;
-
-				$parents = $stitem->getParents();
-
-				if (count($parents) > 0)
-				{
-					list($parent) = $parents;
-				}
-
-				$num_parents++;
-
-			}
-			while (($parent) && ($num_parents <= $max_parents));
-
-			$tree_array = $stitem->getTreeArray($max_depth);
-			// Gets child nodes first
-
-			$array_iterator = new RecursiveIteratorIterator(new RecursiveArrayIterator($tree_array), 2);
-
-			foreach ($array_iterator as $id => $children)
-			{
-				if (in_array($id, $stitems_done))
-				{
-					return;
-				}
-				$stitem = DataObjectFactory::Factory('STItem');
-
-				if (!$stitem->load($id))
-				{
-					return FALSE;
-				}
-
-				$stitems_done[] = $id;
-
-				$old_costs = array(
-					$stitem->latest_cost,
-					$stitem->latest_mat,
-					$stitem->latest_lab,
-					$stitem->latest_osc,
-					$stitem->latest_ohd
-				);
-
-				$stitem->calcLatestCost();
-
-				$new_costs = array(
-					$stitem->latest_cost,
-					$stitem->latest_mat,
-					$stitem->latest_lab,
-					$stitem->latest_osc,
-					$stitem->latest_ohd
-				);
-
-				$equal_costs = true;
-
-				$total_costs = count($old_costs);
-
-				for ($i = 0; $i < $total_costs; $i++)
-				{
-					if (bccomp($old_costs[$i], $new_costs[$i], $stitem->cost_decimals) != 0)
-					{
-						$equal_costs = false;
-						break;
-					}
-				}
-
-				if ($equal_costs)
-				{
-					return;
-				}
-
-				if ((!$stitem->saveCosts()) || (!STCost::saveItemCost($stitem)))
-				{
-					return FALSE;
-				}
-			}
-		};
-
-		set_time_limit(120);
-		if ($progressBar->process($stitem_ids, $callback)===FALSE)
-		{
-			$errors[] = 'Could not re-calculate stock item costs';
-
-			$db->FailTrans();
-
-		}
-
-		$db->CompleteTrans();
-		if (count($errors) == 0)
-		{
-			$flash->addMessage('Stock item costs re-calculated');
-
-			sendTo('Index'
-					,'index'
-					,$this->_modules);
-		}
-		else
-		{
-			$flash->addErrors($errors);
-			sendBack();
-		}
+	    $flash = Flash::Instance();
+    	try {
+    	    $job = new uzJobRecalcLatestCosts(EGS_USERNAME, EGS_COMPANY_ID, 'uzJobCostRollOver');
+    	    $job_id = $job->push();
+    	    $message = uzJobMessages::Factory(EGS_USERNAME, EGS_COMPANY_ID);
+    	    $message->storeMessageToken($job_id);
+    	    $flash->addMessage("Stock items cost recalculation job queued");
+    	} catch (uzJobException $e) {
+    	    $flash->addError($e->getMessage());
+    	}
+    	sendBack();
 	}
 
 	/* output functions */

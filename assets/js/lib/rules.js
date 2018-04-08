@@ -925,41 +925,6 @@ $(document).ready(function () {
 
 	});
 	
-	// Progress Bar for Costing Rollover - needs to be here as driven off main menu
-	
-	$('a[href*="action=rollover"]').live('click', function (event) {
-		
-		event.preventDefault();
-		
-		options = {main_url 		: $(this).attr('href')
-				  ,progress_url		: "/?module=costing&controller=stcosts&action=getprogress&monitor_name=costs_rollover&ajax="
-				  ,heading			: "Costs Rollover"
-				  ,success_message	: "Costs Rollover Completed OK"
-				  ,fail_message		: "Costs Rollover Failed"
-		};
-		
-		uz_progressbar(options);
-		
-	});
-	
-	// Progress Bar for Recalculating Costing - needs to be here as driven off main menu
-	
-	$('a[href*="action=recalclatestcosts"]').live('click', function (event) {
-		
-		event.preventDefault();
-		
-		options = {main_url 		: $(this).attr('href')
-				  ,progress_url		: "/?module=costing&controller=stcosts&action=getprogress&monitor_name=recalclatestcosts&ajax="
-				  ,heading			: "Recalculate Latest Costs"
-				  ,title			: "Recalculating...."
-				  ,success_message	: "Recalculation Completed OK"
-				  ,fail_message		: "Recalculation Failed"
-		};
-		
-		uz_progressbar(options);
-		
-	});
-	
 });
 
 function drag_drop_fields() {
