@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.10.2] 2018-04-08
+
+### Changed
+
+- Remove the ability to change the productline selection when editing Sales an Purchase Order lines to preserve the link when prices are updated.
+
 ## [1.10.1] 2018-01-03
 
 ### Fixed
@@ -342,6 +348,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.10.2]: https://github.com/uzerpllp/uzerp/compare/1.10.1...1.10.2
 [1.10.1]: https://github.com/uzerpllp/uzerp/compare/1.10...1.10.1
 [1.10]: https://github.com/uzerpllp/uzerp/compare/1.9.1...1.10
 [1.9.1]: https://github.com/uzerpllp/uzerp/compare/1.9...1.9.1
