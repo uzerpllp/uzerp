@@ -1,9 +1,9 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
-{* 	$Revision: 1.20 $ *}	
+{* 	$Revision: 1.20 $ *}
 {content_wrapper}
 	<dl id="view_data_left">
 		{form controller="poproductlines" action="save"}
@@ -28,7 +28,7 @@
 					{select attribute='glcentre_id' options=$gl_centres label='Cost Centre'}
 					{input type='date' attribute='start_date' }
 					{input type='date' attribute='end_date' value=$POProductlineHeader->end_date}
-					{input type='text' attribute='ean' }
+					{input type='text' attribute='ean' label='EAN'}
 				{/with}
 				{submit}
 				{submit id='saveform' name='saveadd' value='Save and Add Another'}
