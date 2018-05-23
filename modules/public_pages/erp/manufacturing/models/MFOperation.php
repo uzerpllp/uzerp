@@ -23,6 +23,7 @@ class MFOperation extends DataObject {
 											,'quality_target'
 											,'uptime_target'
 											,'resource_qty'
+											,'centre'
 											,'resource'
 											);
 
