@@ -739,7 +739,7 @@ class MfworkordersController extends ManufacturingController
 
 		$sh->addConstraint(new Constraint('stitem_id', '=', $transaction->stitem_id));
 
-		$sh->setFields(array('id', 'op_no', 'centre', 'resource', 'resource_qty', 'volume_period', 'volume_target', 'volume_uom_id'));
+		$sh->setFields(array('id', 'op_no', 'remarks', 'centre', 'resource', 'resource_qty', 'volume_period', 'volume_target', 'volume_uom_id'));
 
 		parent::index($elements, $sh);
 
