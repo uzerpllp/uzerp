@@ -128,22 +128,35 @@ class GLPeriod extends DataObject
 		
 	}
 	
+	/**
+	 * Return tax period numbers for the specified year
+	 * 
+	 * @param string $year
+	 * 
+	 * @return array Returns array of tax period numbers
+	 */
 	public static function getTaxPeriods($year = null)
 	{
 		$db = DB::Instance();
-		
+		$qvars = [EGS_COMPANY_ID];
+
+		if ($year !== null)
+		{
+			array_push($year, $qvars);
+		}
+
 		$query = 'SELECT DISTINCT tax_period
 					FROM gl_periods
-					WHERE usercompanyid = '.EGS_COMPANY_ID;
-		
+					WHERE tax_period != 0 AND usercompanyid = ?';
+
 		if ($year)
 		{
-			$query .= ' AND year = '.$db->qstr($year);
+			$query .= ' AND year = ?';
 		}
-		
+
 		$query .= ' ORDER BY tax_period ASC';
-		
-		return $db->GetCol($query);
+
+		return $db->GetCol($query, $qvars);
 	}
 	
 	public static function getFuturePeriods($period, $year)
