@@ -30,7 +30,6 @@ class GLTransactionCollection extends DataObjectCollection
 			// Set data source
 			switch ($data['box'])
 			{
-<<<<<<< HEAD
 				// Tax inputs	
 					case 4:
 					case 7:
@@ -50,27 +49,6 @@ class GLTransactionCollection extends DataObjectCollection
 					case 9:
 						$this->_tablename = 'gl_taxeupurchases';
 						break;
-=======
-			// Tax inputs	
-				case 4:
-				case 7:
-					$this->_tablename = 'gltransactions_vat_inputs';
-					break;
-			// Tax overview
-				case 1:
-				case 6:
-					$this->_tablename = 'gltransactions_vat_outputs';
-					break;
-			// EU sales
-				case 8:
-					$this->_tablename = 'gl_taxeusales';
-					break;
-			// EU purchases
-				case 2:
-				case 9:
-					$this->_tablename = 'gl_taxeupurchases';
-					break;
->>>>>>> cec597ccb93b6a889dee385dfdcde5d47988062a
 			}
 		
 		// Set constraints
