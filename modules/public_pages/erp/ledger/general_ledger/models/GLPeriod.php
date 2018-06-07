@@ -74,20 +74,37 @@ class GLPeriod extends DataObject
 		$this->loadBy($sh);
 	}
 	
+	/**
+	 * Return current GL period
+	 * 
+	 * Returns one row containing the 'current' GL period
+	 * i.e. the oldest period that is still open
+	 * 
+	 * @returns object DB row
+	 */
 	function getCurrentPeriod()
 	{
-//
-//	Returns one row containing the 'current' period
-//  i.e. the oldest period that is still open
-//	
 		$sh = new SearchHandler(new GLPeriodCollection($this),false);
-		
 		$sh->fields = '*';
-		
 		$sh->addConstraint(new Constraint('closed', 'is not', 'true'));
-		
 		$sh->setOrderby('enddate','ASC');
-		
+		$this->loadBy($sh);
+	}
+
+	/**
+	 * Return current Tax period
+	 * 
+	 * Returns one row containing the 'current' tax period
+	 * i.e. the oldest period that is still open
+	 * 
+	 * @returns object DB row
+	 */
+	function getCurrentTaxPeriod()
+	{
+		$sh = new SearchHandler(new GLPeriodCollection($this),false);
+		$sh->fields = '*';
+		$sh->addConstraint(new Constraint('tax_period_closed', 'is not', 'true'));
+		$sh->setOrderby('enddate','ASC');
 		$this->loadBy($sh);
 	}
 	
