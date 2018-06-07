@@ -40,7 +40,7 @@ class VatController extends printController
 		else
 		{
 			$glperiod = DataObjectFactory::Factory('GLPeriod');
-			$glperiod->getCurrentPeriod();
+			$glperiod->getCurrentTaxPeriod();
 			
 			if ($glperiod)
 			{
@@ -62,7 +62,7 @@ class VatController extends printController
 		}
 
 		$this->view->set('titles',$vat->titles);
-		$this->view->set('boxes',$vat->getVatBoxes());
+		$this->view->set('boxes',$vat->getVatBoxes($year, $tax_period));
 		$this->view->set('tax_period_closed',$vat->tax_period_closed);
 		$this->view->set('symbol',$vat->currencySymbol);
 		$this->view->set('no_ordering', true);
@@ -764,7 +764,7 @@ class VatController extends printController
 		}
 		
 		// populate extra array
-		$boxes=$vat->getVatBoxes();
+		$boxes=$vat->getVatBoxes($year, $tax_period);
 		
 		foreach ($boxes as $num=>$box)
 		{
