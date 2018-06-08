@@ -55,15 +55,20 @@ abstract class WOReport
         $sh = new SearchHandler($operations, false);
         $sh->addConstraint(new Constraint('stitem_id', '=', $MFWorkorders->stitem_id));
         $sh->setOrderby('op_no', 'asc');
-
         $operations->load($sh);
 
+        $os_operations = new MFOutsideOperationCollection();
+        $sh = new SearchHandler($os_operations, false);
+        $sh->addConstraint(new Constraint('stitem_id', '=', $MFWorkorders->stitem_id));
+        $sh->setOrderby('op_no', 'asc');
+        $os_operations->load($sh);
+        
         $xml = $this->controller->generateXML([
             'model' => [
                 $MFWorkorders,
-                $operations
-            ],
-            'call_model_func' => $model_func
+                $operations,
+                $os_operations
+            ]
         ]);
 
         $this->data['printtype'] = $args['printtype'];
