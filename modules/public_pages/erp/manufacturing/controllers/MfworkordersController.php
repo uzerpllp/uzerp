@@ -737,7 +737,11 @@ class MfworkordersController extends ManufacturingController
 
 		$sh = $this->setSearchHandler($elements);
 
-		$sh->addConstraint(new Constraint('stitem_id', '=', $transaction->stitem_id));
+		$cc = new ConstraintChain;
+		$cc->add(new Constraint('stitem_id', '=', $transaction->stitem_id));
+		$cd = currentDateConstraint();
+		$cc->add($cd);
+		$sh->addConstraintChain($cc);
 
 		$sh->setFields(array('id', 'op_no', 'remarks', 'centre', 'resource', 'resource_qty', 'volume_period', 'volume_target', 'batch_op', 'volume_uom_id'));
 
