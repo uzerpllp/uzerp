@@ -52,16 +52,10 @@ abstract class WOReport
 
         // get operations from the st_item
         $operations = new MFOperationCollection();
-        $sh = new SearchHandler($operations, false);
-        $sh->addConstraint(new Constraint('stitem_id', '=', $MFWorkorders->stitem_id));
-        $sh->setOrderby('op_no', 'asc');
-        $operations->load($sh);
+        $operations->loadItemOperations($MFWorkorders->stitem_id, fix_date($MFWorkorders->created, 'Y-m-d H:i:s.u'));
 
         $os_operations = new MFOutsideOperationCollection();
-        $sh = new SearchHandler($os_operations, false);
-        $sh->addConstraint(new Constraint('stitem_id', '=', $MFWorkorders->stitem_id));
-        $sh->setOrderby('op_no', 'asc');
-        $os_operations->load($sh);
+        $os_operations->loadItemOutsideOperations($MFWorkorders->stitem_id, fix_date($MFWorkorders->created, 'Y-m-d H:i:s.u'));
         
         $xml = $this->controller->generateXML([
             'model' => [
