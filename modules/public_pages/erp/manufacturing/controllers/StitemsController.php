@@ -621,7 +621,12 @@ class StitemsController extends printController
             'uom_conversions',
             'where_used',
             'workorders',
-            'so_product_prices'
+            'purchase_orders',
+            'purchase_invoices',
+            'sales_orders',
+            'sales_invoices',
+            'so_product_prices',
+            'po_product_prices'
         ]);
         $sidebar->addList('related_items', array(
             'documents' => array(
