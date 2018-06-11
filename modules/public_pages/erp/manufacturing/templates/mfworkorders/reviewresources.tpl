@@ -1,5 +1,5 @@
 {** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2018 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -58,13 +58,25 @@
 						{$model->resource_qty}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=6 field="resource_qty" class='numeric'}
-						{if $model->volume_target>0}
+						{if $model->volume_target>0 && $stockitem->cost_basis == 'VOLUME'}
 							{($stockitem->convertToUoM($stockitem->uom_id,$model->volume_uom_id,$transaction->order_qty)/$model->volume_target)|round:2} {$model->getFormatted('volume_period')}
+						{else}
+							{if $model->batch_op == 't' && (!is_null($stockitem->batch_size) && $stockitem->batch_size > 0)}
+								{$model->volume_target} {$model->getFormatted('volume_period')}
+							{else}
+								{($stockitem->convertToUoM($stockitem->uom_id,$model->volume_uom_id,$transaction->order_qty)*$model->volume_target)|round:2} {$model->getFormatted('volume_period')}
+							{/if}
 						{/if}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=7 field="resource_qty" class='numeric'}
-						{if $model->volume_target>0}
+						{if $model->volume_target>0 && $stockitem->cost_basis == 'VOLUME'}
 							{($stockitem->convertToUoM($stockitem->uom_id,$model->volume_uom_id,$transaction->made_qty)/$model->volume_target)|round:2} {$model->getFormatted('volume_period')}
+						{else}
+							{if $model->batch_op == 't' && (!is_null($stockitem->batch_size) && $stockitem->batch_size > 0) && $transaction->made_qty > 0}
+								{$model->volume_target} {$model->getFormatted('volume_period')}
+							{else}
+								{($stockitem->convertToUoM($stockitem->uom_id,$model->volume_uom_id,$transaction->made_qty)*$model->volume_target)|round:2} {$model->getFormatted('volume_period')}
+							{/if}
 						{/if}
 					{/grid_cell}
 				{/grid_row}
