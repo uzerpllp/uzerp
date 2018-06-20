@@ -106,6 +106,7 @@ class VatController extends printController
 		
 		$this->view->set('sidebar',$sidebar);
 		$this->view->set('page_title','Vat');
+		$this->printaction = '';
 	}
 
 	public function enter_journal()
@@ -403,6 +404,7 @@ class VatController extends printController
 		
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
+		$this->printaction = '';
 	}
 
 	public function viewDetail ()
