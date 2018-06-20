@@ -383,6 +383,8 @@ class VatController extends printController
 				'vatreturn'=>array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
+								 ,'year' => $year
+								 ,'tax_period' => $tax_period
 								 ),
 					'tag'=>'View VAT Return'
 				),
