@@ -82,6 +82,19 @@ class VatController extends printController
 								 ),
 					'tag'=>$print_vat_text
 				);
+
+		if ($vat->tax_period_closed === 'f' && $vat->gl_period_closed === 't')
+		{
+			$sidebarlist['closevatperiod'] = array(
+						'link'=>array('modules'=>$this->_modules
+										,'controller'=>$this->name
+										,'action'=>'closeVatPeriod'
+										),
+						'tag'=>'Close VAT Period',
+						'class' => 'confirm',
+						'data_attr' => ['data_uz-confirm-message' => "Close VAT Period?|This cannot be undone."]
+			);
+		}
 		
 		$sidebarlist['inputjournal'] = array(
 					'link'=>array('modules'=>$this->_modules
@@ -702,6 +715,42 @@ class VatController extends printController
 		$vat->vatreturn($tax_period, $year, $errors);
 		return $vat;
 	}
+
+	public function CloseVatPeriod() {
+		
+		$flash = Flash::Instance();
+		$errors		= array();
+		$messages 	= array();
+				
+		// load the model
+		$this->setSearch('VatSearch', 'useDefault', array());
+
+		$tax_period = $this->search->getValue('tax_period');
+		$year		= $this->search->getValue('year');
+		$vat		= $this->getVatReturn($tax_period, $year, $errors);
+
+		if (count($errors) > 0)
+		{
+			$flash->addErrors($errors);
+			sendBack();
+		}
+		
+		if ($vat->tax_period_closed === 'f' && $vat->gl_period_closed === 't')
+		{
+			$result = $vat->closePeriod($tax_period, $year, $errors);
+			if (count($errors) > 0)
+			{
+				$flash->addErrors($errors);
+				sendBack();
+			}
+			$flash->addMessage("VAT Period Closed");
+		} else {
+			$flash->addError('GL Periods open, unable to close VAT Period');
+			sendBack();
+		}
+
+		sendBack();
+	}
 	
 	/* output functions */
 	public function printVatReturn($status = 'generate')
@@ -751,22 +800,7 @@ class VatController extends printController
 			);
 			exit;
 		}
-		
-		// throw an error is the tax period cannot be closed
-		// NOTE: we no longer show a success message when the period has been closed
-		
-		if ($vat->tax_period_closed === 'f' && $vat->gl_period_closed === 't')
-		{
-			if (!$vat->closePeriod($tax_period, $year, $errors))
-			{
-				echo $this->build_print_dialog_response(
-					FALSE,
-					array('message'=>'Error closing VAT period')
-				);
-				exit;
-			}
-		}
-		
+
 		// populate extra array
 		$boxes=$vat->getVatBoxes($year, $tax_period);
 		
