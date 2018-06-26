@@ -6,7 +6,7 @@
  * @package cashbook
  * @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
  * @license GPLv3 or later
- * @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ * @copyright (c) 2018 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
 class CbtransactionsController extends printController
 {
@@ -117,6 +117,11 @@ class CbtransactionsController extends printController
         $this->payments(__FUNCTION__);
     }
 
+    public function pay_vat()
+    {
+        $this->payments(__FUNCTION__);
+    }
+
     /**
      * Display the Cashbook Refund HTML Form
      *
@@ -175,6 +180,11 @@ class CbtransactionsController extends printController
     }
 
     public function receive_payment()
+    {
+        $this->payments(__FUNCTION__);
+    }
+
+    public function receive_vat()
     {
         $this->payments(__FUNCTION__);
     }
@@ -338,6 +348,32 @@ class CbtransactionsController extends printController
         $sidebar->addList('Actions', $sidebarlist);
 
         $sidebarlist = array();
+
+        if ($function != 'pay_vat') {
+            $sidebarlist['payvat'] = array(
+                'tag' => 'Pay VAT',
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => $this->name,
+                    'action' => 'pay_vat'
+                )
+            );
+        }
+
+        if ($function != 'receive_vat') {
+            $sidebarlist['rcvvat'] = array(
+                'tag' => 'Receive VAT',
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => $this->name,
+                    'action' => 'receive_vat'
+                )
+            );
+        }
+
+        $sidebar->addList('VAT', $sidebarlist);
+
+        $sidebarlist = array();
         if ($account) {
             $sidebarlist['accountdetail'] = array(
                 'tag' => 'View Account Detail',
@@ -382,29 +418,22 @@ class CbtransactionsController extends printController
     private function payments($function = '')
     {
         $account = DataObjectFactory::Factory('CBAccount');
-
         $accounts = $account->getAll();
-
         $this->view->set('accounts', $accounts);
 
         if (isset($this->_data['cb_account_id'])) {
             $default_account = $this->_data['cb_account_id'];
-
             $account->load($default_account);
-
             $this->view->set('account', $account->name);
         } else {
             $account->getDefaultAccount(key($accounts));
-
             $default_account = $account->{$account->idField};
         }
 
         $this->view->set('account_id', $default_account);
 
         $sidebar = new SidebarController($this->view);
-
         $this->sidebar($sidebar, null, $function);
-
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
 
@@ -412,20 +441,37 @@ class CbtransactionsController extends printController
         $this->view->set('currency_id', $account->currency_id);
 
         $glaccount = DataObjectFactory::Factory('GLAccount');
-
         $gl_accounts = $glaccount->nonControlAccounts();
 
-        $this->view->set('gl_accounts', $gl_accounts);
+        if ($function == 'pay_vat' || $function == 'receive_vat') {
+            // Making a VAT payment - restrict values
+            $this->view->set('source', 'V');
+            $glparams = new GLParams;
+            $vc_account = $glparams->getParam('VAT Control Account');
+            $gl_accounts = [$vc_account=>'VAT Control Account'];
+            $gl_centres = $this->getCentres($vc_account);
+            $currency = new Currency();
+            $currency->load($glparams->getParam('Base Currency'));
+            $currencies = [$currency->id=>$currency->currency];
 
-        if (isset($this->_data['glaccount_id'])) {
-            $default_glaccount_id = $this->_data['glaccount_id'];
+            // Provide list of Bank Accounts that use the base currency
+            $cc = new ConstraintChain();
+            $cc->add(new Constraint('currency_id', '=', $currency->id));
+            $accounts = $account->getAll($cc);
+            $this->view->set('accounts', $accounts);
         } else {
-            $default_glaccount_id = key($gl_accounts);
+            if (isset($this->_data['glaccount_id'])) {
+                $default_glaccount_id = $this->_data['glaccount_id'];
+            } else {
+                $default_glaccount_id = key($gl_accounts);
+            }
+            $gl_centres = $this->getCentres($default_glaccount_id);
+            $currencies = $this->getAllowedCurrencies($default_account);
         }
-
-        $this->view->set('gl_centres', $this->getCentres($default_glaccount_id));
-
-        $this->view->set('currencies', $this->getAllowedCurrencies($default_account));
+        
+        $this->view->set('gl_accounts', $gl_accounts);
+        $this->view->set('gl_centres', $gl_centres);
+        $this->view->set('currencies', $currencies);
         $this->view->set('rate', $this->getCurrencyRate($default_account, $account->currency_id));
     }
 
