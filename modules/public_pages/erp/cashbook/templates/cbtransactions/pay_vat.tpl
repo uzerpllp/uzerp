@@ -9,11 +9,11 @@
 			{select attribute="cb_account_id" label='Account' force=true value=$account_id options=$accounts}
 			{select attribute='currency_id' value=$currency_id options=$currencies}
 			{input type="hidden" attribute="type" value="P"}
-            {if isset($source)}{input type="hidden" attribute="source" value=$source}{/if}
-			{input type="text" attribute="net_value" }
+            {input type="hidden" attribute="source" value='V'}
+			{input type="text" attribute="net_value" label="Ammount"}
 			{input type="date" attribute="transaction_date"}
-			{select attribute="company_id" label='Company' constrains='person_id'}
-			{select attribute="person_id" label='Person' depends='company_id'}
+			{view_data attribute="company_id" label='Company' value=$company->name}
+			{input type='hidden' attribute='company_id' value=$company->id}
 			{input type="text" attribute="ext_reference"}
 			{input type="text" attribute="description"}
 			{select attribute="payment_type_id"}

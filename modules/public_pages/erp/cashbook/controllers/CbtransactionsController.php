@@ -448,6 +448,9 @@ class CbtransactionsController extends printController
             $this->view->set('source', 'V');
             $glparams = new GLParams;
             $vc_account = $glparams->getParam('VAT Control Account');
+            $vat_payee = $glparams->getParam('VAT Payee');
+            $vat_payee_company = new Company;
+            $vat_payee_company->load($vat_payee);
             $gl_accounts = [$vc_account=>'VAT Control Account'];
             $gl_centres = $this->getCentres($vc_account);
             $currency = new Currency();
@@ -459,6 +462,7 @@ class CbtransactionsController extends printController
             $cc->add(new Constraint('currency_id', '=', $currency->id));
             $accounts = $account->getAll($cc);
             $this->view->set('accounts', $accounts);
+            $this->view->set('company', $vat_payee_company);
         } else {
             if (isset($this->_data['glaccount_id'])) {
                 $default_glaccount_id = $this->_data['glaccount_id'];
