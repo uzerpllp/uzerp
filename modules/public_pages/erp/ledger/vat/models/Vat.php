@@ -181,7 +181,7 @@ class Vat extends GLTransaction
 			
 			$output_tax = $values['Box1']; //$this->getVATSum(1)
 			
-			$input_tax = $values['Box4']; //$this->getVATSum(4)
+			$input_tax = $values['inputs']; //$this->getVATSum(4)
 			
 			$total_tax = bcsub($input_tax, $output_tax);
 			
@@ -263,6 +263,7 @@ select tax_period,
 sum((select sum(vat) from gltransactions_vat_outputs where glperiods_id=glp.id)) as "Box1", 
 sum((select sum(vat) from gl_taxeupurchases vo where vo.glperiods_id=glp.id)) as "Box2",
 sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) + sum((select sum(vat) from gl_taxeupurchases vo where vo.glperiods_id=glp.id)) as "Box4",
+sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) as "inputs",
 sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id)) as "Box6",
 sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) as "Box7",
 sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')) as "Box8",
@@ -294,6 +295,9 @@ QUERY;
 			$boxes[$key]['box_num']	= 'Box '.$key.' : ';
 			$boxes[$key]['value']	= 0;
 		}
+
+		$boxes[100]['box_num'] = '100';
+		$boxes[100]['value'] = 0;
 
 		// VAT due on sales (box 1)
 		$value = $values['Box1'];
@@ -328,6 +332,10 @@ QUERY;
 		// EU purchases excluding VAT (box 9)
 		$value = $values['Box9'];
 		$boxes[9]['value'] = empty($value)?0:$value;
+
+		//inputs
+		$value = $values['inputs'];
+		$boxes[100]['value'] = empty($value)?0:$value;
 		
 		foreach ($boxes as $key=>$value)
 		{
