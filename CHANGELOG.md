@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.10.3] 2018-07-11
+
+- Validate billing and shipping address selection on sales orders when saving.
+
 ## [1.10.2] 2018-04-08
 
 ### Changed
