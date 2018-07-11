@@ -62,7 +62,8 @@ class VatController extends printController
 		}
 
 		$boxes = $vat->getVatBoxes($year, $tax_period);
-		//unset($boxes['100']);
+		// Remove values not required for display
+		unset($boxes['100']);
 
 		$this->view->set('titles',$vat->titles);
 		$this->view->set('boxes',$boxes);
