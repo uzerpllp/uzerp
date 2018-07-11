@@ -62,7 +62,7 @@ class CBTransaction extends DataObject
             'G' => 'General Ledger',
             'P' => 'Purchase Ledger',
             'S' => 'Sales Ledger',
-            'V' => 'VAT'
+            'CV' => 'Cash Book VAT'
         ));
 
         $this->setEnum('status', array(

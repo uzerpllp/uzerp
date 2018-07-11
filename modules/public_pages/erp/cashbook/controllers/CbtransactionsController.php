@@ -445,7 +445,7 @@ class CbtransactionsController extends printController
 
         if ($function == 'pay_vat' || $function == 'receive_vat') {
             // Making a VAT payment - restrict values
-            $this->view->set('source', 'V');
+            $this->view->set('source', 'CV');
             $glparams = new GLParams;
             $vc_account = $glparams->getParam('VAT Control Account');
             $vat_payee = $glparams->getParam('VAT Payee');

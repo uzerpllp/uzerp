@@ -9,8 +9,9 @@
 			{select attribute="cb_account_id" label='Account' force=true value=$account_id options=$accounts}
 			{select attribute='currency_id' value=$currency_id options=$currencies}
 			{input type="hidden" attribute="type" value="P"}
-            {input type="hidden" attribute="source" value='V'}
+            {input type="hidden" attribute="source" value='CV'}
 			{input type="text" attribute="net_value" label="Ammount"}
+			{input type="text" attribute="gross_value" label="gAmmount"}
 			{input type="date" attribute="transaction_date"}
 			{view_data attribute="company_id" label='Company' value=$company->name}
 			{input type='hidden' attribute='company_id' value=$company->id}

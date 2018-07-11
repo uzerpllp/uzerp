@@ -9,7 +9,7 @@
 			{select attribute="cb_account_id" label='Account' force=true value=$account_id options=$accounts}
 			{select attribute='currency_id' value=$currency_id options=$currencies}
 			{input type="hidden" attribute="type" value="R"}
-            {input type="hidden" attribute="source" value='V'}
+            {input type="hidden" attribute="source" value='CV'}
 			{input type="text" attribute="net_value" label="Ammount"}
 			{input type="date" attribute="transaction_date"}
 			{view_data attribute="company_id" label='Company' value=$company->name}
