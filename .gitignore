@@ -33,3 +33,6 @@ apc.php
 .buildpath
 .project
 .settings/
+
+# vscode
+.vscode/**
