@@ -535,6 +535,16 @@ class SordersController extends printController
             sendBack();
         }
 
+        // Check delivery address is valid for customer
+        if (!array_key_exists($header['del_address_id'], $this->getPersonAddresses($header['person_id'], 'shipping', $header['slmaster_id']))) {
+            $errors[] = 'Delivery address is not valid for the selected customer';
+        }
+
+        // Check invoice address is valid for customer
+        if (!array_key_exists($header['inv_address_id'], $this->getPersonAddresses($header['person_id'], 'billing', $header['slmaster_id']))) {
+            $errors[] = 'Invoice address is not valid for the selected customer';
+        }
+
         $result = false;
 
         if ($order && empty($errors)) {
@@ -554,6 +564,10 @@ class SordersController extends printController
 
         if (isset($header['id']) && $header['id'] != '') {
             $this->_data['id'] = $header['id'];
+        }
+
+        if (isset($header['type']) && $header['type'] != '') {
+            $this->_data['type'] = $header['type'];
         }
 
         if (isset($header['slmaster_id']) && $header['slmaster_id'] != '') {
