@@ -38,7 +38,8 @@ class DashboardController extends Controller
 		
 		if (count($eglet->getContents()) > 0)
 		{
-			$this->view->set('eglets', array('Quick Links'=>$eglet));
+			//$this->view->set('eglets', array('Quick Links'=>$eglet));
+			$this->view->set('eglets', array());
 		}
 		
 		#$cache			= Cache::Instance();
@@ -79,32 +80,7 @@ class DashboardController extends Controller
 			{
 				// user preferences are not set, get the default(preset) uzlets for the module
 				$sh->addConstraint(new Constraint('preset', 'is', TRUE));
-				
-				if ($this->dashboard_module == 'dashboard')
-				{
-					$sh->addConstraint(new Constraint('dashboard', 'is', TRUE));
-					// only include uzlets for modules the user has access to
-					foreach ($ao->permissions as $permission)
-					{
-						if ($permission['type'] == 'm' && !empty($permission['module_id']))
-						{
-							$modules[$permission['module_id']] = $permission['module_id'];
-						}
-					}
-					
-					if (count($modules) > 0)
-					{
-						$sh->addConstraint(new Constraint('module_id', 'in', '('.implode(',', $modules).')'));
-					}
-					else
-					{
-						$sh->addConstraint(new Constraint('module_id', '=', -1));
-					}
-				}
-				else
-				{
-					$sh->addConstraint(new Constraint('module', '=', $this->dashboard_module));
-				}
+				$sh->addConstraint(new Constraint('module', '=', $this->dashboard_module));
 			}
 			
 			$sh->addConstraint(new Constraint('enabled', 'is', TRUE));
@@ -165,9 +141,11 @@ class DashboardController extends Controller
 		$prefs = UserPreferences::getPreferencesClass($username);
 		
 		$uzlets = $prefs->getDashboardContents($username, $this->dashboard_module, $this->_data['pid']);
-		
+		$selected = $uzlets['selected'][$this->dashboard_module];
+		ksort($selected);
+				
 		$this->view->set('module_count', count($uzlets['available'][$this->dashboard_module]));
-		$this->view->set('selected', $uzlets['selected'][$this->dashboard_module]);
+		$this->view->set('selected', $selected);
 		$this->view->set('available', $uzlets['available'][$this->dashboard_module]);
 		$this->view->set('username', $username);
 		
