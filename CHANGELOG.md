@@ -1,6 +1,18 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- Dashboards now use CSS grid layout
+- Quicklinks have been removed from all dashboards
+
+### Fixed
+
+- When editing uzLETs on a dashboard the listed order is the same as the display order
+- The Home dashboard will not display any uzLETs until the user sets their preferred list
+
 ## [1.10.3] 2018-07-11
 
 - Validate billing and shipping address selection on sales orders when saving.
