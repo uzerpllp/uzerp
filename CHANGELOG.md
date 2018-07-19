@@ -360,6 +360,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.10.4]: https://github.com/uzerpllp/uzerp/compare/1.10.3...1.10.4
 [1.10.3]: https://github.com/uzerpllp/uzerp/compare/1.10.2...1.10.3
 [1.10.2]: https://github.com/uzerpllp/uzerp/compare/1.10.1...1.10.2
 [1.10.1]: https://github.com/uzerpllp/uzerp/compare/1.10...1.10.1
