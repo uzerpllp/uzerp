@@ -1,7 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.10.4] 2018-19-11
+
+### Fixed
+
+- Set correct billing and shipping address when creating an order directly from a company/person
+
 ## [1.10.3] 2018-07-11
+
+### Added
 
 - Validate billing and shipping address selection on sales orders when saving.
 

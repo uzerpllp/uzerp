@@ -427,6 +427,9 @@ class SordersController extends printController
         if (isset($this->_data[$this->modeltype]['person_id'])) {
             // this is set if there has been error and we are redisplaying the screen
             $default_person = $this->_data[$this->modeltype]['person_id'];
+        } elseif (isset($this->_data['person_id'])) {
+            // creating order from company/person
+            $default_person = $this->_data['person_id'];
         } else {
             if (! $sorder->isLoaded()) {
                 $default_person = $this->getDefaultValue($this->modeltype, 'person_id', '');
