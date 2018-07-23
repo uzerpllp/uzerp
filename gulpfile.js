@@ -18,6 +18,7 @@ var wrap = require('gulp-wrap');
 var less_source = 'assets/css/uzerp';
 var less_source_libs = 'assets/css/lib';
 
+
 //script paths
 var jsFiles = [
         'assets/js/lib/console.js',
@@ -114,6 +115,7 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('dev-scripts', function() {
+    jsFiles.unshift('assets/js/vendor/jquery-migrate-1.4.1.js',);
     return gulp.src(jsFiles)
 	    .pipe(wrap('// <%= file.path %>\n<%= contents %>'))
         .pipe(concat('scripts.js'))
