@@ -29,20 +29,21 @@ class SInvoiceLineCollection extends DataObjectCollection {
 				$sumby='base_net_value';
 				break;
 			case ('item by qty'):
-				$fields[]='stitem';
+				$fields[]='description';
 				$sumby='sales_qty';
-				$sh->addConstraint(new Constraint('stitem', 'is not', 'NULL'));
 				break;
 			case ('item by value'):
-				$fields[]='stitem';
+				$fields[]='description';
 				$sumby='base_net_value';
-				$sh->addConstraint(new Constraint('stitem', 'is not', 'NULL'));
 				break;
 		}
 		
 		$invoice_fields = $fields;
 		$invoices = clone $this;
 		$sh = new SearchHandler($invoices, false);
+		if (isset($constraint)) {
+			$sh->addConstraint($constraint);
+		}
 		$sh->setGroupBy($invoice_fields);
 		$sh->setOrderby($invoice_fields);
 		$invoice_fields[]='sum('.$sumby.') as value';

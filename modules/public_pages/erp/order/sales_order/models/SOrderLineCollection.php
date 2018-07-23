@@ -135,14 +135,12 @@ class SOrderLineCollection extends DataObjectCollection
 				$sumby		= 'base_net_value';
 				break;
 			case ('item by qty'):
-				$fields[]	= 'stitem';
+				$fields[]	= 'description';
 				$sumby		= 'order_qty';
-				$sh->addConstraint(new Constraint('stitem', 'is not', 'NULL'));
 				break;
 			case ('item by value'):
-				$fields[]	= 'stitem';
+				$fields[]	= 'description';
 				$sumby		= 'base_net_value';
-				$sh->addConstraint(new Constraint('stitem', 'is not', 'NULL'));
 				break;
 		}
 		
