@@ -22,10 +22,10 @@
 	{foreach item=pp key=id from=$content}
 		<tr>
 			<td>
-				{link_to module=$module submodule=$submodule controller=periodicpayments action=makepayments company_id=$pp->company_id cb_account_id=$pp->cb_account_id frequency=$pp->frequency source=$pp->source from_date=$pp->next_due_date to_date=$pp->next_due_date value=$pp->company}
+				{link_to module=cashbook controller=periodicpayments action=makepayments company_id=$pp->company_id cb_account_id=$pp->cb_account_id frequency=$pp->frequency source=$pp->source from_date=$pp->next_due_date to_date=$pp->next_due_date value=$pp->company}
 			</td>
 			<td width=10 align=right>
-				{link_to module=$module submodule=$submodule controller=periodicpayments action=index source=$pp->source value=$pp->source}
+				{link_to module=cashbook controller=periodicpayments action=index source=$pp->source value=$pp->source}
 			</td>
 			<td>
 				{$pp->next_due_date}
