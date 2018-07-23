@@ -89,7 +89,7 @@ VIEW;
             'WOrdersBookProductionNewEGlet' => [2, 'action'],
             'MultiBinBalancesPrintEGlet' => [2, 'action'],
             'TopSalesInvoicesEGlet' => [2, 'info'],
-            'SalesHistorySummary' => [2, 'info'],
+            'SalesHistorySummary' => ['NULL', 'info'],
             'PPOverdueEGlet' => [2, 'info'],
             'unpostedJournalsUZlet' => [2, 'info'],
             'templateJournalsUZlet' => [2, 'info'],
