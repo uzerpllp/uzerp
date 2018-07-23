@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 - When editing uzLETs on a dashboard the listed order is the same as the display order
 - The Home dashboard will not display any uzLETs until the user sets their preferred list
+- 'Top 10' Sales uzLETsnot restricted to products linked to stock items
 
 ## [1.10.3] 2018-07-11
 
