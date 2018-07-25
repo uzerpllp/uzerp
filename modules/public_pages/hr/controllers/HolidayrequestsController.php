@@ -58,6 +58,7 @@ class HolidayrequestsController extends HrController
 		
 		// Check if authorisation is allowed
 		$employee = DataObjectFactory::Factory('Employee');
+		$employee->orderby = 'employee';
 		
 		$employee->authorisationPolicy($employee->holiday_model());
 		
@@ -77,12 +78,15 @@ class HolidayrequestsController extends HrController
 			if (!empty($this->_data['employee_id']))
 			{
 				$employee_id = $this->_data['employee_id'];
+				$employee->load($this->_data['employee_id']);
+				$this->view->set('title', ' for ' . $employee->person->getIdentifierValue());
 			}
 			else
 			{
 				$employee_id = $this->get_employee_id();
 			}
-			
+
+
 			if (!empty($this->_data['start_date']))
 			{
 				$holidayRequest->start_date = fix_date($this->_data['start_date']);
@@ -130,7 +134,10 @@ class HolidayrequestsController extends HrController
 		}
 		
 		$this->view->set('employee', $employee);
-		$this->view->set('employees', $employee->getAll());
+		// requests can only be for current employees
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('finished_date', 'is', 'NULL'));
+		$this->view->set('employees', $employee->getAll($cc, TRUE, TRUE));
 		$this->view->set('today', date(DB_DATE_FORMAT));
 	}
 	

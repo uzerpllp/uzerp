@@ -4,13 +4,13 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {* $Revision: 1.10 $ *}
-{content_wrapper title=$page_title|cat:' for '|cat:$employee->person->getIdentifierValue()}
+{content_wrapper title=$page_title|cat:$title}
 	{form controller="holidayrequests" action="save"}
 		{with model=$models.Holidayrequest legend="Holiday Request Details"}
 			{view_section heading="request_details"}
 				{input type='hidden' attribute='id' }
 				{include file='elements/auditfields.tpl' }
-				{select attribute='employee_id' value=$employee->id options=$employees}
+				{select attribute='employee_id' value=$employee->id use_collection=true force=true options=$employees}
 				{view_data attribute=days_left value=$days_left label='Days Left'}
 				{input type='hidden' attribute='today' value=$today}
 				{input type='date' attribute='start_date'}

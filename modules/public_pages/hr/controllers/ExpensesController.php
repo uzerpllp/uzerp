@@ -143,8 +143,15 @@ class ExpensesController extends HrController
             $this->_data['employee_id'] = $expense->employee_id;
         }
 
+        $employee = DataObjectFactory::Factory('Employee');
+        $employee->orderby = 'employee';
+        // requests can only be for current employees
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('finished_date', 'is', 'NULL'));
+        $this->view->set('employees', $employee->getAll($cc, TRUE, TRUE));
+
         if (isset($this->_data['employee_id'])) {
-            $employee = DataObjectFactory::Factory('Employee');
+        
             $employee->load($this->_data['employee_id']);
 
             if (! $employee->isLoaded()) {
