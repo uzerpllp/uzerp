@@ -49,6 +49,8 @@ class Employee extends DataObject {
 		$this->belongsTo('Address', 'address_id', 'address');
 		$this->belongsTo('ContactMethod', 'contact_phone_id', 'phone');
 		$this->belongsTo('ContactMethod', 'contact_mobile_id', 'mobile');
+		$this->belongsTo('ContactMethod', 'contact_email_id', 'email');
+
 		$this->belongsTo('MFDept', 'mfdept_id', 'department');
 		
 		$this->hasOne('Person', 'person_id', 'person');
@@ -70,6 +72,14 @@ class Employee extends DataObject {
 		$this->validateUniquenessOf(array('ni', 'finished_date'), NULL, TRUE);
 		
 		// Define enumerated types
+        $this->setEnum('gender', array(
+            'M' => 'Male',
+            'F' => 'Female',
+            'T' => 'Transgender',
+            'G' => 'Gender non-conforming',
+            'O' => 'Other',
+			'D' => 'Declined to answer'
+		));
 		
 		// Define default values
 		$params			= DataObjectFactory::Factory('GLParams');

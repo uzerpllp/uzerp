@@ -21,6 +21,7 @@
 					{input type='text' attribute='works_number' label='Works Number'}
 					{input type='text' attribute='ni' class="compulsory" label='NI_Number'}
 					{input type='date' attribute='dob' class="compulsory" label='date_of_birth'}
+					{select attribute='gender' forceselect="true"}
 					{select attribute='employee_grade_id' }
 				{/view_section}
 				{view_section heading="Job Details" expand='open'}

@@ -177,7 +177,7 @@ class EmployeesController extends Controller
 		
 		// TODO: Need to move the saving of Party data to appropriate model
 		// See also where saved in SordersController, CompanysController and PersonsController
-		foreach (array('phone', 'mobile') as $contact_type)
+		foreach (array('phone', 'mobile', 'email') as $contact_type)
 		{
 			if (!empty($this->_data[$this->modeltype][$contact_type]))
 			{

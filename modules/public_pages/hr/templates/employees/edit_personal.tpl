@@ -46,6 +46,8 @@
 					{input type='text' attribute="phone" label="phone"}
 					{input type='hidden' attribute="contact_mobile_id" label="mobile"}
 					{input type='text' attribute="mobile" label="mobile"}
+					{input type='hidden' attribute="contact_email_id" label="email"}
+					{input type='text' attribute="email" label="email"}
 					{select attribute='address_id' nonone=true options=$addresses value=$address->id label='Address'}
 					{if $model->address_id==''}
 						<div id='address'>

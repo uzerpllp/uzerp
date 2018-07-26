@@ -76,6 +76,7 @@
 				{with model=$Employee}
 					{view_data attribute="contact_phone_id" label="phone"}
 					{view_data attribute="contact_mobile_id" label="mobile"}
+					{view_data attribute="contact_email_id" label="email"}
 					{view_data attribute="address_id" label="address"}
 				{/with}
 			{/view_section}
