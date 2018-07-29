@@ -20,6 +20,7 @@ class HolidayrequestsController extends HrController
 		$this->_templateobject = DataObjectFactory::Factory('Holidayrequest');
 		
 		$this->uses($this->_templateobject);
+		$this->view->set('controller', 'Holidayrequest');
 
 	}
 
@@ -30,16 +31,15 @@ class HolidayrequestsController extends HrController
 		
 		$this->view->set('status_enums',$status_enums);
 		
-		$legend=array($status_enums['A']=>'fc_green',
-					  $status_enums['C']=>'fc_grey',
-					  $status_enums['D']=>'fc_red',
-					  $status_enums['W']=>'fc_yellow'
-		);
-		
-		$this->view->set('legend',$legend);
-		
 		$s_data = array();
+		$errors = array();
+
 		$this->setSearch('holidaySearch', 'useDefault', $s_data);
+
+		$this->view->set('clickaction', 'view');
+
+        parent::index(new HolidayrequestCollection($this->_templateobject));
+
 		
 		$sidebar = new SidebarController($this->view);
 		
@@ -111,6 +111,18 @@ class HolidayrequestsController extends HrController
 		}
 		
 		$employee->load($employee_id);
+
+		if (!$employee->isLoaded())
+		{
+			$flash->addError('Error loading employee details');
+			sendBack();
+		}
+		
+		if (!is_null($employee->finished_date) && $employee->finished_date < fix_date(date(DATE_FORMAT)))
+		{
+			$flash->addError('Employee has left');
+			sendBack();
+		}
 		
 		if (!$employee->isLoaded())
 		{

@@ -159,6 +159,13 @@ class ExpensesController extends HrController
                 sendBack();
             }
 
+            // restrict adding of expenses from sidebar link
+            if (!is_null($employee->finished_date) && $employee->finished_date < fix_date(date(DATE_FORMAT)))
+		    {
+			$flash->addError('Employee has left');
+			sendBack();
+            }
+            
             $this->view->set('title', ' for ' . $employee->person->getIdentifierValue());
         }
 
