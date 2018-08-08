@@ -176,18 +176,16 @@ class Vat extends GLTransaction
 		{
 		
 			$this->tax_period_closed = true;
+
+			$values = $this->getVATvalues($year, $tax_period);
 			
-			$output_tax = $this->getVATSum(1);
+			$output_tax = $values['Box1']; //$this->getVATSum(1)
 			
-			$input_tax = $this->getVATSum(4);
+			$input_tax = $values['inputs']; //$this->getVATSum(4)
 			
 			$total_tax = bcsub($input_tax, $output_tax);
 			
 			$input_tax = bcmul($input_tax,-1);
-//			$total_tax=$this->getVATSum(5);
-//			if ($total_tax!=($output_tax-$input_tax)) {
-//				$errors[]='Total VAT does not equal Output Tax minus Input Tax';
-//			}
 		}
 		
 		if (count($errors)==0)
@@ -245,7 +243,52 @@ class Vat extends GLTransaction
 		return $db->CompleteTrans();
 	}
 	
-	function getVatBoxes(){
+	/**
+	 * Get VAT 'Box' values
+	 * 
+	 * Note:
+	 *   Box3 = Box1 + Box2
+	 *   Box5 = Box3 + Box4
+	 * 
+	 * @param int $year
+	 * @param int $tax_period
+	 * 
+	 * @return array ['Box[n]' => 0.00, ...]
+	 */
+	function getVATvalues($year=null, $tax_period=null)
+	{
+		$qparams = [$year, $tax_period];
+		$query = <<<'QUERY'
+select tax_period,
+sum((select sum(vat) from gltransactions_vat_outputs where glperiods_id=glp.id)) as "Box1", 
+sum((select sum(vat) from gl_taxeupurchases vo where vo.glperiods_id=glp.id)) as "Box2",
+sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) + sum((select sum(vat) from gl_taxeupurchases vo where vo.glperiods_id=glp.id)) as "Box4",
+sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) as "inputs",
+sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id)) as "Box6",
+sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) as "Box7",
+sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')) as "Box8",
+sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')) as "Box9"
+from gl_periods glp
+where year=? and tax_period=?
+group by tax_period
+QUERY;
+
+		$db = DB::Instance();
+		$boxr = $db->getAll($query, $qparams);
+		return $boxr[0];
+	}
+
+	/**
+	 * Format and calculate VAT values for display
+	 * 
+	 * @param int $year
+	 * @param int $tax_period
+	 * 
+	 * @return array
+	 */
+	function getVatBoxes($year, $tax_period){
+
+		$values = $this->getVATvalues($year, $tax_period);
 
 		foreach ($this->titles as $key=>$value)
 		{
@@ -253,47 +296,46 @@ class Vat extends GLTransaction
 			$boxes[$key]['value']	= 0;
 		}
 
-		$glperiods = implode(', ', $this->glperiod_ids);
-		
-		if (in_array(false, $this->control_accounts, true))
-		{
-			return false;
-		}
-		$control_account_ids = implode(', ', $this->control_accounts);
-		$db = DB::Instance();
+		$boxes[100]['box_num'] = '100';
+		$boxes[100]['value'] = 0;
+
 		// VAT due on sales (box 1)
-		$value = $this->getVATSum('1');
+		$value = $values['Box1'];
 		$boxes[1]['value'] = empty($value)?0:$value;
 
 		// VAT due on EU purchases (box 2)
-		$value = $this->getVATSum('2');
+		$value = $values['Box2'];
 		$boxes[2]['value'] = empty($value)?0:$value;
 
 		// Output tax (box 3)
 		$boxes[3]['value'] = $boxes[1]['value'] + $boxes[2]['value'];
 		
 		// Input tax (box 4)
-		$value = $this->getVATSum('4');
-		$boxes[4]['value'] = empty($value)?0:$value + $boxes[2]['value'];
+		$value = $values['Box4'];
+		$boxes[4]['value'] = empty($value)?0:$value;
 		
 		// Net tax (box 5)
 		$boxes[5]['value'] = $boxes[3]['value'] - $boxes[4]['value'];
 		
 		// Sales excluding VAT (box 6)
-		$value = $this->getVATSum('6');
+		$value = $values['Box6'];
 		$boxes[6]['value'] = empty($value)?0:$value;
 		
 		// Purchases excluding VAT (box 7)
-		$value = $this->getVATSum('7');
+		$value = $values['Box7'];
 		$boxes[7]['value'] = empty($value)?0:$value;
 		
 		// EU sales excluding VAT (box 8)
-		$value = $this->getVATSum('8');
+		$value = $values['Box8'];
 		$boxes[8]['value'] = empty($value)?0:$value;
 		
 		// EU purchases excluding VAT (box 9)
-		$value = $this->getVATSum('9');
+		$value = $values['Box9'];
 		$boxes[9]['value'] = empty($value)?0:$value;
+
+		//inputs
+		$value = $values['inputs'];
+		$boxes[100]['value'] = empty($value)?0:$value;
 		
 		foreach ($boxes as $key=>$value)
 		{
@@ -302,23 +344,6 @@ class Vat extends GLTransaction
 		
 		return $boxes;
 	}
-	
-	protected function getVATSum ($box)
-	{
-		$gltransactions = new GLTransactionCollection($this);
-		
-		$gltransactions->getVAT(array('box'=>$box), $this->glperiod_ids, $this->control_accounts, true);
-		
-		if ($gltransactions->count()==1)
-		{
-			return $gltransactions->getContents(0)->sum;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	
 }
 
 // End of Vat

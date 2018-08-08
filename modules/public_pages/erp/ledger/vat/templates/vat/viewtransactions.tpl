@@ -5,6 +5,7 @@
  **}
 {* $Revision: 1.12 $ *}
 {content_wrapper}
+	{advanced_search}
 	{paging}
 	{data_table}
 		{heading_row}

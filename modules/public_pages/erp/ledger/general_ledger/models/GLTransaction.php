@@ -62,6 +62,10 @@ class GLTransaction extends DataObject
             'RR' => - 1,
             'RP' => - 1,
             'T' => - 1
+        ),
+        'CV' => array(
+            'R' => - 1,
+            'P' => - 1
         )
     );
 
@@ -135,7 +139,8 @@ class GLTransaction extends DataObject
             'G' => 'General Ledger',
             'P' => 'Purchase Ledger',
             'S' => 'Sales Ledger',
-            'V' => 'VAT Return'
+            'V' => 'VAT Return',
+            'CV' => 'Cash book VAT'
         ));
     }
 
