@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.11] 2018-08-08
 
 ### Changed
 
@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - The Home dashboard will not display any uzLETs until the user sets their preferred list
 - 'Top 10' Sales uzLETsnot restricted to products linked to stock items
 
-## [1.10.4] 2018-19-11
+## [1.10.4] 2018-07-19
 
 ### Fixed
 
