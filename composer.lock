@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "adbdd7254c9b6d437d1dc2929b9923a0",
+    "content-hash": "3799e54b6146f2127aaa38fefd61941f",
     "packages": [
         {
             "name": "adodb/adodb-php",
@@ -417,16 +417,16 @@
         },
         {
             "name": "sentry/sentry",
-            "version": "1.8.2",
+            "version": "1.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "3241b135120c25d6522e46246386df0ab48e13c5"
+                "reference": "7ebc06dcab248bdf12e807bed3b308ef9c8a6ebf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/3241b135120c25d6522e46246386df0ab48e13c5",
-                "reference": "3241b135120c25d6522e46246386df0ab48e13c5",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/7ebc06dcab248bdf12e807bed3b308ef9c8a6ebf",
+                "reference": "7ebc06dcab248bdf12e807bed3b308ef9c8a6ebf",
                 "shasum": ""
             },
             "require": {
@@ -453,7 +453,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.9.x-dev"
+                    "dev-master": "1.10.x-dev"
                 }
             },
             "autoload": {
@@ -477,7 +477,7 @@
                 "log",
                 "logging"
             ],
-            "time": "2017-12-21T16:05:46+00:00"
+            "time": "2018-06-19T15:02:57+00:00"
         },
         {
             "name": "smarty/smarty",

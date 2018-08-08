@@ -1,6 +1,23 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- Dashboards now use CSS grid layout
+- Quicklinks have been removed from all dashboards
+- VAT
+  - Add facility to pay/receive VAT via the cashbook
+  - Move closing the VAT period to a separate action
+  - Performance improvements 
+
+### Fixed
+
+- When editing uzLETs on a dashboard the listed order is the same as the display order
+- The Home dashboard will not display any uzLETs until the user sets their preferred list
+- 'Top 10' Sales uzLETsnot restricted to products linked to stock items
+
 ## [1.10.4] 2018-19-11
 
 ### Fixed

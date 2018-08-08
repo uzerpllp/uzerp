@@ -14,7 +14,7 @@
         "symfony/http-foundation": "^3.1",
         "symfony/yaml": "^3.1",
         "ircmaxell/random-lib": "^1.2",
-        "sentry/sentry": "^1.6"
+        "sentry/sentry": "^1.9.1"
     },
 
     "autoload": {
