@@ -27,6 +27,7 @@
 				{if $self.action == 'edit'}
 					{input type='checkbox' attribute="cascade_description_change" label="Update Product-line descriptions" value=false}
 				{/if}
+				{input type='text' attribute='ean' label="EAN"}
 				{select attribute='stuom_id' options=$uoms label='UoM'}
 				{select attribute='tax_rate_id' options=$tax_rates label='Tax Rate'}
 				{select attribute='glaccount_id' options=$gl_accounts label='GL Account'}

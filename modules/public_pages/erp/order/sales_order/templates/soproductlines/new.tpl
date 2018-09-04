@@ -31,7 +31,7 @@
 					{select attribute='glcentre_id' options=$gl_centres label='Cost Centre'}
 					{input type='date' attribute='start_date' }
 					{input type='date' attribute='end_date' value=$SOProductlineHeader->end_date}
-					{input type='text' attribute='ean' }
+					{input type='text' attribute='ean' label="EAN"}
 				</dl>
 			</div>
 		{/with}

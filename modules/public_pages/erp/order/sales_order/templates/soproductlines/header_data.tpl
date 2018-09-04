@@ -9,6 +9,7 @@
 	{input type='hidden'  attribute='stitem_id' }
 	{view_data attribute='uom_name'}
 	{view_data attribute='description'}
+	{view_data attribute='ean' label="EAN"}
 	{view_data attribute='product_group'}
 	{input type='hidden'  attribute='prod_group_id' }
 	{view_data attribute='tax_rate'}

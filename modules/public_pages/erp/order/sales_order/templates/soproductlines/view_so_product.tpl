@@ -9,6 +9,7 @@
 		{with model=$SOProductlineHeader legend="SOProduct Details"}
 		    <dl class="float-left" >
 				{view_data attribute='description' link_to='"module":"'|cat:$linkmodule|cat:'","controller":"'|cat:$linkcontroller|cat:'","action":"view","id":"'|cat:$SOProductlineHeader->id|cat:'"'}
+				{view_data attribute='ean' label="EAN"}
 				{view_data attribute='stitem' label='Stock Item'}
 				{view_data attribute='product_group'}
 				{view_data attribute='uom_name'}
