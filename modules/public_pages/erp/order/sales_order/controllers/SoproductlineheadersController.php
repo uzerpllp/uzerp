@@ -79,6 +79,7 @@ class soproductlineheadersController extends printController
     public function view()
     {
         $this->setSidebarView($this->getHeader());
+        $this->view->set('printaction', '');
     }
 
     public function _new()
