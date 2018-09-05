@@ -12,6 +12,7 @@ class AddSalesProductEan extends UzerpMigration
     {
         $table = $this->table('so_product_lines_header');
         $table->addColumn('ean', 'string', ['limit' => 13, 'null' => true])
+              ->addIndex(['ean'], ['unique' => true])
               ->save();
     }
 }
