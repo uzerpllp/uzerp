@@ -28,6 +28,7 @@
 				{/if}
 				{select attribute='stuom_id' options=$uoms label='UoM'}
 				{select attribute='tax_rate_id' options=$tax_rates label='Tax Rate'}
+				{input attribute='commodity_code'}
 				{select attribute='glaccount_id' options=$gl_accounts label='GL Account'}
 				{select attribute='glcentre_id' options=$gl_centres label='Cost Centre'}
 				{input type='date' attribute='start_date' }
