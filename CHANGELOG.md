@@ -1,6 +1,24 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Changed
+
+- Move EAN number to sales product header and add validation
+
+### Fixed
+
+- Item cloning
+  - Clear EAN when cloning an item with a sales product
+  - Concatentate new item number and description as new sales product description
+- Set default GL centre from product header when entering a new sales or purchase product
+- Prevent hidden model fields from being selected for display in datat grids
+
+### Added
+
+- Make Order detail, EAN number, stock item code and customer code available to sales order item labels
+
 ## [1.11] 2018-08-08
 
 ### Changed
