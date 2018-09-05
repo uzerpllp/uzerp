@@ -335,12 +335,13 @@ class StitemsController extends printController
 
                                 if ($do_name == 'SOProductLineHeader') {
                                     $child->start_date = $this->_data[$this->modeltype]['pstart_date'];
-                                    $child->description = $this->_data[$this->modeltype]['description'];
+                                    $child->description = $this->_data[$this->modeltype]['item_code'] . ' - ' . $this->_data[$this->modeltype]['description'];
+                                    $child->ean = '';
                                 }
 
                                 if (isset($so_product_id) && !is_null($so_product_id) && $do_name == 'SOProductLine') {
                                     $child->productline_header_id = $new_so_product_id;
-                                    $child->description = $this->_data[$this->modeltype]['description'];
+                                    $child->description = $this->_data[$this->modeltype]['item_code'] . ' - ' . $this->_data[$this->modeltype]['description'];
                                     $child->start_date = $this->_data[$this->modeltype]['pstart_date'];
                                 } else {
                                     $child->stitem_id = $stitem_id;
