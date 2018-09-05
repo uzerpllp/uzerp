@@ -2118,14 +2118,21 @@ class SordersController extends printController
                 $errors[] = 'line ' . $line['line_number'] . ' : Print quantity must be greater than zero';
                 continue;
             }
+            $productline = new SOProductline();
+            $productline->load($lines[$key]['productline_id']);
+            $product = new SOProductlineHeader();
+            $product->load($productline->productline_header_id);
+            
             $label_data = [];
             $description_parts = explode('-', $lines[$key]['description'], 2);
+            $label_data[$key]['item_code'] = trim($lines[$key]['item_code']);
             $label_data[$key]['item_number'] = trim($description_parts[0]);
             $label_data[$key]['item_description'] = trim($description_parts[1]);
+            $label_data[$key]['customer_product_code'] = trim($productline->customer_product_code);
+            $label_data[$key]['ean'] = trim($product->ean);
 
             for ($count = 1; $count <= $line['print_qty']; $count ++) {
                 $extra[]['label'] = $label_data;
-                ;
             }
         }
 
@@ -2136,9 +2143,10 @@ class SordersController extends printController
         }
 
         // generate the XML
-        $xml = $this->generateXML(array(
+        $xml = $this->generateXML([
+            'model' => $sorder,
             'extra' => $extra
-        ));
+        ]);
 
         // set the print options
         $data['printtype'] = 'pdf';
