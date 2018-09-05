@@ -245,6 +245,28 @@
 		margin-right: 1px;
 		margin-bottom: 10px;
 	}
+
+	#title-section {
+		display: inline-block;
+		width: 100%;
+
+		h1 {
+			float: left;
+		}
+		a {
+			float:right;
+		}
+	}
+
+	#title-section a {
+		border-bottom: 1px dotted @dark-grey;	
+	}
+
+	#title-section a:hover, #title-section a:active, #title-section a:focus {
+		border-bottom-style: solid;
+		color: @dark-orange;
+		border-bottom-color: @dark-orange;
+	}
 	
 	#search {
 		background-color: @search-background;

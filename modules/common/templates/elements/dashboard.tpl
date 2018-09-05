@@ -21,6 +21,3 @@
 	{/foreach}
 	{include file='dashboard_uzlets.tpl'}
 {/if}
-{if $can_edit && isset($access) && $access->hasPermission($module,'index','edit')}
-	{link_to module=$module submodule=$submodule action="edit" value="Edit uzLETs" _id="edit_dashboard_link"}
-{/if}
