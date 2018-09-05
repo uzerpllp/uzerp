@@ -25,7 +25,7 @@ class SOProductline extends DataObject
         'glcentre' => 'GL Centre',
         'stitem' => 'Stock Item',
         'stproductgroup' => 'Product Group',
-        'uom_name',
+        'uom_name' => 'UoM',
         'so_price_type',
         'start_date',
         'end_date',
