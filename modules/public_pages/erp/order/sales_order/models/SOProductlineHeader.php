@@ -14,9 +14,9 @@ class SOProductlineHeader extends DataObject
         'description',
         'gl_account',
         'gl_centre',
-        'stitem',
+        'stitem' => 'Stock Item',
         'product_group',
-        'uom_name',
+        'uom_name' => 'UoM',
         'start_date',
         'end_date',
         'latest_cost',
@@ -62,6 +62,7 @@ class SOProductlineHeader extends DataObject
         // Define validation
         $this->validateUniquenessOf('stitem_id', NULL, TRUE);
         $this->validateUniquenessOf('description');
+        $this->addValidator(new EanModelValidator($this));
 
         // Define enumerated types
 
