@@ -789,6 +789,7 @@ class soproductlinesController extends printController
 		}
 
 		$this->view->set('gl_account', $default_glaccount_id);
+		$this->view->set('gl_centre', $product_header->glcentre_id);
 		$this->view->set('gl_centres', $this->getCentres($default_glaccount_id));
 
 		$this->view->set('gross_price', $this->_templateobject->getGrossPrice());
