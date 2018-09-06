@@ -1,14 +1,14 @@
 <?php
- 
-/** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+
+/**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 class MFOperation extends DataObject {
 
 	protected $version='$Revision: 1.4 $';
-	
+
 	protected $defaultDisplayFields = array('op_no'
 											,'start_date'
 											,'end_date'
@@ -16,32 +16,49 @@ class MFOperation extends DataObject {
 											,'stitem_id'
 											,'mfcentre_id'
 											,'mfresource_id'
-											,'volume_period'
+                                            ,'volume_target' => 'Volume Target/Time'
+											,'volume_period' => 'Volume Period/Time Unit'
 											,'volume_uom_id'
 											,'volume_uom'
 											,'quality_target'
 											,'uptime_target'
-											,'volume_target'
 											,'resource_qty'
+											,'centre'
 											,'resource'
 											);
-	
+
+
 	function __construct($tablename='mf_operations') {
 		parent::__construct($tablename);
 		$this->idField='id';
 		$this->identifierField='id';
-		
-		
+
+
  		$this->validateUniquenessOf(array('stitem_id', 'op_no'));
  		$this->belongsTo('STItem', 'stitem_id', 'stitem');
  		$this->belongsTo('MFCentre', 'mfcentre_id', 'mfcentre');
- 		$this->belongsTo('MFResource', 'mfresource_id', 'mfresource'); 
- 		$this->belongsTo('STuom', 'volume_uom_id', 'volume_uom'); 
+ 		$this->belongsTo('MFResource', 'mfresource_id', 'mfresource');
+ 		$this->belongsTo('STuom', 'volume_uom_id', 'volume_uom');
 
 		$this->setEnum('volume_period',array( 'S'=>'Second'
 										  ,'M'=>'Minute'
 										  ,'H'=>'Hour'));
- 		
+
+		$this->setAdditional('latest_cost', 'numeric');
+		$this->setAdditional('std_cost', 'numeric');
+	}
+
+	function cb_loaded($success)
+	{
+	    $this->latest_cost = add(
+	        $this->latest_lab,
+	        $this->latest_ohd
+	        );
+
+	    $this->std_cost = add(
+	        $this->std_lab,
+	        $this->std_ohd
+	        );
 	}
 
 	public static function globalRollOver() {

@@ -1,5 +1,5 @@
 {** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2018 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -19,6 +19,9 @@
 			{heading_row}
 				{heading_cell field="op_no" class='right'}
 					Op No.
+				{/heading_cell}
+				{heading_cell field="remarks"}
+					Remarks
 				{/heading_cell}
 				{heading_cell field="centre"}
 					Centre
@@ -42,23 +45,38 @@
 					{grid_cell model=$model cell_num=1 field="op_no" class='numeric'}
 						{$model->op_no}
 					{/grid_cell}
-					{grid_cell model=$model cell_num=2 field="centre"}
+					{grid_cell model=$model cell_num=2 field="remarks"}
+						{$model->remarks}
+					{/grid_cell}
+					{grid_cell model=$model cell_num=3 field="centre"}
 						{$model->centre}
 					{/grid_cell}
-					{grid_cell model=$model cell_num=3 field="resource"}
+					{grid_cell model=$model cell_num=4 field="resource"}
 						{$model->resource}
 					{/grid_cell}
-					{grid_cell model=$model cell_num=4 field="resource_qty" class='numeric'}
+					{grid_cell model=$model cell_num=5 field="resource_qty" class='numeric'}
 						{$model->resource_qty}
 					{/grid_cell}
-					{grid_cell model=$model cell_num=5 field="resource_qty" class='numeric'}
-						{if $model->volume_target>0}
+					{grid_cell model=$model cell_num=6 field="resource_qty" class='numeric'}
+						{if $model->volume_target>0 && $stockitem->cost_basis == 'VOLUME'}
 							{($stockitem->convertToUoM($stockitem->uom_id,$model->volume_uom_id,$transaction->order_qty)/$model->volume_target)|round:2} {$model->getFormatted('volume_period')}
+						{else}
+							{if $model->batch_op == 't' && (!is_null($stockitem->batch_size) && $stockitem->batch_size > 0)}
+								{$model->volume_target} {$model->getFormatted('volume_period')}
+							{else}
+								{($stockitem->convertToUoM($stockitem->uom_id,$model->volume_uom_id,$transaction->order_qty)*$model->volume_target)|round:2} {$model->getFormatted('volume_period')}
+							{/if}
 						{/if}
 					{/grid_cell}
-					{grid_cell model=$model cell_num=6 field="resource_qty" class='numeric'}
-						{if $model->volume_target>0}
+					{grid_cell model=$model cell_num=7 field="resource_qty" class='numeric'}
+						{if $model->volume_target>0 && $stockitem->cost_basis == 'VOLUME'}
 							{($stockitem->convertToUoM($stockitem->uom_id,$model->volume_uom_id,$transaction->made_qty)/$model->volume_target)|round:2} {$model->getFormatted('volume_period')}
+						{else}
+							{if $model->batch_op == 't' && (!is_null($stockitem->batch_size) && $stockitem->batch_size > 0) && $transaction->made_qty > 0}
+								{$model->volume_target} {$model->getFormatted('volume_period')}
+							{else}
+								{($stockitem->convertToUoM($stockitem->uom_id,$model->volume_uom_id,$transaction->made_qty)*$model->volume_target)|round:2} {$model->getFormatted('volume_period')}
+							{/if}
 						{/if}
 					{/grid_cell}
 				{/grid_row}
