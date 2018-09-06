@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Move EAN number to sales product header and add validation
+- Remove EAN from purchased productlines
+- Move dashboard edit link
 
 ### Fixed
 
@@ -18,6 +20,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Make Order detail, EAN number, stock item code and customer code available to sales order item labels
+- Commodity code field for sales and purchased product headers
 
 ## [1.11] 2018-08-08
 
