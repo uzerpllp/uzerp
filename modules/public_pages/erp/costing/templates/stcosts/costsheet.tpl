@@ -170,7 +170,7 @@
 			</tr>
 		{/if}
 	{/data_table}
-	<p><strong>Operations (Labour/Overhead)</strong></p>
+	<p><strong>Operations (Labour/Overhead/Routing Outside Operations)</strong></p>
 	{data_table}
 		{heading_row}
 			{heading_cell field="op_no"}
@@ -210,6 +210,9 @@
 				{heading_cell field="std_ohd" class='right'}
 					Ohd
 				{/heading_cell}
+				{heading_cell field="std_osc" class='right'}
+					Osc
+				{/heading_cell}
 				{heading_cell field="std_cost" class='right'}
 					Total
 				{/heading_cell}
@@ -219,6 +222,9 @@
 				{/heading_cell}
 				{heading_cell field="latest_ohd" class='right'}
 					Ohd
+				{/heading_cell}
+				{heading_cell field="latest_osc" class='right'}
+					Osc
 				{/heading_cell}
 				{heading_cell field="latest_cost" class='right'}
 					Total
@@ -264,11 +270,15 @@
 				{if $type == 'std'}
 					{assign var=total_lab value=$total_lab+$model->std_lab}
 					{assign var=total_ohd value=$total_ohd+$model->std_ohd}
+					{assign var=total_osc value=$total_osc+$model->std_osc}
 					{grid_cell model=$model cell_num=9 field="std_lab"}
 						{$model->std_lab|string_format:$string_format}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=10 field="std_ohd"}
 						{$model->std_ohd|string_format:$string_format}
+					{/grid_cell}
+					{grid_cell model=$model cell_num=10 field="std_osc" class="numeric"}
+						{$model->std_osc|string_format:$string_format}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=11 field="std_cost"}
 						{$model->std_cost|string_format:$string_format}
@@ -276,14 +286,18 @@
 				{else}
 					{assign var=total_lab value=$total_lab+$model->latest_lab}
 					{assign var=total_ohd value=$total_ohd+$model->latest_ohd}
+					{assign var=total_osc value=$total_osc+$model->latest_osc}
 					{grid_cell model=$model cell_num=9 field="latest_lab"}
 						{$model->latest_lab|string_format:$string_format}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=10 field="latest_ohd"}
 						{$model->latest_ohd|string_format:$string_format}
 					{/grid_cell}
+					{grid_cell model=$model cell_num=10 field="latest_osc" class="numeric"}
+						{$model->latest_osc|string_format:$string_format}
+					{/grid_cell}
 					{grid_cell model=$model cell_num=11 field="latest_cost"}
-						{$model->latest_cost|string_format:$string_format}
+						{$model->latest_lab+$model->latest_ohd+$model->latest_osc|string_format:$string_format}
 					{/grid_cell}
 				{/if}
 			{/grid_row}
@@ -291,9 +305,10 @@
 			<tr><td colspan="0">No matching records found!</td></tr>
 		{/foreach}
 		{if $mfoperations->count() > 0}
-			{assign var=total_cost value=$total_lab+$total_ohd}
+			{assign var=total_cost value=$total_lab+$total_ohd+$total_osc}
 			{assign var=grand_total_lab value=$grand_total_lab+$total_lab}
 			{assign var=grand_total_ohd value=$grand_total_ohd+$total_ohd}
+			{assign var=grand_total_osc value=$grand_total_osc+$total_osc}
 			{assign var=grand_total_cost value=$grand_total_cost+$total_cost}
 			<tr>
 				{if $stitem->cost_basis == "VOLUME"}
@@ -308,6 +323,9 @@
 				</td>
 				<td class='numeric'>
 			       	<strong>{$total_ohd|string_format:$string_format}</strong>
+				</td>
+				<td class='numeric'>
+			       	<strong>{$total_osc|string_format:$string_format}</strong>
 				</td>
 				<td class='numeric'>
 			       	<strong>{$total_cost|string_format:$string_format}</strong>

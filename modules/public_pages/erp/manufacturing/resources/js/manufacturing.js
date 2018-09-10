@@ -521,5 +521,17 @@ $(document).ready(function(){
 		});
 		
 	});
+
+	$( "#manufacturing-mfoperations-new form #MFOperation_type" ).on( "change", function() {
+
+		if($(this).val() == 'O') {
+			$(".all-type").hide();
+			$(".o-type").show();
+		} else {
+			$(".all-type").show();
+			$(".o-type").hide();
+		}
+		
+	});
 	
 });
