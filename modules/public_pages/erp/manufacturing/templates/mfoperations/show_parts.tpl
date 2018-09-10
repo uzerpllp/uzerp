@@ -4,13 +4,16 @@
  *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.2 $ *}
-{content_wrapper}
+
 	{if $mfoperations->count()>0}
 		<p><strong>Current Operations</strong></p>
 		{data_table}
 			{heading_row}
 				{heading_cell field="op_no"}
 					Op No.
+				{/heading_cell}
+				{heading_cell field="type"}
+					Type
 				{/heading_cell}
 				{heading_cell field="remarks"}
 					Remarks
@@ -55,11 +58,17 @@
 				{heading_cell field="resource"}
 					Resource
 				{/heading_cell}
+					{heading_cell field="product_description"}
+					PO Product
+				{/heading_cell}
 			{/heading_row}
 			{foreach name=datagrid item=model from=$mfoperations}
 				{grid_row model=$model}
 					{grid_cell model=$model cell_num=2 field="op_no"}
 						{$model->op_no}
+					{/grid_cell}
+					{grid_cell model=$model cell_num=2 field="type"}
+						{$model->getFormatted('type')}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=3 field="remarks"}
 						{$model->remarks}
@@ -96,10 +105,12 @@
 					{grid_cell model=$model cell_num=12 field="resource"}
 						{$model->resource}
 					{/grid_cell}
+					{grid_cell model=$model cell_num=13 field="product_description"}
+						{$model->product_description}
+					{/grid_cell}
 				{/grid_row}
 			{foreachelse}
 				<tr><td colspan="0">No matching records found!</td></tr>
 			{/foreach}
 		{/data_table}
 	{/if}
-{/content_wrapper}

@@ -90,7 +90,8 @@ class StcostsController extends printController {
 						'uptime_target',
 						$type.'_lab',
 						$type.'_ohd',
-						$type.'_cost',
+						$type.'_osc',
+						$type.'_cost'
 						);
 
 		$sh->setFields($fields);
