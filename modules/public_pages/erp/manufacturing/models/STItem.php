@@ -579,7 +579,8 @@ class STItem extends DataObject
 			            break;
 			    }
 
-			    if ($operation->batch_op == 't' && (!is_null($this->batch_size) && $this->batch_size > 0)) {
+				// Per order ops - e.g. setup a machine
+			    if ($operation->type == 'B' && (!is_null($this->batch_size) && $this->batch_size > 0)) {
 			        $cost /= $this->batch_size;
 			    }
 
@@ -618,11 +619,20 @@ class STItem extends DataObject
 		}
 
 		$outside_ops = $this->getOutsideOperations();
+		$routing_outside_ops = $this->getOperations('O');
 
 		foreach ($outside_ops as $outside_op)
 		{
 
 			$outside_op->latest_osc = round($outside_op->latest_osc, $this->cost_decimals);
+
+			$this->latest_osc += $outside_op->latest_osc;
+		}
+
+		foreach ($routing_outside_ops as $outside_op)
+		{
+
+			$outside_op->latest_osc = round($outside_op->outside_processing_cost, $this->cost_decimals);
 
 			$this->latest_osc += $outside_op->latest_osc;
 		}
@@ -1087,13 +1097,29 @@ class STItem extends DataObject
 		return $this->child_structures;
 	}
 
-	public function getOperations()
+	/**
+	 * Return an array of operations for the item
+	 * 
+	 * @param $type mixed
+	 *     Operation type(s), @see MFOperation
+	 */
+	public function getOperations($type=['R', 'B'])
 	{
-		if ($this->operations) {
-			return $this->operations;
-		}
+		//if ($this->operations) {
+		//	return $this->operations;
+		//}
 
 		$cc = new ConstraintChain;
+		if (!is_array($type)) {
+			$cc->add(new Constraint('type', '=', $type));
+		} else {
+			$type_cc = new ConstraintChain;
+			foreach ($type as $t) {
+				$type_cc->add(new Constraint('type', '=', $t), 'OR');
+			}
+			$cc->add($type_cc);
+		}
+		
 		$cc->add(new Constraint('stitem_id', '=', $this->id));
 
 		$db = DB::Instance();

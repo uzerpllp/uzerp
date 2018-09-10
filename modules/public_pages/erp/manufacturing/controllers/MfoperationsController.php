@@ -183,7 +183,7 @@ class MfoperationsController extends ManufacturingController {
 		if($source_stitem->cost_basis == 'VOLUME' && !($data['volume_target'] > 0)){;
 			$errors[]='Volume target must be a number greater than zero';
 		}
-		if($source_stitem->cost_basis == 'TIME' && !($data['volume_target'] > 0)){;
+		if($source_stitem->cost_basis == 'TIME' && !($data['volume_target'] > 0) && $data['type']!=='O'){;
 		$errors[]='Time must be a number greater than zero';
 		}
 		if($source_stitem->cost_basis == 'VOLUME' && !($data['uptime_target']>0)){;
@@ -192,7 +192,7 @@ class MfoperationsController extends ManufacturingController {
 		if($source_stitem->cost_basis == 'VOLUME' && !($data['quality_target']>0)){;
 			$errors[]='Quality target must be a number greater than zero';
 		}
-		if(!($data['resource_qty']>0)){;
+		if(!($data['resource_qty']>0) && $data['type']!=='O'){;
 			$errors[]='Resource quantity must be a number greater than zero';
 		}
 
@@ -201,12 +201,14 @@ class MfoperationsController extends ManufacturingController {
 			if ($stitem->load($this->saved_model->stitem_id)) {
 				$old_costs = array(
 					$stitem->latest_lab,
-					$stitem->latest_ohd
+					$stitem->latest_ohd,
+					$stitem->latest_osc
 				);
 				$stitem->calcLatestCost();
 				$new_costs = array(
 					$stitem->latest_lab,
-					$stitem->latest_ohd
+					$stitem->latest_ohd,
+					$stitem->latest_osc
 				);
 				$equal_costs = true;
 				$total_costs = count($old_costs);
