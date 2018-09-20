@@ -98,7 +98,7 @@ VIEW;
         $view_name = 'po_linesoverview';
         $view_owner = 'www-data';
         $view = <<<'VIEW'
-CREATE OR REPLACE VIEW public.pi_linesoverview AS 
+CREATE OR REPLACE VIEW public.po_linesoverview AS 
 SELECT pl.id,
     pl.invoice_id,
     pl.line_number,
