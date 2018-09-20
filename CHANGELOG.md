@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
         - Use only the default cost basis for new Stock Items
 
 - Manufacturing operations can be marked as batch operations, causing the per item labour and overhead cost to be divided by the item's batch size
+- Outside operations can be added to the production routing, linked to purchase products. Purchase orders have a new action to allow the services to be purchased.
 
 ### Changed
 - Updated workflow for Operations, Outside Operations and Structures
