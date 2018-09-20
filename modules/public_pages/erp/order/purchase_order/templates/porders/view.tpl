@@ -149,7 +149,12 @@
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
-							<td align='left' colspan='10'>Account: {$line->glaccount},&nbsp;&nbsp;&nbsp;&nbsp;Centre {$line->glcentre}</td>
+							<td align='left' colspan='10'>
+								Account: {$line->glaccount},&nbsp;&nbsp;&nbsp;&nbsp;Centre {$line->glcentre}
+								{if $line->workorder}
+									,&nbsp;&nbsp;&nbsp;&nbsp;Work Order: {$line->workorder},&nbsp;&nbsp;&nbsp;&nbsp;Operation: {$line->operation}
+								{/if}
+							</td>
 						</tr>
 					{/foreach}
 				{/data_table}
