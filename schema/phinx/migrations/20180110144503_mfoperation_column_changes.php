@@ -1,13 +1,14 @@
 <?php
 
-
 use Phinx\Migration\AbstractMigration;
 
+/**
+ * Add additonal fields to mf_operations
+ * to support costing and routing outside operations
+ */
 class MfoperationColumnChanges extends AbstractMigration
 {
-    /*
-     * Make volume_taget not null (required)
-     */
+
     public function up()
     {
         $mfops_require_volume_target = $this->execute("ALTER TABLE mf_operations ALTER COLUMN volume_target SET NOT NULL;");
@@ -17,14 +18,11 @@ class MfoperationColumnChanges extends AbstractMigration
         ->addColumn('lead_time', 'integer', ['default' => '0', 'null' => true])
         ->addColumn('po_productline_header_id', 'biginteger', ['null' => true])
         ->addColumn('description', 'string', ['null' => true])
-        ->addColumn('latest_osc', 'decimal', ['default' => '0'])
-        ->addColumn('std_osc', 'decimal', ['default' => '0'])
+        ->addColumn('latest_osc', 'decimal', ['default' => 0])
+        ->addColumn('std_osc', 'decimal', ['default' => 0])
         ->save();
     }
 
-    /*
-     * Remove requirement for volume_target to have a value
-     */
     public function down() {
         $mfops_do_not_require_volume_target = $this->execute("ALTER TABLE mf_operations ALTER COLUMN volume_target DROP NOT NULL;");
         $mfops = $this->table('mf_operations')
