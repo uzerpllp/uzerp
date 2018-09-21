@@ -25,7 +25,7 @@
 
 					{* The following is a hack to prevent date picker showing on dialog open *}
 					<span class="ui-helper-hidden-accessible"><input type="text"/></span>
-					{input type='date' attribute="due_delivery_date"}
+					{input type='date' attribute="due_delivery_date" value=$default_due_date}
 					{select attribute='mf_workorders_id' label='Work Order' options=$wo_options nonone=true}
     				{if $action != 'edit'}
     					<dt>

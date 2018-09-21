@@ -633,7 +633,7 @@ class POrderLine extends SPOrderLine
 	 */
 	public static function getWorkOrdersNeedingPurchase($params=[]) {
 $query = <<<QUERY
-SELECT mfw.id, mfw.wo_number || ': ' || sti.item_code || ' - ' || sti.description as workorder, mfw.order_qty, mfo.po_productline_header_id, mfo.id as op_id, mfo.op_no
+SELECT mfw.id, mfw.wo_number || ': ' || sti.item_code || ' - ' || sti.description as workorder, mfw.order_qty, mfo.po_productline_header_id, mfo.id as op_id, mfo.op_no, mfo.lead_time
 FROM mf_workorders mfw
 JOIN mf_operations mfo ON mfo.stitem_id = mfw.stitem_id
 JOIN st_items sti ON sti.id = mfw.stitem_id
