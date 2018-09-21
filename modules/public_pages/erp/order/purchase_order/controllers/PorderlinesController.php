@@ -202,6 +202,7 @@ class PorderlinesController extends Controller {
 					$this->view->set('default_description', $p->description);
 					$this->view->set('default_price', $p->price);
 					$this->view->set('net_value', number_format($options[key($options)]['order_qty'] * $p->price, 2));
+					$this->view->set('default_due_date', date('d/m/Y', strtotime("+{$opt['lead_time']} weekdays")));
 				}
 			}
 		}
@@ -762,6 +763,13 @@ class PorderlinesController extends Controller {
 		$data['stuom_id']		= $this->buildSelect('', 'stuom_id', $data['stuom_id']);
 		$data['glaccount_id']	= $this->buildSelect('', 'glaccount_id', $data['glaccount_id']);
 		$data['tax_rate_id']	= $this->buildSelect('', 'tax_rate_id', $data['tax_rate_id']);
+
+		// Add the lead time in weekdays to today's date
+		if(isset($this->_data['op_id'])) {
+			$op = new MFOperation();
+			$op->load($this->_data['op_id']);
+			$data['due_delivery_date'] = date('d/m/Y', strtotime("+{$op->lead_time} weekdays"));
+		}
 
 		foreach ($data as $field=>$values)
 		{

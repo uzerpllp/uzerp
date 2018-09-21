@@ -214,6 +214,10 @@ $(document).ready(function() {
 						{
 							element	: '#POrderLine_tax_rate_id',
 							field	: 'tax_rate_id'
+						},
+						{
+							element	: '#POrderLine_due_delivery_date',
+							field	: 'due_delivery_date'
 						}
 					],
 					data: {
@@ -223,6 +227,7 @@ $(document).ready(function() {
 						productline_id	: $self.val(),
 						plmaster_id		: $('#POrder_plmaster_id').val(),
 						product_search	: $('#POrderLine_product_search').val(),
+						op_id			: $('#POrderLine_mf_operations_id').val(),
 						ajax			: ''
 					}
 				});
