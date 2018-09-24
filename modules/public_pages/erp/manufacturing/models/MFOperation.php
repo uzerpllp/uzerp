@@ -35,6 +35,9 @@ class MFOperation extends DataObject {
 		$this->idField='id';
 		$this->identifierField='id';
 
+		$this->orderby = ['op_no'];
+		$this->orderdir = ['ASC'];
+
  		$this->validateUniquenessOf(array('stitem_id', 'op_no'));
  		$this->belongsTo('STItem', 'stitem_id', 'stitem');
  		$this->belongsTo('MFCentre', 'mfcentre_id', 'mfcentre');
