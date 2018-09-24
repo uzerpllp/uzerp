@@ -66,6 +66,7 @@ class MFOperation extends DataObject {
 
 		$this->setAdditional('latest_cost', 'numeric');
 		$this->setAdditional('std_cost', 'numeric');
+		$this->setAdditional('suppliers', 'text');
 	}
 
 	function cb_loaded($success)
@@ -81,6 +82,25 @@ class MFOperation extends DataObject {
 			$this->std_ohd,
 			$this->std_osc
 		);
+
+		// Add available supplier names for Outside Operations
+		$this->suppliers = null;
+
+		if ($this->type == 'O') {
+			$productlines = new POProductlineCollection();
+			$cc = new ConstraintChain();
+			$cc->add(currentDateConstraint(date('Y-m-d')));
+			//note that the appropriate productline_header_id contraint is added for us
+			$sh = new SearchHandler($productlines);
+			$sh->addConstraint($cc);
+			$productlines->load($sh);
+
+			foreach ($productlines as $p) {
+				$suppliers[] = $p->supplier;
+			}
+
+			$this->suppliers = implode(', ', $suppliers);
+		}
 	}
 
 	public static function globalRollOver() {
