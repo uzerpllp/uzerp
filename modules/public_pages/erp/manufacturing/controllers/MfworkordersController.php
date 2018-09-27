@@ -36,6 +36,7 @@ class MfworkordersController extends ManufacturingController
 			$this->_data['Search']['wo_number'] = intval($this->_data['Search']['wo_number']);
 		}
 
+
 		$this->setSearch('workordersSearch', 'useDefault', $s_data);
 
 		$this->view->set('clickaction', 'view');
@@ -324,10 +325,11 @@ class MfworkordersController extends ManufacturingController
 			}
 			else
 			{
-				sendTo('STItems'
-						,'viewWorkorders'
-						,$this->_modules
-						,array('id'=>$data->stitem_id));
+				// sendTo('STItems'
+				// 		,'viewWorkorders'
+				// 		,$this->_modules
+				// 		,array('id'=>$data->stitem_id));
+				sendTo('mfworkorders', 'index', 'manufacturing');
 			}
 		}
 
