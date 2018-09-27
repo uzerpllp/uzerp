@@ -17,7 +17,8 @@
 							{$heading}
 						{/heading_cell}
 					{/foreach}
-					{heading_cell field="complete"}
+					{heading_cell}
+						Action
 					{/heading_cell}
 				{/heading_row}
 			</thead>
@@ -34,14 +35,14 @@
 					{/foreach}
 					<td>
 						{if $model->status!='C'}
-							{if $model->status=='N'}
-								Release?
-								<input type='hidden' name='status[{$model->id}]' value='R'>
-							{elseif $model->status!='C'}
-								Complete?
-								<input type='hidden' name='status[{$model->id}]' value='C'>
-							{/if}
 							<input type="checkbox" name="update[{$model->id}]" id="update{$model->id}" class="checkbox" />
+							{if $model->status=='N'}
+								<label for="update{$model->id}">Release</label>
+								<input type='hidden' name='status[{$model->id}]' value='R' label='release'/>
+							{elseif $model->status!='C'}
+								<label for="update{$model->id}">Complete</label>
+								<input type='hidden' name='status[{$model->id}]' value='C' />
+							{/if}
 						{/if}
 					</td>
 				{/grid_row}

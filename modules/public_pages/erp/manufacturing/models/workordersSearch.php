@@ -22,26 +22,18 @@ class workordersSearch extends BaseSearch {
 			'status',
 			'status_is',
 			'multi_select',
-			array()
+			['N', 'R', 'O']
 		);
-		$wo=new MFWorkorder();
+		$wo = new MFWorkorder();
 		$search->setOptions('status',$wo->getEnumOptions('status'));
-		
-// Search by Stock Item
+
+// Search by Start Date
 		$search->addSearchField(
-			'stitem_id',
-			'Stock Item',
-			'select',
-			'',
-			'advanced'
-			);
-		$stitem = new STItem();
-		$chain = new ConstraintChain();
-		$chain->add(new Constraint('comp_class','=','M'));
-		$stitems=$stitem->getAll($chain);
-		$options=array(''=>'All');
-		$options=$options+$stitems;
-		$search->setOptions('stitem_id',$options);
+			'start_date',
+			'Start Date Between',
+			'between'
+		);
+		
 
 // Search by Required By Date
 /* 'between' is not yet implemented
@@ -60,6 +52,21 @@ class workordersSearch extends BaseSearch {
 			'',
 			'advanced'
 		);
+// Search by Stock Item
+$search->addSearchField(
+	'stitem_id',
+	'Stock Item',
+	'select',
+	'',
+	'advanced'
+	);
+$stitem = new STItem();
+$chain = new ConstraintChain();
+$chain->add(new Constraint('comp_class','=','M'));
+$stitems=$stitem->getAll($chain);
+$options=array(''=>'All');
+$options=$options+$stitems;
+$search->setOptions('stitem_id',$options);
 		
 // Search by Stock Type Code
 		$search->addSearchField(

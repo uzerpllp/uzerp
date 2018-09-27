@@ -13,7 +13,9 @@ class MFWorkorder extends DataObject
 	
 	protected $defaultDisplayFields = array('wo_number'
 											,'order_qty'
-											,'stitem'	=> 'Stock Item'
+											,'item_code'
+											,'stitem'	=> 'Description'
+											,'start_date'
 											,'required_by'
 											,'made_qty'
 											,'status'
