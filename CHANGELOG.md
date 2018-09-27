@@ -562,6 +562,7 @@ All notable changes to this project will be documented in this file.
     - Clicking on the op or structure line number will show the edit form
     - All forms have 'Save and Add...' buttons to speed up datat entry
     - Form 'cancel' links allow easy return to the ops/structure list for the item
+- Updated Work Orders list display and search
 
 ## [1.12] 2018-09-06
 
