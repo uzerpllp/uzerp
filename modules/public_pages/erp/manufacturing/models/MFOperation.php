@@ -90,7 +90,7 @@ class MFOperation extends DataObject {
 			$productlines = new POProductlineCollection();
 			$cc = new ConstraintChain();
 			$cc->add(currentDateConstraint(date('Y-m-d')));
-			//note that the appropriate productline_header_id contraint is added for us
+			$cc->add(new Constraint('productline_header_id', '=', $this->po_productline_header_id));
 			$sh = new SearchHandler($productlines);
 			$sh->addConstraint($cc);
 			$productlines->load($sh);
