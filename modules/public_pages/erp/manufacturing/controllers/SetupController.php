@@ -20,7 +20,9 @@ class SetupController extends MasterSetupController
         'default-operation-units' => 'Default units for operation volume/time',
         'default-cost-basis' => 'Default cost basis for new Stock Items',
         'use-only-default-cost-basis' => 'Use only the selected, default cost basis for new Stock Items',
-        'outside-op-prod-group' => 'Product Group for routing outside op purchases'
+        'outside-op-prod-group' => 'Product Group for routing outside operation purchases',
+        'outside-op-mfcentre' => 'Work Centre for routing outside operations',
+        'outside-op-mfresource' => 'Resource for routing outside operations'
     ];
 
     protected function registerPreference()
@@ -31,6 +33,8 @@ class SetupController extends MasterSetupController
         $defaultCostBasis = $this->module_preferences['default-cost-basis']['preference'];
         $useOnlyCostBasis = $this->module_preferences['use-only-default-cost-basis']['preference'];
         $outsideOpProductGroup = $this->module_preferences['outside-op-prod-group']['preference'];
+        $outsideOpMFCentre = $this->module_preferences['outside-op-mfcentre']['preference'];
+        $outsideOpMFResource = $this->module_preferences['outside-op-mfresource']['preference'];
 
         $this->preferences->registerPreference([
             'name' => 'default-operation-units',
@@ -99,8 +103,39 @@ class SetupController extends MasterSetupController
             'type' => 'select',
             'data' => $data,
             'value' => $outsideOpProductGroup,
-            'default' => 'VOLUME',
             'position' => 4
+        ]);
+
+        $centres = new MFCentre;
+        $list = $centres->getAll();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[] = ['label' => $item, 'value' => $key];
+        }
+
+        $this->preferences->registerPreference([
+            'name' => 'outside-op-mfcentre',
+            'display_name' => $this->module_preferences['outside-op-mfcentre']['title'],
+            'type' => 'select',
+            'data' => $data,
+            'value' => $outsideOpMFCentre,
+            'position' => 5
+        ]);
+
+        $centres = new MFResource;
+        $list = $centres->getAll();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[] = ['label' => $item, 'value' => $key];
+        }
+
+        $this->preferences->registerPreference([
+            'name' => 'outside-op-mfresource',
+            'display_name' => $this->module_preferences['outside-op-mfresource']['title'],
+            'type' => 'select',
+            'data' => $data,
+            'value' => $outsideOpMFResource,
+            'position' => 6
         ]);
     }
 }
