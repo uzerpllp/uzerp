@@ -86,7 +86,7 @@ class MFOperation extends DataObject {
 		// Add available supplier names for Outside Operations
 		$this->suppliers = null;
 
-		if ($this->type == 'O') {
+		if ($this->type == 'O' && isset( $this->po_productline_header_id)) {
 			$productlines = new POProductlineCollection();
 			$cc = new ConstraintChain();
 			$cc->add(currentDateConstraint(date('Y-m-d')));
