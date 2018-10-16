@@ -180,20 +180,34 @@ class MfoperationsController extends ManufacturingController {
 		$source_stitem->load($data['stitem_id']);
 
 		// Validation
-		if($source_stitem->cost_basis == 'VOLUME' && !($data['volume_target'] > 0)){;
-			$errors[]='Volume target must be a number greater than zero';
+		if ($data['type'] !== 'O') {
+			if($source_stitem->cost_basis == 'VOLUME' && !($data['volume_target'] > 0)){;
+				$errors[]='Volume target must be a number greater than zero';
+			}
+			if($source_stitem->cost_basis == 'TIME' && !($data['volume_target'] > 0)){;
+			$errors[]='Time must be a number greater than zero';
+			}
+			if($source_stitem->cost_basis == 'VOLUME' && !($data['uptime_target']>0)){;
+				$errors[]='Uptime target must be a number greater than zero';
+			}
+			if($source_stitem->cost_basis == 'VOLUME' && !($data['quality_target']>0)){;
+				$errors[]='Quality target must be a number greater than zero';
+			}
+			if(!$data['resource_qty'] > 0){;
+				$errors[]='Resource quantity must be a number greater than zero';
+			}
 		}
-		if($source_stitem->cost_basis == 'TIME' && !($data['volume_target'] > 0) && $data['type']!=='O'){;
-		$errors[]='Time must be a number greater than zero';
-		}
-		if($source_stitem->cost_basis == 'VOLUME' && !($data['uptime_target']>0)){;
-			$errors[]='Uptime target must be a number greater than zero';
-		}
-		if($source_stitem->cost_basis == 'VOLUME' && !($data['quality_target']>0)){;
-			$errors[]='Quality target must be a number greater than zero';
-		}
-		if(!($data['resource_qty']>0) && $data['type']!=='O'){;
-			$errors[]='Resource quantity must be a number greater than zero';
+
+		if ($data['type'] == 'O') {
+			if (!isset($this->module_prefs['outside-op-mfcentre']) || !isset($this->module_prefs['outside-op-mfresource'])){
+				$errors[]='Please set the Manufacturing module preferences; Work Centre and Resource for routing outside operations ';
+			}
+			$this->_data['MFOperation']['volume_target'] = 0;
+			$this->_data['MFOperation']['uptime_target'] = 0;
+			$this->_data['MFOperation']['quality_target'] = 0;
+			$this->_data['MFOperation']['resource_qty'] = 0;
+			$this->_data['MFOperation']['mfcentre_id'] = $this->module_prefs['outside-op-mfcentre'];
+			$this->_data['MFOperation']['mfresource_id'] = $this->module_prefs['outside-op-mfresource'];
 		}
 
 		if (count($errors)==0 && parent::save_model('MFOperation')) {
