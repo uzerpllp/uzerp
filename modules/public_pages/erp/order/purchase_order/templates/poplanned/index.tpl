@@ -1,13 +1,12 @@
 {** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2018 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* $Revision: 1.21 $ *}
 {content_wrapper}
 	{advanced_search}
 	{paging}
-		{form controller="mfplanned" action="batchupdate"}
+		{form controller="poplanned" action="createorder"}
 		{assign var=fields value=$plannedorders->getHeadings()}
 		{data_table}
 			<thead>
@@ -17,10 +16,14 @@
 							{$heading}
 						{/heading_cell}
 					{/foreach}
-					{heading_cell field="complete"}
-					{/heading_cell}
+					<th>
+						Select for Order
+					</th>
 				{/heading_row}
 			</thead>
+			<tr>
+				<td colspan="7"></td><td><input type="checkbox" name="select-all" id="select-all" class="checkbox"> Select All</td>
+			</tr>
 			{foreach name=datagrid item=model from=$plannedorders}
 				{grid_row model=$model}
 					{foreach name=gridrow item=tag key=fieldname from=$fields}
@@ -33,16 +36,7 @@
 						{/grid_cell}
 					{/foreach}
 					<td>
-						{if $model->status!='C'}
-							{if $model->status=='N'}
-								Release?
-								<input type='hidden' name='status[{$model->id}]' value='R'>
-							{elseif $model->status!='C'}
-								Create?
-								<input type='hidden' name='status[{$model->id}]' value='C'>
-							{/if}
-							<input type="checkbox" name="update[{$model->id}]" id="update{$model->id}" class="checkbox" />
-						{/if}
+						<input type="checkbox" name="update[{$model->id}]" id="update{$model->id}" class="checkbox select" {if $smarty.session.form_data[$model->id] == 'on'}checked{/if}/>
 					</td>
 				{/grid_row}
 			{foreachelse}
@@ -51,11 +45,9 @@
 				</tr>
 			{/foreach}
 		{/data_table}
-		{if $num_incomplete > 0}
-			{submit value="Update Selected" tags="none"}
-		{/if}
+		{submit value="Create Order" tags="none"}
 	{/form}
-	{paging}
+	{*{paging}*}
 	<div id="data_grid_footer" class="clearfix">
 		{include file='elements/data_table_actions.tpl'}
 	</div>
