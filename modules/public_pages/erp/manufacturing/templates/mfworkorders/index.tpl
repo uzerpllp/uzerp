@@ -20,6 +20,11 @@
 					{heading_cell}
 						Action
 					{/heading_cell}
+					{if $module_prefs['allow-wo-print']}
+					{heading_cell}
+						Print
+					{/heading_cell}
+					{/if}
 				{/heading_row}
 			</thead>
 			{foreach name=datagrid item=model from=$mfworkorders}
@@ -45,6 +50,11 @@
 							{/if}
 						{/if}
 					</td>
+					<td>
+					{if ($model->status == 'R' || $model->status == 'N') && $module_prefs['allow-wo-print']}
+						<input title='Print documents to default printer' type="checkbox" name="print[{$model->id}]" id="print{$model->id}" class="checkbox" />
+					{/if}
+					</td>
 				{/grid_row}
 			{foreachelse}
 				<tr>
@@ -53,7 +63,11 @@
 			{/foreach}
 		{/data_table}
 		{if $num_incomplete > 0}
-			{submit value="Update Selected" tags="none"}
+			{if ($module_prefs['allow-wo-print'])}
+				{submit value="Update/Print Selected" tags="none"}
+			{else}
+				{submit value="Update Selected" tags="none"}
+			{/if}
 		{/if}
 	{/form}
 	{paging}
