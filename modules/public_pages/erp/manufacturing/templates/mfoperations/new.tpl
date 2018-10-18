@@ -18,7 +18,7 @@
 			
 			<div class="all-type" {if $model->type != 'O'}style="display: block;"{else}style="display: none;"{/if}>
 				{select label='Stock Item' attribute='stitem_id' options=$stitems}
-				{select label='Work Centre' attribute='mfcentre_id' }
+				{select label='Work Centre' attribute='mfcentre_id' options=$mfcentres}
 				{if $stitem->cost_basis == 'VOLUME'}
 					{select attribute=volume_uom_id options=$uom_list selected=$model->volume_uom_id}
 					{input type='text'  attribute='volume_target' }
@@ -38,7 +38,7 @@
 					{select attribute='volume_period' label='Time Units'}
 					{/if}
 				{/if}
-				{select label='Resource' attribute='mfresource_id' }
+				{select label='Resource' attribute='mfresource_id' options=$mfresources}
 				{input type='text'  attribute='resource_qty' }
 			</div>
 			
