@@ -22,7 +22,8 @@ class SetupController extends MasterSetupController
         'use-only-default-cost-basis' => 'Use only the selected, default cost basis for new Stock Items',
         'outside-op-prod-group' => 'Product Group for routing outside operation purchases',
         'outside-op-mfcentre' => 'Work Centre for routing outside operations',
-        'outside-op-mfresource' => 'Resource for routing outside operations'
+        'outside-op-mfresource' => 'Resource for routing outside operations',
+        'allow-wo-print' => 'Allow work order printing from list view (New and Released status)'
     ];
 
     protected function registerPreference()
@@ -35,6 +36,7 @@ class SetupController extends MasterSetupController
         $outsideOpProductGroup = $this->module_preferences['outside-op-prod-group']['preference'];
         $outsideOpMFCentre = $this->module_preferences['outside-op-mfcentre']['preference'];
         $outsideOpMFResource = $this->module_preferences['outside-op-mfresource']['preference'];
+        $woPrintFromList = $this->module_preferences['allow-wo-print']['preference'];
 
         $this->preferences->registerPreference([
             'name' => 'default-operation-units',
@@ -136,6 +138,16 @@ class SetupController extends MasterSetupController
             'data' => $data,
             'value' => $outsideOpMFResource,
             'position' => 6
+        ]);
+
+        $this->preferences->registerPreference([
+            'name' => 'allow-wo-print',
+            'display_name' => $this->module_preferences['allow-wo-print']['title'],
+            'group_title' => 'Work Order Printing',
+            'type' => 'checkbox',
+            'status' => (empty($woPrintFromList) || $woPrintFromList == 'off') ? 'off' : 'on',
+            'default' => 'off',
+            'position' => 7
         ]);
     }
 }
