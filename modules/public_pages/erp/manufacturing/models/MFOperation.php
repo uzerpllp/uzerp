@@ -41,6 +41,8 @@ class MFOperation extends DataObject {
  		$this->validateUniquenessOf(array('stitem_id', 'op_no'));
  		$this->belongsTo('STItem', 'stitem_id', 'stitem');
 		$this->belongsTo('STuom', 'volume_uom_id', 'volume_uom');
+		$this->belongsTo('MFCentre', 'mfcentre_id', 'mfcentre');
+		$this->belongsTo('MFResource', 'mfresource_id', 'mfresource');
 
 		// Restrict available product choices based on module setting
 		$system_prefs = SystemPreferences::instance();
@@ -52,25 +54,7 @@ class MFOperation extends DataObject {
 		} else {
 			$this->belongsTo('POProductlineHeader', 'po_productline_header_id', 'product_description');
 		}
-
-		// Filter out routing outside operation work centre and resource,
-		// these are set by the controller on save.
-		if (isset($module_prefs['outside-op-mfcentre'])) {
-			$cc = new ConstraintChain;
-			$cc->add(new Constraint('id', '!=', $module_prefs['outside-op-mfcentre']));
-			$this->belongsTo('MFCentre', 'mfcentre_id', 'mfcentre', $cc);
-		} else {
-			$this->belongsTo('MFCentre', 'mfcentre_id', 'mfcentre');
-		}
-
-		if (isset($module_prefs['outside-op-mfresource'])) {
-			$cc = new ConstraintChain;
-			$cc->add(new Constraint('id', '!=', $module_prefs['outside-op-mfresource']));
-			$this->belongsTo('MFResource', 'mfresource_id', 'mfresource', $cc2);
-		} else {
-			$this->belongsTo('MFResource', 'mfresource_id', 'mfresource');
-		}
-
+		
 		$this->setEnum('volume_period',array( 'S'=>'Second'
 										  ,'M'=>'Minute'
 										  ,'H'=>'Hour'));
