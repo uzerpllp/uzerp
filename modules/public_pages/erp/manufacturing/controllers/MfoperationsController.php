@@ -154,6 +154,28 @@ class MfoperationsController extends ManufacturingController {
 
 		$this->getItemData($stitem_id);
 
+		// Filter out routing outside operation work centre and resource,
+		// these are set by the controller on save.
+		$mfcentre = new MFCentre();
+		if (isset($this->module_prefs['outside-op-mfcentre'])) {
+			$cc = new ConstraintChain;
+			$cc->add(new Constraint('id', '!=', $this->module_prefs['outside-op-mfcentre']));
+			$mfcentres = $mfcentre->getAll($cc);
+		} else {
+			$mfcentres = $mfcentre->getAll();
+		}
+		$this->view->set('mfcentres', $mfcentres);
+
+		$mfresource = new MFResource();
+		if (isset($this->module_prefs['outside-op-mfresource'])) {
+			$cc = new ConstraintChain;
+			$cc->add(new Constraint('id', '!=', $this->module_prefs['outside-op-mfresource']));
+			$mfresources = $mfresource->getAll($cc);
+		} else {
+			$mfresources = $mfresource->getAll();
+		}
+		$this->view->set('mfresources', $mfresources);
+
 		$this->view->set('no_ordering',true);
         $cancel_url = link_to(array_merge($this->_modules, [
             'controller' => $this->name,
