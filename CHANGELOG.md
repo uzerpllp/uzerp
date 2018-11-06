@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Prevent error when viewing Cashbook Account details, See [issue 181](https://github.com/uzerpllp/uzerp/issues/181).
+
 ## [1.12] 2018-09-06
 
 ### Changed
