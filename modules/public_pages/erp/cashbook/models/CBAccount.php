@@ -90,7 +90,8 @@ class CBAccount extends DataObject
 		array_fill_keys($future_periods, NULL);
 
 		// get sum of periods
-		$sum = GLBalance::getSum($future_periods, $this->_data['glaccount_id'], $this->_data['glcentre_id']);
+		$glb = new GLBalance();
+		$sum = $glb->getSum($future_periods, $this->_data['glaccount_id'], $this->_data['glcentre_id']);
 		
 		return $sum;
 	}
