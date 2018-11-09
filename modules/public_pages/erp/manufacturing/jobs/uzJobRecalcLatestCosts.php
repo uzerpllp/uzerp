@@ -103,9 +103,9 @@ class uzJobRecalcLatestCosts extends uzExclusiveJob
         $db->CompleteTrans();
         $message = uzJobMessages::Factory($this->user, $this->egs_co);
         if (count($errors) == 0) {
-            $message->send($this->token, 'Stock items latest cost calculation complete');
+            $message->send($job_id, 'Stock items latest cost calculation complete');
         } else {
-            $message->send($this->token, 'Stock items latest cost calculation failed');
+            $message->send($job_id, 'Stock items latest cost calculation failed');
         }
     }
 }
