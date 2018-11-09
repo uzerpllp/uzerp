@@ -13,16 +13,13 @@
         "symfony/http-foundation": "^3.4",
         "symfony/yaml": "^3.4",
         "ircmaxell/random-lib": "^1.2",
-        "sentry/sentry": "^1.9.1"
+        "sentry/sentry": "^1.9.1",
         "adodb/adodb-php": "@dev"
     },
 
     "autoload": {
         "classmap": [
             "plugins/jobqueue/"
-        ],
-        "files" : [
-            "vendor/adodb/adodb-php/adodb-xmlschema03.inc.php"
         ],
         "psr-4": {
             "UzerpPhinx\\": "schema/phinx/classes/"
