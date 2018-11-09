@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "devDependencies": {
-    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp": "4.0",
     "gulp-clean": "^0.3.2",
     "gulp-clean-css": "^3.0.4",
     "gulp-concat": "^2.6.1",
