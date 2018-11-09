@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- Use PHPMailer class to send emmail from uzERP
+
 ### Fixed
 
 - Prevent error when viewing Cashbook Account details, See [issue 181](https://github.com/uzerpllp/uzerp/issues/181).
