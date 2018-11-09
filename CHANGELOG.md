@@ -1,11 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.12.1] 2018-11-09
 
 ### Changed
 
-- Use PHPMailer class to send emmail from uzERP
+- Use PHPMailer class to send email from uzERP
 
 ### Fixed
 
@@ -408,6 +408,7 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.12.1]: https://github.com/uzerpllp/uzerp/compare/1.12...1.12.1
 [1.12]: https://github.com/uzerpllp/uzerp/compare/1.11...1.12
 [1.11]: https://github.com/uzerpllp/uzerp/compare/1.10.4...1.11
 [1.10.3]: https://github.com/uzerpllp/uzerp/compare/1.10.2...1.10.3
