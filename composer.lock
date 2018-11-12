@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "857ae66ea6f73ca083425349507e88ca",
+    "content-hash": "8d2045adfb0333956401ef5d7045c73f",
     "packages": [
         {
             "name": "adodb/adodb-php",
@@ -890,7 +890,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2016-12-14T21:57:25+00:00"
+            "time": "2018-09-12T20:54:16+00:00"
         },
         {
             "name": "symfony/config",
