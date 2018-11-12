@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.12.2] 2018-11-12
+
+### Fixed
+
+- Use PHPMailer for user emails
+
 ## [1.12.1] 2018-11-09
 
 ### Changed
