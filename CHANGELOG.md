@@ -499,6 +499,7 @@ All notable changes to this project will be documented in this file.
 
 - Manufacturing operations can be marked as batch operations, causing the per item labour and overhead cost to be divided by the item's batch size
 - Outside operations can be added to the production routing, linked to purchase products. Purchase orders have a new action to allow the services to be purchased.
+- Support for Frepple production and materials planning
 
 ### Changed
 - Updated workflow for Operations, Outside Operations and Structures
