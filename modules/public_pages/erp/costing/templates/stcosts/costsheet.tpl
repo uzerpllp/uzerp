@@ -1,17 +1,22 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.7 $ *}
 {content_wrapper}
+{advanced_search}
 	<div id="view_page" class="clearfix">
 		<dl id="view_data_left">
 			{view_data model=$stitem attribute="item_code"}
 			{view_data model=$stitem attribute="description"}
+			{view_data model=$stitem attribute="uom_name"}
+			{view_data model=$stitem attribute="cost_basis"}
 		</dl>
+
 	</div>
-	{advanced_search}
+	<a class="button output ui-button ui-widget ui-corner-all" role="button" href="{$output_link}">Print Cost Sheet</a>
+
 	{assign var=string_format value="%."|cat:$stitem->cost_decimals|cat:"f"}
 	{assign var=grand_total_mat value=0}
 	{assign var=grand_total_lab value=0}
@@ -165,26 +170,38 @@
 			</tr>
 		{/if}
 	{/data_table}
-	<p><strong>Operations (Labour/Overhead)</strong></p>
+	<p><strong>Operations (Labour/Overhead/Routing Outside Operations)</strong></p>
 	{data_table}
 		{heading_row}
 			{heading_cell field="op_no"}
 				Op No.
 			{/heading_cell}
-			{heading_cell field="volume_target" class='right'}
-				Volume Target
+			{heading_cell field="remarks"}
+				Remarks
 			{/heading_cell}
+			{if $stitem->cost_basis == 'VOLUME'}
+    			{heading_cell field="volume_target" class='right'}
+    				Volume Target
+    			{/heading_cell}
+    			{heading_cell field="volume_period"}
+    				Volume Period
+    			{/heading_cell}
+    			{heading_cell field="quality_target" class='right'}
+    				Quality Target %
+    			{/heading_cell}
+    			{heading_cell field="uptime_target" class='right'}
+    				Uptime Target %
+    			{/heading_cell}
+			{else}
+    			{heading_cell field="volume_target" class='right'}
+    				Time
+    			{/heading_cell}
+    			{heading_cell field="volume_period"}
+    				Time Unit
+    			{/heading_cell}
+			{/if}
 			{heading_cell field="volume_uom"}
 				UoM
-			{/heading_cell}
-			{heading_cell field="volume_period"}
-				Volume Period
-			{/heading_cell}
-			{heading_cell field="quality_targt" class='right'}
-				Quality Target %
-			{/heading_cell}
-			{heading_cell field="uptime_target" class='right'}
-				Uptime Target %
 			{/heading_cell}
 			{if $type == 'std'}
 				{heading_cell field="std_lab" class='right'}
@@ -192,6 +209,9 @@
 				{/heading_cell}
 				{heading_cell field="std_ohd" class='right'}
 					Ohd
+				{/heading_cell}
+				{heading_cell field="std_osc" class='right'}
+					Osc
 				{/heading_cell}
 				{heading_cell field="std_cost" class='right'}
 					Total
@@ -202,6 +222,9 @@
 				{/heading_cell}
 				{heading_cell field="latest_ohd" class='right'}
 					Ohd
+				{/heading_cell}
+				{heading_cell field="latest_osc" class='right'}
+					Osc
 				{/heading_cell}
 				{heading_cell field="latest_cost" class='right'}
 					Total
@@ -214,32 +237,48 @@
 		{assign var=total_ohd value=0}
 		{foreach name=datagrid item=model from=$mfoperations}
 			{grid_row model=$model}
-				{grid_cell model=$model cell_num=2 field="op_no"}
+				{grid_cell model=$model cell_num=1 field="op_no"}
 					{$model->op_no}
 				{/grid_cell}
-				{grid_cell model=$model cell_num=3 field="volume_target" class='numeric'}
-					{$model->volume_target}
+				{grid_cell model=$model cell_num=2 field="remarks"}
+					{$model->remarks}
 				{/grid_cell}
-				{grid_cell model=$model cell_num=4 field="volume_uom"}
+				{if $stitem->cost_basis == 'VOLUME'}
+    				{grid_cell model=$model cell_num=3 field="volume_target" class='numeric'}
+    					{$model->volume_target}
+    				{/grid_cell}
+    				{grid_cell model=$model cell_num=5 field="volume_period"}
+    					{$model->getFormatted('volume_period')}
+    				{/grid_cell}
+    				{grid_cell model=$model cell_num=6 field="quality_target" class='numeric'}
+    					{$model->quality_target}
+    				{/grid_cell}
+    				{grid_cell model=$model cell_num=7 field="uptime_taget" class='numeric'}
+    					{$model->uptime_target}
+    				{/grid_cell}
+    			{else}
+    				{grid_cell model=$model cell_num=3 field="volume_target" class='numeric'}
+    					{$model->volume_target}
+    				{/grid_cell}
+    			    {grid_cell model=$model cell_num=5 field="volume_period"}
+    					{$model->getFormatted('volume_period')}
+    				{/grid_cell}
+    			{/if}
+			    {grid_cell model=$model cell_num=4 field="volume_uom"}
 					{$model->volume_uom}
-				{/grid_cell}
-				{grid_cell model=$model cell_num=5 field="volume_period"}
-					{$model->getFormatted('volume_period')}
-				{/grid_cell}
-				{grid_cell model=$model cell_num=6 field="quality_target" class='numeric'}
-					{$model->quality_target}
-				{/grid_cell}
-				{grid_cell model=$model cell_num=7 field="uptime_taget" class='numeric'}
-					{$model->uptime_target}
 				{/grid_cell}
 				{if $type == 'std'}
 					{assign var=total_lab value=$total_lab+$model->std_lab}
 					{assign var=total_ohd value=$total_ohd+$model->std_ohd}
+					{assign var=total_osc value=$total_osc+$model->std_osc}
 					{grid_cell model=$model cell_num=9 field="std_lab"}
 						{$model->std_lab|string_format:$string_format}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=10 field="std_ohd"}
 						{$model->std_ohd|string_format:$string_format}
+					{/grid_cell}
+					{grid_cell model=$model cell_num=10 field="std_osc" class="numeric"}
+						{$model->std_osc|string_format:$string_format}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=11 field="std_cost"}
 						{$model->std_cost|string_format:$string_format}
@@ -247,14 +286,18 @@
 				{else}
 					{assign var=total_lab value=$total_lab+$model->latest_lab}
 					{assign var=total_ohd value=$total_ohd+$model->latest_ohd}
+					{assign var=total_osc value=$total_osc+$model->latest_osc}
 					{grid_cell model=$model cell_num=9 field="latest_lab"}
 						{$model->latest_lab|string_format:$string_format}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=10 field="latest_ohd"}
 						{$model->latest_ohd|string_format:$string_format}
 					{/grid_cell}
+					{grid_cell model=$model cell_num=10 field="latest_osc" class="numeric"}
+						{$model->latest_osc|string_format:$string_format}
+					{/grid_cell}
 					{grid_cell model=$model cell_num=11 field="latest_cost"}
-						{$model->latest_cost|string_format:$string_format}
+						{$model->latest_lab+$model->latest_ohd+$model->latest_osc|string_format:$string_format}
 					{/grid_cell}
 				{/if}
 			{/grid_row}
@@ -262,12 +305,17 @@
 			<tr><td colspan="0">No matching records found!</td></tr>
 		{/foreach}
 		{if $mfoperations->count() > 0}
-			{assign var=total_cost value=$total_lab+$total_ohd}
+			{assign var=total_cost value=$total_lab+$total_ohd+$total_osc}
 			{assign var=grand_total_lab value=$grand_total_lab+$total_lab}
 			{assign var=grand_total_ohd value=$grand_total_ohd+$total_ohd}
+			{assign var=grand_total_osc value=$grand_total_osc+$total_osc}
 			{assign var=grand_total_cost value=$grand_total_cost+$total_cost}
 			<tr>
+				{if $stitem->cost_basis == "VOLUME"}
 				<td colspan="6">
+				{else}
+				<td colspan="5">
+				{/if}
 					<strong>Total</strong>
 				</td>
 				<td  class='numeric'>
@@ -275,6 +323,9 @@
 				</td>
 				<td class='numeric'>
 			       	<strong>{$total_ohd|string_format:$string_format}</strong>
+				</td>
+				<td class='numeric'>
+			       	<strong>{$total_osc|string_format:$string_format}</strong>
 				</td>
 				<td class='numeric'>
 			       	<strong>{$total_cost|string_format:$string_format}</strong>

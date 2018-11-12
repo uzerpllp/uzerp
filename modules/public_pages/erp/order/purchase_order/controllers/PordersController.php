@@ -669,6 +669,19 @@ class PordersController extends printController
                 'tag' => 'Edit ' . $type
             );
 
+            $available_wo_purchase = POrderLine::getWorkOrdersNeedingPurchase(['plmaster_id' => $supplier->id]);
+            if (count($available_wo_purchase) != 0) {
+
+            $actions['add_wo_purchase'] = array(
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => 'porderlines',
+                    'action' => 'new_wopurchase',
+                    'order_id' => $id
+                ),
+                'tag' => 'Add_Work_Order_Purchase'
+            );
+        }
             $actions['add_lines'] = array(
                 'link' => array(
                     'modules' => $this->_modules,

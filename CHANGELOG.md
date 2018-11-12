@@ -1,6 +1,29 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- Time based operation costing
+    - Select *cost basis* for Stock Items, *volume* or *time*
+    - Operation entry/edit forms respond to the item cost basis
+    - New Manufacturing module settings:
+        - Default units for operation volume/time
+        - Default cost basis for new Stock Items
+        - Use only the default cost basis for new Stock Items
+
+- Manufacturing operations can be marked as batch operations, causing the per item labour and overhead cost to be divided by the item's batch size
+- Outside operations can be added to the production routing, linked to purchase products. Purchase orders have a new action to allow the services to be purchased.
+
+### Changed
+- Updated workflow for Operations, Outside Operations and Structures
+    - New sidebar group for ops, structures and costing when viewing a stock item
+    - One click to view the current ops, structure, etc.
+    - Clicking on the op or structure line number will show the edit form
+    - All forms have 'Save and Add...' buttons to speed up datat entry
+    - Form 'cancel' links allow easy return to the ops/structure list for the item
+- Updated Work Orders list display and search
+
 ## [1.12.2] 2018-11-12
 
 ### Fixed

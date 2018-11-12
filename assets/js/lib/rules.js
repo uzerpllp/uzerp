@@ -252,7 +252,7 @@ $(document).ready(function () {
 		
 	});
 	
-	$('a[href*="printDialog"], a[href*="printdialog"]').click(function (event) {
+	$(document).on('click', 'a[href*="printDialog"], a[href*="printdialog"]', function(event){
 		
 		event.preventDefault();
 		
@@ -273,7 +273,6 @@ $(document).ready(function () {
 			uz_print_dialog({url: $(this).attr('href'), data: {fields: fields} });
 		}
 		else {
-
 			uz_print_dialog({url: $(this).attr('href')});
 		}
 		
@@ -499,7 +498,6 @@ $(document).ready(function () {
 			}
 
 			var link = '/?' + makeQueryString($_GET) + '&ajax=';
-	
 			uz_print_dialog({
 				url: link,
 				data: form_data + "&index_key=" + randomString() + "&index_link=" + Base64.encode(form.attr('action') + '&ajax=') + "&Search[print]=print"
