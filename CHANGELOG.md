@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Fixed
+
+- Product selector links added at wrong level of the hierarchy
+
 ## [1.12.2] 2018-11-12
 
 ### Fixed
