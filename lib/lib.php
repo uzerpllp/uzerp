@@ -650,7 +650,7 @@ function with(&$params, &$smarty)
 
 }
 
-function h($string, $quote_style = ENT_NOQUOTES) {
+function uzh($string, $quote_style = ENT_NOQUOTES) {
 	
 	static $cache;
 	
@@ -985,7 +985,7 @@ function pricify($number, $html = TRUE)
 	
 	if ($html)
 	{
-		$symbol = h(EGS_CURRENCY_SYMBOL);
+		$symbol = uzh(EGS_CURRENCY_SYMBOL);
 	}
 	else
 	{

@@ -154,7 +154,7 @@ function smarty_function_view_data($params, &$smarty) {
 							'controller'	=> $_SESSION['cache'][get_class($model)][$attribute]['controller'],
 							'action'		=> 'view',
 							$_SESSION['cache'][get_class($model)][$attribute]['id_field']	=> $model->{$_SESSION['cache'][get_class($model)][$attribute]['fk_field']},
-							'value'			=> h($value)
+							'value'			=> uzh($value)
 						)
 					);
 			
@@ -272,7 +272,7 @@ function smarty_function_view_data($params, &$smarty) {
 						'controller'			=> $belongs_model . 's',
 						'action'				=> 'view',
 						$link_model->idField	=> $model->{$fk_field},
-						'value'					=> h($value)
+						'value'					=> uzh($value)
 						)
 				);
 				$_SESSION['cache'][get_class($model)][$attribute] = array('pid'=> $pid
@@ -291,7 +291,7 @@ function smarty_function_view_data($params, &$smarty) {
 		{
 			if (!$field->is_safe)
 			{
-				$value = h($value, ENT_QUOTES);
+				$value = uzh($value, ENT_QUOTES);
 			}
 		}
 	}
