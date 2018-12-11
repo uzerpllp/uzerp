@@ -1,11 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.12.3] 2018-12-12
 
 ### Fixed
 
 - Product selector links added at wrong level of the hierarchy
+
+### Changed
+
+- The 1.12.3 release package contains an update to the ADODB database library, making it compatible with PHP 7.1
 
 ## [1.12.2] 2018-11-12
 
@@ -420,6 +424,8 @@ All notable changes to this project will be documented in this file.
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.12.3]: https://github.com/uzerpllp/uzerp/compare/1.12.2...1.12.3
+[1.12.2]: https://github.com/uzerpllp/uzerp/compare/1.12.1...1.12.2
 [1.12.1]: https://github.com/uzerpllp/uzerp/compare/1.12...1.12.1
 [1.12]: https://github.com/uzerpllp/uzerp/compare/1.11...1.12
 [1.11]: https://github.com/uzerpllp/uzerp/compare/1.10.4...1.11
