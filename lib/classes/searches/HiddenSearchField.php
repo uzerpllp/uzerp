@@ -24,7 +24,7 @@ class HiddenSearchField extends SearchField {
 			$this->value = $this->default;
 		}
 		
-		$html = '<input type="hidden" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . h(stripslashes($this->value)) . '" />';
+		$html = '<input type="hidden" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . uzh(stripslashes($this->value)) . '" />';
 		return $html;
 		
 	}

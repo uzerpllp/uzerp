@@ -115,7 +115,7 @@ class ModulePreferences {
 						
 						$key = $option['value'];
 						
-						$option_attrs['value'] = h($key, ENT_COMPAT);
+						$option_attrs['value'] = uzh($key, ENT_COMPAT);
 						
 						if (isset($option['selected']) && $option['selected'])
 						{
@@ -123,7 +123,7 @@ class ModulePreferences {
 						}
 						
 						$data['select']['options'][$index]['attrs'] = build_attribute_string($option_attrs);
-						$data['select']['options'][$index]['value'] = h($option['label']);
+						$data['select']['options'][$index]['value'] = uzh($option['label']);
 					}
 					
 					$data['display_tags'] = TRUE;
@@ -171,7 +171,7 @@ class ModulePreferences {
 						
 						$key = $option['value'];
 						
-						$option_attrs['value'] = h($key, ENT_COMPAT);
+						$option_attrs['value'] = uzh($key, ENT_COMPAT);
 						
 						if ((is_array($selected) && in_array($key, $selected)) || ($selected==$key))
 						{
@@ -179,7 +179,7 @@ class ModulePreferences {
 						}
 						
 						$data['select']['options'][$index]['attrs'] = build_attribute_string($option_attrs);
-						$data['select']['options'][$index]['value'] = h($option['label']);
+						$data['select']['options'][$index]['value'] = uzh($option['label']);
 					}
 					
 					$data['display_tags'] = TRUE;

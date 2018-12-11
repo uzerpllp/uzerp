@@ -27,7 +27,7 @@ class TextSearchField extends SearchField {
 		}
 		
 		// change to facilitate list
-		$html = '<input type="text" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . h(stripslashes($value)) . '" /></li>';
+		$html = '<input type="text" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . uzh(stripslashes($value)) . '" /></li>';
 		
 		return $this->labelHTML() . $html;
 		
