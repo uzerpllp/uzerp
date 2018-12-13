@@ -299,6 +299,11 @@ class SorderlinesController extends printController
             $productline = DataObjectFactory::Factory('SOProductline');
 
             $productline->load($_productline_id);
+            
+            $header = DataObjectFactory::Factory('SOProductlineHeader');
+            $header->load($productline->productline_header_id);
+            $stitem = DataObjectFactory::Factory('STItem');
+            $stitem->load($header->stitem_id);
 
             if ($productline->isLoaded()) {
                 $data['description'] = $productline->description;
@@ -306,6 +311,9 @@ class SorderlinesController extends printController
                 $data['stuom_id'] = array(
                     $productline->product_detail->stuom_id => $productline->product_detail->uom_name
                 );
+                if ($stitem->isLoaded()) {
+                    $data['sales_stock'] = $stitem->pickableBalance();
+                }
 
                 $account = DataObjectFactory::Factory('GLAccount');
                 $account->load($productline->glaccount_id);
