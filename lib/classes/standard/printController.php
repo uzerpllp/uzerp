@@ -1391,7 +1391,7 @@ class printController extends Controller
                     $merge_path = $paths['temp_path'] . $options['merge_file_name'];
 
                     // append files
-                    $response = PDFTK::append($paths['temp_file_path'], $merge_path);
+                    $response = PDFTools::append($paths['temp_file_path'], $merge_path);
 
                     // check response, return to callee
                     if ($response === TRUE) {
