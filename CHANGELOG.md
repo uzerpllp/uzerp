@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Product selector links added at wrong level of the hierarchy
+- Use of pdftk for PDF merging replaced by qpdf. pdftk no longer available in Ubuntu 18.04 repos
 
 ### Changed
 
