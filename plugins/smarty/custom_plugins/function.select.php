@@ -635,7 +635,7 @@ function smarty_function_select($params, &$smarty) {
 		
 		$attrs=array('name'=>$data['select']['attrs']['name']
 					,'id'=>$data['select']['attrs']['id']
-					,'value'=>h($selected, ENT_COMPAT)
+					,'value'=>uzh($selected, ENT_COMPAT)
 					,'data-text_id'=>$data['select']['attrs']['id'].'_text');
 
 		if (isset($data['select']['attrs']['data-depends'])) {
