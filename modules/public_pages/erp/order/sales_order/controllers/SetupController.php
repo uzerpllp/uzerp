@@ -16,7 +16,7 @@ class SetupController extends MasterSetupController
 
     protected $setup_preferences = array(
         'disable-orders-stopped' => 'Prevent new sales orders/quotes and editing for accounts on stop',
-        'soline-entry-stock' => 'Show pickable stock when adding or adjusting order lines'
+        'soline-entry-stock' => 'Show pickable stock when adding sales order lines'
     );
 
     protected function registerPreference()
