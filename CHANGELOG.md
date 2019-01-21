@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [1.12.3] 2018-12-12
 
+### Added
+
+- Add Sales Order module preference to show current pickable stock balance when entering new order lines
+
 ### Fixed
 
 - Product selector links added at wrong level of the hierarchy
