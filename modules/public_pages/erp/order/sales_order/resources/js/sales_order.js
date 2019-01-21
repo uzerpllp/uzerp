@@ -332,7 +332,7 @@ $(document).ready(function() {
 	
 	/* sales_order -> sorderlines -> new */
 	
-	$("select, input", "#sales_order-sorderlines-new").live('change', function() {
+	$(document).on('change', "select, input", "#sales_order-sorderlines-new", function() {
 
 		var $self	= $(this),
 			field	= $self.data('field');
@@ -341,6 +341,7 @@ $(document).ready(function() {
 			case "product_search":
 				$('label.info').remove(); /* remove any form errors */
 				if ($self.val() !='' && $self.val().length >= 3){ /* don't search if empty or we'll return 1000's of product lines to the select */
+					$('#SOrderLine_sales_stock').html('-');
 					$('#SOrderLine_productline_id').uz_ajax({
 						data:{
 							module			: 'sales_order',
@@ -370,6 +371,11 @@ $(document).ready(function() {
 							element	: '#SOrderLine_item_description',
 							field	: "description"
 						},
+						{
+							element	: '#SOrderLine_sales_stock',
+							field	: "sales_stock"
+						},
+
 						{
 							element	: '#SOrderLine_stuom_id',
 							field	: "stuom_id"
