@@ -185,6 +185,7 @@ class SorderlinesController extends printController
         $this->view->set('glcentre_options', $this->getCentre($_glaccount_id, $_productline_id));
         $this->view->set('taxrate_options', $data['tax_rate_id']);
         $this->view->set('sorder', $sorder);
+        $this->view->set('display_stock', $this->displaySalesStock());
     }
 
     public function save()
@@ -291,6 +292,15 @@ class SorderlinesController extends printController
         return $accounts->getAll($cc);
     }
 
+    private function displaySalesStock() {
+        $system_prefs = SystemPreferences::instance();
+        $pref = $system_prefs->getPreferenceValue('soline-entry-stock', 'sales_order');
+        if ($pref === 'on') {
+            return true;
+        }
+        return false;
+    }
+
     private function getProductLineData($_productline_id = '', $_slmaster_id = '')
     {
         $data = array();
@@ -311,6 +321,7 @@ class SorderlinesController extends printController
                 $data['stuom_id'] = array(
                     $productline->product_detail->stuom_id => $productline->product_detail->uom_name
                 );
+
                 if ($stitem->isLoaded()) {
                     $data['sales_stock'] = $stitem->pickableBalance();
                 }

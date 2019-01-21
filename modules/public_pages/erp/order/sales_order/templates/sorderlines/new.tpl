@@ -40,7 +40,11 @@
 				{/if}
 				{input type="hidden" attribute="item_description" }
 				{input type="text" attribute="description" }
+				{if $display_stock && $action != 'edit'}
 				{view_data attribute='sales_stock' label='Available Stock' value=$sales_stock}
+				{else}
+				{input type='hidden' attribute='sales_stock' }
+				{/if}
 				{input type="text" attribute="revised_qty" label="Quantity" class="order_qty numeric" }
 				{if $model->id!=''}
 					{view_data attribute="order_qty" label="Original Quantity"}
