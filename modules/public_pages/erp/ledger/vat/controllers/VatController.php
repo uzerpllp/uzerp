@@ -22,6 +22,7 @@ class VatController extends printController
 		$this->uses($this->_templateobject);
 		
 		$this->titles=array(4=>'Inputs', 6=>'Outputs', 8=>'EU Sales', 9=>'EU Purchases');
+
 	}
 	
 	public function index()
@@ -343,48 +344,64 @@ class VatController extends printController
 	
 	public function viewTransactions()
 	{
+		// Not a standard list, only CSV output possible
+		$this->printtype = ['csv' => 'CSV'];
+		$this->printaction = ['view' => 'View'];
 
 		$errors = array();
-		$this->setSearch('VatSearch', 'useDefault', array());
+
+		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
+		{
+			$s_data['year']			= $this->_data['year'];
+			$s_data['tax_period']	= $this->_data['tax_period'];
+		}
+		else
+		{
+			$glperiod = DataObjectFactory::Factory('GLPeriod');
+			$glperiod->getCurrentTaxPeriod();
+			
+			if ($glperiod)
+			{
+				$s_data['year']			= $glperiod->year;
+				$s_data['tax_period']	= $glperiod->tax_period;
+			}
+		}
+		$this->setSearch('VatSearch', 'useDefault', $s_data);
+		$this->search->disable_field_selection = true;
+		
+		$tax_period	= $this->search->getValue('tax_period');
+		$year		= $this->search->getValue('year');
 		
 		$tax_period = $this->search->getValue('tax_period');
 		$year = $this->search->getValue('year');
 		
-		$vat = $this->getVatReturn($tax_period, $year, $errors);
-		
 		if (isset($this->_data['box']))
 		{
-			$this->view->set('title', $vat->titles[$this->_data['box']]);
-			
-			$gltransactions = $vat->getTransactions($this->_data, true);
-			
-			if ($gltransactions === false)
-			{
-				$flash->addError('Not all control accounts have been assigned');
-				
-				$gltransactions = array();
-				
-				$this->view->set('num_pages',0);
-				$this->view->set('num_records',0);
-				$this->view->set('cur_page',1);
+			switch ($this->_data['box']) {
+				case '4': // inputs
+					$this->_templateobject = DataObjectFactory::Factory('VatInputs');
+					$this->uses($this->_templateobject);
+					parent::index(new VatInputsCollection($this->_templateobject));
+					break;
+				case '6': // outputs
+					$this->_templateobject = DataObjectFactory::Factory('VatOutputs');
+					$this->uses($this->_templateobject);
+					parent::index(new VatOutputsCollection($this->_templateobject));
+					break;
+				case '8': // eu sales
+					$this->_templateobject = DataObjectFactory::Factory('VatEuSales');
+					$this->uses($this->_templateobject);
+					parent::index(new VatEuSalesCollection($this->_templateobject));
+					break;
+				case '9': // eu purchases
+					$this->_templateobject = DataObjectFactory::Factory('VatEuPurchases');
+					$this->uses($this->_templateobject);
+					parent::index(new VatEuPurchasesCollection($this->_templateobject));
+					break;
 			}
-			else
-			{
-				$this->view->set('num_pages',$gltransactions->num_pages);
-				$this->view->set('num_records',$gltransactions->num_records);
-				$this->view->set('cur_page',$gltransactions->cur_page);
-			}
-		}
-		
-		$this->view->set('gltransactions',$gltransactions);
-		
-		$this->view->set('clickaction', 'viewdetail');
-		
-		if (isset($this->_data['box']))
-		{
 			$this->view->set('box',$this->_data['box']);
 			$this->view->set('page_title','VAT Transactions - '.$this->titles[$this->_data['box']]);
-		}
+		}		
 		
 		$sidebar = $this->generalSidebar($this->titles);
 		
@@ -421,7 +438,7 @@ class VatController extends printController
 		
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		$this->printaction = '';
+		//$this->printaction = '';
 	}
 
 	public function viewDetail ()
@@ -807,6 +824,8 @@ class VatController extends printController
 
 		// populate extra array
 		$boxes=$vat->getVatBoxes($year, $tax_period);
+		// Remove values not required for display
+		unset($boxes['100']);
 		
 		foreach ($boxes as $num=>$box)
 		{
@@ -857,13 +876,42 @@ class VatController extends printController
 		{
 			return $options;
 		}
-				
-		// load the model
+
 		$this->setSearch('VatSearch', 'useDefault', array());
 
 		$tax_period	= $this->search->getValue('tax_period');
 		$year		= $this->search->getValue('year');
-		$vat		= $this->getVatReturn($tax_period, $year, $errors);
+
+		
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('tax_period', '=', $tax_period));
+		$cc->add(new Constraint('year', '=', $year));
+
+		if (isset($this->_data['box']))
+		{
+			switch ($this->_data['box']) {
+				case '4': // inputs
+					$gltransaction = DataObjectFactory::Factory('VatInputs');
+					$gltransactions = new VatInputsCollection($gltransaction);
+					break;
+				case '6': // outputs
+					$gltransaction = DataObjectFactory::Factory('VatOutputs');
+					$gltransactions = new VatOutputsCollection($gltransaction);
+					break;
+				case '8': // eu sales
+					$gltransaction = DataObjectFactory::Factory('VatEuSales');
+					$gltransactions = new VatEuSalesCollection($gltransaction);
+					break;
+				case '9': // eu purchases
+					$gltransaction = DataObjectFactory::Factory('VatEuPurchases');
+					$gltransactions = new VatEuPurchasesCollection($gltransaction);
+					break;
+			}
+		}
+
+		$sh = new SearchHandler($gltransactions);
+		$sh->addConstraint($cc);
+		$gltransactions->load($sh);
 		
 		if (count($errors) > 0)
 		{
@@ -876,8 +924,7 @@ class VatController extends printController
 		
 		if (isset($this->_data['box']))
 		{
-			set_time_limit(90);
-			$gltransactions = $vat->getTransactions($this->_data, false);
+			set_time_limit(180);
 			if ($gltransactions === false)
 			{
 				echo $this->build_print_dialog_response(
@@ -927,7 +974,7 @@ class VatController extends printController
 			$total_vat	+=	$vat->vat;
 			$total_net	+=	$vat->net;
 			$account	=	$vat->account;
-			$centre		=	$vat->cost_centre;
+			//$centre		=	$vat->cost_centre;
 		}
 		
 		$extra = array(
