@@ -1,6 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] 2019-02-06
+
+### Added
+
+VAT Report views can be output to CSV by using the 'Output' button in the search area.
+
+### Fixed
+
+VAT Report views and transaction printing updated to use new calculations, matching the VAT return.
+
 ## [1.12.3] 2018-12-12
 
 ### Added
