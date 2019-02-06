@@ -164,6 +164,31 @@ VIEW;
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
         $this->query("ALTER TABLE {$view_name} OWNER TO \"{$view_owner}\"");
+
+        $module = $this->fetchRow("SELECT id FROM modules WHERE name = 'vat'");
+        $module_component_data = [
+            [
+                'name' => 'vatinputs',
+                'type' => 'M',
+                'controller' => 'moduleobjects',
+                'location' => 'modules/public_pages/erp/ledger/vat/models/VatInputs.php',
+                'module_id' => $module['id'],
+                'createdby' => 'admin',
+                'title' => ''
+            ],
+            [
+                'name' => 'vatinputscollection',
+                'type' => 'M',
+                'controller' => 'moduleobjects',
+                'location' => 'modules/public_pages/erp/ledger/vat/models/VatInputsCollection.php',
+                'module_id' => $module['id'],
+                'createdby' => 'admin',
+                'title' => ''
+            ]
+        ];
+        $table = $this->table('module_components');
+        $table->insert($module_component_data);
+        $table->save();
     }
 
     /**
