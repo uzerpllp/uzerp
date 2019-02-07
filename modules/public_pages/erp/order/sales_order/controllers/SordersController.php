@@ -3613,6 +3613,9 @@ class SordersController extends printController
         $payment_term->load($order->customer->payment_term_id);
 
         foreach ($order->lines as $orderlines) {
+            if ($orderlines->status == 'X') {
+                continue;
+            }
             // tax (in the UK at least) is dependent on the tax_rate of the item, and the tax status of the customer.
             // this function is a wrapper to a call to a config-dependent method
             // $tax_percentage=calc_tax_percentage($orderlines->tax_rate_id,$customer->tax_status_id,$orderlines->net_value);
