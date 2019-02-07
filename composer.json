@@ -15,7 +15,8 @@
         "symfony/yaml": "^3.1",
         "ircmaxell/random-lib": "^1.2",
         "sentry/sentry": "^1.9.1",
-	"phpmailer/phpmailer": "~6.0"
+	"phpmailer/phpmailer": "~6.0",
+        "league/oauth2-client": "^2.4"
     },
 
     "autoload": {
