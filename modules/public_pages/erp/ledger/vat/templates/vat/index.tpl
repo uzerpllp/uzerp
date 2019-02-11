@@ -1,14 +1,13 @@
 {** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2019 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* $Revision: 1.6 $ *}
 {content_wrapper}
 	{advanced_search}
 	<p><strong>VAT Return</strong></p>
-	{if !$tax_period_closed}
-		<p style="color: red"><strong>Warning:</strong> Tax period is not closed therefore the figures below may not be final.</p>
+	{if $tax_period_closed === 'f'}
+		<p style="color: red"><strong>Warning:</strong> Tax period is not closed, the figures below may not be final.</p>
 	{/if}
 	{data_table}
 		{heading_row}

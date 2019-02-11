@@ -103,6 +103,17 @@ class VatController extends printController
 						'data_attr' => ['data_uz-confirm-message' => "Close VAT Period?|This cannot be undone."]
 			);
 		}
+
+		$sidebarlist['hmrcpostvat'] = [
+			'link' => [
+				'modules' => $this->_modules,
+				'controller' => $this->name,
+				'action' => 'hmrcPostVat',
+				'year' => $year,
+				'tax_period' => $tax_period
+			],
+			'tag' => 'Submit VAT Return',
+		];
 		
 		$sidebarlist['inputjournal'] = array(
 					'link'=>array('modules'=>$this->_modules
@@ -1001,7 +1012,11 @@ class VatController extends printController
 		exit;
 		
 	}
-	
-}
 
+	public function hmrcPostVat()
+	{
+		echo 'Magic starts here';
+		exit;
+	}
+}
 // End of VatController
