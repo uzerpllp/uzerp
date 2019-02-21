@@ -16,9 +16,11 @@ class VatReturn extends DataObject
         finalised
     ];
 
-    public function __construct($tablename='vat_hmrc') {
+    public function __construct($tablename='vat_return') {
         parent::__construct($tablename);
         $this->idField='id';
+        $this->orderby = ['year', 'tax_period'];
+        $this->orderdir = ['desc', 'desc'];
     }
 }
 ?>
