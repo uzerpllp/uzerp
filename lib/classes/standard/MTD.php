@@ -147,10 +147,80 @@ class MTD {
             
             $response = $this->provider->getResponse($request);
             
-            echo var_dump(json_decode($response->getBody(), true));
-            exit;
+            return json_decode($response->getBody(), true);
         } else {
             // empty token - re-auth
+            $this->authorizationGrant();
+        }
+    }
+
+    function postVat(String $vrn, $year, $tax_period) {
+        $this->refreshToken();
+        $storage = new OauthStorage();
+        $accesstoken = $storage->getToken('vat-mtd');
+        if ($accesstoken) {
+
+            $return = new VatReturn;
+            $return->loadVatReturn($year, $tax_period);
+            
+            $returnc = new VatReturnCollection;
+            $sh = new SearchHandler($returnc, false);
+            $cc = new ConstraintChain();
+            $cc->add(new Constraint('year', '=', $year));
+            $cc->add(new Constraint('tax_period', '=', $tax_period));
+            $sh->addConstraintChain($cc);
+            $returnc->load($sh);
+            $returnx = $returnc->current();
+
+            $obligations = $this->getObligations($vrn, ['status' => 'O']);
+            foreach ($obligations as $obligation) {
+                if ($obligation[0]['end'] == $returnx->enddate) {
+                    $return->setVatReturnPeriodKey($year, $tax_period, $obligation[0]['periodKey']);
+                    var_dump($returnc->current()->enddate);
+                }
+            }
+            $body = [
+                'periodKey' => $obligation[0]['periodKey'],
+                'vatDueSales' => round($return->vat_due_sales,2),
+                'vatDueAcquisitions' => round($return->vat_due_aquisitions,2),
+                'totalVatDue' => round($return->total_vat_due,2),
+                'vatReclaimedCurrPeriod' => round($return->vat_reclaimed_curr_period,2),
+                'netVatDue' => round($return->net_vat_due,2),
+                'totalValueSalesExVAT' => round($return->total_value_sales_ex_vat),
+                'totalValuePurchasesExVAT' => round($return->total_value_purchase_ex_vat),
+                'totalValueGoodsSuppliedExVAT' => round($return->total_value_goods_supplied_ex_vat),
+                'totalAcquisitionsExVAT' => round($return->total_aquisitions_ex_vat),
+                'finalised' => true
+            ];
+            var_dump($body);
+            //exit;
+
+            $url = "{$this->base_url}/organisations/vat/{$vrn}/returns";
+            $request = $this->provider->getAuthenticatedRequest(
+                'POST',
+                $url,
+                $accesstoken->getToken(),
+                [
+                    'headers' => [
+                    'Accept' => 'application/vnd.hmrc.1.0+json',
+                    'Content-Type' => 'application/json'],
+                    'body' => json_encode($body),
+                ]
+            );
+
+            try
+            {
+                $response = $this->provider->getResponse($request);
+            }
+            catch (Exception $e)
+            {
+                echo $e->getResponse()->getBody()->getContents();
+            }
+            echo var_dump(json_decode($response->getBody(), true));
+            exit;
+
+           
+        } else {
             $this->authorizationGrant();
         }
     }

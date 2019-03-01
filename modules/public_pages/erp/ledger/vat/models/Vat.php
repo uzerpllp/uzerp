@@ -234,7 +234,17 @@ class Vat extends GLTransaction
 				$this->saveTransactions($gltransactions, $errors);
 			}
 		}
-		
+
+		try
+		{
+			$return = new VatReturn;
+			$return->updateVatReturnBoxes($year, $tax_period, $values, true);
+		}
+		catch (VatReturnStorageException $e)
+		{
+			$errors[] = $e;
+		}
+
 		if (count($errors) > 0)
 		{
 			$db->FailTrans();
@@ -275,7 +285,10 @@ QUERY;
 
 		$db = DB::Instance();
 		$boxr = $db->getAll($query, $qparams);
-		return $boxr[0];
+		$boxr = $boxr[0];
+		$boxr['Box3'] = $boxr['Box1'] + $boxr['Box2'];
+		$boxr['Box5'] = $boxr['Box3'] - $boxr['Box4'];
+		return $boxr;
 	}
 
 	/**

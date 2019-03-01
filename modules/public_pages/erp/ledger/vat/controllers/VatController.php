@@ -20,7 +20,7 @@ class VatController extends printController
 	{
 		parent::__construct($module, $action);
 		
-		$this->_templateobject = DataObjectFactory::Factory('Vat');
+		$this->_templateobject = DataObjectFactory::Factory('VatReturn');
 		
 		$this->uses($this->_templateobject);
 		
@@ -53,11 +53,12 @@ class VatController extends printController
 			}
 		}
 		$this->setSearch('VatSearch', 'useDefault', $s_data);
+		parent::index(new VatReturnCollection($this->_templateobject));
 		
 		$tax_period	= $this->search->getValue('tax_period');
 		$year		= $this->search->getValue('year');
 		
-		$vat		= $this->getVatReturn($tax_period, $year, $errors);
+		$vat		= $this->getVatReturn($tax_period, $year);
 		
 		if (count($errors) > 0)
 		{
@@ -65,12 +66,13 @@ class VatController extends printController
 			sendBack();
 		}
 
-		$boxes = $vat->getVatBoxes($year, $tax_period);
+		//$boxes = $vat->getVatBoxes($year, $tax_period);
+		$boxes=[];
 		// Remove values not required for display
 		unset($boxes['100']);
 
 		$this->view->set('titles',$vat->titles);
-		$this->view->set('boxes',$boxes);
+		//$this->view->set('boxes',$boxes);
 		$this->view->set('tax_period_closed',$vat->tax_period_closed);
 		$this->view->set('symbol',$vat->currencySymbol);
 		$this->view->set('no_ordering', true);
@@ -744,10 +746,18 @@ class VatController extends printController
 		
 	}
 	
-	private function getVatReturn ($tax_period, $year, &$errors)
+	private function getVatReturn ($tax_period, $year)
 	{
-		$vat = DataObjectFactory::Factory('Vat');
-		$vat->vatreturn($tax_period, $year, $errors);
+		$vat = new VatReturn();
+		try
+		{
+		$vat->getTaxPeriodStatus($tax_period, $year);
+		}
+		catch(VatReturnException $e)
+		{
+			$flash = Flash::Instance();
+			$flas->addError($e);
+		}
 		return $vat;
 	}
 
@@ -762,7 +772,10 @@ class VatController extends printController
 
 		$tax_period = $this->search->getValue('tax_period');
 		$year		= $this->search->getValue('year');
-		$vat		= $this->getVatReturn($tax_period, $year, $errors);
+		$vat		= new Vat;
+		$vat->vatreturn($tax_period, $year, $errors);
+		$return = new VatReturn;
+		$return->getTaxPeriodStatus($tax_period, $year);
 
 		if (count($errors) > 0)
 		{
@@ -770,7 +783,7 @@ class VatController extends printController
 			sendBack();
 		}
 		
-		if ($vat->tax_period_closed === 'f' && $vat->gl_period_closed === 't')
+		if ($return->tax_period_closed === 'f' && $return->gl_period_closed === 't')
 		{
 			$result = $vat->closePeriod($tax_period, $year, $errors);
 			if (count($errors) > 0)
@@ -778,7 +791,7 @@ class VatController extends printController
 				$flash->addErrors($errors);
 				sendBack();
 			}
-			$flash->addMessage("VAT Period Closed");
+			$flash->addMessage("VAT Period {$year}/{$tax_period} Closed");
 		} else {
 			$flash->addError('GL Periods open, unable to close VAT Period');
 			sendBack();
@@ -820,7 +833,9 @@ class VatController extends printController
 
 		$tax_period = $this->search->getValue('tax_period');
 		$year		= $this->search->getValue('year');
-		$vat		= $this->getVatReturn($tax_period, $year, $errors);
+		$vat		= new Vat;
+		$return = new VatReturn;
+		$return->getTaxPeriodStatus($tax_period, $year);
 		
 		if ($this->_data['filename'] === 'VAT_Return') {
 			$this->_data['filename'] .= '_' . $year . '_' . $tax_period;
@@ -850,7 +865,7 @@ class VatController extends printController
 			);
 		}
 		
-		if ($vat->tax_period_closed === 'f')
+		if ($return->tax_period_closed === 'f')
 		{
 			$extra['tax_period_not_closed'] = true;
 		}
@@ -1015,8 +1030,78 @@ class VatController extends printController
 
 	public function hmrcPostVat()
 	{
-		echo 'Magic starts here';
-		exit;
+		$flash = Flash::Instance();
+		$errors		= array();
+		$messages 	= array();
+				
+		// load the model
+		$this->setSearch('VatSearch', 'useDefault', array());
+
+		$tax_period = $this->search->getValue('tax_period');
+		$year		= $this->search->getValue('year');
+		$vat		= new Vat;
+		$vat->vatreturn($tax_period, $year, $errors);
+		$return = new VatReturn;
+		$return->getTaxPeriodStatus($tax_period, $year);
+
+		$mtd = new MTD('ms1iIWBBPqEUYYWy90fCzlR3sgsa', 'efa6f975-f06a-44c7-8e7b-dc49259715c4');
+		$mtd->postVat('500799546', $year, $tax_period);
 	}
+
+	public function calculateVAT()
+	{
+		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
+		{
+			$s_data['year']			= $this->_data['year'];
+			$s_data['tax_period']	= $this->_data['tax_period'];
+		}
+		else
+		{
+			$glperiod = DataObjectFactory::Factory('GLPeriod');
+			$glperiod->getCurrentTaxPeriod();
+			
+			if ($glperiod)
+			{
+				$s_data['year']			= $glperiod->year;
+				$s_data['tax_period']	= $glperiod->tax_period;
+			}
+		}
+		$this->setSearch('VatSearch', 'useDefault', $s_data);
+		
+		$tax_period	= $this->search->getValue('tax_period');
+		$year		= $this->search->getValue('year');
+
+		$vat = new Vat();
+		//$vat = $this->getVatReturn($tax_period, $year, $errors);
+	
+		if (count($errors) > 0)
+		{
+			$flash->addErrors($errors);
+			return false;
+		}
+
+		$boxes = $vat->getVATvalues($year, $tax_period);
+		$return = new VatReturn();
+		$return->updateVatReturnBoxes($year, $tax_period, $boxes);
+		$this->refresh();
+	}
+
+	public function vatAuth() {
+
+		//$storage = new OauthStorage();
+		//$storage->loadBy('target_key', 'vat-mtd');
+		//var_dump($storage->access_token);
+		//$storage->deleteToken('vat-mtd');
+		//exit;
+		//$storage = new OauthStorage();
+    //$storage->storeTokens('test', '1', '2', '3');
+		//exit;
+		$mtd = new MTD('ms1iIWBBPqEUYYWy90fCzlR3sgsa', 'efa6f975-f06a-44c7-8e7b-dc49259715c4');
+		//$mtd->authorizationGrant();
+		//$mtd->refreshToken();
+		var_dump($mtd->getObligations('500799546', ['status' => 'O']));
+		exit;
+
+  	}
 }
 // End of VatController

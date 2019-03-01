@@ -4,26 +4,11 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {content_wrapper}
-	{advanced_search}
-	<p><strong>VAT Return</strong></p>
 	{if $tax_period_closed === 'f'}
 		<p style="color: red"><strong>Warning:</strong> Tax period is not closed, the figures below may not be final.</p>
 	{/if}
-	{data_table}
-		{heading_row}
-			{foreach from=$titles key=k item=value}
-				{heading_cell}
-					{$value}
-				{/heading_cell}
-			{/foreach}
-		{/heading_row}
-		<tr>
-			{foreach from=$boxes item=value}
-				<td>
-					{$value[title]}
-					{$symbol|escape}{$value.value|string_format:"%.2f"}
-				</td>
-			{/foreach}
-		</tr>
-	{/data_table}
+	{include file="elements/datatable.tpl" collection=$vatreturns}
+	<a href="?module=vat&controller=vat&action=calculateVAT">Update VAT Position</a>
+	<a data-uz-confirm-message="Close VAT Period?|This cannot be undone." id="" class=" confirm" href="/?pid=568&amp;module=vat&amp;controller=vat&amp;action=closeVatPeriod">Close VAT Period</a>
+	<a href="?module=vat&controller=vat&action=hmrcPostVat">Submit VAT Return</a>
 {/content_wrapper}

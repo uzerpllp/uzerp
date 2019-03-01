@@ -101,5 +101,22 @@ class GlperiodsController extends LedgerController {
 		return parent::getPageName((empty($base)?'GL Periods':$base), $action);
 	}
 
+	public function save() {
+		$flash=Flash::Instance();
+		$vat_return = new VatReturn();
+		$period_data = $this->_data['GLPeriod'];
+
+		try
+		{
+			$vat_return->newVatReturn($period_data['year'], $period_data['tax_period']);
+		}
+		catch (VatReturnStorageException $e)
+		{
+			$flash->addError($e);
+			sendTo($this->name, 'index', $this->_modules);
+		}
+		parent::save();
+	}
+
 }
 ?>
