@@ -13,8 +13,9 @@
         "symfony/http-foundation": "^3.4",
         "symfony/yaml": "^3.4",
         "ircmaxell/random-lib": "^1.2",
+        "phpmailer/phpmailer": "~6.0",
         "sentry/sentry": "^1.9.1",
-	"phpmailer/phpmailer": "~6.0",
+        "phpmailer/phpmailer": "~6.0",
         "adodb/adodb-php": "@dev"
     },
 

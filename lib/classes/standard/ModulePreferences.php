@@ -174,9 +174,15 @@ class ModulePreferences {
 						$option_attrs = array();
 
 						$key = $option['value'];
+<<<<<<< HEAD
 						
 						$option_attrs['value'] = uzh($key, ENT_COMPAT);
 						
+=======
+
+						$option_attrs['value'] = h($key, ENT_COMPAT);
+
+>>>>>>> f4334232f67552dc0cfe1f9399f4846e13327df8
 						if ((is_array($selected) && in_array($key, $selected)) || ($selected==$key))
 						{
 							$option_attrs['selected'] = 'selected';
