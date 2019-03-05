@@ -141,6 +141,7 @@ class VatController extends printController
 		$this->view->set('sidebar',$sidebar);
 		$this->view->set('page_title','Vat');
 		$this->printaction = '';
+		$this->view->set('clickaction', 'view');
 	}
 
 	public function enter_journal()
@@ -1044,8 +1045,11 @@ class VatController extends printController
 		$return = new VatReturn;
 		$return->getTaxPeriodStatus($tax_period, $year);
 
+		$company = DataObjectFactory::Factory('Systemcompany');
+		$company->load(EGS_COMPANY_ID);
+
 		$mtd = new MTD('ms1iIWBBPqEUYYWy90fCzlR3sgsa', 'efa6f975-f06a-44c7-8e7b-dc49259715c4');
-		$mtd->postVat('500799546', $year, $tax_period);
+		$mtd->postVat($company->getVRN(), $year, $tax_period);
 	}
 
 	public function calculateVAT()
@@ -1099,7 +1103,9 @@ class VatController extends printController
 		$mtd = new MTD('ms1iIWBBPqEUYYWy90fCzlR3sgsa', 'efa6f975-f06a-44c7-8e7b-dc49259715c4');
 		//$mtd->authorizationGrant();
 		//$mtd->refreshToken();
-		var_dump($mtd->getObligations('500799546', ['status' => 'O']));
+		$company = DataObjectFactory::Factory('Systemcompany');
+		$company->load(EGS_COMPANY_ID);
+		var_dump($mtd->getObligations($company->getVRN(), ['status' => 'O']));
 		exit;
 
   	}
