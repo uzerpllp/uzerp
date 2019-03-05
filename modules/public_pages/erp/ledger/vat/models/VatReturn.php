@@ -95,6 +95,27 @@ class VatReturn extends DataObject
     }
 
 
+    public function saveSubmissionDetail($year, $tax_period, $details) {
+        $cc = new ConstraintChain();
+        $cc->add(new Constraint('year', '=', $year));
+        $cc->add(new Constraint('tax_period', '=', $tax_period));
+        $this->loadBy($cc);
+        if (!$this->isLoaded()) {
+            throw new VatReturnException("Failed to load VAT Return for {$year}/{$tax_period}");
+        }
+
+        $this->processing_date = $details['processingDate'];
+        $this->payment_indicator = $details['paymentIndicator'];
+        $this->form_bundle_number = $details['formBundleNumber'];
+        $this->charge_ref_number = $details['chargeRefNumber'];
+        $this->receipt_id_header = $details['Receipt-ID'];
+
+        if (!$this->save()) {
+            throw new VatReturnStorageException("Failed to update VAT Return submission detail for {$year}/{$tax_period}");
+        }
+    }
+
+
     public function setVatReturnPeriodKey($year, $tax_period, $key) {
         $cc = new ConstraintChain();
         $cc->add(new Constraint('year', '=', $year));
