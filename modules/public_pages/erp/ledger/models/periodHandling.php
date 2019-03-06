@@ -164,6 +164,16 @@ class periodHandling {
 		
 		$newperiod = DataObject::Factory($data, $errors, 'GLPeriod');
 		
+		$vat_return = new VatReturn();
+		try
+		{
+			$vat_return->newVatReturn($data['year'], $data['tax_period']);
+		}
+		catch (VatReturnStorageException $e)
+		{
+			$errors[] = $e->getMessage();
+		}
+		
 		if (count($errors)===0 && $newperiod)
 		{
 			return $newperiod->save();
