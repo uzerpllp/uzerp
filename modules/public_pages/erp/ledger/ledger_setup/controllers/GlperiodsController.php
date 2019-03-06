@@ -112,7 +112,7 @@ class GlperiodsController extends LedgerController {
 		}
 		catch (VatReturnStorageException $e)
 		{
-			$flash->addError($e);
+			$flash->addError($e->getMessage());
 			sendTo($this->name, 'index', $this->_modules);
 		}
 		parent::save();
