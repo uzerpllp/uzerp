@@ -106,17 +106,6 @@ class VatController extends printController
 			);
 		}
 
-		$sidebarlist['hmrcpostvat'] = [
-			'link' => [
-				'modules' => $this->_modules,
-				'controller' => $this->name,
-				'action' => 'hmrcPostVat',
-				'year' => $year,
-				'tax_period' => $tax_period
-			],
-			'tag' => 'Submit VAT Return',
-		];
-		
 		$sidebarlist['inputjournal'] = array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -754,7 +743,7 @@ class VatController extends printController
 		{
 		$vat->getTaxPeriodStatus($tax_period, $year);
 		}
-		catch(VatReturnException $e)
+		catch(VatReturnStorageException $e)
 		{
 			$flash = Flash::Instance();
 			$flas->addError($e);
@@ -1040,16 +1029,12 @@ class VatController extends printController
 
 		$tax_period = $this->search->getValue('tax_period');
 		$year		= $this->search->getValue('year');
-		$vat		= new Vat;
-		$vat->vatreturn($tax_period, $year, $errors);
-		$return = new VatReturn;
-		$return->getTaxPeriodStatus($tax_period, $year);
 
 		$company = DataObjectFactory::Factory('Systemcompany');
 		$company->load(EGS_COMPANY_ID);
 
 		$mtd = new MTD('ms1iIWBBPqEUYYWy90fCzlR3sgsa', 'efa6f975-f06a-44c7-8e7b-dc49259715c4');
-		$mtd->postVat($company->getVRN(), $year, $tax_period);
+		$mtd->postVat($year, $tax_period);
 	}
 
 	public function calculateVAT()
@@ -1105,7 +1090,7 @@ class VatController extends printController
 		//$mtd->refreshToken();
 		$company = DataObjectFactory::Factory('Systemcompany');
 		$company->load(EGS_COMPANY_ID);
-		var_dump($mtd->getObligations($company->getVRN(), ['status' => 'O']));
+		var_dump($mtd->getObligations(['status' => 'O']));
 		exit;
 
   	}
