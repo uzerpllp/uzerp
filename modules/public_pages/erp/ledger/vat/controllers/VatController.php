@@ -66,13 +66,7 @@ class VatController extends printController
 			sendBack();
 		}
 
-		//$boxes = $vat->getVatBoxes($year, $tax_period);
-		$boxes=[];
-		// Remove values not required for display
-		unset($boxes['100']);
-
 		$this->view->set('titles',$vat->titles);
-		//$this->view->set('boxes',$boxes);
 		$this->view->set('tax_period_closed',$vat->tax_period_closed);
 		$this->view->set('symbol',$vat->currencySymbol);
 		$this->view->set('no_ordering', true);
@@ -1061,8 +1055,6 @@ class VatController extends printController
 		$year		= $this->search->getValue('year');
 
 		$vat = new Vat();
-		//$vat = $this->getVatReturn($tax_period, $year, $errors);
-	
 		if (count($errors) > 0)
 		{
 			$flash->addErrors($errors);
