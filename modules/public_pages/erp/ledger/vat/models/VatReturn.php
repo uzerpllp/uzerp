@@ -1,7 +1,15 @@
 <?php
-
+/**
+ * @author uzERP LLP and Steve Blamey <sblamey@uzerp.com>
+ * @license GPLv3 or later
+ * @copyright (c) 2019 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ * uzERP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ */
 class VatReturnStorageException extends Exception {}
-class VatReturnException extends Exception {}
 
 class VatReturn extends DataObject
 {
@@ -32,49 +40,51 @@ class VatReturn extends DataObject
         $this->orderdir = ['desc', 'desc'];
     }
 
+    public function loadVatReturn($year, $tax_period) {
+        $q_cc = new ConstraintChain();
+        $q_cc->add(new Constraint('year', '=', $year));
+        $q_cc->add(new Constraint('tax_period', '=', $tax_period));
+        $q_cc->add(new Constraint('usercompanyid', '=', EGS_COMPANY_ID));
+
+        $this->loadBy($q_cc);
+        if (!$this->isLoaded()) {
+            throw new VatReturnStorageException("Failed to load VAT Return for {$year}/{$tax_period}");
+        }
+    }
+
     /**
      * @param string $year
      * @param string $tax_period
      * @throws VatReturnStorageException
      */
     public function newVatReturn($year, $tax_period) {
-        $cc = new ConstraintChain();
-        $cc->add(new Constraint('year', '=', $year));
-        $cc->add(new Constraint('tax_period', '=', $tax_period));
-        $this->loadBy($cc);
-        if ($this->isLoaded()) {
-            // VAT return already exists
-            return;
-        }
+        try
+        {
+            $this->loadVatReturn($year, $tax_period);
 
-        $this->id = 'NULL';
-        $this->year = $year;
-        $this->tax_period = $tax_period;
-        $this->usercompanyid = EGS_COMPANY_ID;
-        $this->finalised = false;
-        if (!$this->save()) {
-            throw new VatReturnStorageException("Failed to Create VAT Return for {$year}/{$tax_period}");
-        }
-    }
+            if ($this->isLoaded()) {
+                //exists
+                return;
+            }
 
-    public function loadVatReturn($year, $tax_period) {
-        $cc = new ConstraintChain();
-        $cc->add(new Constraint('year', '=', $year));
-        $cc->add(new Constraint('tax_period', '=', $tax_period));
-        $this->loadBy($cc);
-        if (!$this->isLoaded()) {
-            throw new VatReturnException("Failed to load VAT Return for {$year}/{$tax_period}");
+
+        }
+        catch (VatReturnStorageException $e)
+        {
+            $this->id = 'NULL';
+            $this->year = $year;
+            $this->tax_period = $tax_period;
+            $this->usercompanyid = EGS_COMPANY_ID;
+            $this->finalised = false;
+            //$this->created = date('Y-m-d H:i:s');
+            if (!$this->save()) {
+                throw new VatReturnStorageException("Failed to Create VAT Return for {$year}/{$tax_period}");
+            }
         }
     }
 
     public function updateVatReturnBoxes($year, $tax_period, $boxes, $finalise=false) {
-        $cc = new ConstraintChain();
-        $cc->add(new Constraint('year', '=', $year));
-        $cc->add(new Constraint('tax_period', '=', $tax_period));
-        $this->loadBy($cc);
-        if (!$this->isLoaded()) {
-            throw new VatReturnException("Failed to load VAT Return for {$year}/{$tax_period}");
-        }
+        $this->loadVatReturn($year, $tax_period);
 
         $this->vat_due_sales = $boxes['Box1'];
         $this->vat_due_aquisitions = $boxes['Box2'];
@@ -96,13 +106,7 @@ class VatReturn extends DataObject
 
 
     public function saveSubmissionDetail($year, $tax_period, $details) {
-        $cc = new ConstraintChain();
-        $cc->add(new Constraint('year', '=', $year));
-        $cc->add(new Constraint('tax_period', '=', $tax_period));
-        $this->loadBy($cc);
-        if (!$this->isLoaded()) {
-            throw new VatReturnException("Failed to load VAT Return for {$year}/{$tax_period}");
-        }
+        $this->loadVatReturn($year, $tax_period);
 
         $this->processing_date = $details['processingDate'];
         $this->payment_indicator = $details['paymentIndicator'];
@@ -117,18 +121,12 @@ class VatReturn extends DataObject
 
 
     public function setVatReturnPeriodKey($year, $tax_period, $key) {
-        $cc = new ConstraintChain();
-        $cc->add(new Constraint('year', '=', $year));
-        $cc->add(new Constraint('tax_period', '=', $tax_period));
-        $this->loadBy($cc);
-        if (!$this->isLoaded()) {
-            throw new VatReturnException("Failed to load VAT Return for {$year}/{$tax_period}");
-        }
+        $this->loadVatReturn($year, $tax_period);
 
         $this->period_key = $key;
 
         if (!$this->save()) {
-            throw new VatReturnStorageException("Failed to update VAT Return for {$year}/{$tax_period}");
+            throw new VatReturnStorageException("Failed to set period key for VAT Return {$year}/{$tax_period}");
         }
     }
 
@@ -145,7 +143,7 @@ class VatReturn extends DataObject
 		}
 		else
 		{
-			throw new VatReturnException("Failed to get period status for {$year}/{$tax_period}");
+			throw new VatReturnStorageException("Failed to get period status for {$year}/{$tax_period}");
 		}
 	}
 }
