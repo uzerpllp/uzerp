@@ -30,7 +30,7 @@ class VatReturn extends DataObject
         total_value_goods_supplied_ex_vat, //Box 8 - EU Sales Exc. VAT
         total_aquisitions_ex_vat, //Box 9 -EU Purchases Exc. VAT
         tax_period_closed,
-        finalised
+        'finalised' => 'submitted'
     ];
 
     public function __construct($tablename='vat_return') {
@@ -38,6 +38,20 @@ class VatReturn extends DataObject
         $this->idField='id';
         $this->orderby = ['year', 'tax_period'];
         $this->orderdir = ['desc', 'desc'];
+        // Add this field, _data is loaded from the collection
+        // but it does not exist in the vate_return table
+        $this->setAdditional('tax_period_closed', 'boolean');
+        // Set the red/green boolean display formatter
+        $this->getField('tax_period_closed')->setFormatter(new BooleanFormatter());
+        // Output to smarty from the formatter will be html,
+        // flag as html to prevent escaping
+        $this->getField('tax_period_closed')->type = 'html';
+    }
+
+    function cb_loaded() {
+        // Set the field value, used when displaying the smarty data_table
+        $this->getfield('tax_period_closed')->value = $this->_data['tax_period_closed'];
+       
     }
 
     public function loadVatReturn($year, $tax_period) {
@@ -74,16 +88,28 @@ class VatReturn extends DataObject
             $this->id = 'NULL';
             $this->year = $year;
             $this->tax_period = $tax_period;
+            $this->vat_due_sales = 0;
+            $this->vat_due_aquisitions = 0;
+            $this->total_vat_due = 0;
+            $this->vat_reclaimed_curr_period = 0;
+            $this->net_vat_due = 0;
+            $this->total_value_sales_ex_vat = 0;
+            $this->total_value_purchase_ex_vat = 0;
+            $this->total_value_goods_supplied_ex_vat = 0;
+            $this->total_aquisitions_ex_vat = 0;
             $this->usercompanyid = EGS_COMPANY_ID;
             $this->finalised = false;
-            //$this->created = date('Y-m-d H:i:s');
+            $dt = new DateTime();
+            $this->created = $dt->format('Y-m-d H:i:s.u'); // 'u' will be 000000 prior to php7.2
+            $this->createdby = EGS_USERNAME;
+            unset($this->created);
             if (!$this->save()) {
                 throw new VatReturnStorageException("Failed to Create VAT Return for {$year}/{$tax_period}");
             }
         }
     }
 
-    public function updateVatReturnBoxes($year, $tax_period, $boxes, $finalise=false) {
+    public function updateVatReturnBoxes($year, $tax_period, $boxes) {
         $this->loadVatReturn($year, $tax_period);
 
         $this->vat_due_sales = $boxes['Box1'];
@@ -95,9 +121,9 @@ class VatReturn extends DataObject
         $this->total_value_purchase_ex_vat = $boxes['Box7'];
         $this->total_value_goods_supplied_ex_vat = $boxes['Box8'];
         $this->total_aquisitions_ex_vat = $boxes['Box9'];
-        if ($finalise === true) {
-            $this->finalised = true;
-        }
+        $dt = new DateTime();
+        $this->lastupdated = $dt->format('Y-m-d H:i:s.u'); // 'u' will be 000000 prior to php7.2
+        $this->lastupdatedby = EGS_USERNAME;
 
         if (!$this->save()) {
             throw new VatReturnStorageException("Failed to update VAT Return for {$year}/{$tax_period}");
@@ -113,6 +139,10 @@ class VatReturn extends DataObject
         $this->form_bundle_number = $details['formBundleNumber'];
         $this->charge_ref_number = $details['chargeRefNumber'];
         $this->receipt_id_header = $details['Receipt-ID'];
+        $this->finalised = true;
+        $dt = new DateTime();
+        $this->lastupdated = $dt->format('Y-m-d H:i:s.u'); // 'u' will be 000000 prior to php7.2
+        $this->lastupdatedby = EGS_USERNAME;
 
         if (!$this->save()) {
             throw new VatReturnStorageException("Failed to update VAT Return submission detail for {$year}/{$tax_period}");
@@ -124,6 +154,9 @@ class VatReturn extends DataObject
         $this->loadVatReturn($year, $tax_period);
 
         $this->period_key = $key;
+        $dt = new DateTime();
+        $this->lastupdated = $dt->format('Y-m-d H:i:s.u'); // 'u' will be 000000 prior to php7.2
+        $this->lastupdatedby = EGS_USERNAME;
 
         if (!$this->save()) {
             throw new VatReturnStorageException("Failed to set period key for VAT Return {$year}/{$tax_period}");
