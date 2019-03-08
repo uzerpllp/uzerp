@@ -1,4 +1,6 @@
 <?php
+use \Symfony\Component\Yaml\Yaml;
+use \Symfony\Component\Yaml\Exception\ParseException;
 use \League\OAuth2\Client\Token;
 
 /**
@@ -9,6 +11,35 @@ class OauthStorage extends DataObject
     public function __construct($tablename='oauth') {
         parent::__construct($tablename);
         $this->idField='id';
+    }
+
+    public static function getconfig($target_key='') {
+        $storage = new self;
+        return $storage->loadConfig(FILE_ROOT . 'conf/oauth.yml')[$target_key];
+    }
+
+    /**
+     * Load configuration from a yaml file
+     *
+     * @param string $yaml_file
+     *            File name to load
+     */
+    private function loadConfig($yaml_file = null)
+    {
+        if (is_null($yaml_file)) {
+            return;
+        }
+
+        $flash = Flash::Instance();
+
+        try {
+            if (file_exists($yaml_file)) {
+                $oauth_config = Yaml::parse(file_get_contents($yaml_file));
+                return $oauth_config;
+            }
+        } catch (ParseException $e) {
+            $flash->addError('Unable to use Oauth settings from ' . $yaml_file . ': ' . $e->getMessage());
+        }
     }
 
     /**
