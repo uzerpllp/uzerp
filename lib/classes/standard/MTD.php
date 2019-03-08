@@ -23,23 +23,27 @@ class MTD {
     private $base_url;
     private $fraud_protection_headers;
     private $vrn;
+    private $config_key;
     
-    function __construct($clientId, $clientSecret, $scopes=['write:vat', 'read:vat']) {
+    function __construct($config_key='mtd-vat') {
+        $this->config_key = $config_key;
         $company = DataObjectFactory::Factory('Systemcompany');
         $company->load(EGS_COMPANY_ID);
         $this->vrn = $company->getVRN();
 
-        $this->base_url = "https://test-api.service.hmrc.gov.uk";
+        $oauth_config = OauthStorage::getconfig($this->config_key);
+        
+        $this->base_url = $oauth_config['baseurl'];
         $this->api_part = "/organisations/vat/{$this->vrn}";
         $this->provider = new \League\OAuth2\Client\Provider\GenericProvider([
-            'clientId'                => $clientId,
-            'clientSecret'            => $clientSecret,
-            'scopes'                  => $scopes,
+            'clientId'                => $oauth_config['clientid'],
+            'clientSecret'            => $oauth_config['clientsecret'],
+            'scopes'                  => ['write:vat', 'read:vat'],
             'scopeSeparator'          => '+',
-            'redirectUri'             => 'http://localhost:8080/?module=vat&controller=vat&action=vatauth',
+            'redirectUri'             => $oauth_config['redirecturl'],
             'urlAuthorize'            => "{$this->base_url}/oauth/authorize",
             'urlAccessToken'          => "{$this->base_url}/oauth/token",
-            'urlResourceOwnerDetails' => "{$this->base_url}/organisations/vat" //?
+            'urlResourceOwnerDetails' => "{$this->base_url}/organisations/vat" //required by the provider, but not impelemented by the API
         ]);
 
         $current   = timezone_open('Europe/London');
@@ -103,7 +107,7 @@ class MTD {
                 ]);
 
                 $storage = new OauthStorage();
-                if (!$storage->storeToken($this->accessToken, 'vat-mtd')) {
+                if (!$storage->storeToken($this->accessToken, $this->config_key)) {
                     echo 'failed to save access token';
                     exit;
                 }
@@ -124,7 +128,7 @@ class MTD {
      */
     function refreshToken() {
         $storage = new OauthStorage();
-        $existingAccessToken = $storage->getToken('vat-mtd');
+        $existingAccessToken = $storage->getToken($this->config_key);
 
         if ($existingAccessToken !== false) {
             if ($existingAccessToken->hasExpired()) {
@@ -137,7 +141,7 @@ class MTD {
                     return;
                 } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                     // Assume the the refresh token is no longer valid, re-authorise the application
-                    $storage->deleteToken('vat-mtd');
+                    $storage->deleteToken($this->config_key);
                     $this->authorizationGrant();
                 }
             }
@@ -150,14 +154,16 @@ class MTD {
      * API: Get VAT Obligations
      * 
      * @param array $qparams  Assoc array of query string paramters
-     * @return void
+     * @return array
      * 
      * @see https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/vat-api/1.0#_retrieve-vat-obligations_get_accordion
      */
     function getObligations($qparams) {
+        $flash = Flash::Instance();
+
         $this->refreshToken();
         $storage = new OauthStorage();
-        $accesstoken = $storage->getToken('vat-mtd');
+        $accesstoken = $storage->getToken($this->config_key);
         if (!$accesstoken) {
             $this->authorizationGrant();
         }
@@ -171,7 +177,6 @@ class MTD {
         }
         $endpoint = "{$this->base_url}{$this->api_part}/obligations";
         $url = $endpoint . $query_string;
-        
         $request = $this->provider->getAuthenticatedRequest(
             'GET',
             $url,
@@ -182,10 +187,24 @@ class MTD {
                 'Content-Type' => 'application/json'], $this->fraud_protection_headers)
             ]
         );
-        
-        $response = $this->provider->getResponse($request);
-        
-        return json_decode($response->getBody(), true);
+
+        try
+        {
+            $response = $this->provider->getResponse($request);
+            return json_decode($response->getBody(), true);
+        }
+        catch (Exception $e)
+        {
+            $api_errors = json_decode($e->getResponse()->getBody()->getContents());
+            if (count($api_errors) > 1) {
+                foreach ($api_errors->errors as $error) {
+                    $flash->addError("{$error->code} {$error->message}");
+                }
+            } else {
+                $flash->addError("{$api_errors->code} {$api_errors->message}");
+            }
+            return false;
+        }
     }
 
     /**
@@ -193,14 +212,14 @@ class MTD {
      * 
      * @param string $year
      * @param string $tax_period
-     * @return void
+     * @return boolean
      */
     function postVat($year, $tax_period) {
         $flash = Flash::Instance();
 
         $this->refreshToken();
         $storage = new OauthStorage();
-        $accesstoken = $storage->getToken('vat-mtd');
+        $accesstoken = $storage->getToken($this->config_key);
         if (!$accesstoken) {
             $this->authorizationGrant();
         }
@@ -212,7 +231,7 @@ class MTD {
         catch (VatReturnStorageException $e)
         {
             $flash->addError($e->getMessage());
-            sendBack();
+            return false;
         }
         
         // Use the collection becuase it has required info, like the period end date
@@ -221,20 +240,28 @@ class MTD {
         $cc = new ConstraintChain();
         $cc->add(new Constraint('year', '=', $year));
         $cc->add(new Constraint('tax_period', '=', $tax_period));
+        $cc->add(new Constraint('finalised', 'is', 'false'));
         $sh->addConstraintChain($cc);
         $returnc->load($sh);
-        $returnx = $returnc->current(); // first in the collection, should only be one record
+        if(iterator_count($returnc) == 0){
+            $flash->addError('Un-submitted return not found');
+            return false;
+        }
+        $returnc->rewind();
 
         // Find the matching obligation and get the HMRC period key
         $obligations = $this->getObligations(['status' => 'O']);
+        if (!$obligations) {
+            return false;
+        }
         foreach ($obligations as $obligation) {
-            if ($obligation[0]['end'] == $returnx->enddate) {
+            if ($obligation[0]['end'] == $returnc->current()->enddate) {
                 try {
                     $return->setVatReturnPeriodKey($year, $tax_period, $obligation[0]['periodKey']);
                 } catch (VatReturnStorageException  $e) {
                     $flash->addError($e->getMessage());
                     $flash->addError("Failed to submit return for {$year}/{$tax_period}");
-                    sendBack();
+                    return false;
                 }
                 
                 //var_dump($returnx->enddate);
@@ -273,26 +300,24 @@ class MTD {
                     $details = array_merge($rbody, $rheader);
                     $return->saveSubmissionDetail($year, $tax_period, $details); //catch exception and log this info, it may fail to save
                     $flash->addMessage("VAT Return Submitted for {$year}/{$tax_period}");
-                    sendBack();
-                    //echo var_dump(json_decode($rbody, true));
-                    //echo var_dump($rheader);
+                    return true;
                 }
                 catch (VatReturnStorageException $e)
                 {
                     $flash->addError("VAT Return {$year}/{$tax_period} submitted, but not updated in uzERP");
-                    sendBack();
+                    return false;
                 }
                 catch (Exception $e)
                 {
                     $api_errors = json_decode($e->getResponse()->getBody()->getContents());
                     foreach ($api_errors->errors as $error) {
                         $flash->addError("{$error->code} {$error->message}");
-                        echo "{$error->code} {$error->message}";
-                        sendBack();
+                        return false;
                     }
                 }
             } else {
                 $flash->addWarning('No obligation found for the VAT period');
+                return false;
            }
         }
     }
