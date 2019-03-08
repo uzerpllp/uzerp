@@ -238,11 +238,11 @@ class Vat extends GLTransaction
 		try
 		{
 			$return = new VatReturn;
-			$return->updateVatReturnBoxes($year, $tax_period, $values, true);
+			$return->updateVatReturnBoxes($year, $tax_period, $values);
 		}
 		catch (VatReturnStorageException $e)
 		{
-			$errors[] = $e;
+			$errors[] = $e->getMessage();
 		}
 
 		if (count($errors) > 0)
