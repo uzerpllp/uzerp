@@ -15,7 +15,7 @@ class OauthStorage extends DataObject
 
     public static function getconfig($target_key='') {
         $storage = new self;
-        return $storage->loadConfig(FILE_ROOT . 'conf/oauth.yml')[$target_key];
+        return $storage->loadConfig(FILE_ROOT . 'conf/oauth.yml', $target_key);
     }
 
     /**
@@ -24,7 +24,7 @@ class OauthStorage extends DataObject
      * @param string $yaml_file
      *            File name to load
      */
-    private function loadConfig($yaml_file = null)
+    private function loadConfig($yaml_file = null, $target_key)
     {
         if (is_null($yaml_file)) {
             return;
@@ -32,13 +32,17 @@ class OauthStorage extends DataObject
 
         $flash = Flash::Instance();
 
-        try {
+        try
+        {
             if (file_exists($yaml_file)) {
                 $oauth_config = Yaml::parse(file_get_contents($yaml_file));
-                return $oauth_config;
+                return $oauth_config[$target_key];
             }
-        } catch (ParseException $e) {
+        }
+        catch (ParseException $e)
+        {
             $flash->addError('Unable to use Oauth settings from ' . $yaml_file . ': ' . $e->getMessage());
+            return false;
         }
     }
 
