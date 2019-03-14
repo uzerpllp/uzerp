@@ -38,8 +38,8 @@ class VatReturn extends DataObject
         $this->idField='id';
         $this->orderby = ['year', 'tax_period'];
         $this->orderdir = ['desc', 'desc'];
-        // Add this field, _data is loaded from the collection
-        // but it does not exist in the vate_return table
+        // Add this field object, _data is loaded from the collection
+        // but it does not exist in the vat_return table
         $this->setAdditional('tax_period_closed', 'boolean');
         // Set the red/green boolean display formatter
         $this->getField('tax_period_closed')->setFormatter(new BooleanFormatter());
@@ -136,7 +136,7 @@ class VatReturn extends DataObject
 
         $this->processing_date = $details['processingDate'];
         $this->payment_indicator = $details['paymentIndicator'];
-        $this->form_bundle_number = $details['formBundleNumber'];
+        $this->form_bundle = $details['formBundleNumber'];
         $this->charge_ref_number = $details['chargeRefNumber'];
         $this->receipt_id_header = $details['Receipt-ID'];
         $this->finalised = true;
