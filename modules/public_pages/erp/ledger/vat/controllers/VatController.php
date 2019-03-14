@@ -828,9 +828,9 @@ class VatController extends printController
 
 		$tax_period = $this->search->getValue('tax_period');
 		$year		= $this->search->getValue('year');
-		$vat		= new Vat;
 		$return = new VatReturn;
 		$return->getTaxPeriodStatus($tax_period, $year);
+		$return->loadVatReturn($year, $tax_period);
 		
 		if ($this->_data['filename'] === 'VAT_Return') {
 			$this->_data['filename'] .= '_' . $year . '_' . $tax_period;
@@ -846,18 +846,70 @@ class VatController extends printController
 			exit;
 		}
 
-		// populate extra array
-		$boxes=$vat->getVatBoxes($year, $tax_period);
-		// Remove values not required for display
-		unset($boxes['100']);
-		
-		foreach ($boxes as $num=>$box)
+		$extra['boxes'][]['line'][] = [
+			'title' => 'VAT due on sales and other outputs.',
+			'box_num' => 'Box 1',
+			'value' => $return->vat_due_sales,
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'VAT due on acquisitions from other EC Member States.',
+			'box_num' => 'Box 2',
+			'value' => $return->vat_due_aquisitions,
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Total VAT due',
+			'box_num' => 'Box 3',
+			'value' => $return->total_vat_due,
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'VAT reclaimed on purchases and other inputs (including acquisitions from the EC). ',
+			'box_num' => 'Box 4',
+			'value' => $return->vat_reclaimed_curr_period,
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Net VAT Due',
+			'box_num' => 'Box 5',
+			'value' => $return->net_vat_due,
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Total value of sales and all other outputs excluding any VAT.',
+			'box_num' => 'Box 6',
+			'value' => round($return->total_value_sales_ex_vat),
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Total value of purchases and all other inputs excluding any VAT (including exempt purchases)',
+			'box_num' => 'Box 7',
+			'value' => round($return->total_value_purchase_ex_vat),
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Total value of all supplies of goods and related costs, excluding any VAT, to other EC member states. ',
+			'box_num' => 'Box 8',
+			'value' => round($return->total_value_goods_supplied_ex_vat),
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Total value of acquisitions of goods and related costs excluding any VAT, from other EC member states.',
+			'box_num' => 'Box 9',
+			'value' => round($return->total_aquisitions_ex_vat),
+		];
+
+		if ($return->finalised === 't')
 		{
-			$extra['boxes'][]['line'][] = array(
-				'title'		=> $vat->titles[$num],
-				'box_num'	=> $box['box_num'],
-				'value'		=> $box['value']
-			);
+			$extra['submission'] = [
+				'processing_date' => $return->processing_date,
+				'form_bundle' => $return->form_bundle,
+				'charge_ref_number' => $return->charge_ref_number,
+				'receipt_id_header' => $return->receipt_id_header,
+			];
+		} else {
+			$extra['mtd_not_submitted'] = true;
 		}
 		
 		if ($return->tax_period_closed === 'f')
