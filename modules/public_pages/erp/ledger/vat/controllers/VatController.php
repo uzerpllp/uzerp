@@ -31,11 +31,19 @@ class VatController extends printController
 	public function index()
 	{
 		$errors = array();
-		
 		$s_data = array();
-		
 		$flash = Flash::Instance();
-		
+
+		$mtd_config = OauthStorage::getconfig('mtd-vat');
+		if ($mtd_config === null) {
+			$flash->addWarning('Making Tax Digital for VAT is not configured');
+			$this->view->set('mtd_configured', false);
+		} else {
+			$this->view->set('mtd_configured', true);
+			$mtd = new MTD();
+			$mtd->refreshToken;
+		}
+
 		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
 		{
 			$s_data['year']			= $this->_data['year'];
@@ -59,6 +67,7 @@ class VatController extends printController
 		$year		= $this->search->getValue('year');
 		
 		$vat		= $this->getVatReturn($tax_period, $year);
+		$this->view->set('return_id', $vat->id);
 		
 		if (count($errors) > 0)
 		{
@@ -735,6 +744,10 @@ class VatController extends printController
 	}
 
 	public function CloseVatPeriod() {
+		$this->checkRequest(['post'], true);
+		if (! $this->checkParams('id')) {
+            sendBack();
+		}
 		
 		$flash = Flash::Instance();
 		$errors		= array();
@@ -748,7 +761,15 @@ class VatController extends printController
 		$vat		= new Vat;
 		$vat->vatreturn($tax_period, $year, $errors);
 		$return = new VatReturn;
+		$return->load($this->_data['id']);
+
+		if ($return->year !== $year && $return->tax_period !== $tax_period) {
+			$flash->addError('Loaded return does not match selected year/period');
+			sendBack();
+		}
+
 		$return->getTaxPeriodStatus($tax_period, $year);
+		
 
 		if (count($errors) > 0)
 		{
@@ -1004,20 +1025,23 @@ class VatController extends printController
 
 	public function hmrcPostVat()
 	{
-		$flash = Flash::Instance();
-		$errors		= array();
-		$messages 	= array();
-				
-		// load the model
-		$this->setSearch('VatSearch', 'useDefault', array());
+		$this->checkRequest(['post'], true);
+		if (! $this->checkParams('id')) {
+            sendBack();
+        }
 
-		$tax_period = $this->search->getValue('tax_period');
-		$year		= $this->search->getValue('year');
+		$vat_return = new VatReturn();
+		$vat_return->load($this->_data['id']);
+		$year = $vat_return->year;
+		$tax_period = $vat_return->tax_period;
 
 		$mtd = new MTD();
 		$mtd->postVat($year, $tax_period);
-		sendTo($this->name, 'index', $this->module, ['year' => $year, 'tax_period' => $tax_period]);
-		//sendTo($this->name, 'index', $this->module);
+		
+		sendTo(
+            'vat',
+            'index',
+            ['vat',]);
 	}
 
 	public function calculateVAT()
@@ -1080,7 +1104,7 @@ class VatController extends printController
                 'controller' => $this->name,
                 'action' => 'index'
             ),
-            'tag' => "View VAT Returns"
+            'tag' => "Select VAT Return"
 		);
 		
 		$sidebar->addList('Actions', $sidebarlist);
@@ -1088,8 +1112,7 @@ class VatController extends printController
 		$this->sidebarRelatedItems($sidebar, $model);
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
-
-
+		$this->view->set('page_title','Vat Return');
 	}
 
 	public function vatAuth() {
