@@ -216,7 +216,6 @@ class MTD {
      */
     function postVat($year, $tax_period) {
         $flash = Flash::Instance();
-
         $this->refreshToken();
         $storage = new OauthStorage();
         $accesstoken = $storage->getToken($this->config_key);
@@ -244,7 +243,7 @@ class MTD {
         $sh->addConstraintChain($cc);
         $returnc->load($sh);
         if(iterator_count($returnc) == 0){
-            $flash->addError('Un-submitted return not found');
+            $flash->addError('No un-submitted return found');
             return false;
         }
         $returnc->rewind();
