@@ -21,6 +21,7 @@ conf/config.php
 conf/custom-model-order.yml
 conf/model-config.yml
 conf/selector-config.yml
+conf/oauth.yml
 
 # Exclude composer installed stuff
 #composer.lock
