@@ -145,6 +145,7 @@ class MTD {
                     $this->authorizationGrant();
                 }
             }
+            return true;
         } else {
             $this->authorizationGrant();
         }
@@ -315,7 +316,7 @@ class MTD {
                     }
                 }
             } else {
-                $flash->addWarning('No obligation found for the VAT period');
+                $flash->addWarning("No obligation found for the {$year}/{$tax_period} VAT period");
                 return false;
            }
         }
