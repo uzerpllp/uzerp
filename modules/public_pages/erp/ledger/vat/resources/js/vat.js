@@ -13,15 +13,16 @@
  */
 
 $(document).ready(function(){
+	
 	// custom confirmation message
-	$('#included_file').on('click', 'a.vat-confirm', function(event){
+	$(document).on('click', 'button.vat-confirm', {}, function(event){
 		event.preventDefault();
 		var message = 'Are you sure?';
 		if ($( this ).data('uz-confirm-message') !== undefined) {
 			message = $( this ).data('uz-confirm-message').split('|');
 		}
 		
-		var targetUrl = $(this).attr("href");
+		var targetUrl = $(this).data('action');
 		var actionID = $(this).data('uz-action-id');
 		
 		$( '<div id="#confirm-dialog" title="Confirm Action"><p><strong>' + message[0] + '</strong></p>\
@@ -56,10 +57,7 @@ $(document).ready(function(){
 							$( this ).dialog( "close" );
 						} else {
 							$( this ).dialog( "close" );
-
-							$.blockUI.defaults.overlayCSS = {}; 
-							$.blockUI();
-							window.location.href = targetUrl;
+							alert("Invalid Data");
 						}
 					},
 					Cancel: function() {

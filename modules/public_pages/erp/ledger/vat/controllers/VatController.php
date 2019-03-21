@@ -41,7 +41,10 @@ class VatController extends printController
 		} else {
 			$this->view->set('mtd_configured', true);
 			$mtd = new MTD();
-			$mtd->refreshToken;
+			$result = $mtd->refreshToken();
+			if ($result === true) {
+				$this->view->set('mtd_authorised', true);
+			}
 		}
 
 		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
@@ -1088,12 +1091,9 @@ class VatController extends printController
 		$tax_period = $vat_return->tax_period;
 
 		$mtd = new MTD();
-		$mtd->postVat($year, $tax_period);
+		$sucess = $mtd->postVat($year, $tax_period);
 		
-		sendTo(
-            'vat',
-            'index',
-            ['vat',]);
+		sendBack();
 	}
 
 	public function calculateVAT()
