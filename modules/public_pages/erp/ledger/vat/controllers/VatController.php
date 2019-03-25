@@ -1098,18 +1098,19 @@ class VatController extends printController
 
 	public function calculateVAT()
 	{
+		$this->checkRequest(['post'], true);
+		if (! $this->checkParams('id')) {
+            sendBack();
+		}
+		
 		$flash = Flash::Instance();
 		$errors		= array();
 		$messages 	= array();
-				
-		// load the model
-		$this->setSearch('VatSearch', 'useDefault', array());
 
-		$tax_period = $this->search->getValue('tax_period');
-		$year		= $this->search->getValue('year');
-		
-		$tax_period	= $this->search->getValue('tax_period');
-		$year		= $this->search->getValue('year');
+		$vat_return = new VatReturn();
+		$vat_return->load($this->_data['id']);
+		$year = $vat_return->year;
+		$tax_period = $vat_return->tax_period;
 
 		$vat = new Vat();
 		$vat->vatreturn($tax_period, $year, $errors);
@@ -1167,25 +1168,10 @@ class VatController extends printController
 		$this->view->set('page_title','Vat Return');
 	}
 
-	public function vatAuth() {
-
-		//$storage = new OauthStorage();
-		//$storage->loadBy('target_key', 'vat-mtd');
-		//var_dump($storage->access_token);
-		//$storage->deleteToken('vat-mtd');
-		//exit;
-		//$storage = new OauthStorage();
-    //$storage->storeTokens('test', '1', '2', '3');
-		//exit;
-		//$config = OauthStorage::getconfig('mtd-vat');
+	public function vatObligations() {
 		$mtd = new MTD();
-		//$mtd->authorizationGrant();
-		//$mtd->refreshToken();
-		//$company = DataObjectFactory::Factory('Systemcompany');
-		//$company->load(EGS_COMPANY_ID);
 		var_dump($mtd->getObligations(['status' => 'O']));
 		exit;
-
   	}
 }
 // End of VatController

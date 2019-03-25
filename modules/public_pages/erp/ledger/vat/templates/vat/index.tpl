@@ -15,7 +15,7 @@
 	<div id="vat-action-buttons">
 	{if isset($tax_period_closed) }
 		{if $tax_period_closed !== 't' }
-			<button class="vat-confirm" type="button" data-uz-confirm-message="Recalculate VAT?|This cannot be undone." data-action="?module=vat&controller=vat&action=calculateVAT">Update VAT Position</button>
+			<button class="vat-confirm" type="button" data-uz-action-id="{$return_id}" data-uz-confirm-message="Recalculate VAT?|This cannot be undone." data-action="?module=vat&controller=vat&action=calculateVAT">Update VAT Position</button>
 			<button class="vat-confirm" type="button" data-uz-action-id="{$return_id}" data-uz-confirm-message="Close VAT Period?|This cannot be undone." data-action="/?pid=568&amp;module=vat&amp;controller=vat&amp;action=closeVatPeriod">Close VAT Period</button>
 		{/if}
 		{if $tax_period_closed == 't' && $finalised === 'f' && $mtd_configured === true && $mtd_authorised === true}
