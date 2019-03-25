@@ -443,6 +443,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
 
+[1.14]: https://github.com/uzerpllp/uzerp/compare/1.13...1.14
 [1.13]: https://github.com/uzerpllp/uzerp/compare/1.12.3...1.13
 [1.12.2]: https://github.com/uzerpllp/uzerp/compare/1.12.1...1.12.2
 [1.12.1]: https://github.com/uzerpllp/uzerp/compare/1.12...1.12.1
