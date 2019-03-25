@@ -1,0 +1,11 @@
+---
+mtd-vat:
+    clientid: 'dave123'
+    clientsecret: 'xyz123'
+    baseurl: 'https://some-api.service.hmrc.gov.uk'
+    redirecturl: 'http://localhost:8080/?module=vat&controller=vat&action=index'
+    securekey: 'dontchange'
+mtd-incometax:
+    clientid: 'bob123'
+    clientsecret: 'mykey'
+    securekey: 'dontchange'
