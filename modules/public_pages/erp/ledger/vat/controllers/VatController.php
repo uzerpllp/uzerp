@@ -63,7 +63,7 @@ class VatController extends printController
 				$s_data['tax_period']	= $glperiod->tax_period;
 			}
 		}
-		$this->setSearch('VatSearch', 'useDefault', $s_data);
+		$this->setSearch('VatSearch', 'useDefault', $s_data, [], true);
 		parent::index(new VatReturnCollection($this->_templateobject));
 		
 		$tax_period	= $this->search->getValue('tax_period');
