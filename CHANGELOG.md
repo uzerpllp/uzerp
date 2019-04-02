@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+- Minor fixes for PHP 7.1+ compatibility
+
 ## [1.14] 2019-03-25
 
 Support for Making Tax Digital for VAT
