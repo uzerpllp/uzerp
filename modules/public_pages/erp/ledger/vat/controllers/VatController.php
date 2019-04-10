@@ -85,21 +85,8 @@ class VatController extends printController
 		$this->view->set('finalised', $vat->finalised);
 		$this->view->set('no_ordering', true);
 		
-		$sidebar = $this->generalSidebar($this->titles);
-		
+		$sidebar = new SidebarController($this->view);
 		$sidebarlist = array();
-		
-		$print_vat_text = 'Print VAT Return';
-		
-		$sidebarlist['printvatreturn'] = array(
-					'link'=>array('modules'=>$this->_modules
-								 ,'controller'=>$this->name
-								 ,'action'=>'printDialog'
-								 ,'printaction'=>'printVatReturn'
-								 ,'filename'=>'VAT_Return'
-								 ),
-					'tag'=>$print_vat_text
-				);
 
 		$sidebarlist['inputjournal'] = array(
 					'link'=>array('modules'=>$this->_modules
@@ -369,11 +356,11 @@ class VatController extends printController
 		$this->setSearch('VatSearch', 'useDefault', $s_data);
 		$this->search->disable_field_selection = true;
 		
-		$tax_period	= $this->search->getValue('tax_period');
-		$year		= $this->search->getValue('year');
-		
 		$tax_period = $this->search->getValue('tax_period');
 		$year = $this->search->getValue('year');
+
+		$return = new VatReturn();
+		$return->loadVatReturn($year, $tax_period);
 		
 		if (isset($this->_data['box']))
 		{
@@ -400,10 +387,10 @@ class VatController extends printController
 					break;
 			}
 			$this->view->set('box',$this->_data['box']);
-			$this->view->set('page_title','VAT Transactions - '.$this->titles[$this->_data['box']]);
+			$this->view->set('page_title',"VAT Transactions {$year}/{$tax_period} - ".$this->titles[$this->_data['box']]);
 		}		
 		
-		$sidebar = $this->generalSidebar($this->titles);
+		$sidebar = $this->generalSidebar($this->titles, $year, $tax_period);
 		
 		$print_params = array();
 		
@@ -421,7 +408,7 @@ class VatController extends printController
 								 ,'year' => $year
 								 ,'tax_period' => $tax_period
 								 ),
-					'tag'=>'View VAT Return'
+					'tag'=>'Select VAT Return'
 				),
 				'printtransactions'=>array(
 					'link'=>array_merge(array('modules'=>$this->_modules
@@ -432,6 +419,14 @@ class VatController extends printController
 											 )
 									   ,$print_params),
 					'tag'=>'Print Transactions'
+				),
+				'printvatreturn' => array(
+					'link'=>array('modules'=>$this->_modules
+								 ,'controller'=>$this->name
+								 ,'action'=>'view'
+								 ,'id' => $return->id
+								 ),
+					'tag'=>'View VAT Return'
 				)
 			)
 		);
@@ -640,9 +635,8 @@ class VatController extends printController
 		return $net_mass;
 	}
 	
-	private function generalSidebar($titles)
+	private function generalSidebar($titles, $year, $tax_period)
 	{
-
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList(
 			'Reports',
@@ -652,6 +646,8 @@ class VatController extends printController
 								 ,'controller'=>$this->name
 								 ,'action'=>'viewTransactions'
 								 ,'box'=>4
+								 ,'year'=>$year
+								 ,'tax_period'=>$tax_period
 								 ),
 					'tag'=>$titles[4]
 				),
@@ -660,6 +656,8 @@ class VatController extends printController
 								 ,'controller'=>$this->name
 								 ,'action'=>'viewTransactions'
 								 ,'box'=>6
+								 ,'year'=>$year
+								 ,'tax_period'=>$tax_period
 								 ),
 					'tag'=>$titles[6]
 				),
@@ -668,6 +666,8 @@ class VatController extends printController
 								 ,'controller'=>$this->name
 								 ,'action'=>'viewTransactions'
 								 ,'box'=>8
+								 ,'year'=>$year
+								 ,'tax_period'=>$tax_period
 								 ),
 					'tag'=>$titles[8]
 				),
@@ -676,6 +676,8 @@ class VatController extends printController
 								 ,'controller'=>$this->name
 								 ,'action'=>'viewTransactions'
 								 ,'box'=>9
+								 ,'year'=>$year
+								 ,'tax_period'=>$tax_period
 								 ),
 					'tag'=>$titles[9]
 				)
@@ -825,18 +827,13 @@ class VatController extends printController
 		
 		$errors		= array();
 		$messages 	= array();
-				
-		// load the model
-		$this->setSearch('VatSearch', 'useDefault', array());
 
-		$tax_period = $this->search->getValue('tax_period');
-		$year		= $this->search->getValue('year');
 		$return = new VatReturn;
-		$return->getTaxPeriodStatus($tax_period, $year);
-		$return->loadVatReturn($year, $tax_period);
+		$return->load($this->_data['id']);
+		$return->getTaxPeriodStatus($return->tax_period, $return->year);
 		
 		if ($this->_data['filename'] === 'VAT_Return') {
-			$this->_data['filename'] .= '_' . $year . '_' . $tax_period;
+			$this->_data['filename'] .= '_' . $return->year . '_' . $return->tax_period;
 		}
 		
 		
@@ -920,7 +917,7 @@ class VatController extends printController
 			$extra['tax_period_not_closed'] = true;
 		}
 		
-		$extra['title'] = 'VAT Return ' . $year . '-' . $tax_period;
+		$extra['title'] = 'VAT Return ' . $return->year . '-' . $return->tax_period;
 		
 		// generate the xml and add it to the options array
 		$options['xmlSource'] = $this->generateXML(array('extra'=>$extra));
@@ -1147,7 +1144,7 @@ class VatController extends printController
         $model = $this->_uses[$this->modeltype];
         $this->view->set('model', $model);
 
-        $sidebar = new SidebarController($this->view);
+		$sidebar = $this->generalSidebar($this->titles, $model->year, $model->tax_period);
 
         $sidebarlist = array();
 
@@ -1158,6 +1155,17 @@ class VatController extends printController
                 'action' => 'index'
             ),
             'tag' => "Select VAT Return"
+		);
+
+		$sidebarlist['printvatreturn'] = array(
+			'link'=>array('modules'=>$this->_modules
+						 ,'controller'=>$this->name
+						 ,'action'=>'printDialog'
+						 ,'id' => $model->id
+						 ,'printaction'=>'printVatReturn'
+						 ,'filename'=>'VAT_Return'
+						 ),
+			'tag'=>'Print VAT Return'
 		);
 		
 		$sidebar->addList('Actions', $sidebarlist);
