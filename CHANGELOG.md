@@ -1,9 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.14.1]
 
 - Minor fixes for PHP 7.1+ compatibility
+- Move VAT reports to VAT Return View
 
 ## [1.14] 2019-03-25
 
@@ -446,7 +447,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - First Git controlled release on bitbucket
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
-
+[1.14.1]: https://github.com/uzerpllp/uzerp/compare/1.14...1.14.1
 [1.14]: https://github.com/uzerpllp/uzerp/compare/1.13...1.14
 [1.13]: https://github.com/uzerpllp/uzerp/compare/1.12.3...1.13
 [1.12.2]: https://github.com/uzerpllp/uzerp/compare/1.12.1...1.12.2
