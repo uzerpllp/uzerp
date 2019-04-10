@@ -1173,7 +1173,7 @@ class VatController extends printController
 		$this->sidebarRelatedItems($sidebar, $model);
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
-		$this->view->set('page_title','Vat Return');
+		$this->view->set('page_title',"Vat Return {$model->year}/{$model->tax_period}");
 	}
 
 	public function vatObligations() {
