@@ -254,10 +254,10 @@ class MTD {
         if (!$obligations) {
             return false;
         }
-        foreach ($obligations as $obligation) {
-            if ($obligation[0]['end'] == $returnc->current()->enddate) {
+        foreach ($obligations['obligations'] as $obligation) {
+            if ($obligation['end'] == $returnc->current()->enddate) {
                 try {
-                    $return->setVatReturnPeriodKey($year, $tax_period, $obligation[0]['periodKey']);
+                    $return->setVatReturnPeriodKey($year, $tax_period, $obligation['periodKey']);
                 } catch (VatReturnStorageException  $e) {
                     $flash->addError($e->getMessage());
                     $flash->addError("Failed to submit return for {$year}/{$tax_period}");
@@ -266,7 +266,7 @@ class MTD {
                 
                 //var_dump($returnx->enddate);
                 $body = [
-                    'periodKey' => $obligation[0]['periodKey'],
+                    'periodKey' => $obligation['periodKey'],
                     'vatDueSales' => round($return->vat_due_sales,2),
                     'vatDueAcquisitions' => round($return->vat_due_aquisitions,2),
                     'totalVatDue' => round($return->total_vat_due,2),
@@ -315,11 +315,11 @@ class MTD {
                         return false;
                     }
                 }
-            } else {
-                $flash->addWarning("No obligation found for the {$year}/{$tax_period} VAT period");
-                return false;
-           }
+            }
         }
+
+        $flash->addWarning("No obligation found for the {$year}/{$tax_period} VAT period");
+        return false;
     }
 }
 ?>
