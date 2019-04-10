@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [1.14.1]
+## [1.14.1] 2019-04-10
 
 - Minor fixes for PHP 7.1+ compatibility
 - Move VAT reports to VAT Return View
