@@ -11,6 +11,7 @@
  */
 class VatReturnStorageException extends Exception {}
 
+
 class VatReturn extends DataObject
 {
     public $tax_period_closed;
@@ -33,6 +34,7 @@ class VatReturn extends DataObject
         'finalised' => 'submitted'
     ];
 
+
     public function __construct($tablename='vat_return') {
         parent::__construct($tablename);
         $this->idField='id';
@@ -48,12 +50,18 @@ class VatReturn extends DataObject
         $this->getField('tax_period_closed')->type = 'html';
     }
 
-    function cb_loaded() {
+
+    public function cb_loaded() {
         // Set the field value, used when displaying the smarty data_table
         $this->getfield('tax_period_closed')->value = $this->_data['tax_period_closed'];
-       
     }
 
+
+    /**
+     * @param string $year
+     * @param string $tax_period
+     * @throws VatReturnStorageException
+     */
     public function loadVatReturn($year, $tax_period) {
         $q_cc = new ConstraintChain();
         $q_cc->add(new Constraint('year', '=', $year));
@@ -66,6 +74,7 @@ class VatReturn extends DataObject
         }
     }
 
+
     /**
      * @param string $year
      * @param string $tax_period
@@ -75,13 +84,10 @@ class VatReturn extends DataObject
         try
         {
             $this->loadVatReturn($year, $tax_period);
-
             if ($this->isLoaded()) {
                 //exists
                 return;
             }
-
-
         }
         catch (VatReturnStorageException $e)
         {
@@ -109,6 +115,13 @@ class VatReturn extends DataObject
         }
     }
 
+
+    /**
+     * @param string $year
+     * @param string $tax_period
+     * @param array $boxes computed VAT figures for each 'box'
+     * @throws VatReturnStorageException
+     */
     public function updateVatReturnBoxes($year, $tax_period, $boxes) {
         $this->loadVatReturn($year, $tax_period);
 
@@ -131,6 +144,14 @@ class VatReturn extends DataObject
     }
 
 
+    /**
+     * Save submission details returned by the MTD api
+     *
+     * @param string $year
+     * @param string $tax_period
+     * @param array $details values returned by the MTD api
+     * @throws VatReturnStorageException
+     */
     public function saveSubmissionDetail($year, $tax_period, $details) {
         $this->loadVatReturn($year, $tax_period);
 
@@ -150,6 +171,12 @@ class VatReturn extends DataObject
     }
 
 
+    /**
+     * @param string $year
+     * @param string $tax_period
+     * @param string $key tax period key returned by the MTD api
+     * @throws VatReturnStorageException
+     */
     public function setVatReturnPeriodKey($year, $tax_period, $key) {
         $this->loadVatReturn($year, $tax_period);
 
@@ -163,21 +190,26 @@ class VatReturn extends DataObject
         }
     }
 
+
+    /**
+     * Set the Tax and GL period status attributes on this model
+     *
+     * @param string $year
+     * @param string $tax_period
+     * @throws VatReturnStorageException
+     */
     public function getTaxPeriodStatus ($tax_period, $year)
-	{
-		$this->tax_period_closed = false;
-		$this->gl_period_closed = false;
-		$glperiod = DataObjectFactory::Factory('GLPeriod');
-		$glperiod->getTaxPeriodEnd($tax_period, $year);
-		if ($glperiod)
-		{
-			$this->tax_period_closed = $glperiod->tax_period_closed;
-			$this->gl_period_closed  = $glperiod->closed;
-		}
-		else
-		{
-			throw new VatReturnStorageException("Failed to get period status for {$year}/{$tax_period}");
-		}
-	}
+    {
+        $this->tax_period_closed = false;
+        $this->gl_period_closed = false;
+        $glperiod = DataObjectFactory::Factory('GLPeriod');
+        $glperiod->getTaxPeriodEnd($tax_period, $year);
+        if ($glperiod) {
+            $this->tax_period_closed = $glperiod->tax_period_closed;
+            $this->gl_period_closed  = $glperiod->closed;
+        } else {
+            throw new VatReturnStorageException("Failed to get period status for {$year}/{$tax_period}");
+        }
+    }
 }
 ?>
