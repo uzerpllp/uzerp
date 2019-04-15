@@ -1136,13 +1136,29 @@ class VatController extends printController
 	}
 
 	public function view() {
+		$mtd_config = OauthStorage::getconfig('mtd-vat');
+		if ($mtd_config === null) {
+			$flash->addWarning('Making Tax Digital for VAT is not configured');
+			$mtd_configured = false;
+			$mtd_authorised = false;
+		} else {
+			$mtd_configured = true;
+			$mtd = new MTD();
+			$result = $mtd->refreshToken();
+			if ($result === true) {
+				$mtd_authorised = true;
+			}
+		}
+
         $flash = Flash::Instance();
         if (! $this->loadData()) {
             $this->dataError();
             sendBack();
         }
         $model = $this->_uses[$this->modeltype];
-        $this->view->set('model', $model);
+		$this->view->set('model', $model);
+		
+		$model->getTaxPeriodStatus ($model->tax_period, $model->year);
 
 		$sidebar = $this->generalSidebar($this->titles, $model->year, $model->tax_period);
 
@@ -1156,6 +1172,49 @@ class VatController extends printController
             ),
             'tag' => "Select VAT Return"
 		);
+
+		if ($model->tax_period_closed !== 't') {
+			$sidebarlist['updatevatposition'] = array(
+				'link'=>array('modules'=>$this->_modules
+							,'controller'=>$this->name
+							,'action'=>'calculateVAT'
+							),
+				'tag'=>'Update VAT Postion',
+				'class' => 'vat-confirm',
+				'data_attr' => [
+					'data_uz-confirm-message' => "Recalculate VAT?|This cannot be undone.",
+					'data_uz-action-id' => $model->id
+				]
+			);
+
+			$sidebarlist['closevatperiod'] = array(
+				'link'=>array('modules'=>$this->_modules
+							,'controller'=>$this->name
+							,'action'=>'closeVatPeriod'
+							),
+				'tag'=>'Close VAT Period',
+				'class' => 'vat-confirm',
+				'data_attr' => [
+					'data_uz-confirm-message' => "Close VAT Period?|This cannot be undone.",
+					'data_uz-action-id' => $model->id
+				]
+			);
+		}
+
+		if ($model->tax_period_closed === 't' && $model->finalised === 'f' && $mtd_configured === true && $mtd_authorised === true) {
+			$sidebarlist['submitreturn'] = array(
+				'link'=>array('modules'=>$this->_modules
+							,'controller'=>$this->name
+							,'action'=>'hmrcPostVat'
+							),
+				'tag'=>'Submit VAT Return',
+				'class' => 'vat-confirm',
+				'data_attr' => [
+					'data_uz-confirm-message' => "Submit VAT Return to HMRC?|When you submit this VAT information you are making a legal declaration that the information is true and complete. A false declaration can result in prosecution.",
+					'data_uz-action-id' => $model->id
+				]
+			);
+		}
 
 		$sidebarlist['printvatreturn'] = array(
 			'link'=>array('modules'=>$this->_modules

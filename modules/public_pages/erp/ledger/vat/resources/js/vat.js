@@ -15,14 +15,14 @@
 $(document).ready(function(){
 	
 	// custom confirmation message
-	$(document).on('click', 'button.vat-confirm', {}, function(event){
+	$(document).on('click', 'a.vat-confirm', {}, function(event){
 		event.preventDefault();
 		var message = 'Are you sure?';
 		if ($( this ).data('uz-confirm-message') !== undefined) {
 			message = $( this ).data('uz-confirm-message').split('|');
 		}
 		
-		var targetUrl = $(this).data('action');
+		var targetUrl = $(this).attr('href');
 		var actionID = $(this).data('uz-action-id');
 		
 		$( '<div id="#confirm-dialog" title="Confirm Action"><p><strong>' + message[0] + '</strong></p>\
