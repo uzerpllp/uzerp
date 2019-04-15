@@ -138,7 +138,6 @@ class MTD {
                     ]);
 
                     $storage->update($storage->id, ['access_token', 'expires'], [$newAccessToken->getToken(), $newAccessToken->getExpires()]);
-                    return;
                 } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                     // Assume the the refresh token is no longer valid, re-authorise the application
                     $storage->deleteToken($this->config_key);
