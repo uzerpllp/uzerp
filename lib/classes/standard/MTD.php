@@ -311,7 +311,7 @@ class MTD {
                 {
                     $api_errors = json_decode($e->getResponse()->getBody()->getContents());
                     foreach ($api_errors->errors as $error) {
-                        $flash->addError("{$error->code} {$error->message}");
+                        $flash->addError("HMRC API ERROR: {$error->code} {$error->message}");
                         return false;
                     }
                 }
