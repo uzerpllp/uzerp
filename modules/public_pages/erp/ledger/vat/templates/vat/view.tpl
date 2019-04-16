@@ -1,4 +1,7 @@
 {content_wrapper}
+	{if $tax_period_closed === 'f'}
+		<p style="color: red"><strong>Warning:</strong> Tax period is not closed, the figures below may not be final.</p>
+	{/if}
 	<div id="view_page" class="clearfix">
 		<dl id="view_data_left">
 			<dt class="heading">Submission</dt>

@@ -7,8 +7,5 @@
 	{if $mtd_authorised}
 		<p><em>uzERP is currently authorised to access <abbr title="Making Tax Digital">MTD</abbr> for VAT</em></p>
 	{/if}
-	{if $tax_period_closed === 'f'}
-		<p style="color: red"><strong>Warning:</strong> Tax period is not closed, the figures below may not be final.</p>
-	{/if}
 	{include file="elements/datatable.tpl" collection=$vatreturns}
 {/content_wrapper}

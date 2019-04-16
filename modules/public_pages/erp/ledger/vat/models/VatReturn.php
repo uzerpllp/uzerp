@@ -54,6 +54,16 @@ class VatReturn extends DataObject
     public function cb_loaded() {
         // Set the field value, used when displaying the smarty data_table
         $this->getfield('tax_period_closed')->value = $this->_data['tax_period_closed'];
+
+        // Convert the UTC processing time from HMRC to the local timezone
+        if ($this->_data['processing_date']) {
+            $utc_date = DateTime::createFromFormat(
+                'Y-m-d G:i:s.u',
+                $this->_data['processing_date'],
+                new DateTimeZone('UTC')
+            );
+            $this->getfield('processing_date')->value = $utc_date->setTimeZone(new DateTimeZone(date_default_timezone_get()))->format('Y-m-d H:i:s');
+        }
     }
 
 
@@ -198,8 +208,12 @@ class VatReturn extends DataObject
      * @param string $tax_period
      * @throws VatReturnStorageException
      */
-    public function getTaxPeriodStatus ($tax_period, $year)
+    public function getTaxPeriodStatus ($tax_period=null, $year=null)
     {
+        if(is_null($tax_period) && is_null($year) && $this->isLoaded()) {
+            $year = $this->year;
+            $tax_period = $this->tax_period;
+        }
         $this->tax_period_closed = false;
         $this->gl_period_closed = false;
         $glperiod = DataObjectFactory::Factory('GLPeriod');
