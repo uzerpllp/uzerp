@@ -55,6 +55,31 @@ class VatController extends printController
 			sendBack();
 		}
 
+		$sidebar = new SidebarController($this->view);
+
+		$returns_sidebar = [];
+		$returns_sidebar['inputjournal'] = array(
+			'link'=>array('modules'=>$this->_modules
+						 ,'controller'=>$this->name
+						 ,'action'=>'enter_journal'
+						 ,'vat_type'=>'input'
+						 ),
+			'tag'=>'VAT Input Journal'
+		);
+
+		$returns_sidebar['outputjournal'] = array(
+			'link'=>array('modules'=>$this->_modules
+						 ,'controller'=>$this->name
+						 ,'action'=>'enter_journal'
+						 ,'vat_type'=>'output'
+						 ),
+			'tag'=>'VAT Output Journal'
+		);
+
+		$sidebar->addList('Actions', $returns_sidebar);
+
+		$this->view->register('sidebar', $sidebar);
+		$this->view->set('sidebar', $sidebar);
 		$this->view->set('page_title','Vat Returns');
 		$this->view->set('clickaction', 'view');
 	}
@@ -1146,25 +1171,6 @@ class VatController extends printController
 			], 'tag' => "View All VAT Returns"
 		];
 
-
-			$returns_sidebar['inputjournal'] = array(
-			'link'=>array('modules'=>$this->_modules
-						 ,'controller'=>$this->name
-						 ,'action'=>'enter_journal'
-						 ,'vat_type'=>'input'
-						 ),
-			'tag'=>'VAT Input Journal'
-		);
-
-		$returns_sidebar['outputjournal'] = array(
-			'link'=>array('modules'=>$this->_modules
-						 ,'controller'=>$this->name
-						 ,'action'=>'enter_journal'
-						 ,'vat_type'=>'output'
-						 ),
-			'tag'=>'VAT Output Journal'
-		);
-
 		$sidebar->addList('VAT Returns', $returns_sidebar);
 		$sidebar->addList("{$model->year}/{$model->tax_period} Actions", $sidebarlist);
 		//$sidebar->addList("{$model->year}/{$model->tax_period} Reports", $this->reportSidebar($this->titles, $model->year, $model->tax_period));
@@ -1175,8 +1181,15 @@ class VatController extends printController
 		$this->view->set('page_title',"Vat Return {$model->year}/{$model->tax_period}");
 	}
 
+	/**
+	 * This action is for testing purposes
+	 * 
+	 * Get VAT Obligations from HMRC and dump to the browser
+	 * 
+	 * URI: /?module=vat&controller=vat&action=vatObligations
+	 */
 	public function vatObligations() {
-		$mtd = new MTD();
+		$mtd = new MTD;
 		var_dump($mtd->getObligations(['status' => 'O']));
 		exit;
   	}
