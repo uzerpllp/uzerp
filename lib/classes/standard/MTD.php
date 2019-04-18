@@ -95,12 +95,11 @@ class MTD {
                 unset($_SESSION['oauth2state']);
             }
             
-            exit('Invalid state');
+            exit('Oauth Error: Invalid state on authorization grant');
         
         } else {
-        
-            try {
-        
+            try
+            {
                 // Try to get an access token using the authorization code grant.
                 $this->accessToken = $this->provider->getAccessToken('authorization_code', [
                     'code' => $_GET['code']
@@ -108,15 +107,14 @@ class MTD {
 
                 $storage = new OauthStorage();
                 if (!$storage->storeToken($this->accessToken, $this->config_key)) {
-                    echo 'failed to save access token';
-                    exit;
+                    exit('Oauth Error: failed to save access token after authorization grant');
                 }
-                
-            } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
-        
+            }
+            catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e)
+            {
                 // Failed to get the access token or user details.
-                exit($e->getMessage());
-        
+                $response = $e->getResponseBody();
+                exit("Oauth Error: {$response['error']}, {$response['error_description']}");
             }
         }
     }
@@ -127,21 +125,36 @@ class MTD {
      * @see https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints
      */
     function refreshToken() {
+        $flash = Flash::Instance();
         $storage = new OauthStorage();
         $existingAccessToken = $storage->getToken($this->config_key);
 
         if ($existingAccessToken !== false) {
             if ($existingAccessToken->hasExpired()) {
-                try {
+                try
+                {
                     $newAccessToken = $this->provider->getAccessToken('refresh_token', [
                         'refresh_token' => $existingAccessToken->getRefreshToken()
                     ]);
 
-                    $storage->update($storage->id, ['access_token', 'expires'], [$newAccessToken->getToken(), $newAccessToken->getExpires()]);
-                } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
-                    // Assume the the refresh token is no longer valid, re-authorise the application
                     $storage->deleteToken($this->config_key);
-                    $this->authorizationGrant();
+                    $newStorage = new OauthStorage();
+                    if (!$newStorage->storeToken($newAccessToken, $this->config_key)) {
+                        $flash->addError("Oauth Error: Failed to store access token after refresh");
+                        return false;
+                    }
+                }
+                catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e)
+                {
+                    $response = $e->getResponseBody();
+                    
+                    // If authorization grant has expired, re-authorise application
+                    if ($response['error'] == 'invalid_request') {
+                        $storage->deleteToken($this->config_key);
+                        $this->authorizationGrant();
+                    }
+                    $flash->addWarning("Oauth Error: {$response['error']}, {$response['error_description']}");
+                    return false;
                 }
             }
             return true;
@@ -267,14 +280,14 @@ class MTD {
                 $body = [
                     'periodKey' => $obligation['periodKey'],
                     'vatDueSales' => round($return->vat_due_sales,2),
-                    'vatDueAcquisitions' => round($return->vat_due_aquisitions,2),
+                    'vatDueAcquisitions' => round($return->vat_due_acquisitions,2),
                     'totalVatDue' => round($return->total_vat_due,2),
                     'vatReclaimedCurrPeriod' => round($return->vat_reclaimed_curr_period,2),
                     'netVatDue' => round($return->net_vat_due,2),
                     'totalValueSalesExVAT' => round($return->total_value_sales_ex_vat),
                     'totalValuePurchasesExVAT' => round($return->total_value_purchase_ex_vat),
                     'totalValueGoodsSuppliedExVAT' => round($return->total_value_goods_supplied_ex_vat),
-                    'totalAcquisitionsExVAT' => round($return->total_aquisitions_ex_vat),
+                    'totalAcquisitionsExVAT' => round($return->total_acquisitions_ex_vat),
                     'finalised' => true
                 ];
 
