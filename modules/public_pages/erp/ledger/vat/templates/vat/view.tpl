@@ -21,14 +21,14 @@
 		<dl id="view_data_right">
 			<dt class="heading">VAT Values</dt>
             {view_data model=$model attribute="vat_due_sales"}
-            {view_data model=$model attribute="vat_due_aquisitions"}
+            {view_data model=$model attribute="vat_due_acquisitions"}
             {view_data model=$model attribute="total_vat_due"}
             {view_data model=$model attribute="vat_reclaimed_curr_period"}
             {view_data model=$model attribute="net_vat_due"}
             {view_data model=$model attribute="total_value_sales_ex_vat"}
             {view_data model=$model attribute="total_value_purchase_ex_vat"}
             {view_data model=$model attribute="total_value_goods_supplied_ex_vat"}
-            {view_data model=$model attribute="total_aquisitions_ex_vat"}
+            {view_data model=$model attribute="total_acquisitions_ex_vat"}
 		</dl>
 	</div>
 {/content_wrapper}

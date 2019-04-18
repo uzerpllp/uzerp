@@ -783,7 +783,7 @@ class VatController extends printController
 		$extra['boxes'][]['line'][] = [
 			'title' => 'VAT due on acquisitions from other EC Member States.',
 			'box_num' => 'Box 2',
-			'value' => $return->vat_due_aquisitions,
+			'value' => $return->vat_due_acquisitions,
 		];
 
 		$extra['boxes'][]['line'][] = [
@@ -825,7 +825,7 @@ class VatController extends printController
 		$extra['boxes'][]['line'][] = [
 			'title' => 'Total value of acquisitions of goods and related costs excluding any VAT, from other EC member states.',
 			'box_num' => 'Box 9',
-			'value' => round($return->total_aquisitions_ex_vat),
+			'value' => round($return->total_acquisitions_ex_vat),
 		];
 
 		if ($return->finalised === 't')

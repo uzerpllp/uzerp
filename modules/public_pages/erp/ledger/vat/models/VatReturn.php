@@ -22,14 +22,14 @@ class VatReturn extends DataObject
         year,
         tax_period,
         vat_due_sales, //Box 1 - VAT Due On Sales
-        vat_due_aquisitions, //Box 2 - VAT Due On EU Purchases
+        vat_due_acquisitions, //Box 2 - VAT Due On EU Purchases
         total_vat_due, // Box 3 - Output Tax - CHECK THIS!!
         vat_reclaimed_curr_period, //Box 4 - Input Tax - CHECK THIS!!
         net_vat_due, //Box 5 - Net Tax
         total_value_sales_ex_vat, //Box 6 - Sales Exc. VAT
         total_value_purchase_ex_vat, //Box 7 - Purchases Exc. VAT
         total_value_goods_supplied_ex_vat, //Box 8 - EU Sales Exc. VAT
-        total_aquisitions_ex_vat, //Box 9 -EU Purchases Exc. VAT
+        total_acquisitions_ex_vat, //Box 9 -EU Purchases Exc. VAT
         tax_period_closed,
         'finalised' => 'submitted'
     ];
@@ -105,14 +105,14 @@ class VatReturn extends DataObject
             $this->year = $year;
             $this->tax_period = $tax_period;
             $this->vat_due_sales = 0;
-            $this->vat_due_aquisitions = 0;
+            $this->vat_due_acquisitions = 0;
             $this->total_vat_due = 0;
             $this->vat_reclaimed_curr_period = 0;
             $this->net_vat_due = 0;
             $this->total_value_sales_ex_vat = 0;
             $this->total_value_purchase_ex_vat = 0;
             $this->total_value_goods_supplied_ex_vat = 0;
-            $this->total_aquisitions_ex_vat = 0;
+            $this->total_acquisitions_ex_vat = 0;
             $this->usercompanyid = EGS_COMPANY_ID;
             $this->finalised = false;
             $dt = new DateTime();
@@ -136,14 +136,14 @@ class VatReturn extends DataObject
         $this->loadVatReturn($year, $tax_period);
 
         $this->vat_due_sales = $boxes['Box1'];
-        $this->vat_due_aquisitions = $boxes['Box2'];
+        $this->vat_due_acquisitions = $boxes['Box2'];
         $this->total_vat_due = $boxes['Box3'];
         $this->vat_reclaimed_curr_period = $boxes['Box4'];
         $this->net_vat_due = $boxes['Box5'];
         $this->total_value_sales_ex_vat = $boxes['Box6'];
         $this->total_value_purchase_ex_vat = $boxes['Box7'];
         $this->total_value_goods_supplied_ex_vat = $boxes['Box8'];
-        $this->total_aquisitions_ex_vat = $boxes['Box9'];
+        $this->total_acquisitions_ex_vat = $boxes['Box9'];
         $dt = new DateTime();
         $this->lastupdated = $dt->format('Y-m-d H:i:s.u'); // 'u' will be 000000 prior to php7.2
         $this->lastupdatedby = EGS_USERNAME;
