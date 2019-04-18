@@ -1,6 +1,18 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- Main VAT return view now allows listing and searching for returns and is not restricted to a single return.
+- All actions related to individual VAT returns (period close, submit, etc.) have been moved to the individual return view.
+
+### Fixed
+
+- Prevent Making Tax Digital re-authorisation on Oauth2 access token expiry.
+- VAT transaction reports can be output to CSV, print, email, etc.
+
 ## [1.14.1] 2019-04-10
 
 - Minor fixes for PHP 7.1+ compatibility
