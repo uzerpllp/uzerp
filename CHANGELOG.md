@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Functions added to phinx UzerpMigration base class to make adding/removeing module components easier.
+- Functions added to phinx UzerpMigration base class to make adding/removing module components easier.
 
 ### Changed
 
@@ -80,9 +80,9 @@ VAT Report views and transaction printing updated to use new calculations, match
 
 - Item cloning
   - Clear EAN when cloning an item with a sales product
-  - Concatentate new item number and description as new sales product description
+  - Concatenate new item number and description as new sales product description
 - Set default GL centre from product header when entering a new sales or purchase product
-- Prevent hidden model fields from being selected for display in datat grids
+- Prevent hidden model fields from being selected for display in data grids
 
 ### Added
 
@@ -361,7 +361,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Closing final period of year fails when trying to update assets
 
 ### Added
-- Make VAT amounts availabe to Sales Order Acknowledgement print
+- Make VAT amounts available to Sales Order Acknowledgement print
 
 ## [2014.3.9] - 2014-12-01
 ### Fixed
@@ -428,7 +428,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 ## [2014.3.5] - 2014-08-20
 ### Fixed
 - Broken link on view purchase order supply/demand
-- Parentheses arround address fields cause SQL error
+- Parentheses around address fields cause SQL error
 
 ### Added
 - Print company bank account details on pro-forma invoice
@@ -446,7 +446,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 
 ## [2014.3.2] - 2014-06-24
 ### Added
-- Allow selection of a custom XSL report defintion for reports.
+- Allow selection of a custom XSL report definition for reports.
 
 ## [2014.3.1] - 2014-06-11
 ### Fixed
@@ -464,6 +464,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - First Git controlled release on bitbucket
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
+[1.15]: https://github.com/uzerpllp/uzerp/compare/1.14.1...1.15
 [1.14.1]: https://github.com/uzerpllp/uzerp/compare/1.14...1.14.1
 [1.14]: https://github.com/uzerpllp/uzerp/compare/1.13...1.14
 [1.13]: https://github.com/uzerpllp/uzerp/compare/1.12.3...1.13
