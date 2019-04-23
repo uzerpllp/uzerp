@@ -6,7 +6,7 @@ namespace UzerpPhinx;
  *
  * @author uzERP LLP and Steve Blamey <sblamey@uzerp.com>
  * @license GPLv3 or later
- * @copyright (c) 2000-2015 uzERP LLP (support#uzerp.com). All rights reserved.
+ * @copyright (c) 2019 uzERP LLP (support#uzerp.com). All rights reserved.
  */
 class UzerpMigration extends \Phinx\Migration\AbstractMigration {
     

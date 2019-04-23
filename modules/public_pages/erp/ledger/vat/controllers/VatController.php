@@ -1004,6 +1004,9 @@ class VatController extends printController
 		
 	}
 
+	/**
+	 * Submit return to HMRC
+	 */
 	public function hmrcPostVat()
 	{
 		$this->checkRequest(['post'], true);
@@ -1022,6 +1025,9 @@ class VatController extends printController
 		sendBack();
 	}
 
+	/**
+	 * Calculate and update current VAT position
+	 */
 	public function calculateVAT()
 	{
 		$this->checkRequest(['post'], true);
@@ -1089,8 +1095,6 @@ class VatController extends printController
 		
 		$model->getTaxPeriodStatus ($model->tax_period, $model->year);
 		$this->view->set('tax_period_closed', $model->tax_period_closed);
-
-		//$sidebar = $this->generalSidebar($this->titles, $model->year, $model->tax_period);
 
 		$sidebar = new SidebarController($this->view);
 
@@ -1173,7 +1177,6 @@ class VatController extends printController
 
 		$sidebar->addList('VAT Returns', $returns_sidebar);
 		$sidebar->addList("{$model->year}/{$model->tax_period} Actions", $sidebarlist);
-		//$sidebar->addList("{$model->year}/{$model->tax_period} Reports", $this->reportSidebar($this->titles, $model->year, $model->tax_period));
 
 		$this->sidebarRelatedItems($sidebar, $model);
         $this->view->register('sidebar', $sidebar);

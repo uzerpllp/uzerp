@@ -1,7 +1,12 @@
 # Change Log
+
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.5] 2019-04-23
+
+### Added
+
+- Functions added to phinx UzerpMigration base class to make adding/removeing module components easier.
 
 ### Changed
 
