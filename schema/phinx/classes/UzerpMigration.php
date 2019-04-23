@@ -19,9 +19,8 @@ class UzerpMigration extends \Phinx\Migration\AbstractMigration {
     /**
      * Remove listed keys from memcache
      *
-     * @param array $keys
-     *            array of key names to remove
-    */
+     * @param array $keys  array of key names to remove
+     */
     function cleanMemcache($keys)
     {
         $options = $this->getAdapter()->getOptions();
@@ -39,18 +38,24 @@ class UzerpMigration extends \Phinx\Migration\AbstractMigration {
      * Add uzERP module components
      * 
      * This enables class autloading for the component in uzERP
+     * by adding its details to the module_components table.
+     * 
+     * For example: schema/phinx/migrations/20190418105223_add_vat_module_components.php
      */
     public function addModuleComponents()
     {
         $components = [];
 
         foreach ($this->module_components as $component) {
-            $module = $component['module'];
-            unset($component['module']);
-            $module_record = $this->fetchRow("SELECT id FROM modules WHERE name = '{$module}'");
-            $component['module_id'] = $module_record['id'];
-            $component['createdby'] = 'admin';
-            $components[] = $component;
+            $component_record = $this->fetchRow("SELECT count(location) FROM module_components WHERE location = '{$component['location']}'");
+            if ($component_record['count'] == 0) {
+                $module = $component['module'];
+                unset($component['module']);
+                $module_record = $this->fetchRow("SELECT id FROM modules WHERE name = '{$module}'");
+                $component['module_id'] = $module_record['id'];
+                $component['createdby'] = 'admin';
+                $components[] = $component;
+            }
         }
 
         $table = $this->table('module_components');
@@ -58,10 +63,12 @@ class UzerpMigration extends \Phinx\Migration\AbstractMigration {
         $table->save();
     }
 
+
     /**
      * Remove uzERP module components
      * 
-     * This enables class autloading for the component in uzERP
+     * This prevents class autloading for the component in uzERP
+     * by removing its details from the module_components table.
      */
     public function removeModuleComponents()
     {
@@ -76,5 +83,4 @@ class UzerpMigration extends \Phinx\Migration\AbstractMigration {
         $this->execute($sql);
     }
 }
-
 ?>
