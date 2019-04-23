@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.1] 2019-04-23
+
+- Minor bug fix
+
 ## [1.5] 2019-04-23
 
 ### Added
