@@ -58,7 +58,7 @@ class VatReturn extends DataObject
         // Convert the UTC processing time from HMRC to the local timezone
         if ($this->_data['processing_date']) {
             $utc_date = DateTime::createFromFormat(
-                'Y-m-d G:i:s.u',
+                'Y-m-d G:i:s',
                 $this->_data['processing_date'],
                 new DateTimeZone('UTC')
             );
