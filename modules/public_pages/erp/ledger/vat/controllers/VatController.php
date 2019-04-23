@@ -1071,6 +1071,7 @@ class VatController extends printController
 	}
 
 	public function view() {
+		$flash = Flash::Instance();
 		$mtd_config = OauthStorage::getconfig('mtd-vat');
 		if ($mtd_config === null) {
 			$flash->addWarning('Making Tax Digital for VAT is not configured');
