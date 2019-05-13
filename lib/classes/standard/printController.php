@@ -2416,11 +2416,14 @@ class printController extends Controller
         }
 
         $from = $replyto = $contact;
+        $address_list = array_map('trim', explode(';', $params['email']));
         $mail = new PHPMailer(true);
         try {
             $mail->setFrom($from);
             $mail->addReplyTo($replyto);
-            $mail->addAddress($params['email']);
+            foreach ($address_list as $recipient) {
+                $mail->addAddress($recipient);
+            }
             $mail->Subject = $params['subject'];
             $mail->Body = $params['emailtext'];
             $mail->addAttachment($file);
