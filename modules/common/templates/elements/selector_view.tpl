@@ -3,8 +3,7 @@
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* $Revision: 1.4 $ *}
-{content_wrapper title='view '|cat:$SelectorObject->description|cat:' '|cat:$SelectorObject->name}
+{content_wrapper class="clearfix" title='view '|cat:$SelectorObject->description|cat:' '|cat:$SelectorObject->name}
 	<div id="view_page" class="clearfix">
 		<dl id="view_data_left">
 			{with model=$SelectorObject}
@@ -36,6 +35,7 @@
 								{/heading_cell}
 							{/foreach}
 						{/heading_row}
+						<tbody>
 						{foreach name=datagrid item=model from=$selectorobjects}
 							{grid_row}
 								{foreach key=name item=tag from=$headings}
@@ -45,8 +45,8 @@
 								{/foreach}
 							{/grid_row}
 						{/foreach}
+						</tbody>
 					{/data_table}
-					{paging}
 				{/view_section}
 			{/if}
 		</div>
