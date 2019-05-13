@@ -2416,7 +2416,7 @@ class printController extends Controller
         }
 
         $from = $replyto = $contact;
-        $address_list = array_map('trim', explode(';', $params['email']));
+        $address_list = array_map('trim', explode(',', $params['email']));
         $mail = new PHPMailer(true);
         try {
             $mail->setFrom($from);
