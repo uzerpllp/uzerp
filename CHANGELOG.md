@@ -2,16 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.5.2] 2019-05-13
+## [1.15.2] 2019-05-13
 
 - Fix error when viewing product list under product selector level.
 - Allow multiple receipients, separated by a comma, to be added when outputing to email.
 
-## [1.5.1] 2019-04-23
+## [1.15.1] 2019-04-23
 
 - Minor bug fix
 
-## [1.5] 2019-04-23
+## [1.15] 2019-04-23
 
 ### Added
 
