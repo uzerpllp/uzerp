@@ -1,0 +1,11 @@
+[Unit]
+Description=uzERP Exclusive Job Queue Worker
+
+[Service]
+RuntimeDirectory=/vagrant/uzerp
+WorkingDirectory=/vagrant/uzerp
+ExecStart=/usr/bin/php utils/exclusive-queue-worker.php
+
+[Install]
+WantedBy=multi-user.target
+
