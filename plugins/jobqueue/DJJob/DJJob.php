@@ -448,7 +448,7 @@ class DJWorker extends DJBase {
                 $job = $this->getNewJob($this->queue);
 
                 if (!$job) {
-                    $this->log("[JOB] Failed to get a job, queue::{$this->queue} may be empty", self::DEBUG);
+                    //$this->log("[JOB] Failed to get a job, queue::{$this->queue} may be empty", self::DEBUG);
                     sleep($this->sleep);
                     continue;
                 }
