@@ -1,13 +1,17 @@
 <?php
 require 'system.php';
-//require 'test-job.php';
+error_reporting(E_ERROR);
 
-$_SERVER['DOCUMENT_ROOT'] = __DIR__ . '/';
+//require dirname( dirname(__FILE__) ) . '/plugins/jobqueue/DJJob/DJJob.php';
+
+$_SERVER['DOCUMENT_ROOT'] = dirname( dirname(__FILE__) ) . '/';
 
 
 //define('HTTP_HOST', 'example.com');
 
-
+//define('ADMIN_EMAIL', 'admin@example.com');
+//define('ADMIN_EMAIL_FROM', 'admin@example.com');
+$_SERVER['HTTP_HOST'] = 'example.com';
 
 $system = system::Instance();
 $system->load_essential();
