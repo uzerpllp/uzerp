@@ -637,7 +637,7 @@ SELECT mfw.id, mfw.wo_number || ': ' || sti.item_code || ' - ' || sti.descriptio
 FROM mf_workorders mfw
 JOIN mf_operations mfo ON mfo.stitem_id = mfw.stitem_id
 JOIN st_items sti ON sti.id = mfw.stitem_id
-left join po_lines pol ON pol.mf_workorders_id = mfw.id AND pol.mf_operations_id = mfo.id
+left join po_lines pol ON pol.mf_workorders_id = mfw.id AND pol.mf_operations_id = mfo.id AND pol.status != 'X'
 left join po_product_lines ppl on ppl.productline_header_id = mfo.po_productline_header_id
 WHERE (mfo.end_date is null OR (mfo.start_date <= now() AND mfo.end_date >= now()))
 	AND mfo.type='O' AND mfw.status !='C'

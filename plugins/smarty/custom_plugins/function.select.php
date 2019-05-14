@@ -561,7 +561,7 @@ function smarty_function_select($params, &$smarty) {
 			
 				$opt_counter++;
 		
-				$option_attrs['value'] = h($key, ENT_COMPAT);
+				$option_attrs['value'] = uzh($key, ENT_COMPAT);
 			
 				if ((is_array($selected) && in_array($key, $selected)) || ($selected==$key))
 				{
@@ -569,7 +569,7 @@ function smarty_function_select($params, &$smarty) {
 				}
 			
 				$data['select']['options'][$opt_counter]['attrs'] = build_attribute_string($option_attrs);
-				$data['select']['options'][$opt_counter]['value'] = h($value);
+				$data['select']['options'][$opt_counter]['value'] = uzh($value);
 		
 				$data['autocomplete'] = false;
 			
@@ -635,7 +635,7 @@ function smarty_function_select($params, &$smarty) {
 		
 		$attrs=array('name'=>$data['select']['attrs']['name']
 					,'id'=>$data['select']['attrs']['id']
-					,'value'=>h($selected, ENT_COMPAT)
+					,'value'=>uzh($selected, ENT_COMPAT)
 					,'data-text_id'=>$data['select']['attrs']['id'].'_text');
 
 		if (isset($data['select']['attrs']['data-depends'])) {

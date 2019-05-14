@@ -262,6 +262,12 @@ class Systemcompany extends DataObject {
 		return $count;
 	}
 
+	public function getVRN()
+	{
+		$vrn = preg_replace("/[^0-9]/", "", $this->systemcompany->vatnumber);
+		return $vrn;
+	}
+
 	function getNonUsers ()
 	{
 //		$users=array();

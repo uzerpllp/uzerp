@@ -11,8 +11,11 @@ class RemovePurchaseEan extends UzerpMigration
     public function up()
     {
         $table = $this->table('po_product_lines');
-        $table->removeColumn('ean')
-              ->save();
+        $column = $table->hasColumn('ean');
+        if ($column) {
+            $table->removeColumn('ean')
+                ->save();
+        }
     }
 
     /**

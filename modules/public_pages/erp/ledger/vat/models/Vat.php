@@ -234,7 +234,17 @@ class Vat extends GLTransaction
 				$this->saveTransactions($gltransactions, $errors);
 			}
 		}
-		
+
+		try
+		{
+			$return = new VatReturn;
+			$return->updateVatReturnBoxes($year, $tax_period, $values);
+		}
+		catch (VatReturnStorageException $e)
+		{
+			$errors[] = $e->getMessage();
+		}
+
 		if (count($errors) > 0)
 		{
 			$db->FailTrans();
@@ -260,14 +270,14 @@ class Vat extends GLTransaction
 		$qparams = [$year, $tax_period];
 		$query = <<<'QUERY'
 select tax_period,
-sum((select sum(vat) from gltransactions_vat_outputs where glperiods_id=glp.id)) as "Box1", 
-sum((select sum(vat) from gl_taxeupurchases vo where vo.glperiods_id=glp.id)) as "Box2",
-sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) + sum((select sum(vat) from gl_taxeupurchases vo where vo.glperiods_id=glp.id)) as "Box4",
-sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) as "inputs",
-sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id)) as "Box6",
-sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) as "Box7",
-sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')) as "Box8",
-sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')) as "Box9"
+coalesce(sum((select sum(vat) from gltransactions_vat_outputs where glperiods_id=glp.id)), 0.00) as "Box1", 
+coalesce(sum((select sum(vat) from gl_taxeupurchases vo where vo.glperiods_id=glp.id)), 0.00) as "Box2",
+coalesce(sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) + coalesce(sum((select sum(vat) from gl_taxeupurchases vo where vo.glperiods_id=glp.id)),0.00), 0.00) as "Box4",
+coalesce(sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)), 0.00) as "inputs",
+coalesce(sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id)), 0.00) as "Box6",
+coalesce(sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)), 0.00) as "Box7",
+coalesce(sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')), 0.00) as "Box8",
+coalesce(sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')), 0.00) as "Box9"
 from gl_periods glp
 where year=? and tax_period=?
 group by tax_period
@@ -275,7 +285,10 @@ QUERY;
 
 		$db = DB::Instance();
 		$boxr = $db->getAll($query, $qparams);
-		return $boxr[0];
+		$boxr = $boxr[0];
+		$boxr['Box3'] = $boxr['Box1'] + $boxr['Box2'];
+		$boxr['Box5'] = $boxr['Box3'] - $boxr['Box4'];
+		return $boxr;
 	}
 
 	/**

@@ -1,9 +1,11 @@
 # Change Log
+
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
 ### Added
+
 - Time based operation costing
     - Select *cost basis* for Stock Items, *volume* or *time*
     - Operation entry/edit forms respond to the item cost basis
@@ -12,17 +14,106 @@ All notable changes to this project will be documented in this file.
         - Default cost basis for new Stock Items
         - Use only the default cost basis for new Stock Items
 
-- Manufacturing operations can be marked as batch operations, causing the per item labour and overhead cost to be divided by the item's batch size
-- Outside operations can be added to the production routing, linked to purchase products. Purchase orders have a new action to allow the services to be purchased.
+- Manufacturing operations can be marked as batch operations, causing the per item labour and overhead cost to be divided by the item's batch size (if set).
+
+- Outside operations can be placed in the manufactured item routing with a lead time and linked to a purchase product line that holds supplier and price information.
+    - The outside operation supplier(s) are available to print on the operations/route card output.
+    - Outside operation purchasing - purchase against work order routing outside operations, using the *Add Work Order Purchase* from the purchase order side-bar.
+    - New Manufacturing module settings:
+        - Product Group for routing outside operation purchases, all outside op purchase product lines must be linked to the chosen product group.
+        - Work Centre for routing outside operations, the work centre used in work order operations.
+        - Resource for routing outside operations, the MF resource for outside operations.
+
+- Integration with frePPLe - the open source, production planning and scheduling solution - https://frepple.com:
+    - Import Work Orders, Sales & Purchase Orders, inventory, etc. from uzERP into Frepple to generate planned work orders and purchase orders.
+    - Export selected orders or a complete plan back in to uzERP for execution.
+        - Planned purchase review and order creation - lists planned purchase requirements directly in uzERP, create purchase orders for individual items or group them on one purchase order.
+        - Work orders are created directly in uzERP from frePPLe, with start dates, ready to release.
+    - See our frePPLe connector: https://github.com/uzerpllp/uzerpfrepple.
 
 ### Changed
+
 - Updated workflow for Operations, Outside Operations and Structures
     - New sidebar group for ops, structures and costing when viewing a stock item
     - One click to view the current ops, structure, etc.
     - Clicking on the op or structure line number will show the edit form
     - All forms have 'Save and Add...' buttons to speed up datat entry
     - Form 'cancel' links allow easy return to the ops/structure list for the item
-- Updated Work Orders list display and search
+
+## [1.15.2] 2019-05-13
+
+- Fix error when viewing product list under product selector level.
+- Allow multiple receipients, separated by a comma, to be added when outputing to email.
+
+## [1.15.1] 2019-04-23
+
+- Minor bug fix
+
+## [1.15] 2019-04-23
+
+### Added
+
+- Functions added to phinx UzerpMigration base class to make adding/removing module components easier.
+
+### Changed
+
+- Main VAT return view now allows listing and searching for returns and is not restricted to a single return.
+- All actions related to individual VAT returns (period close, submit, etc.) have been moved to the individual return view.
+
+### Fixed
+
+- Prevent Making Tax Digital re-authorisation on Oauth2 access token expiry.
+- VAT transaction reports can be output to CSV, print, email, etc.
+
+## [1.14.1] 2019-04-10
+
+- Minor fixes for PHP 7.1+ compatibility
+- Move VAT reports to VAT Return View
+
+## [1.14] 2019-03-25
+
+Support for Making Tax Digital for VAT
+
+## [1.13] 2019-02-11
+
+### Added
+
+VAT Report views can be output to CSV by using the 'Output' button in the search area.
+
+### Fixed
+
+VAT Report views and transaction printing updated to use new calculations, matching the VAT return.
+
+## [1.12.3] 2018-12-12
+
+### Added
+
+- Add Sales Order module preference to show current pickable stock balance when entering new order lines
+
+### Fixed
+
+- Product selector links added at wrong level of the hierarchy
+- Use of pdftk for PDF merging replaced by qpdf. pdftk no longer available in Ubuntu 18.04 repos
+
+### Changed
+
+- The 1.12.3 release package contains an update to the ADODB database library, making it compatible with PHP 7.1
+
+## [1.12.2] 2018-11-12
+
+### Fixed
+
+- Use PHPMailer for user emails
+
+## [1.12.1] 2018-11-09
+
+### Changed
+
+- Use PHPMailer class to send email from uzERP
+
+### Fixed
+
+- Prevent error when viewing Cashbook Account details, See [issue 181](https://github.com/uzerpllp/uzerp/issues/181).
 
 ## [1.12] 2018-09-06
 
@@ -36,9 +127,9 @@ All notable changes to this project will be documented in this file.
 
 - Item cloning
   - Clear EAN when cloning an item with a sales product
-  - Concatentate new item number and description as new sales product description
+  - Concatenate new item number and description as new sales product description
 - Set default GL centre from product header when entering a new sales or purchase product
-- Prevent hidden model fields from being selected for display in datat grids
+- Prevent hidden model fields from being selected for display in data grids
 
 ### Added
 
@@ -317,7 +408,7 @@ All notable changes to this project will be documented in this file.
 - Closing final period of year fails when trying to update assets
 
 ### Added
-- Make VAT amounts availabe to Sales Order Acknowledgement print
+- Make VAT amounts available to Sales Order Acknowledgement print
 
 ## [2014.3.9] - 2014-12-01
 ### Fixed
@@ -384,7 +475,7 @@ All notable changes to this project will be documented in this file.
 ## [2014.3.5] - 2014-08-20
 ### Fixed
 - Broken link on view purchase order supply/demand
-- Parentheses arround address fields cause SQL error
+- Parentheses around address fields cause SQL error
 
 ### Added
 - Print company bank account details on pro-forma invoice
@@ -402,7 +493,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2014.3.2] - 2014-06-24
 ### Added
-- Allow selection of a custom XSL report defintion for reports.
+- Allow selection of a custom XSL report definition for reports.
 
 ## [2014.3.1] - 2014-06-11
 ### Fixed
@@ -420,7 +511,14 @@ All notable changes to this project will be documented in this file.
 - First Git controlled release on bitbucket
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
-
+[1.15.2]: https://github.com/uzerpllp/uzerp/compare/1.15.2...1.15.1
+[1.15.1]: https://github.com/uzerpllp/uzerp/compare/1.15.1...1.15
+[1.15]: https://github.com/uzerpllp/uzerp/compare/1.14.1...1.15
+[1.14.1]: https://github.com/uzerpllp/uzerp/compare/1.14...1.14.1
+[1.14]: https://github.com/uzerpllp/uzerp/compare/1.13...1.14
+[1.13]: https://github.com/uzerpllp/uzerp/compare/1.12.3...1.13
+[1.12.2]: https://github.com/uzerpllp/uzerp/compare/1.12.1...1.12.2
+[1.12.1]: https://github.com/uzerpllp/uzerp/compare/1.12...1.12.1
 [1.12]: https://github.com/uzerpllp/uzerp/compare/1.11...1.12
 [1.11]: https://github.com/uzerpllp/uzerp/compare/1.10.4...1.11
 [1.10.3]: https://github.com/uzerpllp/uzerp/compare/1.10.2...1.10.3
@@ -452,4 +550,3 @@ All notable changes to this project will be documented in this file.
 [2014.3.3]: https://github.com/uzerpllp/uzerp/compare/2014.3.2...2014.3.3
 [2014.3.2]: https://github.com/uzerpllp/uzerp/compare/2014.3.1...2014.3.2
 [2014.3.1]: https://github.com/uzerpllp/uzerp/compare/2014.3...2014.3.1
-

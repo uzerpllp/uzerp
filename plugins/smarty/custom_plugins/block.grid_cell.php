@@ -37,7 +37,7 @@ function smarty_block_grid_cell($params, $content, &$smarty, $repeat)
 
 		if($model->getField($params['field'])->type !== 'html' && !isset($params['no_escape']))
 		{
-			$content = h(trim($content));
+			$content = uzh(trim($content));
 		}
 
 		if ($params['cell_num'] == 1)

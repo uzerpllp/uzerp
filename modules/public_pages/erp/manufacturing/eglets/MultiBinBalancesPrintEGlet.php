@@ -13,8 +13,10 @@ class MultiBinBalancesPrintEGlet extends SimpleEGlet {
 	}
 	
 	function populate() {
-		$store=new WHStore();
-		$this->contents['whstore']=$store->getAll();
+		$store = new WHStore();
+		$stores = $store->getAll();
+		$this->contents = [];
+		$this->contents['whstore'] = $stores;
 	}
 	
 }

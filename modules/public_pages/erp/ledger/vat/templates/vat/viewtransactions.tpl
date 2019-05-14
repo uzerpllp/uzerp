@@ -3,9 +3,16 @@
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* $Revision: 1.12 $ *}
+{if $box == '4'}
+	{assign var=data value=$vatinputss}
+{else if $box == '6'}
+	{assign var=data value=$vatoutputss}
+{else if $box == '8'}
+	{assign var=data value=$vateusaless}
+{else if $box == '9'}
+	{assign var=data value=$vateupurchasess}
+{/if}
 {content_wrapper}
-	{advanced_search}
 	{paging}
 	{data_table}
 		{heading_row}
@@ -37,12 +44,12 @@
 				Type
 			{/heading_cell}
 		{/heading_row}
-		{foreach name=datagrid item=model from=$gltransactions}
+		{foreach name=datagrid item=model from=$data}
 			{assign var=totalVat value=$totalVat+$model->vat}
 			{assign var=totalNet value=$totalNet+$model->net}
 			{grid_row model=$model}
-				{grid_cell model=$model cell_num=1 field="transaction_date"}
-					{$model->transaction_date}
+				{grid_cell model=$model cell_num=1 field="transaction_date" no_escape=true}
+					{link_to module='general_ledger' controller='gltransactions' action='view' id=$model->gl_id value=$model->transaction_date}
 				{/grid_cell}
 				{grid_cell model=$model cell_num=4 field="docref" no_escape=true}
 					{if $model->source=='C'}
@@ -65,7 +72,11 @@
 					{$model->ext_reference}
 				{/grid_cell}
 				{grid_cell model=$model cell_num=7 field="type"}
-					{$model->company}
+					{if $model->supplier}
+						{$model->supplier}
+					{else if $model->customer}
+						{$model->customer}
+					{/if}
 				{/grid_cell}
 				{grid_cell model=$model cell_num=4 field="comment"}
 					{$model->comment}
@@ -88,20 +99,7 @@
 				<td colspan="0">No matching records found!</td>
 			</tr>
 		{/foreach}
-		{if $gltransactions->count()>0}
-			<td colspan=4></td>
-			{grid_cell model=$model cell_num=2 }
-				Total Value for Page
-			{/grid_cell}
-			{grid_cell model=$model cell_num=2  field="vat" class="numeric"}
-				{$totalVat|string_format:"%.2f"}
-			{/grid_cell}
-			{grid_cell model=$model cell_num=2 field="net"  class="numeric"}
-				{$totalNet|string_format:"%.2f"}
-			{/grid_cell}
-			{grid_cell model=$model cell_num=2 }{/grid_cell}
-			{grid_cell model=$model cell_num=2 }{/grid_cell}
-		{/if}
+
 	{/data_table}
 	<div id="data_grid_footer" class="clearfix">
 		{paging}

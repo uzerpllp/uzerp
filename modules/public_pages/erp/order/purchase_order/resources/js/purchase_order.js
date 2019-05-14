@@ -12,7 +12,16 @@
  */
 
 $(document).ready(function() {
-																																						
+
+	/* planned orders -> createorder */
+	$('#purchase_order-poplanned-index').on('change', '#select-all', function() {
+		$('input:checkbox.select').not(this).prop('checked', this.checked);
+	});
+
+	$('input:checkbox.select').on('click', function() {
+		$('input#select-all').prop('checked', false);
+	});
+
 	/* purchase_order -> porders -> new */
 
 	$('#default_receive_action', '#purchase_order-porders-new').live('change', function() {

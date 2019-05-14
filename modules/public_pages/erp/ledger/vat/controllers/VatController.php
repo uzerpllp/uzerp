@@ -1,11 +1,14 @@
 <?php
-
-/** 
- *	(c) 2018 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **/
-
+/**
+ *	@author uzERP LLP and Steve Blamey <sblamey@uzerp.com>
+ *	@license GPLv3 or later
+ *	@copyright (c) 2019 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	uzERP is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	any later version.
+ */
 class VatController extends printController
 {
 
@@ -17,113 +20,68 @@ class VatController extends printController
 	{
 		parent::__construct($module, $action);
 		
-		$this->_templateobject = DataObjectFactory::Factory('Vat');
+		$this->_templateobject = DataObjectFactory::Factory('VatReturn');
 		
 		$this->uses($this->_templateobject);
 		
 		$this->titles=array(4=>'Inputs', 6=>'Outputs', 8=>'EU Sales', 9=>'EU Purchases');
+
 	}
 	
 	public function index()
 	{
 		$errors = array();
-		
 		$s_data = array();
-		
 		$flash = Flash::Instance();
-		
-		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
-		{
-			$s_data['year']			= $this->_data['year'];
-			$s_data['tax_period']	= $this->_data['tax_period'];
-		}
-		else
-		{
-			$glperiod = DataObjectFactory::Factory('GLPeriod');
-			$glperiod->getCurrentTaxPeriod();
-			
-			if ($glperiod)
-			{
-				$s_data['year']			= $glperiod->year;
-				$s_data['tax_period']	= $glperiod->tax_period;
+
+		$mtd_config = OauthStorage::getconfig('mtd-vat');
+		if ($mtd_config === null) {
+			$flash->addWarning('Making Tax Digital for VAT is not configured');
+			$this->view->set('mtd_configured', false);
+		} else {
+			$this->view->set('mtd_configured', true);
+			$mtd = new MTD();
+			$result = $mtd->refreshToken();
+			if ($result === true) {
+				$this->view->set('mtd_authorised', true);
 			}
 		}
-		$this->setSearch('VatSearch', 'useDefault', $s_data);
-		
-		$tax_period	= $this->search->getValue('tax_period');
-		$year		= $this->search->getValue('year');
-		
-		$vat		= $this->getVatReturn($tax_period, $year, $errors);
-		
+
+		$this->setSearch('VatSearch', 'useDefault');
+		parent::index(new VatReturnCollection($this->_templateobject));
 		if (count($errors) > 0)
 		{
 			$flash->addErrors($errors);
 			sendBack();
 		}
 
-		$boxes = $vat->getVatBoxes($year, $tax_period);
-		// Remove values not required for display
-		unset($boxes['100']);
+		$sidebar = new SidebarController($this->view);
 
-		$this->view->set('titles',$vat->titles);
-		$this->view->set('boxes',$boxes);
-		$this->view->set('tax_period_closed',$vat->tax_period_closed);
-		$this->view->set('symbol',$vat->currencySymbol);
-		$this->view->set('no_ordering', true);
-		
-		$sidebar = $this->generalSidebar($this->titles);
-		
-		$sidebarlist = array();
-		
-		$print_vat_text = 'Print VAT Return';
-		
-		$sidebarlist['printvatreturn'] = array(
-					'link'=>array('modules'=>$this->_modules
-								 ,'controller'=>$this->name
-								 ,'action'=>'printDialog'
-								 ,'printaction'=>'printVatReturn'
-								 ,'filename'=>'VAT_Return'
-								 ),
-					'tag'=>$print_vat_text
-				);
+		$returns_sidebar = [];
+		$returns_sidebar['inputjournal'] = array(
+			'link'=>array('modules'=>$this->_modules
+						 ,'controller'=>$this->name
+						 ,'action'=>'enter_journal'
+						 ,'vat_type'=>'input'
+						 ),
+			'tag'=>'VAT Input Journal'
+		);
 
-		if ($vat->tax_period_closed === 'f' && $vat->gl_period_closed === 't')
-		{
-			$sidebarlist['closevatperiod'] = array(
-						'link'=>array('modules'=>$this->_modules
-										,'controller'=>$this->name
-										,'action'=>'closeVatPeriod'
-										),
-						'tag'=>'Close VAT Period',
-						'class' => 'confirm',
-						'data_attr' => ['data_uz-confirm-message' => "Close VAT Period?|This cannot be undone."]
-			);
-		}
-		
-		$sidebarlist['inputjournal'] = array(
-					'link'=>array('modules'=>$this->_modules
-								 ,'controller'=>$this->name
-								 ,'action'=>'enter_journal'
-								 ,'vat_type'=>'input'
-								 ),
-					'tag'=>'VAT Input Journal'
-				);
-		
-		$sidebarlist['outputjournal'] = array(
-					'link'=>array('modules'=>$this->_modules
-								 ,'controller'=>$this->name
-								 ,'action'=>'enter_journal'
-								 ,'vat_type'=>'output'
-								 ),
-					'tag'=>'VAT Output Journal'
-				);
-		
-		$sidebar->addList('Actions',$sidebarlist);
-		$this->view->register('sidebar',$sidebar);
-		
-		$this->view->set('sidebar',$sidebar);
-		$this->view->set('page_title','Vat');
-		$this->printaction = '';
+		$returns_sidebar['outputjournal'] = array(
+			'link'=>array('modules'=>$this->_modules
+						 ,'controller'=>$this->name
+						 ,'action'=>'enter_journal'
+						 ,'vat_type'=>'output'
+						 ),
+			'tag'=>'VAT Output Journal'
+		);
+
+		$sidebar->addList('Actions', $returns_sidebar);
+
+		$this->view->register('sidebar', $sidebar);
+		$this->view->set('sidebar', $sidebar);
+		$this->view->set('page_title','Vat Returns');
+		$this->view->set('clickaction', 'view');
 	}
 
 	public function enter_journal()
@@ -343,69 +301,94 @@ class VatController extends printController
 	
 	public function viewTransactions()
 	{
-
 		$errors = array();
-		$this->setSearch('VatSearch', 'useDefault', array());
 		
+		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
+		{
+			$s_data['year']			= $this->_data['year'];
+			$s_data['tax_period']	= $this->_data['tax_period'];
+		}
+		else
+		{
+			$glperiod = DataObjectFactory::Factory('GLPeriod');
+			$glperiod->getCurrentTaxPeriod();
+			
+			if ($glperiod)
+			{
+				$s_data['year']			= $glperiod->year;
+				$s_data['tax_period']	= $glperiod->tax_period;
+			}
+		}
+		$this->setSearch('VatTransSearch', 'useDefault', $s_data);
+		$this->search->disable_field_selection = true;
+
 		$tax_period = $this->search->getValue('tax_period');
 		$year = $this->search->getValue('year');
 		
-		$vat = $this->getVatReturn($tax_period, $year, $errors);
-		
 		if (isset($this->_data['box']))
 		{
-			$this->view->set('title', $vat->titles[$this->_data['box']]);
-			
-			$gltransactions = $vat->getTransactions($this->_data, true);
-			
-			if ($gltransactions === false)
-			{
-				$flash->addError('Not all control accounts have been assigned');
-				
-				$gltransactions = array();
-				
-				$this->view->set('num_pages',0);
-				$this->view->set('num_records',0);
-				$this->view->set('cur_page',1);
+			switch ($this->_data['box']) {
+				case '4': // inputs
+					$this->_templateobject = DataObjectFactory::Factory('VatInputs');
+					$this->uses($this->_templateobject);
+					parent::index(new VatInputsCollection($this->_templateobject));
+					break;
+				case '6': // outputs
+					$this->_templateobject = DataObjectFactory::Factory('VatOutputs');
+					$this->uses($this->_templateobject);
+					parent::index(new VatOutputsCollection($this->_templateobject));
+					break;
+				case '8': // eu sales
+					$this->_templateobject = DataObjectFactory::Factory('VatEuSales');
+					$this->uses($this->_templateobject);
+					parent::index(new VatEuSalesCollection($this->_templateobject));
+					break;
+				case '9': // eu purchases
+					$this->_templateobject = DataObjectFactory::Factory('VatEuPurchases');
+					$this->uses($this->_templateobject);
+					parent::index(new VatEuPurchasesCollection($this->_templateobject));
+					break;
 			}
-			else
-			{
-				$this->view->set('num_pages',$gltransactions->num_pages);
-				$this->view->set('num_records',$gltransactions->num_records);
-				$this->view->set('cur_page',$gltransactions->cur_page);
-			}
-		}
-		
-		$this->view->set('gltransactions',$gltransactions);
-		
-		$this->view->set('clickaction', 'viewdetail');
-		
-		if (isset($this->_data['box']))
-		{
 			$this->view->set('box',$this->_data['box']);
-			$this->view->set('page_title','VAT Transactions - '.$this->titles[$this->_data['box']]);
-		}
+			$this->view->set('page_title',"VAT Transactions {$year}/{$tax_period} - ".$this->titles[$this->_data['box']]);
+		}		
+
+		$return = new VatReturn();
+		$return->loadVatReturn($year, $tax_period);
+
+		$sidebar = new SidebarController($this->view);
+
+		$returns_sidebar['all'] = [
+            'link' => [
+                'modules' => $this->_modules,
+                'controller' => $this->name,
+                'action' => 'index'
+			], 'tag' => "View All VAT Returns"
+		];
 		
-		$sidebar = $this->generalSidebar($this->titles);
+		$returns_sidebar['viewvatreturn'] = [
+			'link'=>['modules'=>$this->_modules
+						 ,'controller'=>$this->name
+						 ,'action'=>'view'
+						 ,'id' => $return->id
+			], 'tag'=>"View {$year}/{$tax_period} VAT Return"
+		];
+
+		$sidebar->addList('VAT Returns', $returns_sidebar);
+		$sidebar->addList("{$return->year}/{$return->tax_period} Reports", $this->reportSidebar($this->titles, $return->year, $return->tax_period));
 		
 		$print_params = array();
 		
 		if (isset($this->_data['box']))
 		{
 			$print_params['box'] = $this->_data['box'];
+			$print_params['year'] = $year;
+			$print_params['tax_period'] = $tax_period;
 		}
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
-				'vatreturn'=>array(
-					'link'=>array('modules'=>$this->_modules
-								 ,'controller'=>$this->name
-								 ,'year' => $year
-								 ,'tax_period' => $tax_period
-								 ),
-					'tag'=>'View VAT Return'
-				),
 				'printtransactions'=>array(
 					'link'=>array_merge(array('modules'=>$this->_modules
 											 ,'controller'=>$this->name
@@ -414,14 +397,13 @@ class VatController extends printController
 											 ,'filename'=>'Transactions_'.$year.'-'.$tax_period
 											 )
 									   ,$print_params),
-					'tag'=>'Print Transactions'
-				)
+					'tag'=>'Output Transactions'
+				),
 			)
 		);
 		
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		$this->printaction = '';
 	}
 
 	public function viewDetail ()
@@ -431,7 +413,6 @@ class VatController extends printController
 					,'general_ledger'
 					,array('id'=>$this->_data['id']));
 	}
-
 
 	public function edit_despatch_line ()
 	{
@@ -586,10 +567,8 @@ class VatController extends printController
 		$this->view->set('transactions', $collection);
 		
 		$sidebar = new SidebarController($this->view);
-		
+		$sidebar->addList('VAT Returns', $this->vatReturnSidebar());
 		$sidebar->addList('Intrastat', $this->intrastatSidebar());
-		
-		$sidebar->addList('Actions', $this->vatReturnSidebar());
 		
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
@@ -623,48 +602,51 @@ class VatController extends printController
 		return $net_mass;
 	}
 	
-	private function generalSidebar($titles)
+	private function reportSidebar($titles, $year, $tax_period)
 	{
-
-		$sidebar = new SidebarController($this->view);
-		$sidebar->addList(
-			'Reports',
-			array(
-				'box4'=>array(
-					'link'=>array('modules'=>$this->_modules
-								 ,'controller'=>$this->name
-								 ,'action'=>'viewTransactions'
-								 ,'box'=>4
-								 ),
-					'tag'=>$titles[4]
-				),
-				'box6'=>array(
-					'link'=>array('modules'=>$this->_modules
-								 ,'controller'=>$this->name
-								 ,'action'=>'viewTransactions'
-								 ,'box'=>6
-								 ),
-					'tag'=>$titles[6]
-				),
-				'box8'=>array(
-					'link'=>array('modules'=>$this->_modules
-								 ,'controller'=>$this->name
-								 ,'action'=>'viewTransactions'
-								 ,'box'=>8
-								 ),
-					'tag'=>$titles[8]
-				),
-				'box9'=>array(
-					'link'=>array('modules'=>$this->_modules
-								 ,'controller'=>$this->name
-								 ,'action'=>'viewTransactions'
-								 ,'box'=>9
-								 ),
-					'tag'=>$titles[9]
-				)
+		$list = array(
+			'box4'=>array(
+				'link'=>array('modules'=>$this->_modules
+								,'controller'=>$this->name
+								,'action'=>'viewTransactions'
+								,'box'=>4
+								,'year'=>$year
+								,'tax_period'=>$tax_period
+								),
+				'tag'=>$titles[4]
+			),
+			'box6'=>array(
+				'link'=>array('modules'=>$this->_modules
+								,'controller'=>$this->name
+								,'action'=>'viewTransactions'
+								,'box'=>6
+								,'year'=>$year
+								,'tax_period'=>$tax_period
+								),
+				'tag'=>$titles[6]
+			),
+			'box8'=>array(
+				'link'=>array('modules'=>$this->_modules
+								,'controller'=>$this->name
+								,'action'=>'viewTransactions'
+								,'box'=>8
+								,'year'=>$year
+								,'tax_period'=>$tax_period
+								),
+				'tag'=>$titles[8]
+			),
+			'box9'=>array(
+				'link'=>array('modules'=>$this->_modules
+								,'controller'=>$this->name
+								,'action'=>'viewTransactions'
+								,'box'=>9
+								,'year'=>$year
+								,'tax_period'=>$tax_period
+								),
+				'tag'=>$titles[9]
 			)
 		);
-		return $sidebar;
+		return $list;
 	}
 	
 	private function intrastatSidebar ()
@@ -706,53 +688,43 @@ class VatController extends printController
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
 								 ),
-					'tag'=>'View VAT Return'
+					'tag'=>'View All VAT Returns'
 				);
 				
 		return $sidebarlist;
 		
 	}
-	
-	private function getVatReturn ($tax_period, $year, &$errors)
-	{
-		$vat = DataObjectFactory::Factory('Vat');
-		$vat->vatreturn($tax_period, $year, $errors);
-		return $vat;
-	}
 
 	public function CloseVatPeriod() {
+		$this->checkRequest(['post'], true);
+		if (! $this->checkParams('id')) {
+            sendBack();
+		}
 		
 		$flash = Flash::Instance();
 		$errors		= array();
-		$messages 	= array();
 				
 		// load the model
-		$this->setSearch('VatSearch', 'useDefault', array());
-
-		$tax_period = $this->search->getValue('tax_period');
-		$year		= $this->search->getValue('year');
-		$vat		= $this->getVatReturn($tax_period, $year, $errors);
-
-		if (count($errors) > 0)
-		{
-			$flash->addErrors($errors);
-			sendBack();
-		}
+		$return = new VatReturn;
+		$return->load($this->_data['id']);
+		$return->getTaxPeriodStatus();
 		
-		if ($vat->tax_period_closed === 'f' && $vat->gl_period_closed === 't')
+		$vat = new Vat;
+		$vat->vatreturn($return->tax_period, $return->year, $errors);
+		if ($return->tax_period_closed === 'f' && $return->gl_period_closed === 't')
 		{
-			$result = $vat->closePeriod($tax_period, $year, $errors);
+			$result = $vat->closePeriod($return->tax_period, $return->year, $errors);
 			if (count($errors) > 0)
 			{
 				$flash->addErrors($errors);
 				sendBack();
 			}
-			$flash->addMessage("VAT Period Closed");
+			$flash->addMessage("VAT Period {$return->year}/{$return->tax_period} Closed");
+		} else if ($return->tax_period_closed === 't') {
+			$flash->addError('VAT Period already closed');
 		} else {
 			$flash->addError('GL Periods open, unable to close VAT Period');
-			sendBack();
 		}
-
 		sendBack();
 	}
 	
@@ -783,16 +755,13 @@ class VatController extends printController
 		
 		$errors		= array();
 		$messages 	= array();
-				
-		// load the model
-		$this->setSearch('VatSearch', 'useDefault', array());
 
-		$tax_period = $this->search->getValue('tax_period');
-		$year		= $this->search->getValue('year');
-		$vat		= $this->getVatReturn($tax_period, $year, $errors);
+		$return = new VatReturn;
+		$return->load($this->_data['id']);
+		$return->getTaxPeriodStatus($return->tax_period, $return->year);
 		
 		if ($this->_data['filename'] === 'VAT_Return') {
-			$this->_data['filename'] .= '_' . $year . '_' . $tax_period;
+			$this->_data['filename'] .= '_' . $return->year . '_' . $return->tax_period;
 		}
 		
 		
@@ -805,24 +774,78 @@ class VatController extends printController
 			exit;
 		}
 
-		// populate extra array
-		$boxes=$vat->getVatBoxes($year, $tax_period);
-		
-		foreach ($boxes as $num=>$box)
+		$extra['boxes'][]['line'][] = [
+			'title' => 'VAT due on sales and other outputs.',
+			'box_num' => 'Box 1',
+			'value' => $return->vat_due_sales,
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'VAT due on acquisitions from other EC Member States.',
+			'box_num' => 'Box 2',
+			'value' => $return->vat_due_acquisitions,
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Total VAT due',
+			'box_num' => 'Box 3',
+			'value' => $return->total_vat_due,
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'VAT reclaimed on purchases and other inputs (including acquisitions from the EC). ',
+			'box_num' => 'Box 4',
+			'value' => $return->vat_reclaimed_curr_period,
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Net VAT Due',
+			'box_num' => 'Box 5',
+			'value' => $return->net_vat_due,
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Total value of sales and all other outputs excluding any VAT.',
+			'box_num' => 'Box 6',
+			'value' => round($return->total_value_sales_ex_vat),
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Total value of purchases and all other inputs excluding any VAT (including exempt purchases)',
+			'box_num' => 'Box 7',
+			'value' => round($return->total_value_purchase_ex_vat),
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Total value of all supplies of goods and related costs, excluding any VAT, to other EC member states. ',
+			'box_num' => 'Box 8',
+			'value' => round($return->total_value_goods_supplied_ex_vat),
+		];
+
+		$extra['boxes'][]['line'][] = [
+			'title' => 'Total value of acquisitions of goods and related costs excluding any VAT, from other EC member states.',
+			'box_num' => 'Box 9',
+			'value' => round($return->total_acquisitions_ex_vat),
+		];
+
+		if ($return->finalised === 't')
 		{
-			$extra['boxes'][]['line'][] = array(
-				'title'		=> $vat->titles[$num],
-				'box_num'	=> $box['box_num'],
-				'value'		=> $box['value']
-			);
+			$extra['submission'] = [
+				'processing_date' => $return->processing_date,
+				'form_bundle' => $return->form_bundle,
+				'charge_ref_number' => $return->charge_ref_number,
+				'receipt_id_header' => $return->receipt_id_header,
+			];
+		} else {
+			$extra['mtd_not_submitted'] = true;
 		}
 		
-		if ($vat->tax_period_closed === 'f')
+		if ($return->tax_period_closed === 'f')
 		{
 			$extra['tax_period_not_closed'] = true;
 		}
 		
-		$extra['title'] = 'VAT Return ' . $year . '-' . $tax_period;
+		$extra['title'] = 'VAT Return ' . $return->year . '-' . $return->tax_period;
 		
 		// generate the xml and add it to the options array
 		$options['xmlSource'] = $this->generateXML(array('extra'=>$extra));
@@ -835,12 +858,12 @@ class VatController extends printController
 	
 	public function printTransactions($status = 'generate')
 	{
-		
 		// build options array
 		$options = array(
 			'type' => array(
-				'pdf'	=> '',
-				'xml'	=> ''
+				'pdf' => '',
+				'xml' => '',
+				'csv' => ''
 			),
 			'output' => array(
 				'print'	=> '',
@@ -857,13 +880,41 @@ class VatController extends printController
 		{
 			return $options;
 		}
-				
-		// load the model
+
 		$this->setSearch('VatSearch', 'useDefault', array());
 
-		$tax_period	= $this->search->getValue('tax_period');
-		$year		= $this->search->getValue('year');
-		$vat		= $this->getVatReturn($tax_period, $year, $errors);
+		$tax_period	= $this->_data['tax_period'];
+		$year		= $this->_data['year'];
+
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('tax_period', '=', $tax_period));
+		$cc->add(new Constraint('year', '=', $year));
+
+		if (isset($this->_data['box']))
+		{
+			switch ($this->_data['box']) {
+				case '4': // inputs
+					$gltransaction = DataObjectFactory::Factory('VatInputs');
+					$gltransactions = new VatInputsCollection($gltransaction);
+					break;
+				case '6': // outputs
+					$gltransaction = DataObjectFactory::Factory('VatOutputs');
+					$gltransactions = new VatOutputsCollection($gltransaction);
+					break;
+				case '8': // eu sales
+					$gltransaction = DataObjectFactory::Factory('VatEuSales');
+					$gltransactions = new VatEuSalesCollection($gltransaction);
+					break;
+				case '9': // eu purchases
+					$gltransaction = DataObjectFactory::Factory('VatEuPurchases');
+					$gltransactions = new VatEuPurchasesCollection($gltransaction);
+					break;
+			}
+		}
+
+		$sh = new SearchHandler($gltransactions);
+		$sh->addConstraint($cc);
+		$gltransactions->load($sh);
 		
 		if (count($errors) > 0)
 		{
@@ -876,8 +927,7 @@ class VatController extends printController
 		
 		if (isset($this->_data['box']))
 		{
-			set_time_limit(90);
-			$gltransactions = $vat->getTransactions($this->_data, false);
+			set_time_limit(180);
 			if ($gltransactions === false)
 			{
 				echo $this->build_print_dialog_response(
@@ -927,7 +977,7 @@ class VatController extends printController
 			$total_vat	+=	$vat->vat;
 			$total_net	+=	$vat->net;
 			$account	=	$vat->account;
-			$centre		=	$vat->cost_centre;
+			//$centre		=	$vat->cost_centre;
 		}
 		
 		$extra = array(
@@ -946,12 +996,206 @@ class VatController extends printController
 				'load_relationships'	=> FALSE
 			)
 		);
+
+		$options['query'] = $gltransactions->query;
 		
 		echo $this->constructOutput($this->_data['print'], $options);
 		exit;
 		
 	}
-	
-}
 
+	/**
+	 * Submit return to HMRC
+	 */
+	public function hmrcPostVat()
+	{
+		$this->checkRequest(['post'], true);
+		if (! $this->checkParams('id')) {
+            sendBack();
+        }
+
+		$vat_return = new VatReturn();
+		$vat_return->load($this->_data['id']);
+		$year = $vat_return->year;
+		$tax_period = $vat_return->tax_period;
+
+		$mtd = new MTD();
+		$sucess = $mtd->postVat($year, $tax_period);
+		
+		sendBack();
+	}
+
+	/**
+	 * Calculate and update current VAT position
+	 */
+	public function calculateVAT()
+	{
+		$this->checkRequest(['post'], true);
+		if (! $this->checkParams('id')) {
+            sendBack();
+		}
+		
+		$flash = Flash::Instance();
+		$errors		= array();
+		$messages 	= array();
+
+		$vat_return = new VatReturn();
+		$vat_return->load($this->_data['id']);
+		$year = $vat_return->year;
+		$tax_period = $vat_return->tax_period;
+
+		$vat = new Vat();
+		$vat->vatreturn($tax_period, $year, $errors);
+		if (count($errors) > 0)
+		{
+			$flash->addErrors($errors);
+			return false;
+		}
+
+		if ($vat->tax_period_closed === 't') {
+			$flash->addError('Tax period is closed');
+			sendBack();
+		}
+
+		$boxes = $vat->getVATvalues($year, $tax_period);
+		try
+		{
+			$return = new VatReturn();
+			$return->updateVatReturnBoxes($year, $tax_period, $boxes);
+		}
+		catch (VatReturnStorageException $e)
+		{
+			$flash->addError($e->getMessage());
+		}
+		sendBack();
+	}
+
+	public function view() {
+		$flash = Flash::Instance();
+		$mtd_config = OauthStorage::getconfig('mtd-vat');
+		if ($mtd_config === null) {
+			$flash->addWarning('Making Tax Digital for VAT is not configured');
+			$mtd_configured = false;
+			$mtd_authorised = false;
+		} else {
+			$mtd_configured = true;
+			$mtd = new MTD();
+			$result = $mtd->refreshToken();
+			if ($result === true) {
+				$mtd_authorised = true;
+			}
+		}
+
+        $flash = Flash::Instance();
+        if (! $this->loadData()) {
+            $this->dataError();
+            sendBack();
+        }
+        $model = $this->_uses[$this->modeltype];
+		$this->view->set('model', $model);
+		
+		$model->getTaxPeriodStatus ($model->tax_period, $model->year);
+		$this->view->set('tax_period_closed', $model->tax_period_closed);
+
+		$sidebar = new SidebarController($this->view);
+
+        $sidebarlist = array();
+
+		if ($model->tax_period_closed !== 't') {
+			$sidebarlist['updatevatposition'] = array(
+				'link'=>array('modules'=>$this->_modules
+							,'controller'=>$this->name
+							,'action'=>'calculateVAT'
+							),
+				'tag'=>'Update VAT Postion',
+				'class' => 'vat-confirm',
+				'data_attr' => [
+					'data_uz-confirm-message' => "Recalculate VAT?|This cannot be undone.",
+					'data_uz-action-id' => $model->id
+				]
+			);
+		}
+
+		if ($model->tax_period_closed !== 't' && $model->gl_period_closed === 't') {
+			$sidebarlist['closevatperiod'] = array(
+				'link'=>array('modules'=>$this->_modules
+							,'controller'=>$this->name
+							,'action'=>'closeVatPeriod'
+							),
+				'tag'=>'Close VAT Period',
+				'class' => 'vat-confirm',
+				'data_attr' => [
+					'data_uz-confirm-message' => "Close VAT Period?|This cannot be undone.",
+					'data_uz-action-id' => $model->id
+				]
+			);
+		}
+
+		if ($model->tax_period_closed === 't' && $model->finalised === 'f' && $mtd_configured === true && $mtd_authorised === true) {
+			$sidebarlist['submitreturn'] = array(
+				'link'=>array('modules'=>$this->_modules
+							,'controller'=>$this->name
+							,'action'=>'hmrcPostVat'
+							),
+				'tag'=>'Submit VAT Return',
+				'class' => 'vat-confirm',
+				'data_attr' => [
+					'data_uz-confirm-message' => "Submit VAT Return to HMRC?|When you submit this VAT information you are making a legal declaration that the information is true and complete. A false declaration can result in prosecution.",
+					'data_uz-action-id' => $model->id
+				]
+			);
+		}
+
+		$sidebarlist['printvatreturn'] = array(
+			'link'=>array('modules'=>$this->_modules
+						 ,'controller'=>$this->name
+						 ,'action'=>'printDialog'
+						 ,'id' => $model->id
+						 ,'printaction'=>'printVatReturn'
+						 ,'filename'=>'VAT_Return'
+						 ),
+			'tag'=>'Print VAT Return'
+		);
+
+		$sidebarlist['viewtransactions'] = array(
+			'link'=>array('modules'=>$this->_modules
+						 ,'controller'=>$this->name
+						 ,'action'=>'viewTransactions'
+						 ,'box'=>4
+						 ,'year'=>$model->year
+						 ,'tax_period'=>$model->tax_period
+						 ),
+			'tag'=>'View Transactions'
+		);
+		
+		$returns_sidebar['all'] = [
+            'link' => [
+                'modules' => $this->_modules,
+                'controller' => $this->name,
+                'action' => 'index'
+			], 'tag' => "View All VAT Returns"
+		];
+
+		$sidebar->addList('VAT Returns', $returns_sidebar);
+		$sidebar->addList("{$model->year}/{$model->tax_period} Actions", $sidebarlist);
+
+		$this->sidebarRelatedItems($sidebar, $model);
+        $this->view->register('sidebar', $sidebar);
+        $this->view->set('sidebar', $sidebar);
+		$this->view->set('page_title',"Vat Return {$model->year}/{$model->tax_period}");
+	}
+
+	/**
+	 * This action is for testing purposes
+	 * 
+	 * Get VAT Obligations from HMRC and dump to the browser
+	 * 
+	 * URI: /?module=vat&controller=vat&action=vatObligations
+	 */
+	public function vatObligations() {
+		$mtd = new MTD;
+		var_dump($mtd->getObligations(['status' => 'O']));
+		exit;
+  	}
+}
 // End of VatController

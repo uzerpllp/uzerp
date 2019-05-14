@@ -1,4 +1,6 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 /**
  * Extends Controller to add output capabilities
@@ -8,6 +10,9 @@
  * @license GPLv3 or later
  * @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
+
+
+
 class printController extends Controller
 {
 
@@ -1386,7 +1391,7 @@ class printController extends Controller
                     $merge_path = $paths['temp_path'] . $options['merge_file_name'];
 
                     // append files
-                    $response = PDFTK::append($paths['temp_file_path'], $merge_path);
+                    $response = PDFTools::append($paths['temp_file_path'], $merge_path);
 
                     // check response, return to callee
                     if ($response === TRUE) {
@@ -1560,14 +1565,20 @@ class printController extends Controller
                 $email = $this->output_file_to_email($email_params, $errors);
                 $message = '';
 
+                $message = "<p>Document " . $message . "successfully emailed</p>";
+
                 if (! $email) {
-                    $message = "NOT ";
+                    $message = "<p>Document NOT successfully emailed</p>";
+                    $message .= "<ul>";
+                    foreach ($errors as $er) {
+                        $message .= "<li>{$er}</li>";
+                    }
+                    $message .= "</ul>";
                 }
 
                 return $this->build_print_dialog_response($email, array(
-                    'message' => "<p>Document " . $message . "successfully emailed</p>"
+                    'message' => $message
                 ));
-
                 break;
         }
     }
@@ -2405,15 +2416,23 @@ class printController extends Controller
         }
 
         $from = $replyto = $contact;
-
-        $header_string = 'From: ' . $from . "\n";
-        $header_string .= 'Reply-To: ' . $replyto . "\n";
-
-        $header_string .= "Content-Type: multipart/mixed; boundary=\"SD-12345\"\n" . "Content-Transfer-Encoding: 7bit\n" . "--SD-12345\n";
-        $header_string .= "Content-Type: text/plain; charset=\"iso-8859-1\"\n" . "Content-Transfer-Encoding: 7bit\n" . "\n" . $params['emailtext'] . "\n" . "--SD-12345\n";
-        $header_string .= "Content-Type: " . mime_content_type($file) . "; name=\"$fname\"\n" . "Content-Transfer-Encoding: base64\n" . "Content-ID: <$fname>\n" . "Content-Disposition: attachment;\n" . "\n" . chunk_split(base64_encode($data), 68, "\n") . "--SD-12345--\n";
-
-        return mail($params['email'], $params['subject'], $params['emailtext'], $header_string, '-r ' . $replyto);
+        $address_list = array_map('trim', explode(',', $params['email']));
+        $mail = new PHPMailer(true);
+        try {
+            $mail->setFrom($from);
+            $mail->addReplyTo($replyto);
+            foreach ($address_list as $recipient) {
+                $mail->addAddress($recipient);
+            }
+            $mail->Subject = $params['subject'];
+            $mail->Body = $params['emailtext'];
+            $mail->addAttachment($file);
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            $errors[] = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            return false;
+        }
     }
 
     /**

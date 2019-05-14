@@ -76,6 +76,7 @@ class SalesOrdersSummaryEGlet extends SimpleEGlet
 		$customersales['Next Month'] = $orderline->getSum('base_net_value', $cc, 'so_linesoverview');
 		
 		$this->title			= 'Title';
+		$this->contents = [];
 		$this->contents['main'] = $customersales;
 		$this->contents['type'] = $this->params['type'];
 	}

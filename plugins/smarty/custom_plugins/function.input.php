@@ -517,7 +517,7 @@ function smarty_function_input($params, &$smarty)
 			$data['attrs']['class'][] = $attribute;
 
 		default:
-			$data['attrs']['value'] = h(trim($data['attrs']['value']), ENT_QUOTES);
+			$data['attrs']['value'] = uzh(trim($data['attrs']['value']), ENT_QUOTES);
 
 			break;
 
