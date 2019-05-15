@@ -5,16 +5,26 @@
  **}
 {* $Revision: 1.7 $ *}
 {content_wrapper}
+{if $stitem->comp_class !='B'}
 {advanced_search}
+{/if}
 	<div id="view_page" class="clearfix">
 		<dl id="view_data_left">
 			{view_data model=$stitem attribute="item_code"}
 			{view_data model=$stitem attribute="description"}
 			{view_data model=$stitem attribute="uom_name"}
+			{view_data model=$stitem attribute="comp_class"}
+			{if $stitem->comp_class =='M'}
 			{view_data model=$stitem attribute="cost_basis"}
+			{/if}
+			{if $stitem->comp_class =='B'}
+			{view_data model=$stitem attribute="latest_mat" label="Latest Cost"}
+			{view_data model=$stitem attribute="std_mat" label="Standard Cost"}
+			{/if}
 		</dl>
 
 	</div>
+	{if $stitem->comp_class !='B'}
 	<a class="button output ui-button ui-widget ui-corner-all" role="button" href="{$output_link}">Print Cost Sheet</a>
 
 	{assign var=string_format value="%."|cat:$stitem->cost_decimals|cat:"f"}
@@ -466,4 +476,5 @@
 			{/if}
 		{/grid_row}
 	{/data_table}
+	{/if}
 {/content_wrapper}
