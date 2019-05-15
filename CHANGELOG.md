@@ -31,6 +31,10 @@ All notable changes to this project will be documented in this file.
         - Work orders are created directly in uzERP from frePPLe, with start dates, ready to release.
     - See our frePPLe connector: https://github.com/uzerpllp/uzerpfrepple.
 
+- Delayed/Async Jobs
+    - Tasks can now be queued and run by a worker in the background
+    - Latest cost recalculation and cost roll-over have been moved to jobs
+
 ### Changed
 
 - Updated workflow for Operations, Outside Operations and Structures
