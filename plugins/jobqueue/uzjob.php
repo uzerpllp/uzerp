@@ -1,4 +1,13 @@
 <?php
+/**
+ *  uzERP Delayed jobs
+ * 
+ *  A framework for queueing jobs for later execution by workers
+ * 
+ *  @author Steve Blamey <blameys@blueloop.net>
+ *  @license GPLv3 or later
+ *  @copyright (c) 2019 uzERP LLP (support#uzerp.com). All rights reserved.
+ **/
 
 class uzJobException extends Exception
 {
@@ -53,11 +62,6 @@ abstract class uzJob
     abstract public function perform();
 }
 
-/**
- *
- * @author steve
- *
- */
 abstract class uzExclusiveJob
 {
 

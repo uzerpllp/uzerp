@@ -1,7 +1,17 @@
 <?php
-
-# This system is mostly a port of delayed_job: http://github.com/tobi/delayed_job
-
+/**
+ *  DJJob allows uzERP to process long-running tasks asynchronously.
+ * 
+ *  See the uzJob class for uzERP integration of DJJob and flash message handling from jobs.
+ * 
+ *  This system is mostly a port of DJJob, https://github.com/seatgeek/djjob, originally
+ *  ported from delayed_job: http://github.com/tobi/delayed_job. A few changes have been made
+ *  to make the system work well with PostgreSQL, including returning job numbers.
+ *
+ *  @author Steve Blamey <blameys@blueloop.net>
+ *  @license GPLv3 or later
+ *  @copyright (c) 2019 uzERP LLP (support#uzerp.com). All rights reserved.
+ **/
 class DJException extends Exception { }
 
 /**
@@ -362,6 +372,7 @@ class DJWorker extends DJBase {
         $this->name = "host::$hostname pid::$pid";
 
         if (function_exists("pcntl_signal")) {
+            declare(ticks = 1);
             pcntl_signal(SIGTERM, array($this, "handleSignal"));
             pcntl_signal(SIGINT, array($this, "handleSignal"));
         }
