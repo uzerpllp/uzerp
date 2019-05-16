@@ -47,7 +47,7 @@ class StcostsController extends printController {
                 'action' => 'recalclatestcosts'
             ]),
             'class' => 'confirm',
-            'data_attr' => ['data_uz-confirm-message' => "Start cost recalculation?|This cannot be undone."]
+            'data_attr' => ['data_uz-action-id' => 'p', 'data_uz-confirm-message' => "Start cost recalculation?|This cannot be undone."]
         ];
         $sidebarlist['viewItem'] = [
             'tag' => 'Costs Roll Over',
@@ -56,7 +56,7 @@ class StcostsController extends printController {
                 'action' => 'rollover'
             ]),
             'class' => 'confirm',
-            'data_attr' => ['data_uz-confirm-message' => "Start latest costs roll to standard costs?|This cannot be undone."]
+            'data_attr' => ['data_uz-action-id' => 'p', 'data_uz-confirm-message' => "Start latest costs roll to standard costs?|This cannot be undone."]
         ];
 		$sidebar->addList('Cost Changes',$sidebarlist);
 		$this->view->register('sidebar',$sidebar);
@@ -257,6 +257,7 @@ class StcostsController extends printController {
 
 	public function rollOver()
 	{
+		$this->checkRequest(['post'], true);
 	    $flash = Flash::Instance();
 		try {
 		    $job = new uzJobCostRollOver(EGS_USERNAME, EGS_COMPANY_ID, 'uzJobRecalcLatestCosts');
@@ -272,6 +273,7 @@ class StcostsController extends printController {
 
 	public function recalcLatestCosts()
 	{
+		$this->checkRequest(['post'], true);
 	    $flash = Flash::Instance();
     	try {
     	    $job = new uzJobRecalcLatestCosts(EGS_USERNAME, EGS_COMPANY_ID, 'uzJobCostRollOver');
