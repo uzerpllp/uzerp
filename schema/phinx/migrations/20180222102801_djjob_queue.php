@@ -22,5 +22,7 @@ class DjjobQueue extends UzerpMigration
         ->addColumn('error', 'string', ['null' => true])
         ->addColumn('created_at', 'datetime')
         ->save();
+
+        $this->query("ALTER TABLE jobs OWNER TO \"www-data\"");
     }
 }
