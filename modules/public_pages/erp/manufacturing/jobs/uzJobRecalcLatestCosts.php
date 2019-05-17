@@ -105,7 +105,7 @@ class uzJobRecalcLatestCosts extends uzExclusiveJob
         if (count($errors) == 0) {
             $message->send($job_id, 'Stock items latest cost calculation complete');
         } else {
-            $message->send($job_id, 'Stock items latest cost calculation failed');
+            $message->send($job_id, 'Stock items latest cost calculation failed', 'error');
         }
     }
 }

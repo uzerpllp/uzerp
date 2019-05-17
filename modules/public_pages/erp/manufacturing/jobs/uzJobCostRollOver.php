@@ -36,7 +36,7 @@ class uzJobCostRollOver extends uzExclusiveJob
         if (count($errors) == 0) {
             $message->send($job_id, 'Stock items cost roll-over complete');
         } else {
-            $message->send($job_id, 'Stock items cost roll-over failed');
+            $message->send($job_id, 'Stock items cost roll-over failed', 'error');
         }
     }
 }
