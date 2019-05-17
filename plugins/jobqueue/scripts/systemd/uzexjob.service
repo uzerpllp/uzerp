@@ -1,0 +1,12 @@
+[Unit]
+Description=uzERP Exclusive Job Queue Worker
+
+[Service]
+Type=simple
+WorkingDirectory=/vagrant/uzerp
+ExecStart=/usr/bin/php plugins/jobqueue/workers/exclusive-queue-worker.php
+ExecStop=/bin/kill 15 $MAINPID
+TimeoutStopSec=5min
+
+[Install]
+WantedBy=multi-user.target
