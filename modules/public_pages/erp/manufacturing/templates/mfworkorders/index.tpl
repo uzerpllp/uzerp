@@ -20,7 +20,7 @@
 					{heading_cell}
 						Action
 					{/heading_cell}
-					{if $module_prefs['allow-wo-print']}
+					{if $module_prefs['allow-wo-print'] == 'on'}
 					{heading_cell}
 						Print
 					{/heading_cell}
@@ -51,7 +51,7 @@
 						{/if}
 					</td>
 					<td>
-					{if ($model->status == 'R' || $model->status == 'N') && $module_prefs['allow-wo-print']}
+					{if ($model->status == 'R' || $model->status == 'N') && $module_prefs['allow-wo-print'] == 'on'}
 						<input title='Print documents to default printer' type="checkbox" name="print[{$model->id}]" id="print{$model->id}" class="checkbox" />
 					{/if}
 					</td>
@@ -63,7 +63,7 @@
 			{/foreach}
 		{/data_table}
 		{if $num_incomplete > 0}
-			{if ($module_prefs['allow-wo-print'])}
+			{if ($module_prefs['allow-wo-print'] == 'on')}
 				{submit value="Update/Print Selected" tags="none"}
 			{else}
 				{submit value="Update Selected" tags="none"}

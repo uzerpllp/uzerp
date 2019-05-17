@@ -144,7 +144,7 @@ class MfworkordersController extends ManufacturingController
 			$flash->addMessage('Selected Work Orders have been updated');
 		}
 
-		if ($this->module_prefs['allow-wo-print']) {
+		if ($this->module_prefs['allow-wo-print'] == 'on') {
 			foreach ($print as $id => $value) {
 				$worksorder = DataObjectFactory::Factory('MFWorkorder');
 				$worksorder->load($id);
