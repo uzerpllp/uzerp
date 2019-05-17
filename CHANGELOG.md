@@ -37,6 +37,11 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Allow printing of Work Order documentation from the Work Order list view.
+    - Work Order documents can be printed ahead of release or re-printed while open.
+    - Printing at release time, by selecting both 'release' and 'print'.
+    - This option must be enabled in the Manufacturing module preferences found under Setup > Manufacturing Setup > MF Module Preferences.
+
 - Updated workflow for Operations, Outside Operations and Structures
     - New sidebar group for ops, structures and costing when viewing a stock item
     - One click to view the current ops, structure, etc.
