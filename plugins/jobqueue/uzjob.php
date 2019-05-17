@@ -269,7 +269,7 @@ class uzJobMessages
     }
 
     /**
-     * Flash meesages from jobs
+     * Flash messages from jobs
      */
     public function displayJobMessages()
     {
