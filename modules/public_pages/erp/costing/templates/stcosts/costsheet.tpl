@@ -322,9 +322,9 @@
 			{assign var=grand_total_cost value=$grand_total_cost+$total_cost}
 			<tr>
 				{if $stitem->cost_basis == "VOLUME"}
-				<td colspan="6">
+				<td colspan="7">
 				{else}
-				<td colspan="5">
+				<td colspan="6">
 				{/if}
 					<strong>Total</strong>
 				</td>
