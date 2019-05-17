@@ -34,7 +34,8 @@ abstract class uzJob
     }
 
     /**
-     *
+     * Enqueue the Job
+     * 
      * @return integer Job ID
      *
      * @throws uzJobException
@@ -59,6 +60,9 @@ abstract class uzJob
         return $job_id;
     }
 
+    /**
+     * @see Djjob::DJJobHandlerInterface()
+     */
     abstract public function perform();
 }
 
@@ -132,7 +136,8 @@ abstract class uzExclusiveJob
     }
 
     /**
-     *
+     * Enqueue the Job
+     * 
      * @return integer Job ID
      *
      * @throws uzJobException
@@ -165,13 +170,14 @@ abstract class uzExclusiveJob
         return $job_id;
     }
 
+    /**
+     * @see Djjob::DJJobHandlerInterface()
+     */
     abstract public function perform();
 }
 
 /**
  * Store messages from jobs and display them in the uzERP web UI
- *
- * @author steve
  *
  */
 class uzJobMessages
@@ -220,7 +226,7 @@ class uzJobMessages
     }
 
     /**
-     * Send a message
+     * Send a message to the user
      *
      * @param unknown $token
      * @param unknown $message
@@ -262,6 +268,9 @@ class uzJobMessages
         $this->storage->add("{$this->key_part}_jobs", json_encode($tokens));
     }
 
+    /**
+     * Flash meesages from jobs
+     */
     public function displayJobMessages()
     {
         $tokens = $this->getMessageTokens();
