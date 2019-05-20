@@ -16,6 +16,8 @@ All notable changes to this project will be documented in this file.
 
 - Manufacturing operations can be marked as batch operations, causing the per item labour and overhead cost to be divided by the item's batch size (if set).
 
+- Manufacturing Centres have an *Available Qty* field. This can be used to indicate the number of machines of a type available, for example. This number has no effect in uzERP, but may be used by external planning tools like frePPLe.
+
 - Outside operations can be placed in the manufactured item routing with a lead time and linked to a purchase product line that holds supplier and price information.
     - The outside operation supplier(s) are available to print on the operations/route card output.
     - Outside operation purchasing - purchase against work order routing outside operations, using the *Add Work Order Purchase* from the purchase order side-bar.
@@ -25,7 +27,7 @@ All notable changes to this project will be documented in this file.
         - Resource for routing outside operations, the MF resource for outside operations.
 
 - Integration with frePPLe - the open source, production planning and scheduling solution - https://frepple.com:
-    - Import Work Orders, Sales & Purchase Orders, inventory, etc. from uzERP into Frepple to generate planned work orders and purchase orders.
+    - Import Work Orders, Sales & Purchase Orders, inventory, etc. from uzERP into frePPLe to generate planned work orders and purchase orders.
     - Export selected orders or a complete plan back in to uzERP for execution.
         - Planned purchase review and order creation - lists planned purchase requirements directly in uzERP, create purchase orders for individual items or group them on one purchase order.
         - Work orders are created directly in uzERP from frePPLe, with start dates, ready to release.
@@ -520,8 +522,8 @@ VAT Report views and transaction printing updated to use new calculations, match
 - First Git controlled release on bitbucket
 - Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
-[1.15.2]: https://github.com/uzerpllp/uzerp/compare/1.15.2...1.15.1
-[1.15.1]: https://github.com/uzerpllp/uzerp/compare/1.15.1...1.15
+[1.15.2]: https://github.com/uzerpllp/uzerp/compare/1.15.1...1.15.2
+[1.15.1]: https://github.com/uzerpllp/uzerp/compare/1.15...1.15.1
 [1.15]: https://github.com/uzerpllp/uzerp/compare/1.14.1...1.15
 [1.14.1]: https://github.com/uzerpllp/uzerp/compare/1.14...1.14.1
 [1.14]: https://github.com/uzerpllp/uzerp/compare/1.13...1.14
