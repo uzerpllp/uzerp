@@ -31,6 +31,5 @@ VIEW;
 
         $this->query($view);
         $this->query("ALTER TABLE {$view_name} OWNER TO \"{$view_owner}\"");
-        $this->query("select deps_restore_dependencies('public', '{$view_owner}')");
     }
 }

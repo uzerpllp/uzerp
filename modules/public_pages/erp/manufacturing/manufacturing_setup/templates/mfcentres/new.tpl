@@ -13,6 +13,7 @@
 			{select attribute='mfdept_id'}
 			{input type='text'  attribute='work_centre' class="compulsory" }
 			{input type='text'  attribute='centre' class="compulsory" }
+			{input type='text'  attribute='available_qty' class="compulsory" }
 			{input type='text'  attribute='centre_rate' class="compulsory" }
 			{if $mfdept->production_recording=='t'}
 				{assign var=display value='block'}
