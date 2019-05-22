@@ -51,6 +51,9 @@ All notable changes to this project will be documented in this file.
     - All forms have 'Save and Add...' buttons to speed up datat entry
     - Form 'cancel' links allow easy return to the ops/structure list for the item
 
+### Fixed
+    - Sales price check uzLET failed ajax requests
+
 ## [1.15.2] 2019-05-13
 
 - Fix error when viewing product list under product selector level.
