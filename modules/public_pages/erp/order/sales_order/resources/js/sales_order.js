@@ -332,7 +332,7 @@ $(document).ready(function() {
 	
 	/* sales_order -> sorderlines -> new */
 	
-	$(document).on('change', "select, input", "#sales_order-sorderlines-new", function() {
+	$(document).on('change', "#sales_order-sorderlines-new input, #sales_order-sorderlines-new select", function() {
 
 		var $self	= $(this),
 			field	= $self.data('field');
