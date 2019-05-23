@@ -80,7 +80,7 @@
 					</li>
 					<li class="email email_options action_options">
 						<label for="email">Email Address:</label>
-						<input type='text' name='print[email]' value={$options.email}>
+						<input type='text' name='print[email]' value='{$options.email}'>
 					</li>
 					<li class="email email_options action_options">
 						<label for="email_subject">Email Subject:</label>
