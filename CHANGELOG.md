@@ -52,12 +52,14 @@ All notable changes to this project will be documented in this file.
     - Form 'cancel' links allow easy return to the ops/structure list for the item
 
 ### Fixed
+
+    - Ensure email address string is displayed correctly in print/output dialog
     - Sales price check uzLET failed ajax requests
 
 ## [1.15.2] 2019-05-13
 
 - Fix error when viewing product list under product selector level.
-- Allow multiple receipients, separated by a comma, to be added when outputing to email.
+- Allow multiple recipients, separated by a comma, to be added when outputting to email.
 
 ## [1.15.1] 2019-04-23
 
