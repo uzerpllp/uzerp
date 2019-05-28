@@ -98,54 +98,13 @@ class DJBase {
 
         switch ($numArgs) {
             case 1:{
-                if (is_array($args[0])){
-                    self::configureWithOptions($args[0]);
-                } else {
-                    self::configureWithDsnAndOptions($args[0]);
-                }
+                self::configureWithOptions($args[0]);
                 break;
             }
             case 2:{
-                if (is_array($args[0])){
-                    self::configureWithOptions($args[0], $args[1]);
-                } else {
-                    self::configureWithDsnAndOptions($args[0], $args[1]);
-                }
+                self::configureWithOptions($args[0], $args[1]);
                 break;
             }
-            case 3: {
-                self::configureWithDsnAndOptions($args[0], $args[1], $args[2]);
-                break;
-            }
-        }
-    }
-
-    /**
-     * Configures DJJob with certain values for the database connection.
-     *
-     * @param        $dsn The PDO connection string.
-     * @param array  $options The options for the PDO connection.
-     * @param string $jobsTable Name of the jobs table.
-     *
-     * @throws DJException Throws an exception with invalid parameters.
-     */
-    protected static function configureWithDsnAndOptions($dsn, array $options = array(), $jobsTable = 'jobs') {
-        if (!isset($options['mysql_user'])){
-            throw new DJException("Please provide the database user in configure options array.");
-        }
-        if (!isset($options['mysql_pass'])){
-            throw new DJException("Please provide the database password in configure options array.");
-        }
-
-        self::$dsn = $dsn;
-        self::$jobsTable = $jobsTable;
-
-        self::$user = $options['mysql_user'];
-        self::$password = $options['mysql_pass'];
-
-        // searches for retries
-        if (isset($options['retries'])){
-            self::$retries = (int) $options['retries'];
         }
     }
 
@@ -248,8 +207,8 @@ class DJBase {
                 return $ret;
             }
             catch (PDOException $e) {
-                // Catch "MySQL server has gone away" error.
-                if ($e->errorInfo[1] == 2006) {
+                // Catch "sqlclient_unable_to_establish_sqlconnection" error.
+                if ($e->errorInfo[1] == '08001') {
                     self::$db = null;
                 }
                 // Throw all other errors as expected.
@@ -280,8 +239,8 @@ class DJBase {
                 return $result;
             }
             catch (PDOException $e) {
-                // Catch "MySQL server has gone away" error.
-                if ($e->errorInfo[1] == 2006) {
+                // Catch "sqlclient_unable_to_establish_sqlconnection" error.
+                if ($e->errorInfo[1] == '08001') {
                     self::$db = null;
                 }
                 // Throw all other errors as expected.
@@ -311,8 +270,8 @@ class DJBase {
                 return $stmt->rowCount();
             }
             catch (PDOException $e) {
-                // Catch "MySQL server has gone away" error.
-                if ($e->errorInfo[1] == 2006) {
+                // Catch "sqlclient_unable_to_establish_sqlconnection" error.
+                if ($e->errorInfo[1] == '08001') {
                     self::$db = null;
                 }
                 // Throw all other errors as expected.
@@ -694,7 +653,7 @@ class DJJob extends DJBase {
      *
      * @param object $handler The handler that can execute this job.
      * @param string $queue The queue to enqueue this job to. All queues are saved in the same table.
-     * @param string $run_at A valid mysql DATETIME string at which to run the jobs.
+     * @param string $run_at A valid DATETIME string at which to run the jobs.
      *
      * @return bool|string Returns the last inserted ID or false if enqueuing failed.
      */
@@ -717,7 +676,7 @@ class DJJob extends DJBase {
      *
      * @param object[] $handlers An array of handlers to enqueue.
      * @param string $queue The queue to enqueue the handlers to.
-     * @param string $run_at A valid mysql DATETIME string at which to run the jobs.
+     * @param string $run_at A valid DATETIME string at which to run the jobs.
      *
      * @return bool
      */
