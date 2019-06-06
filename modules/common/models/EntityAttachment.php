@@ -46,13 +46,18 @@ class EntityAttachment extends DataObject {
 		}
 				
 		$file = DataObjectFactory::Factory('File');
+		$outputs = new EntityAttachmentOutputCollection;
+		$sh = new SearchHandler($outputs, false);
+		$sh->addConstraint(new Constraint('entity_attachment_id', '=', $this->id));
 		
 		$db = DB::Instance();
 		
 		$db->StartTrans();
+
+		$outputs->delete($sh);
 		
 		if (!parent::delete(null, $errors, $archive, $archive_table, $archive_schema)
-			|| !$file->delete($this->file_id, $errors, $archive, $archive_table, $archive_schema))
+			|| !$file->delete($this->file_id, $errors, $archive, $archive_table, $archive_schema) )
 		{
 			$result = FALSE;
 			$db->FailTrans();

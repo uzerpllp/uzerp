@@ -516,7 +516,10 @@ class DataObjectCollection implements Iterator, Countable {
 			// Collection may be based on a view so need to get the base table
 			// of the DataObject model associated with this DataObjectCollection
 			
-			$this->_tablename = $this->getModel()->getTableName();
+			$do = new $this->_doname;
+			$this->_tablename = $do->getTableName();
+
+			//$this->_tablename = $this->getModel()->getTableName();
 			
 			if ($this->_templateobject->isAccessControlled())
 			{
