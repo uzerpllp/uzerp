@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+- Removed reliance on uzERP ADODB fork and updated dependency to use upstream releases
+
 ## [1.16] 2019-05-24
 
 **Testing Release**
