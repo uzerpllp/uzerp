@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4e21df3a80d8a66da98eead8681df990",
+    "content-hash": "6e0c4edba09bf3fb644330651fc5327e",
     "packages": [
         {
             "name": "adodb/adodb-php",
-            "version": "dev-master",
+            "version": "v5.20.14",
             "source": {
                 "type": "git",
-                "url": "https://github.com/uzerpllp/adodb.git",
-                "reference": "1183aa190eddec8d993015e1cd7513b53d7fa5dc"
+                "url": "https://github.com/ADOdb/ADOdb.git",
+                "reference": "a32113c6b3e4e2cb8ae6b49752527d5668a9d7a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/uzerpllp/adodb/zipball/1183aa190eddec8d993015e1cd7513b53d7fa5dc",
-                "reference": "1183aa190eddec8d993015e1cd7513b53d7fa5dc",
+                "url": "https://api.github.com/repos/ADOdb/ADOdb/zipball/a32113c6b3e4e2cb8ae6b49752527d5668a9d7a6",
+                "reference": "a32113c6b3e4e2cb8ae6b49752527d5668a9d7a6",
                 "shasum": ""
             },
             "require": {
@@ -29,9 +29,10 @@
                     "adodb.inc.php"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "LGPL-2.1",
-                " BSD-2-Clause"
+                "BSD-3-Clause",
+                "LGPL-2.1-or-later"
             ],
             "authors": [
                 {
@@ -42,18 +43,22 @@
                 {
                     "name": "Damien Regad",
                     "role": "Current maintainer"
+                },
+                {
+                    "name": "Mark Newnham",
+                    "role": "Developer"
                 }
             ],
             "description": "ADOdb is a PHP database abstraction layer library",
-            "homepage": "http://adodb.sourceforge.net/",
+            "homepage": "http://adodb.org/",
             "keywords": [
-                "database"
+                "abstraction",
+                "database",
+                "layer",
+                "library",
+                "php"
             ],
-            "support": {
-                "issues": "https://github.com/ADOdb/ADOdb/issues",
-                "source": "https://github.com/ADOdb/ADOdb"
-            },
-            "time": "2018-12-11T19:40:15+00:00"
+            "time": "2019-01-05T23:16:44+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -940,7 +945,7 @@
         },
         {
             "name": "symfony/config",
-            "version": "v3.4.27",
+            "version": "v3.4.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/config.git",
@@ -1004,16 +1009,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v3.4.27",
+            "version": "v3.4.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "15a9104356436cb26e08adab97706654799d31d8"
+                "reference": "8e1d1e406dd31727fa70cd5a99cda202e9d6a5c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/15a9104356436cb26e08adab97706654799d31d8",
-                "reference": "15a9104356436cb26e08adab97706654799d31d8",
+                "url": "https://api.github.com/repos/symfony/console/zipball/8e1d1e406dd31727fa70cd5a99cda202e9d6a5c6",
+                "reference": "8e1d1e406dd31727fa70cd5a99cda202e9d6a5c6",
                 "shasum": ""
             },
             "require": {
@@ -1072,20 +1077,20 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2019-04-08T09:29:13+00:00"
+            "time": "2019-05-09T08:42:51+00:00"
         },
         {
             "name": "symfony/debug",
-            "version": "v3.4.27",
+            "version": "v3.4.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "681afbb26488903c5ac15e63734f1d8ac430c9b9"
+                "reference": "671fc55bd14800668b1d0a3708c3714940e30a8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/debug/zipball/681afbb26488903c5ac15e63734f1d8ac430c9b9",
-                "reference": "681afbb26488903c5ac15e63734f1d8ac430c9b9",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/671fc55bd14800668b1d0a3708c3714940e30a8c",
+                "reference": "671fc55bd14800668b1d0a3708c3714940e30a8c",
                 "shasum": ""
             },
             "require": {
@@ -1128,11 +1133,11 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2019-04-11T09:48:14+00:00"
+            "time": "2019-05-18T13:32:47+00:00"
         },
         {
             "name": "symfony/filesystem",
-            "version": "v3.4.27",
+            "version": "v3.4.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
@@ -1182,16 +1187,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v3.4.27",
+            "version": "v3.4.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "fa02215233be8de1c2b44617088192f9e8db3512"
+                "reference": "677ae5e892b081e71a665bfa7dd90fe61800c00e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/fa02215233be8de1c2b44617088192f9e8db3512",
-                "reference": "fa02215233be8de1c2b44617088192f9e8db3512",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/677ae5e892b081e71a665bfa7dd90fe61800c00e",
+                "reference": "677ae5e892b081e71a665bfa7dd90fe61800c00e",
                 "shasum": ""
             },
             "require": {
@@ -1232,7 +1237,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2019-05-01T08:04:33+00:00"
+            "time": "2019-05-27T05:50:24+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -1412,7 +1417,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.4.27",
+            "version": "v3.4.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
@@ -1473,9 +1478,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "adodb/adodb-php": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
