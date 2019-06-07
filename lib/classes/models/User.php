@@ -85,7 +85,7 @@ class User extends DataObject
 
 		$cc->add(new Constraint('usercompanyid','=',EGS_COMPANY_ID));
 
-		$query = 'SELECT '.$this->idField.', '.$this->getIdentifier().' FROM '.$tablename;
+		$query = 'SELECT '.$this->idField.' as id, '.$this->getIdentifier().' FROM '.$tablename;
 
 		$constraint = $cc->__toString();
 
