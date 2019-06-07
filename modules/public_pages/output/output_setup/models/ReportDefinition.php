@@ -62,8 +62,6 @@ class ReportDefinition extends DataObject
 	{
 		$report_definition = DataObjectFactory::Factory('ReportDefinition');
 		
-		$report_definition->idField = 'name';
-		
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('report_type_id', '=', $_report_type_id));
 		

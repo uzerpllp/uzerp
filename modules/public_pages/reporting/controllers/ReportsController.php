@@ -243,18 +243,18 @@ class ReportsController extends PrintController {
 		//Set report defintion list
 		$report_type_id = ReportType::getReportTypeID('Reports');
 		$definition_list = ReportDefinition::getReportsByType($report_type_id);
-		array_unshift($definition_list, "Default");
+		$definition_list = [0 => 'Default'] + $definition_list;
 		$this->view->set('report_definitions', $definition_list);
 		
 		//Set currently selected report definition
 		$selected_def = ReportDefinition::getDefinitionByID($report->report_definition);
 		if ($selected_def->_data['name'] == 'PrintCollection')
 		{
-			$this->view->set('selected_reportdef', 'Default');
+			$this->view->set('selected_reportdef', 0);
 		}
 		else
 		{
-			$this->view->set('selected_reportdef', $selected_def->_data['name']);
+			$this->view->set('selected_reportdef', $selected_def->_data['id']);
 		}	
 	}
 
@@ -749,11 +749,11 @@ class ReportsController extends PrintController {
 		}
 		
 		// Set the rpeort definition id, unless Default was selected
-		if ($this->_data['report_def'] != 'Default')
+		if ($this->_data['report_def'] != 0)
 		{
-			$def = new ReportDefinition();
-			$rdef = $def->getDefinition($this->_data['report_def']);
-			$this->_data['Report']['report_definition'] = $rdef->_data['id'];
+			//$def = new ReportDefinition();
+			//$rdef = $def->getDefinitionByID($this->_data['report_def']);
+			$this->_data['Report']['report_definition'] = $this->_data['report_def'];
 		}
 		
 		// fire up the db
