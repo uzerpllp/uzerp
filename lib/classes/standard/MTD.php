@@ -57,7 +57,7 @@ class MTD {
         
         $this->fraud_protection_headers = [
             'Gov-Client-Connection-Method' => 'OTHER_DIRECT',
-            'Gov-Client-User-IDs' => "uzerp={$uz_user}",
+            'Gov-Client-User-IDs' => "os={$uz_user}",
             'Gov-Client-Timezone' => "UTC{$utc_offset}",
             'Gov-Client-User-Agent' => $os_info,
             'Gov-Vendor-Version' => "uzerp={$config->get('SYSTEM_VERSION')}"
