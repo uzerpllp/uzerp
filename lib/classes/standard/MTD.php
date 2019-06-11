@@ -46,6 +46,7 @@ class MTD {
             'urlResourceOwnerDetails' => "{$this->base_url}/organisations/vat" //required by the provider, but not impelemented by the API
         ]);
 
+        $device_uuid = $oauth_config['deviceuuid'];
         $current   = timezone_open('Europe/London');
         $utcTime  = new \DateTime('now', new \DateTimeZone('UTC'));
         $offsetInSecs =  $current->getOffset($utcTime);
@@ -57,6 +58,7 @@ class MTD {
         
         $this->fraud_protection_headers = [
             'Gov-Client-Connection-Method' => 'OTHER_DIRECT',
+            'Gov-Client-Device-ID' => $device_uuid,
             'Gov-Client-User-IDs' => "os={$uz_user}",
             'Gov-Client-Timezone' => "UTC{$utc_offset}",
             'Gov-Client-User-Agent' => $os_info,
