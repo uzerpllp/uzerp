@@ -116,8 +116,7 @@ class AttachmentsController extends Controller {
 	{
 		$this->setAttributes();
 		
-		//$this->view->set('clickaction', 'view_file');
-		$this->view->set('clickaction', 'edit');
+		$this->view->set('clickaction', 'view_file');
 		
 		$entityAttachments = new EntityAttachmentCollection($this->_templateobject);
 		

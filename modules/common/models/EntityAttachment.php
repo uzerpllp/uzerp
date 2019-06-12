@@ -13,9 +13,9 @@ class EntityAttachment extends DataObject {
 	protected $defaultDisplayFields = array(
 		'file' => 'Name',
 		'revision',
+		'note' => 'Note',
 		'type' => 'Type',
 		'size' => 'Size',
-		'note' => 'Note'
 	);
 	
 	function __construct($tablename = 'entity_attachments')
