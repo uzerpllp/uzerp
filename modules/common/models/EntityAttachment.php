@@ -12,6 +12,7 @@ class EntityAttachment extends DataObject {
 	
 	protected $defaultDisplayFields = array(
 		'file' => 'Name',
+		'revision',
 		'type' => 'Type',
 		'size' => 'Size',
 		'note' => 'Note'
