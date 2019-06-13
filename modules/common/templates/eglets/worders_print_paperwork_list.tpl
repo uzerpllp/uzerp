@@ -19,7 +19,7 @@
 				{link_to module=$module submodule=$submodule controller=mfworkorders action=printaction printaction=printdocumentation id=$worder->id value=$worder->wo_number}
 			</td>
 			<td>
-				{$worder->item_code|cat:': '|cat:$worder->stitem|truncate:20:"...":true}
+				{$worder->item_code|cat:': '|cat:$worder->stitem}
 			</td>
 		</tr>
 	{/foreach}
