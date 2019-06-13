@@ -22,6 +22,8 @@ class MFWorkorder extends DataObject
 											,'stitem_id'
 											,'data_sheet_id'
 											);
+	
+	protected $hasAttachmentOutputs = ['tag' => 'workorder', 'name' => 'Work Orders', ];
 											
 	function __construct($tablename='mf_workorders')
 	{
@@ -89,6 +91,11 @@ class MFWorkorder extends DataObject
 		
 		return parent::Factory($data, $errors, $do);
 
+	}
+
+	public static function getAttachmentOutputsDefinition() {
+		$model = new self;
+		return $model->hasAttachmentOutputs;
 	}
 
 	public function getBalances($field, $type="All")
