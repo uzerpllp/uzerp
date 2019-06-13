@@ -15,9 +15,7 @@ class EntityAttachmentOutput extends DataObject {
 
 		$this->setEnum(
 			'tag', [
-				'workorder'	=> 'Works Order',
-				'sorder'	=> 'Sales Order',
-				'porder'	=> 'Purchase Order'
+				MFWorkorder::getAttachmentOutputsDefinition()['tag'] => MFWorkorder::getAttachmentOutputsDefinition()['name'],
 			]
 		);
 	}
