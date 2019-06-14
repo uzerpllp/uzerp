@@ -144,10 +144,14 @@ class MfworkordersController extends ManufacturingController
 			$flash->addMessage('Selected Work Orders have been updated');
 		}
 
-		if ($this->module_prefs['allow-wo-print'] == 'on') {
+		if ($this->module_prefs['allow-wo-print'] !== 'D') {
 			foreach ($print as $id => $value) {
 				$worksorder = DataObjectFactory::Factory('MFWorkorder');
 				$worksorder->load($id);
+				if (isset($this->_data['update']) && ($this->_data['status'][$id] == 'C' && $this->_data['update'][$id] == 'on')) {
+					// skip printing if the status is changing to complete
+					continue;
+				}
 
 				if (unserialize($worksorder->documentation)[0]=='') {
 					continue;
