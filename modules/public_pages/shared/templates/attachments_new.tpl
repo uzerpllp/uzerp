@@ -10,7 +10,7 @@
 		{input type='hidden' attribute='entity_id' value=$entity_id}
 		{input type='hidden' attribute='data_model' value=$data_model}
 		{if !is_null($file->name)}
-			{input type='hidden' attribute='REPLACING' value='{$file->name}'}
+			{input type='hidden' attribute='REPLACING' value=$file->name}
 			{view_section heading="Current"}
 				<dt>Name</dt><dd>{$file->name}</dd>
 				{view_data model=$file attribute='revision'}

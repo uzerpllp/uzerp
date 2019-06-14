@@ -24,7 +24,7 @@
 				{foreach name=gridrow item=tag key=fieldname from=$fields}
 					{if $fieldname == 'file'}
 					<td>
-						{link_to _target="_blank" _rel="noopener noreferrer" module=$module controller="attachments" action="view_file" id=$model->id value=$model->getFormatted($fieldname)}
+						{link_to _title="View File" _target="_blank" _rel="noopener noreferrer" module=$module controller="attachments" action="view_file" id=$model->id value=$model->getFormatted($fieldname)}
 					</td>
 					{else}
 					{grid_cell field=$fieldname cell_num=$smarty.foreach.gridrow.iteration model=$model collection=$entityattachments}
