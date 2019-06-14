@@ -23,7 +23,7 @@ class SetupController extends MasterSetupController
         'outside-op-prod-group' => 'Product Group for routing outside operation purchases',
         'outside-op-mfcentre' => 'Work Centre for routing outside operations',
         'outside-op-mfresource' => 'Resource for routing outside operations',
-        'allow-wo-print' => 'Allow work order printing from list view (New and Released status)'
+        'allow-wo-print' => 'Allow work order printing from list view'
     ];
 
     protected function registerPreference()
@@ -140,13 +140,41 @@ class SetupController extends MasterSetupController
             'position' => 6
         ]);
 
-        $this->preferences->registerPreference([
+/*         $this->preferences->registerPreference([
             'name' => 'allow-wo-print',
             'display_name' => $this->module_preferences['allow-wo-print']['title'],
             'group_title' => 'Work Order Printing',
             'type' => 'checkbox',
             'status' => (empty($woPrintFromList) || $woPrintFromList == 'off') ? 'off' : 'on',
             'default' => 'off',
+            'position' => 7
+        ]); */
+
+        $this->preferences->registerPreference([
+            'name' => 'allow-wo-print',
+            'display_name' => $this->module_preferences['allow-wo-print']['title'],
+            'group_title' => 'Work Order Printing',
+            'type' => 'select',
+            'data' => [
+                [
+                    "label" => "Disabled",
+                    "value" => "D"
+                ],
+                [
+                    "label" => "Status New Only",
+                    "value" => "N"
+                ],
+                [
+                    "label" => "Status Released Only",
+                    "value" => "R"
+                ],
+                [
+                    "label" => "Status New and Released",
+                    "value" => "A"
+                ]
+            ],
+            'value' => (empty($woPrintFromList) || $woPrintFromList == 'D') ? 'D' : $woPrintFromList,
+            'default' => 'D',
             'position' => 7
         ]);
     }
