@@ -163,17 +163,19 @@ class MfworkordersController extends ManufacturingController
 				$data['printaction'] = 'Print';
 				$data['printer']	 = $defaultPrinter;
 
+				$merge_file_name = 'mfworksorders_documentation_'.$id.'_'.date('H_i_s_d_m_Y').'.pdf';
+
 				foreach ($documents as $document)
 				{
 					// when we fire the construct, pass the printController as the report does
 					// not extend another model
 					$model = new $document->class_name($this);
-					$docname = '123.pdf';
-					$merge_file_name = 'mfworksorders_documentation_'.$id.'_'.date('H_i_s_d_m_Y').'.pdf';
+					$docname = rand().'.pdf';
+					
 					$args = array(
 						'model'				=>	$worksorder,
 						'data'				=>	$data,
-						'merge_file_name'	=>	$docname,
+						'merge_file_name'	=>	$merge_file_name,
 						'type' => 'print',
 						'printtype'	 => 'pdf'
 					);
@@ -184,47 +186,11 @@ class MfworkordersController extends ManufacturingController
 					{
 						$errors[] = $document->class_name.": ".$response->message;
 					}
-
-					// Load attachments and create temporary files for merging
-					$attachments = new EntityAttachmentOutputCollection;
-					$sh = new SearchHandler($attachments, false);
-					$sh->addConstraint(new Constraint('type', '=', 'application/pdf'));
-					$sh->addConstraint(new Constraint('tag', '=', 'workorder'));
-					$sh->addConstraint(new Constraint('entity_id', '=', $worksorder->stitem_id));
-					$sh->setOrderby('print_order', 'ASC');
-
-					$attachments->load($sh);
-					$attachment_paths = [];
-
-					if (count($attachments) > 0) {
-						foreach ($attachments as $attachment)
-						{
-							$file = DataObjectFactory::Factory('File');
-							$file->load($attachment->id);
-							
-							$db = &DB::Instance();
-							
-							$content =$db->BlobDecode($file->file, $file->size); 
-
-							$tpaths = $this->get_paths('123', 'pdf');
-							$fhandle = fopen($tpaths['temp_file_path'], 'w');
-
-							fwrite($fhandle, $content);
-							fclose($fhandle);
-
-							$attachment_paths[] = $tpaths['temp_file_path'];
-						}
-					}
-					
-					// construct file path, print the file and add a success message
-					$merge_file_path = $this->get_filetype_path('tmp').$merge_file_name;
-
-
-					$response = PDFTools::append($this->get_filetype_path('tmp').$docname, $merge_file_path);
-					
 				}
 
-				// append attachments
+				$merge_file_path = $this->get_filetype_path('tmp').$merge_file_name;
+
+				$attachment_paths = $this->createAttachmentOutputFiles($worksorder->stitem_id);
 				if (count($attachment_paths) > 0){
 					foreach ($attachment_paths as $file){
 						$response = PDFTools::append($file, $merge_file_path);
@@ -1229,36 +1195,6 @@ class MfworkordersController extends ManufacturingController
 				    }
 				}
 
-				// Load attachments and create temporary files for merging
-				$attachments = new EntityAttachmentOutputCollection;
-				$sh = new SearchHandler($attachments, false);
-				$sh->addConstraint(new Constraint('type', '=', 'application/pdf'));
-				$sh->addConstraint(new Constraint('tag', '=', 'workorder'));
-				$sh->addConstraint(new Constraint('entity_id', '=', $worksorder->stitem_id));
-				$sh->setOrderby('print_order', 'ASC');
-
-				$attachments->load($sh);
-				$attachment_paths = [];
-
-				if (count($attachments) > 0) {
-					foreach ($attachments as $attachment)
-					{
-						$file = DataObjectFactory::Factory('File');
-						$file->load($attachment->id);
-						
-						$db = &DB::Instance();
-						
-						$content =$db->BlobDecode($file->file, $file->size); 
-
-						$tpaths = $this->get_paths('123', 'pdf');
-						$fhandle = fopen($tpaths['temp_file_path'], 'w');
-
-						fwrite($fhandle, $content);
-						fclose($fhandle);
-
-						$attachment_paths[] = $tpaths['temp_file_path'];
-					}
-				}
 			}
 			else
 			{
@@ -1277,6 +1213,7 @@ class MfworkordersController extends ManufacturingController
 			$merge_file_path = $this->get_filetype_path('tmp').$merge_file_name;
 
 			// append attachments
+			$attachment_paths = $this->createAttachmentOutputFiles($worksorder->stitem_id);
 			if (count($attachment_paths) > 0 && !isset($this->_data['original_action'])){
 				foreach ($attachment_paths as $file){
 					$response = PDFTools::append($file, $merge_file_path);
@@ -1768,6 +1705,42 @@ class MfworkordersController extends ManufacturingController
 		}
 
 	}
+
+
+    private function createAttachmentOutputFiles($entity_id) {
+
+        $attachments = new EntityAttachmentOutputCollection;
+        $sh = new SearchHandler($attachments, false);
+        $sh->addConstraint(new Constraint('type', '=', 'application/pdf'));
+        $sh->addConstraint(new Constraint('tag', '=', MFWorkorder::getAttachmentOutputsDefinition()['tag']));
+        $sh->addConstraint(new Constraint('entity_id', '=', $entity_id));
+        $sh->setOrderby('print_order', 'ASC');
+
+        $attachments->load($sh);
+        $attachment_paths = [];
+
+        if (count($attachments) > 0) {
+            foreach ($attachments as $attachment)
+            {
+                $file = DataObjectFactory::Factory('File');
+                $file->load($attachment->id);
+                
+                $db = &DB::Instance();
+                
+                $content =$db->BlobDecode($file->file, $file->size); 
+
+                $tpaths = $this->get_paths('123', 'pdf');
+                $fhandle = fopen($tpaths['temp_file_path'], 'w');
+
+                fwrite($fhandle, $content);
+                fclose($fhandle);
+
+                $attachment_paths[] = $tpaths['temp_file_path'];
+            }
+        }
+
+        return $attachment_paths;
+    }
 
 	protected function getPageName($base = null, $action = null)
 	{
