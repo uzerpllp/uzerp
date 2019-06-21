@@ -1,11 +1,5 @@
 @CHARSET "UTF-8";
 
-.strengthify-wrapper {
-	background: #e0e0e0;
-    margin-top: 1em;
-    width: 250px;
-}
-
 .help-text {
 	font-size:13px;
 	line-height:1.24em;
