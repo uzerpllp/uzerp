@@ -4,8 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Sales Summary uzLET is now responsive
+- Corrected column header aligmnet on Aged Debtors Summary uzLET
+- Chart widgets can be scrolled horizontally on small screens
+
+### Changed
+
 - Removed reliance on uzERP ADODB fork and updated dependency to use upstream releases
+
+### Added
+
 - Add Gov-Client-Device-ID header to Making Tax Digital VAT interactions
+- Documents attached to stock items can be selected to be printed with work orders for the item.
+
+### Removed
+
+- The password strength meter has been removed
 
 ## [1.16] 2019-05-24
 
