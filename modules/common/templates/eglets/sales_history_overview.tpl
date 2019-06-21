@@ -4,7 +4,7 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {* $Revision: 1.1 $ *}
-<div id='sales_by_month'>
+<div class='columns_2' id='sales_by_month'>
 <dl id="view_data_left">
 <table class='datagrid'>
 	<tr>
