@@ -144,10 +144,14 @@ class MfworkordersController extends ManufacturingController
 			$flash->addMessage('Selected Work Orders have been updated');
 		}
 
-		if ($this->module_prefs['allow-wo-print'] == 'on') {
+		if ($this->module_prefs['allow-wo-print'] !== 'D') {
 			foreach ($print as $id => $value) {
 				$worksorder = DataObjectFactory::Factory('MFWorkorder');
 				$worksorder->load($id);
+				if (isset($this->_data['update']) && ($this->_data['status'][$id] == 'C' && $this->_data['update'][$id] == 'on')) {
+					// skip printing if the status is changing to complete
+					continue;
+				}
 
 				if (unserialize($worksorder->documentation)[0]=='') {
 					continue;
@@ -163,12 +167,15 @@ class MfworkordersController extends ManufacturingController
 				$data['printaction'] = 'Print';
 				$data['printer']	 = $defaultPrinter;
 
+				$merge_file_name = 'mfworksorders_documentation_'.$id.'_'.date('H_i_s_d_m_Y').'.pdf';
+
 				foreach ($documents as $document)
 				{
 					// when we fire the construct, pass the printController as the report does
 					// not extend another model
 					$model = new $document->class_name($this);
-					$merge_file_name = 'mfworksorders_documentation_'.$id.'_'.date('H_i_s_d_m_Y').'.pdf';
+					$docname = rand().'.pdf';
+					
 					$args = array(
 						'model'				=>	$worksorder,
 						'data'				=>	$data,
@@ -183,11 +190,18 @@ class MfworkordersController extends ManufacturingController
 					{
 						$errors[] = $document->class_name.": ".$response->message;
 					}
-					
-					// construct file path, print the file and add a success message
-					$merge_file_path = $this->get_filetype_path('tmp').$merge_file_name;
-					$this->output_file_to_printer($merge_file_path, $data['printer']);
 				}
+
+				$merge_file_path = $this->get_filetype_path('tmp').$merge_file_name;
+
+				$attachment_paths = $this->createAttachmentOutputFiles($worksorder->stitem_id);
+				if (count($attachment_paths) > 0){
+					foreach ($attachment_paths as $file){
+						$response = PDFTools::append($file, $merge_file_path);
+					}
+				}
+
+				$this->output_file_to_printer($merge_file_path, $data['printer']);
 
 				if (count($errors)>0)
 				{
@@ -1184,6 +1198,7 @@ class MfworkordersController extends ManufacturingController
     					}
 				    }
 				}
+
 			}
 			else
 			{
@@ -1200,6 +1215,14 @@ class MfworkordersController extends ManufacturingController
 
 			// construct file path, print the file and add a success message
 			$merge_file_path = $this->get_filetype_path('tmp').$merge_file_name;
+
+			// append attachments
+			$attachment_paths = $this->createAttachmentOutputFiles($worksorder->stitem_id);
+			if (count($attachment_paths) > 0 && !isset($this->_data['original_action'])){
+				foreach ($attachment_paths as $file){
+					$response = PDFTools::append($file, $merge_file_path);
+				}
+			}
 
 			if (!isset($this->_data['type']) || $this->_data['type'] === 'print') {
     			$this->output_file_to_printer($merge_file_path, $data['printer']);
@@ -1686,6 +1709,42 @@ class MfworkordersController extends ManufacturingController
 		}
 
 	}
+
+
+    private function createAttachmentOutputFiles($entity_id) {
+
+        $attachments = new EntityAttachmentOutputCollection;
+        $sh = new SearchHandler($attachments, false);
+        $sh->addConstraint(new Constraint('type', '=', 'application/pdf'));
+        $sh->addConstraint(new Constraint('tag', '=', MFWorkorder::getAttachmentOutputsDefinition()['tag']));
+        $sh->addConstraint(new Constraint('entity_id', '=', $entity_id));
+        $sh->setOrderby('print_order', 'ASC');
+
+        $attachments->load($sh);
+        $attachment_paths = [];
+
+        if (count($attachments) > 0) {
+            foreach ($attachments as $attachment)
+            {
+                $file = DataObjectFactory::Factory('File');
+                $file->load($attachment->id);
+                
+                $db = &DB::Instance();
+                
+                $content =$db->BlobDecode($file->file, $file->size); 
+
+                $tpaths = $this->get_paths('123', 'pdf');
+                $fhandle = fopen($tpaths['temp_file_path'], 'w');
+
+                fwrite($fhandle, $content);
+                fclose($fhandle);
+
+                $attachment_paths[] = $tpaths['temp_file_path'];
+            }
+        }
+
+        return $attachment_paths;
+    }
 
 	protected function getPageName($base = null, $action = null)
 	{

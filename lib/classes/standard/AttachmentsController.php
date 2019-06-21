@@ -339,9 +339,22 @@ class AttachmentsController extends Controller {
 		{
 			// This is an edit - i.e. replace current with new
 			$file = DataObjectFactory::Factory('File');
-			
 			$file->load($attachment->file_id);
+
+			$outputs = new EntityAttachmentOutputCollection;
+			$sh = new SearchHandler($outputs, false);
+			$sh->addConstraint(new Constraint('entity_attachment_id', '=', $attachment->id));
+			$outputs->load($sh);
+
+			$output = new EntityAttachmentOutput;
+			$output_choices = $output->getEnumOptions('tag');
+
+			$tags = [];
+			foreach ($outputs as $output) {
+				$tags[$output->tag] = $output_choices[$output->tag];
+			}
 			
+			$this->view->set('old_output_choices', $tags);
 			$this->view->set('file', $file);
 			
 			$this->_data['entity_id']	= $attachment->entity_id;
@@ -354,6 +367,9 @@ class AttachmentsController extends Controller {
 	public function _new()
 	{
 		
+		$output = new EntityAttachmentOutput;
+		$output_choices = $output->getEnumOptions('tag');
+
 		$this->setAttributes();
 		
 		$this->view->set('entity_id', $this->_data['entity_id']);
@@ -370,6 +386,8 @@ class AttachmentsController extends Controller {
 		$this->view->set('attachmentController', $this->attachmentController);
 		
 		$this->view->set('title', 'Load Attachment for '.$this->getTitle($this->_data['entity_id']));
+
+		$this->view->set('output_choices', $output_choices);
 		
 		$this->setTemplateName('attachments_new');
 		
@@ -399,6 +417,11 @@ class AttachmentsController extends Controller {
 		$count = count($data);
 		
 		$update = FALSE;
+
+		if (isset($this->_data['REPLACING'])
+				&& $this->_data['REPLACING'] !== $file->name) {
+			$errors[] = 'Replacement file must have the same filename';
+		}
 		
 		// Should only be one or none; otherwise this is an error
 		if ($count > 1)
@@ -422,9 +445,9 @@ class AttachmentsController extends Controller {
 		{
 			$this->_data['revision'] = $new_revision;
 		}
-		elseif ($this->_data['revision'] <= $current_revision)
+		elseif ($this->_data['revision'] < $current_revision)
 		{
-			$errors[] = 'Current version '.$current_revision.' is the same or later than input version '.$this->_data['revision'];
+			$errors[] = 'Current version '.$current_revision.' later than input version '.$this->_data['revision'];
 		}
 		
 		$db = DB::Instance();
@@ -475,9 +498,31 @@ class AttachmentsController extends Controller {
 			$old_file = DataObjectFactory::Factory('File');
 			$file_save = $old_file->delete($row['file_id'], $errors);
 		}
-		
+
+		$outputs_remove = true;
+		$outputs_save = true;
+
+		//Remove current outputs
+		if ($attachment->id > 0) {
+			$outputs = new EntityAttachmentOutputCollection;
+			$sh = new SearchHandler($outputs, false);
+			$sh->addConstraint(new Constraint('entity_attachment_id', '=', $attachment->id));
+			$outputs_remove = $outputs->delete($sh);
+		}
+
+		if (count($this->_data['tag']) > 0 && $attachment->id > 0) {
+			foreach($this->_data['tag'] as $tag) {
+				$output = DataObjectFactory::Factory('EntityAttachmentOutput');
+				$output->id = 'NULL';
+				$output->print_order = 1;
+				$output->entity_attachment_id = $attachment->id;
+				$output->tag = $tag;
+				$outputs_save = $output->save();
+			}
+		}
+
 		// Now check and tidy up
-		if (!$file_save || !$attachment_save)
+		if (!$file_save || !$attachment_save || !$outputs_remove || !$outputs_save)
 		{
 			$errors[] = 'Error loading file';
 		}
@@ -491,11 +536,11 @@ class AttachmentsController extends Controller {
 		{
 			if ($update)
 			{
-				$flash->addMessage('File '.$file->name.' version '.$current_revision.' replaced with version '.$new_revision);
+				$flash->addMessage('File '.$file->name.' version '.$current_revision.' replaced');
 			}
 			else
 			{
-				$flash->addMessage('File '.$file->name.' version '.$new_revision.' uploaded OK');
+				$flash->addMessage('File '.$file->name.' uploaded');
 			}
 		}
 		

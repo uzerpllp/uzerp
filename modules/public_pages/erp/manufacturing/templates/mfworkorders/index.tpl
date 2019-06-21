@@ -20,7 +20,7 @@
 					{heading_cell}
 						Action
 					{/heading_cell}
-					{if $module_prefs['allow-wo-print'] == 'on'}
+					{if $module_prefs['allow-wo-print'] !== 'D'}
 					{heading_cell}
 						Print
 					{/heading_cell}
@@ -42,16 +42,17 @@
 						{if $model->status!='C'}
 							<input type="checkbox" name="update[{$model->id}]" id="update{$model->id}" class="checkbox" />
 							{if $model->status=='N'}
-								<label for="update{$model->id}">Release</label>
+								<label for="update{$model->id}">Release Order</label>
 								<input type='hidden' name='status[{$model->id}]' value='R' label='release'/>
 							{elseif $model->status!='C'}
-								<label for="update{$model->id}">Complete</label>
+								<label for="update{$model->id}">Complete Order</label>
 								<input type='hidden' name='status[{$model->id}]' value='C' />
 							{/if}
 						{/if}
 					</td>
 					<td>
-					{if ($model->status == 'R' || $model->status == 'N') && $module_prefs['allow-wo-print'] == 'on'}
+					{if (($model->status == 'N') && in_array($module_prefs['allow-wo-print'], ['A', 'N']))
+						|| (($model->status == 'R') && in_array($module_prefs['allow-wo-print'], ['A', 'R']))}
 						<input title='Print documents to default printer' type="checkbox" name="print[{$model->id}]" id="print{$model->id}" class="checkbox" />
 					{/if}
 					</td>
@@ -63,7 +64,7 @@
 			{/foreach}
 		{/data_table}
 		{if $num_incomplete > 0}
-			{if ($module_prefs['allow-wo-print'] == 'on')}
+			{if ($module_prefs['allow-wo-print'] !== 'D')}
 				{submit value="Update/Print Selected" tags="none"}
 			{else}
 				{submit value="Update Selected" tags="none"}
