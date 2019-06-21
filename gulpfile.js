@@ -60,7 +60,6 @@ var jsFiles = [
         'assets/js/vendor/wijmo/jquery.wijmo.wijbarchart.min.js',
         'assets/js/vendor/wijmo/external/jquery.glob.min.js',
         'assets/js/vendor/jquery.tableScroll/jquery.tablescroll.js',
-        'assets/js/vendor/strengthify/jquery.strengthify.js',
         // uzLET js
         'modules/public_pages/**/resources/js/*.uzlet.js'
     ],
@@ -80,7 +79,6 @@ var jsFiles = [
         'assets/js/vendor/collapsibleCheckboxTree/jquery.collapsibleCheckboxTree.css',
         'assets/js/vendor/jqPagination/css/style.css',
         'assets/js/vendor/contextMenu/jquery.contextMenu.css',
-        'assets/js/vendor/strengthify/strengthify.css',
         'modules/public_pages/**/resources/css/**/*.css',
     ];
 
