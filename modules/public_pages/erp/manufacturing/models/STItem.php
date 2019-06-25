@@ -954,6 +954,7 @@ class STItem extends DataObject
 
 		$sh->addConstraint(new Constraint('stitem_id', '=', $this->id));
 		$sh->addConstraint(new Constraint('status', 'in', "('N', 'R', 'P', 'S')"));
+		$sh->addConstraintChain(new Constraint('type', '=', 'O'));
 		$sh->setOrderby('due_despatch_date');
 
 		$solines->load($sh);

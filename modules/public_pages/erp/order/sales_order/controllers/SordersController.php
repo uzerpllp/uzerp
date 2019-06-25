@@ -1303,6 +1303,7 @@ class SordersController extends printController
         $orders = new SOrderCollection($this->_templateobject);
 
         $sh = $this->setSearchHandler($orders);
+        $sh->addConstraintChain(new Constraint('type', '=', 'O'));
 
         $orders->getItems($sh);
 

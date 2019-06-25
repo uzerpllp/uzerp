@@ -703,7 +703,10 @@ class StitemsController extends printController
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
 
-        $this->view->set('page_title', $this->getPageName('', 'View'));
+        $stitem = new STItem;
+        $stitem->load($this->_data['id']);
+        $identifier = $stitem->getIdentifierValue;
+        $this->view->set('page_title', "Stock Balances for {$stitem->item_code} - {$stitem->description}");
     }
 
     public function viewOutside_Operations()
@@ -1249,6 +1252,7 @@ class StitemsController extends printController
         $salesorderlines->orderby = 'due_date';
 
         $sh = $this->setSearchHandler($salesorderlines);
+        $sh->addConstraintChain(new Constraint('type', '=', 'O'));
 
         $sh->setFields(array(
             'id',
