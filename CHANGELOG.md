@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.17] 2019-06-26
 
 ### Fixed
 
@@ -552,8 +552,9 @@ VAT Report views and transaction printing updated to use new calculations, match
 ## [2014.3] - 2014-05-27
 ### Changed
 - First Git controlled release on bitbucket
-- Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
+[1.15.2]: https://github.com/uzerpllp/uzerp/compare/1.16...1.17
+[1.16]: https://github.com/uzerpllp/uzerp/compare/1.15.2...1.16
 [1.15.2]: https://github.com/uzerpllp/uzerp/compare/1.15.1...1.15.2
 [1.15.1]: https://github.com/uzerpllp/uzerp/compare/1.15...1.15.1
 [1.15]: https://github.com/uzerpllp/uzerp/compare/1.14.1...1.15
