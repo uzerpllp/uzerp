@@ -92,11 +92,11 @@ class TwoDateSearchField extends SearchField {
 					
 					if (!empty($to))
 					{
-						$c = new Constraint($this->fieldname, 'between', $db->qstr(fix_date($from)) . ' and ' . $db->qstr(fix_date($to)));
+						$c = new Constraint($this->fieldname . '::date', 'between', $db->qstr(fix_date($from)) . ' and ' . $db->qstr(fix_date($to)));
 					}
 					else
 					{
-						$c = new Constraint($this->fieldname, '>=', $db->qstr(fix_date($from)));
+						$c = new Constraint($this->fieldname . '::date', '>=', $db->qstr(fix_date($from)));
 					}
 					
 				}
@@ -105,7 +105,7 @@ class TwoDateSearchField extends SearchField {
 					
 					if (!empty($to))
 					{
-						$c = new Constraint($this->fieldname, '<=', $db->qstr(fix_date($to)));
+						$c = new Constraint($this->fieldname . '::date', '<=', $db->qstr(fix_date($to)));
 					}
 					
 				}
