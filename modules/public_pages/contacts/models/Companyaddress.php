@@ -33,6 +33,7 @@ class Companyaddress extends PartyAddress
  		$this->belongsTo('Company', 'company_id', 'company');
  		
 		$this->setConcatenation('address',array('street1','street2','street3','town','county','postcode','country'),',');
+		$this->orderby = ['address'];
 	
 	}
 
