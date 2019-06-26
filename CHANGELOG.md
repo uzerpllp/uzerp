@@ -7,8 +7,11 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Sales Summary uzLET is now responsive
-- Corrected column header aligmnet on Aged Debtors Summary uzLET
+- Corrected column header alignmet on Aged Debtors Summary uzLET
 - Chart widgets can be scrolled horizontally on small screens
+- Exclude sales quotations from supply/demand views
+- Sort company and person addresses on drop-downs
+- Show correct stock transactions for dates selected in search
 
 ### Changed
 
@@ -18,6 +21,7 @@ All notable changes to this project will be documented in this file.
 
 - Add Gov-Client-Device-ID header to Making Tax Digital VAT interactions
 - Documents attached to stock items can be selected to be printed with work orders for the item.
+- Search for manufacturing product groups
 
 ### Removed
 
