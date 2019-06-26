@@ -1252,12 +1252,12 @@ class StitemsController extends printController
         $salesorderlines->orderby = 'due_date';
 
         $sh = $this->setSearchHandler($salesorderlines);
-        $sh->addConstraintChain(new Constraint('type', '=', 'O'));
 
         $sh->setFields(array(
             'id',
             'order_id',
             'order_number',
+            'type',
             'customer',
             'order_qty',
             'revised_qty',
