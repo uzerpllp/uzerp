@@ -15,7 +15,7 @@ class AddProductGroupSearchModuleComponent extends UzerpMigration
     protected $module_components = [
         [
             'module' => 'manufacturing',
-            'name' => 'productgroupsearch',
+            'name' => 'productgroupssearch',
             'type' => 'M',
             'location' => 'modules/public_pages/erp/manufacturing/models/productgroupsSearch.php'
         ]
