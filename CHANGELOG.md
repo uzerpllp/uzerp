@@ -553,7 +553,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 ### Changed
 - First Git controlled release on bitbucket
 
-[1.15.2]: https://github.com/uzerpllp/uzerp/compare/1.16...1.17
+[1.17]: https://github.com/uzerpllp/uzerp/compare/1.16...1.17
 [1.16]: https://github.com/uzerpllp/uzerp/compare/1.15.2...1.16
 [1.15.2]: https://github.com/uzerpllp/uzerp/compare/1.15.1...1.15.2
 [1.15.1]: https://github.com/uzerpllp/uzerp/compare/1.15...1.15.1
