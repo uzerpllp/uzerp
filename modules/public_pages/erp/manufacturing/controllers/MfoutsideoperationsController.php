@@ -1,9 +1,9 @@
 <?php
- 
-/** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+
+/**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class MfoutsideoperationsController extends Controller {
@@ -35,10 +35,10 @@ class MfoutsideoperationsController extends Controller {
 		$outside_ops->load($sh);
 		$this->view->set('outside_ops',$outside_ops);
 
-		$this->view->set('linkfield','id');
-		$this->view->set('linkvaluefield','id');
-		$this->view->set('clickaction','view');
-		$this->view->set('clickcontroller','MFOutsideOperations');
+		//$this->view->set('linkfield','id');
+		//$this->view->set('linkvaluefield','id');
+		$this->view->set('clickaction','edit');
+		//$this->view->set('clickcontroller','MFOutsideOperations');
 		$this->view->set('no_ordering',true);
 
 		$sidebar=new SidebarController($this->view);
@@ -71,9 +71,62 @@ class MfoutsideoperationsController extends Controller {
 			);
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
 	}
-	
+
+
+    /**
+     * Create/edit Outside Operation
+     */
+    public function _new()
+    {
+        parent::_new();
+        $mfoperation = new MFOutsideOperation();
+        $mfoperation->load($this->_data['id']);
+        $stitem = new STItem();
+
+        // Identify and load the associated stock item from attributes or the loaded operation
+        if ($mfoperation->isLoaded()) {
+            $this->_data['stitem_id'] = $mfoperation->stitem_id;
+        }
+
+        if (empty($this->_data['stitem_id'])) {
+            $stitems = $stitem->getAll();
+            $this->view->set('stitems', $stitems);
+            $stitem_id = key($stitems);
+        } else {
+            $stitem_id = $this->_data['stitem_id'];
+        }
+        $stitem->load($stitem_id);
+
+        if (! empty($this->_data['stitem_id'])) {
+            $this->view->set('page_title', $this->getPageName() . ' for ' . $stitem->getIdentifierValue());
+        }
+        $this->view->set('stitem', $stitem);
+
+        // Load the current operations and pass to the view for display
+        $outside_ops = new MFOutsideOperationCollection();
+        $outside_ops->orderby = 'op_no';
+        $sh = $this->setSearchHandler($outside_ops);
+
+        $cc = new ConstraintChain();
+        $cc->add(new Constraint('stitem_id', '=', $stitem_id));
+        $db = DB::Instance();
+        $date = Constraint::TODAY;
+        $between = $date . ' BETWEEN ' . $db->IfNull('start_date', $date) . ' AND ' . $db->IfNull('end_date', $date);
+        $cc->add(new Constraint('', '', '(' . $between . ')'));
+        $sh->addConstraintChain($cc);
+        $outside_ops->load($sh);
+        $this->view->set('mfoutsideoperations', $outside_ops);
+
+        // Set the cancel link for the form
+        $cancel_url = link_to(array_merge($this->_modules, [
+            'controller' => $this->name,
+            'action' => 'index',
+            'stitem_id' => $this->_data['stitem_id']
+        ]), false, false);
+        $this->view->set('cancel_link', $cancel_url);
+    }
+
 	public function delete(){
 		$flash = Flash::Instance();
 		$errors = array();
@@ -109,7 +162,7 @@ class MfoutsideoperationsController extends Controller {
 			sendBack();
 		}
 	}
-	
+
 	public function save() {
 		$flash=Flash::Instance();
 		$db = DB::Instance();
@@ -141,24 +194,29 @@ class MfoutsideoperationsController extends Controller {
 			$db->FailTrans();
 		}
 		$db->CompleteTrans();
-		if (count($errors) == 0) {
-			sendTo('STItems'
-					,'viewoutside_operations'
-					,$this->_modules
-					,array('id' => $this->_data['MFOutsideOperation']['stitem_id']));
+		if (count($errors) == 0 && isset($this->_data['saveadd'])) {
+		    sendTo($this->name
+		        ,'new'
+		        ,$this->_modules
+		        ,array('stitem_id' => $this->_data['MFOutsideOperation']['stitem_id']));
+		} elseif (count($errors) == 0) {
+		        sendTo($this->name
+		            ,'index'
+		            ,$this->_modules
+		            ,array('stitem_id' => $this->_data[$this->modeltype]['stitem_id']));
 		} else {
 			$flash->addErrors($errors);
 			$this->_data['stitem_id']= $this->_data['MFOutsideOperation']['stitem_id'];
 			$this->refresh();
 		}
 	}
-	
+
 	public function view(){
 		$id = $this->_data['id'];
 		$transaction=&$this->_uses['MFOutsideOperation'];
 		$transaction->load($id);
 		$this->view->set('transaction',$transaction);
-		
+
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList(
 			'Actions',
@@ -201,7 +259,7 @@ class MfoutsideoperationsController extends Controller {
 			);
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
+
 	}
 
 	protected function getPageName($base=null,$action=null) {

@@ -11,19 +11,19 @@ class SOProductlineHeader extends DataObject
     protected $version = '$Revision: 1.10 $';
 
     protected $defaultDisplayFields = array(
+        'description',
         'gl_account',
         'gl_centre',
-        'stitem',
-        'uom_name',
-        'description',
+        'stitem' => 'Stock Item',
+        'product_group',
+        'uom_name' => 'UoM',
         'start_date',
         'end_date',
-        'tax_rate',
-        'product_group',
-        'glaccount_id',
-        'glcentre_id',
         'latest_cost',
         'std_cost',
+        'tax_rate',
+        'glaccount_id',
+        'glcentre_id',
         'stitem_id',
         'stuom_id',
         'prod_group_id'
@@ -37,6 +37,7 @@ class SOProductlineHeader extends DataObject
         // Contruct the object
         parent::__construct($tablename);
 
+        $this->setHidden('not_despatchable');
         // Set specific characteristics
         $this->idField = 'id';
         $this->identifierField = 'description';
@@ -61,6 +62,7 @@ class SOProductlineHeader extends DataObject
         // Define validation
         $this->validateUniquenessOf('stitem_id', NULL, TRUE);
         $this->validateUniquenessOf('description');
+        $this->addValidator(new EanModelValidator($this));
 
         // Define enumerated types
 

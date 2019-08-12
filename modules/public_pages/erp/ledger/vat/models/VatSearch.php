@@ -12,41 +12,64 @@ class VatSearch extends BaseSearch {
 	public static function useDefault($search_data=null, &$errors=array(), $defaults=null) {
 		$search = new VatSearch($defaults);
 
-		$search->addSearchField(
-			'box',
-			'Box',
-			'hidden',
-			'',
-			'hidden'
-		);
-		$default_year = date('Y');
-		$default_tax_period = 1;
-		$glperiod = GLPeriod::getPeriod(date('Y-m-d'));
-		if (($glperiod) && (count($glperiod) > 0)) {
-			$default_year = $glperiod['year'];
-			$default_tax_period = $glperiod['tax_period'];
-		}
+		$glperiod = DataObjectFactory::Factory('GLPeriod');
+		$glperiod->getCurrentTaxPeriod();
+
 		$search->addSearchField(
 				'year',
 				'Year',
 				'select',
-				$default_year,
+				$glperiod->year,
 				'basic'
 			);
 		$search->addSearchField(
 				'tax_period',
 				'Tax Period',
 				'select',
-				$default_tax_period,
-				'basic'
+				null,
+				'advanced'
+			);
+		$search->addSearchField(
+				'tax_period_closed',
+				'Tax Period Status',
+				'select',
+				null,
+				'advanced'
+			);
+
+		$search->addSearchField(
+				'finalised',
+				'Submitted',
+				'select',
+				null,
+				'advanced'
 			);
 		
+		$status_options = [
+			'0' => 'Any',
+			'f' => 'Open',
+			't' => 'Closed'
+		];
+
+		$search->setOptions('tax_period_closed', $status_options);
+
+		$status_options = [
+			'0' => 'All',
+			't' => 'Yes',
+			'f' => 'No'
+		];
+
+		$search->setOptions('finalised', $status_options);
+
 		$glperiods = new GLPeriodCollection;
 		$sh = new SearchHandler($glperiods, false);
 		$sh->setOrderBy('year');
 		$glperiods->load($sh);
 		$glperiods = $glperiods->getContents();
-		$options = array();
+		
+		$options = array(
+			'0' => 'All'
+		);
 		foreach ($glperiods as $glperiod) {
 			if (!array_key_exists($glperiod->year, $options)) {
 				$options[$glperiod->year] = $glperiod->year;
@@ -54,8 +77,12 @@ class VatSearch extends BaseSearch {
 		}
 		$search->setOptions('year',$options);
 		
+		$options = array(
+			'0' => 'All'
+		);
 		$tax_periods = GLPeriod::getTaxPeriods();
-		$options = array_combine($tax_periods, $tax_periods);
+
+		$options += array_combine($tax_periods, $tax_periods);
 		$search->setOptions('tax_period',$options);
 		
 		$search->setSearchData($search_data,$errors);

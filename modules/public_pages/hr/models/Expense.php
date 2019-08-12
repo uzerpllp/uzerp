@@ -490,7 +490,7 @@ class Expense extends DataObject
         return $result;
     }
 
-    public function save($debug)
+    public function save($debug=false)
     {
         $expenseline = DataObjectFactory::Factory('ExpenseLine');
 

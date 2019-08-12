@@ -9,7 +9,7 @@
 		<th>
 			Period
 		</th>
-		<th align=right>
+		<th class='right'>
 			Value
 		</th>
 	</tr>

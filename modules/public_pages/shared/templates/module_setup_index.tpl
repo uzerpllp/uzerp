@@ -1,7 +1,7 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.6 $ *}
 {content_wrapper}
@@ -18,6 +18,7 @@
 				</div>
 			</dl>
 		{/if}
+		{if $setup_options}
 		<dl class='float-left'>
 			<div id=data class='placeholder'>
 				{view_section heading='Data'}
@@ -46,5 +47,6 @@
 				{/view_section}
 			</div>
 		</dl>
+		{/if}
 	</div>
 {/content_wrapper}

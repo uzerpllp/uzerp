@@ -33,14 +33,13 @@ class HasRole extends DataObject
 // Could simplify this by putting usercompanyid on hasrole?
 		$role = DataObjectFactory::Factory('Role');
 		
-		$role->identifierField = 'id';
-		
 		$roles = $role->getAll();
+		$role_ids = array_keys($roles);
 		
 		$cc = new ConstraintChain();
 		
 		$cc->add(new Constraint('username','=',$username));
-		$cc->add(new Constraint('roleid','in','('.implode(',',$roles).')'));
+		$cc->add(new Constraint('roleid','in','('.implode(',',$role_ids).')'));
 		
 // return the roles that the user is assigned to
 		return $this->getAll($cc);

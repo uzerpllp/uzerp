@@ -11,22 +11,27 @@ class STItem extends DataObject
 
 	protected $version='$Revision: 1.45 $';
 
-	protected $defaultDisplayFields = array('item_code'
-											,'description'
-											,'product_group'=>'Product Group'
-											,'type_code'=>'Type Code'
-											,'alpha_code'
-											,'comp_class'
-											,'abc_class'
-											,'ref1'
-											,'balance'
-											,'uom_name'
-											,'latest_cost'
-											,'std_cost'
-											,'prod_group_id'
-											,'type_code_id'
-											,'uom_id'
-											);
+    protected $defaultDisplayFields = [
+        'item_code',
+        'description',
+        'product_group' => 'Product Group',
+        'type_code' => 'Type Code',
+        'alpha_code',
+        'comp_class',
+        'abc_class',
+        'ref1',
+        'balance',
+        'uom_name',
+        'latest_cost',
+        'std_cost',
+        'prod_group_id',
+        'type_code_id',
+        'uom_id'
+    ];
+
+    protected $hidden = [
+        'cost_basis' => 1
+    ];
 
 //	protected $parent;
 //	protected $parent_structure;
@@ -95,6 +100,10 @@ class STItem extends DataObject
 		$this->setEnum('abc_class',array( 'A'=>'A'
                                          ,'B'=>'B'
                                          ,'C'=>'C'));
+		$this->setEnum('cost_basis', [
+		    'VOLUME' => 'Volume',
+		    'TIME' => 'Time'
+		]);
 
 		// Define link rules for related items
 		$this->linkRules=array('balances'=>array('actions'=>array('link')
@@ -410,40 +419,78 @@ class STItem extends DataObject
 				continue;
 			}
 
-			// if values are NULL or 0
-			if(is_null($operation->uptime_target) || $operation->uptime_target<=0
-				|| is_null($operation->quality_target) || $operation->quality_target<=0
-				|| is_null($operation->volume_target) || $operation->volume_target<=0)
-			{
-					return -1;
+			if ($this->cost_basis == 'VOLUME') {
+    			// if values are NULL or 0
+    			if(is_null($operation->uptime_target) || $operation->uptime_target<=0
+    				|| is_null($operation->quality_target) || $operation->quality_target<=0
+    				|| is_null($operation->volume_target) || $operation->volume_target<=0)
+    			{
+    					return -1;
+    			}
+
+    			$cost = $mfresource->resource_rate * $operation->resource_qty;
+
+    			switch ($operation->volume_period) {
+    				case 'S':
+    					$cost /= 3600;
+    					//echo ' / 3600';
+    					break;
+    				case 'M':
+    					$cost /= 60;
+    					//echo ' / 60';
+    					break;
+    			}
+
+    			$cost *= (100 / $operation->uptime_target);
+
+				$cost /= $operation->volume_target;
+				
+				// Divide by batch size before unit-of-measure conversion.
+			    // Batch size is in the item's UOM.
+			    if ($operation->type == 'B' && (!is_null($this->batch_size) || $this->batch_size > 0)) {
+			        $cost /= $this->batch_size;
+			    }
+
+    			$uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
+
+    			$cost = $uom;
+
+    			$cost *= (100 / $operation->quality_target);
+
+    			$operation->latest_lab = round($cost, $this->cost_decimals);
+
+    			$this->latest_lab = add($this->latest_lab, $operation->latest_lab);
+			} else {
+			    // Time based calculation
+			    if(is_null($operation->volume_target) || $operation->volume_target <= 0) {
+			        return -1;
+			    }
+
+			    $operation_time = $operation->volume_target;
+			    $cost = $mfresource->resource_rate * $operation->resource_qty;
+			    $cost *= $operation_time;
+
+			    switch ($operation->volume_period) {
+			        case 'S':
+			            $cost /= 3600;
+			            break;
+			        case 'M':
+			            $cost /= 60;
+			            break;
+			    }
+
+			    // Divide by batch size before unit-of-measure conversion.
+			    // Batch size is in the item's UOM.
+			    if ($operation->type == 'B' && (!is_null($this->batch_size) || $this->batch_size > 0)) {
+			        $cost /= $this->batch_size;
+			    }
+
+			    $uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
+			    $cost = $uom;
+
+			    $operation->latest_lab = round($cost, $this->cost_decimals);
+			    $this->latest_lab = add($this->latest_lab, $operation->latest_lab);
 			}
-
-			$cost = $mfresource->resource_rate * $operation->resource_qty;
-
-			switch ($operation->volume_period) {
-				case 'S':
-					$cost /= 3600;
-					//echo ' / 3600';
-					break;
-				case 'M':
-					$cost /= 60;
-					//echo ' / 60';
-					break;
-			}
-
-			$cost *= (100 / $operation->uptime_target);
-
-			$cost /= $operation->volume_target;
-
-			$uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
-
-			$cost = $uom;
-
-			$cost *= (100 / $operation->quality_target);
-
-			$operation->latest_lab = round($cost, $this->cost_decimals);
-
-			$this->latest_lab = add($this->latest_lab, $operation->latest_lab);
 		}
 
 		foreach ($children as $key => $child)
@@ -486,37 +533,74 @@ class STItem extends DataObject
 				continue;
 			}
 
-			if(is_null($operation->uptime_target) || $operation->uptime_target<=0
-				|| is_null($operation->quality_target) || $operation->quality_target<=0
-				|| is_null($operation->volume_target) || $operation->volume_target<=0)
-			{
-					return -1;
+			if ($this->cost_basis == 'VOLUME') {
+    			if(is_null($operation->uptime_target) || $operation->uptime_target<=0
+    				|| is_null($operation->quality_target) || $operation->quality_target<=0
+    				|| is_null($operation->volume_target) || $operation->volume_target<=0)
+    			{
+    					return -1;
+    			}
+
+    			$cost = $mfcentre->centre_rate;
+
+    			switch ($operation->volume_period) {
+    				case 'S':
+    					$cost /= 3600;
+    					//echo ' / 3600';
+    					break;
+    				case 'M':
+    					$cost /= 60;
+    					//echo ' / 60';
+    					break;
+    			}
+
+    			$cost *= (100 / $operation->uptime_target);
+
+    			$cost /= $operation->volume_target;
+
+				// Per order ops - e.g. setup a machine
+			    if ($operation->type == 'B' && (!is_null($this->batch_size) || $this->batch_size > 0)) {
+			        $cost /= $this->batch_size;
+			    }
+
+    			$uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
+    			$cost = $uom;
+
+    			$cost *= (100 / $operation->quality_target);
+
+    			$operation->latest_ohd = round($cost, $this->cost_decimals);
+    			$this->latest_ohd += $operation->latest_ohd;
+			} else {
+			    // Time based costing
+			    if(is_null($operation->volume_target) || $operation->volume_target <= 0) {
+			        return -1;
+			    }
+
+			    $operation_time = $operation->volume_target;
+			    $cost = $mfcentre->centre_rate * $operation_time;
+
+			    switch ($operation->volume_period) {
+			        case 'S':
+			            $cost /= 3600;
+			            //echo ' / 3600';
+			            break;
+			        case 'M':
+			            $cost /= 60;
+			            //echo ' / 60';
+			            break;
+			    }
+
+				// Per order ops - e.g. setup a machine
+			    if ($operation->type == 'B' && (!is_null($this->batch_size) || $this->batch_size > 0)) {
+			        $cost /= $this->batch_size;
+			    }
+
+			    $uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
+			    $cost = $uom;
+
+			    $operation->latest_ohd = round($cost, $this->cost_decimals);
+			    $this->latest_ohd += $operation->latest_ohd;
 			}
-
-			$cost = $mfcentre->centre_rate;
-
-			switch ($operation->volume_period) {
-				case 'S':
-					$cost /= 3600;
-					//echo ' / 3600';
-					break;
-				case 'M':
-					$cost /= 60;
-					//echo ' / 60';
-					break;
-			}
-
-			$cost *= (100 / $operation->uptime_target);
-
-			$cost /= $operation->volume_target;
-
-			$uom = $this->convertToUoM($this->uom_id, $operation->volume_uom_id, $cost);
-			$cost = $uom;
-
-			$cost *= (100 / $operation->quality_target);
-
-			$operation->latest_ohd = round($cost, $this->cost_decimals);
-			$this->latest_ohd += $operation->latest_ohd;
 		}
 
 		foreach ($children as $key => $child)
@@ -546,11 +630,20 @@ class STItem extends DataObject
 		}
 
 		$outside_ops = $this->getOutsideOperations();
+		$routing_outside_ops = $this->getOperations('O');
 
 		foreach ($outside_ops as $outside_op)
 		{
 
 			$outside_op->latest_osc = round($outside_op->latest_osc, $this->cost_decimals);
+
+			$this->latest_osc += $outside_op->latest_osc;
+		}
+
+		foreach ($routing_outside_ops as $outside_op)
+		{
+
+			$outside_op->latest_osc = round($outside_op->outside_processing_cost, $this->cost_decimals);
 
 			$this->latest_osc += $outside_op->latest_osc;
 		}
@@ -861,6 +954,7 @@ class STItem extends DataObject
 
 		$sh->addConstraint(new Constraint('stitem_id', '=', $this->id));
 		$sh->addConstraint(new Constraint('status', 'in', "('N', 'R', 'P', 'S')"));
+		$sh->addConstraintChain(new Constraint('type', '=', 'O'));
 		$sh->setOrderby('due_despatch_date');
 
 		$solines->load($sh);
@@ -1015,13 +1109,29 @@ class STItem extends DataObject
 		return $this->child_structures;
 	}
 
-	public function getOperations()
+	/**
+	 * Return an array of operations for the item
+	 * 
+	 * @param $type mixed
+	 *     Operation type(s), @see MFOperation
+	 */
+	public function getOperations($type=['R', 'B'])
 	{
 		if ($this->operations) {
 			return $this->operations;
 		}
 
 		$cc = new ConstraintChain;
+		if (!is_array($type)) {
+			$cc->add(new Constraint('type', '=', $type));
+		} else {
+			$type_cc = new ConstraintChain;
+			foreach ($type as $t) {
+				$type_cc->add(new Constraint('type', '=', $t), 'OR');
+			}
+			$cc->add($type_cc);
+		}
+		
 		$cc->add(new Constraint('stitem_id', '=', $this->id));
 
 		$db = DB::Instance();

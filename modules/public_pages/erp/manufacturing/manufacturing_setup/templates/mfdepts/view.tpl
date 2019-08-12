@@ -25,10 +25,13 @@
 				{heading_cell field="centre" }
 					Centre Name
 				{/heading_cell}
+				{heading_cell field="available_qty" }
+					Available Qty
+				{/heading_cell}
 				{heading_cell field="centre_rate" }
 					Centre Rate
 				{/heading_cell}
-				{heading_cell field="production_recording" }
+				{heading_cell field="production_recording"  class='center'}
 					Production Recording
 				{/heading_cell}
 			{/heading_row}
@@ -39,6 +42,9 @@
 					{/grid_cell}
 					{grid_cell model=$model cell_num=2 field="centre"}
 						{$model->centre}
+					{/grid_cell}
+					{grid_cell model=$model cell_num=2 field="available_qty"}
+						{$model->available_qty}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=2 field="centre_rate"}
 						{$model->centre_rate}

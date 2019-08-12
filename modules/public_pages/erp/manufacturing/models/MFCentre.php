@@ -29,6 +29,8 @@ class MFCentre extends DataObject {
 // Define field formats
 		$this->getField('centre_rate')->addValidator(new NumericValidator());
 		$this->getField('centre_rate')->addValidator(new MinimumValueValidator(0));
+		$this->getField('available_qty')->addValidator(new NumericValidator());
+		$this->getField('available_qty')->addValidator(new MinimumValueValidator(1));
 		
 // Define enumerated types
  		

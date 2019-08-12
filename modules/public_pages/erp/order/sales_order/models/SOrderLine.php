@@ -86,6 +86,12 @@ class SOrderLine extends SPOrderLine {
 								)
 						);
 
+		$sorder_model = new SOrder;
+		$this->setEnum(
+			'type',
+			$sorder_model->enums['type']
+		);
+
 // Define system defaults
 		$this->getField('order_qty')->setDefault('0');
 		$this->getField('os_qty')->setDefault('0');

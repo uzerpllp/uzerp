@@ -252,7 +252,7 @@ $(document).ready(function () {
 		
 	});
 	
-	$('a[href*="printDialog"], a[href*="printdialog"]').click(function (event) {
+	$(document).on('click', 'a[href*="printDialog"], a[href*="printdialog"]', function(event){
 		
 		event.preventDefault();
 		
@@ -273,7 +273,6 @@ $(document).ready(function () {
 			uz_print_dialog({url: $(this).attr('href'), data: {fields: fields} });
 		}
 		else {
-
 			uz_print_dialog({url: $(this).attr('href')});
 		}
 		
@@ -499,7 +498,6 @@ $(document).ready(function () {
 			}
 
 			var link = '/?' + makeQueryString($_GET) + '&ajax=';
-	
 			uz_print_dialog({
 				url: link,
 				data: form_data + "&index_key=" + randomString() + "&index_link=" + Base64.encode(form.attr('action') + '&ajax=') + "&Search[print]=print"
@@ -925,41 +923,6 @@ $(document).ready(function () {
 			
 		}
 
-	});
-	
-	// Progress Bar for Costing Rollover - needs to be here as driven off main menu
-	
-	$('a[href*="action=rollover"]').live('click', function (event) {
-		
-		event.preventDefault();
-		
-		options = {main_url 		: $(this).attr('href')
-				  ,progress_url		: "/?module=costing&controller=stcosts&action=getprogress&monitor_name=costs_rollover&ajax="
-				  ,heading			: "Costs Rollover"
-				  ,success_message	: "Costs Rollover Completed OK"
-				  ,fail_message		: "Costs Rollover Failed"
-		};
-		
-		uz_progressbar(options);
-		
-	});
-	
-	// Progress Bar for Recalculating Costing - needs to be here as driven off main menu
-	
-	$('a[href*="action=recalclatestcosts"]').live('click', function (event) {
-		
-		event.preventDefault();
-		
-		options = {main_url 		: $(this).attr('href')
-				  ,progress_url		: "/?module=costing&controller=stcosts&action=getprogress&monitor_name=recalclatestcosts&ajax="
-				  ,heading			: "Recalculate Latest Costs"
-				  ,title			: "Recalculating...."
-				  ,success_message	: "Recalculation Completed OK"
-				  ,fail_message		: "Recalculation Failed"
-		};
-		
-		uz_progressbar(options);
-		
 	});
 	
 });

@@ -1,5 +1,8 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 /**
  * IndexController Allows users to login to uzERP
  *
@@ -243,17 +246,24 @@ class IndexController extends Controller
                 }
 
                 $user->update($user->username, 'password', password_hash($passwd, PASSWORD_DEFAULT));
-                $flash->addError('Your new password will be emailed to you shortly.');
+                $flash->addMessage('Your new password will be emailed to you shortly.');
 
                 $message = "You have modified your password for " . SERVER_ROOT . "\n" . "Your username is {$user->username}\n" . "Your password is {$passwd}\n" . "Thank you";
 
                 $subject = 'New Password';
                 $to = $email;
 
-                $headers = 'From: ' . get_config('ADMIN_EMAIL') . "\r\n" . 'X-Mailer: PHP/' . phpversion();
-
                 if ($to != '') {
-                    mail($to, $subject, $message, $headers);
+                    $mail = new PHPMailer(true);
+                    try {
+                        $mail->setFrom(get_config('ADMIN_EMAIL'));
+                        $mail->addAddress($to);
+                        $mail->Subject = $subject;
+                        $mail->Body = $message;
+                        $mail->send();
+                    } catch (Exception $e) {
+                        $flash->addError("New password email could not be sent. Mailer Error: {$mail->ErrorInfo}");
+                    }
                 }
 
                 $this->index();

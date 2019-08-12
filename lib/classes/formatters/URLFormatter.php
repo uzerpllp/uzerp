@@ -20,7 +20,7 @@ class URLFormatter implements FieldFormatter {
 			return '';
 		}
 		
-		return '<a class="website" href="http://' . str_replace('http://', '', $value) . '">' . h($value) . '</a>';
+		return '<a class="website" href="http://' . str_replace('http://', '', $value) . '">' . uzh($value) . '</a>';
 		
 	}
 	

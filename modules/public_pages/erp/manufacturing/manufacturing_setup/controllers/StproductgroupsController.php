@@ -18,6 +18,10 @@ class StproductgroupsController extends ManufacturingController {
 	}
 
 	public function index(){
+		$s_data = [];
+
+		$this->setSearch('productgroupsSearch', 'useDefault', $s_data);
+
 		$this->view->set('clickaction', 'edit');
 		parent::index(new STProductgroupCollection($this->_templateobject));
 		

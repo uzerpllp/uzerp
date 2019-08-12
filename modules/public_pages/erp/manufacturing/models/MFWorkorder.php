@@ -13,13 +13,17 @@ class MFWorkorder extends DataObject
 	
 	protected $defaultDisplayFields = array('wo_number'
 											,'order_qty'
-											,'stitem'	=> 'Stock Item'
+											,'item_code'
+											,'stitem'	=> 'Description'
+											,'start_date'
 											,'required_by'
 											,'made_qty'
 											,'status'
 											,'stitem_id'
 											,'data_sheet_id'
 											);
+	
+	protected $hasAttachmentOutputs = ['tag' => 'workorder', 'name' => 'Work Orders', ];
 											
 	function __construct($tablename='mf_workorders')
 	{
@@ -87,6 +91,11 @@ class MFWorkorder extends DataObject
 		
 		return parent::Factory($data, $errors, $do);
 
+	}
+
+	public static function getAttachmentOutputsDefinition() {
+		$model = new self;
+		return $model->hasAttachmentOutputs;
 	}
 
 	public function getBalances($field, $type="All")

@@ -28,10 +28,9 @@
 					{input type='text' attribute='net_price' value=$model->getPrice()|string_format:"%.2f" class="readonly" readonly=true label="Net Price" }
 					{select attribute='currency_id' label='Currency' value=$currency}
 					{select attribute='glaccount_id' options=$gl_accounts value=$gl_account label='GL Account'}
-					{select attribute='glcentre_id' options=$gl_centres label='Cost Centre'}
+					{select attribute='glcentre_id' options=$gl_centres value=$gl_centre label='Cost Centre'}
 					{input type='date' attribute='start_date' }
 					{input type='date' attribute='end_date' value=$SOProductlineHeader->end_date}
-					{input type='text' attribute='ean' }
 				</dl>
 			</div>
 		{/with}

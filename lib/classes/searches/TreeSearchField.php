@@ -72,7 +72,7 @@ class TreeSearchField extends SearchField {
 				$selected = 'selected="selected"';
 			}
 			
-			$html .= '<option value="' . $val . '" ' . $selected . '>' . h(prettify($opt)) . '</option>';
+			$html .= '<option value="' . $val . '" ' . $selected . '>' . uzh(prettify($opt)) . '</option>';
 			
 		} 
 		

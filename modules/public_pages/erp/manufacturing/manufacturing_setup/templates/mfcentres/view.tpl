@@ -10,6 +10,7 @@
 			{view_data model=$transaction attribute="mfdept" label="Department"}
 			{view_data model=$transaction attribute="work_centre"}
 			{view_data model=$transaction attribute="centre"}
+			{view_data model=$transaction attribute="available_qty"}
 			{view_data model=$transaction attribute="centre_rate"}
 			{view_data model=$transaction attribute="production_recording"}
 		</dl>

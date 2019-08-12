@@ -17,8 +17,14 @@
 							{$heading}
 						{/heading_cell}
 					{/foreach}
-					{heading_cell field="complete"}
+					{heading_cell}
+						Action
 					{/heading_cell}
+					{if $module_prefs['allow-wo-print'] !== 'D'}
+					{heading_cell}
+						Print
+					{/heading_cell}
+					{/if}
 				{/heading_row}
 			</thead>
 			{foreach name=datagrid item=model from=$mfworkorders}
@@ -34,15 +40,21 @@
 					{/foreach}
 					<td>
 						{if $model->status!='C'}
-							{if $model->status=='N'}
-								Release?
-								<input type='hidden' name='status[{$model->id}]' value='R'>
-							{elseif $model->status!='C'}
-								Complete?
-								<input type='hidden' name='status[{$model->id}]' value='C'>
-							{/if}
 							<input type="checkbox" name="update[{$model->id}]" id="update{$model->id}" class="checkbox" />
+							{if $model->status=='N'}
+								<label for="update{$model->id}">Release Order</label>
+								<input type='hidden' name='status[{$model->id}]' value='R' label='release'/>
+							{elseif $model->status!='C'}
+								<label for="update{$model->id}">Complete Order</label>
+								<input type='hidden' name='status[{$model->id}]' value='C' />
+							{/if}
 						{/if}
+					</td>
+					<td>
+					{if (($model->status == 'N') && in_array($module_prefs['allow-wo-print'], ['A', 'N']))
+						|| (($model->status == 'R') && in_array($module_prefs['allow-wo-print'], ['A', 'R']))}
+						<input title='Print documents to default printer' type="checkbox" name="print[{$model->id}]" id="print{$model->id}" class="checkbox" />
+					{/if}
 					</td>
 				{/grid_row}
 			{foreachelse}
@@ -52,7 +64,11 @@
 			{/foreach}
 		{/data_table}
 		{if $num_incomplete > 0}
-			{submit value="Update Selected" tags="none"}
+			{if ($module_prefs['allow-wo-print'] !== 'D')}
+				{submit value="Update/Print Selected" tags="none"}
+			{else}
+				{submit value="Update Selected" tags="none"}
+			{/if}
 		{/if}
 	{/form}
 	{paging}

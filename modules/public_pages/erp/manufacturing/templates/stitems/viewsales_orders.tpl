@@ -8,12 +8,14 @@
 	{advanced_search}
 	<div id="view_page" class="clearfix">
 	<input type="hidden" id="print_force_index" value="true" />
-		<h3>Sales Orders</h3>
 		{paging}
 		{data_table}
 			{heading_row}
 				{heading_cell field="order_number"}
-					Sales Order No.
+					Order No.
+				{/heading_cell}
+				{heading_cell field="type"}
+					Type
 				{/heading_cell}
 				{heading_cell field="customer"}
 					Customer
@@ -39,6 +41,9 @@
 				<td>
 					{link_to module=$clickmodule controller=$clickcontroller action=$clickaction id=$model->order_id value=$model->order_number}
 				</td>
+				{grid_cell model=$model cell_num=2 field="type"}
+					{$model->getFormatted('type')}
+				{/grid_cell}
 				{grid_cell model=$model cell_num=2 field="customer"}
 					{$model->customer}
 				{/grid_cell}

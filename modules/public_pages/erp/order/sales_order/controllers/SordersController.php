@@ -427,6 +427,9 @@ class SordersController extends printController
         if (isset($this->_data[$this->modeltype]['person_id'])) {
             // this is set if there has been error and we are redisplaying the screen
             $default_person = $this->_data[$this->modeltype]['person_id'];
+        } elseif (isset($this->_data['person_id'])) {
+            // creating order from company/person
+            $default_person = $this->_data['person_id'];
         } else {
             if (! $sorder->isLoaded()) {
                 $default_person = $this->getDefaultValue($this->modeltype, 'person_id', '');
@@ -535,6 +538,16 @@ class SordersController extends printController
             sendBack();
         }
 
+        // Check delivery address is valid for customer
+        if (!array_key_exists($header['del_address_id'], $this->getPersonAddresses($header['person_id'], 'shipping', $header['slmaster_id']))) {
+            $errors[] = 'Delivery address is not valid for the selected customer';
+        }
+
+        // Check invoice address is valid for customer
+        if (!array_key_exists($header['inv_address_id'], $this->getPersonAddresses($header['person_id'], 'billing', $header['slmaster_id']))) {
+            $errors[] = 'Invoice address is not valid for the selected customer';
+        }
+
         $result = false;
 
         if ($order && empty($errors)) {
@@ -554,6 +567,10 @@ class SordersController extends printController
 
         if (isset($header['id']) && $header['id'] != '') {
             $this->_data['id'] = $header['id'];
+        }
+
+        if (isset($header['type']) && $header['type'] != '') {
+            $this->_data['type'] = $header['type'];
         }
 
         if (isset($header['slmaster_id']) && $header['slmaster_id'] != '') {
@@ -1286,6 +1303,7 @@ class SordersController extends printController
         $orders = new SOrderCollection($this->_templateobject);
 
         $sh = $this->setSearchHandler($orders);
+        $sh->addConstraintChain(new Constraint('type', '=', 'O'));
 
         $orders->getItems($sh);
 
@@ -2101,14 +2119,21 @@ class SordersController extends printController
                 $errors[] = 'line ' . $line['line_number'] . ' : Print quantity must be greater than zero';
                 continue;
             }
+            $productline = new SOProductline();
+            $productline->load($lines[$key]['productline_id']);
+            $product = new SOProductlineHeader();
+            $product->load($productline->productline_header_id);
+            
             $label_data = [];
             $description_parts = explode('-', $lines[$key]['description'], 2);
+            $label_data[$key]['item_code'] = trim($lines[$key]['item_code']);
             $label_data[$key]['item_number'] = trim($description_parts[0]);
             $label_data[$key]['item_description'] = trim($description_parts[1]);
+            $label_data[$key]['customer_product_code'] = trim($productline->customer_product_code);
+            $label_data[$key]['ean'] = trim($product->ean);
 
             for ($count = 1; $count <= $line['print_qty']; $count ++) {
                 $extra[]['label'] = $label_data;
-                ;
             }
         }
 
@@ -2119,9 +2144,10 @@ class SordersController extends printController
         }
 
         // generate the XML
-        $xml = $this->generateXML(array(
+        $xml = $this->generateXML([
+            'model' => $sorder,
             'extra' => $extra
-        ));
+        ]);
 
         // set the print options
         $data['printtype'] = 'pdf';
@@ -3588,6 +3614,9 @@ class SordersController extends printController
         $payment_term->load($order->customer->payment_term_id);
 
         foreach ($order->lines as $orderlines) {
+            if ($orderlines->status == 'X') {
+                continue;
+            }
             // tax (in the UK at least) is dependent on the tax_rate of the item, and the tax status of the customer.
             // this function is a wrapper to a call to a config-dependent method
             // $tax_percentage=calc_tax_percentage($orderlines->tax_rate_id,$customer->tax_status_id,$orderlines->net_value);

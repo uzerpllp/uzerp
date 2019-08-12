@@ -18,10 +18,12 @@ class MfworkordersController extends ManufacturingController
 	public function __construct($module = null, $action = null)
 	{
 		parent::__construct($module, $action);
-
 		$this->_templateobject = DataObjectFactory::Factory('MFWorkorder');
-
 		$this->uses($this->_templateobject);
+
+		// Get module preferences
+		$this->module_prefs = ManufacturingController::getPreferences();
+		$this->view->set('module_prefs', $this->module_prefs);
 
 	}
 
@@ -35,6 +37,7 @@ class MfworkordersController extends ManufacturingController
 		{
 			$this->_data['Search']['wo_number'] = intval($this->_data['Search']['wo_number']);
 		}
+
 
 		$this->setSearch('workordersSearch', 'useDefault', $s_data);
 
@@ -114,7 +117,7 @@ class MfworkordersController extends ManufacturingController
 
 	public function batchUpdate()
 	{
-		if (!isset($this->_data['update']))
+		if (!isset($this->_data['update']) && !isset($this->_data['print']))
 		{
 			sendTo($this->name
 					,'index'
@@ -122,6 +125,7 @@ class MfworkordersController extends ManufacturingController
 		}
 
 		$update = $this->_data['update'];
+		$print = $this->_data['print'];
 
 		$flash = Flash::Instance();
 
@@ -137,7 +141,75 @@ class MfworkordersController extends ManufacturingController
 
 		if (count($errors) == 0)
 		{
-			$flash->addMessage('Selected Orders have been updated');
+			$flash->addMessage('Selected Work Orders have been updated');
+		}
+
+		if ($this->module_prefs['allow-wo-print'] !== 'D') {
+			foreach ($print as $id => $value) {
+				$worksorder = DataObjectFactory::Factory('MFWorkorder');
+				$worksorder->load($id);
+				if (isset($this->_data['update']) && ($this->_data['status'][$id] == 'C' && $this->_data['update'][$id] == 'on')) {
+					// skip printing if the status is changing to complete
+					continue;
+				}
+
+				if (unserialize($worksorder->documentation)[0]=='') {
+					continue;
+				} // No documents selected on this work order
+				$documents = InjectorClass::unserialize($worksorder->documentation);
+
+				$userPreferences	= UserPreferences::instance(EGS_USERNAME);
+				$defaultPrinter		= $userPreferences->getPreferenceValue('default_printer', 'shared');
+
+				$data				 = [];
+				$data['id']			 = $id;
+				$data['printtype']	 = 'pdf';
+				$data['printaction'] = 'Print';
+				$data['printer']	 = $defaultPrinter;
+
+				$merge_file_name = 'mfworksorders_documentation_'.$id.'_'.date('H_i_s_d_m_Y').'.pdf';
+
+				foreach ($documents as $document)
+				{
+					// when we fire the construct, pass the printController as the report does
+					// not extend another model
+					$model = new $document->class_name($this);
+					$docname = rand().'.pdf';
+					
+					$args = array(
+						'model'				=>	$worksorder,
+						'data'				=>	$data,
+						'merge_file_name'	=>	$merge_file_name,
+						'type' => 'print',
+						'printtype'	 => 'pdf'
+					);
+
+					$response = $model->buildReport($args);
+
+					if($response->status!==true)
+					{
+						$errors[] = $document->class_name.": ".$response->message;
+					}
+				}
+
+				$merge_file_path = $this->get_filetype_path('tmp').$merge_file_name;
+
+				$attachment_paths = $this->createAttachmentOutputFiles($worksorder->stitem_id);
+				if (count($attachment_paths) > 0){
+					foreach ($attachment_paths as $file){
+						$response = PDFTools::append($file, $merge_file_path);
+					}
+				}
+
+				$this->output_file_to_printer($merge_file_path, $data['printer']);
+
+				if (count($errors)>0)
+				{
+					$flash->addErrors($errors);
+				} else {
+					$flash->addMessage('Work Order Documentation Printed');
+				}
+			}
 		}
 
 		sendTo($this->name
@@ -324,10 +396,11 @@ class MfworkordersController extends ManufacturingController
 			}
 			else
 			{
-				sendTo('STItems'
-						,'viewWorkorders'
-						,$this->_modules
-						,array('id'=>$data->stitem_id));
+				// sendTo('STItems'
+				// 		,'viewWorkorders'
+				// 		,$this->_modules
+				// 		,array('id'=>$data->stitem_id));
+				sendTo('mfworkorders', 'index', 'manufacturing');
 			}
 		}
 
@@ -737,9 +810,13 @@ class MfworkordersController extends ManufacturingController
 
 		$sh = $this->setSearchHandler($elements);
 
-		$sh->addConstraint(new Constraint('stitem_id', '=', $transaction->stitem_id));
+		$cc = new ConstraintChain;
+		$cc->add(new Constraint('stitem_id', '=', $transaction->stitem_id));
+		$cd = currentDateConstraint();
+		$cc->add($cd);
+		$sh->addConstraintChain($cc);
 
-		$sh->setFields(array('id', 'op_no', 'centre', 'resource', 'resource_qty', 'volume_period', 'volume_target', 'volume_uom_id'));
+		$sh->setFields(array('id', 'op_no', 'remarks', 'centre', 'resource', 'resource_qty', 'volume_period', 'volume_target', 'batch_op', 'volume_uom_id'));
 
 		parent::index($elements, $sh);
 
@@ -1121,6 +1198,7 @@ class MfworkordersController extends ManufacturingController
     					}
 				    }
 				}
+
 			}
 			else
 			{
@@ -1137,6 +1215,14 @@ class MfworkordersController extends ManufacturingController
 
 			// construct file path, print the file and add a success message
 			$merge_file_path = $this->get_filetype_path('tmp').$merge_file_name;
+
+			// append attachments
+			$attachment_paths = $this->createAttachmentOutputFiles($worksorder->stitem_id);
+			if (count($attachment_paths) > 0 && !isset($this->_data['original_action'])){
+				foreach ($attachment_paths as $file){
+					$response = PDFTools::append($file, $merge_file_path);
+				}
+			}
 
 			if (!isset($this->_data['type']) || $this->_data['type'] === 'print') {
     			$this->output_file_to_printer($merge_file_path, $data['printer']);
@@ -1623,6 +1709,42 @@ class MfworkordersController extends ManufacturingController
 		}
 
 	}
+
+
+    private function createAttachmentOutputFiles($entity_id) {
+
+        $attachments = new EntityAttachmentOutputCollection;
+        $sh = new SearchHandler($attachments, false);
+        $sh->addConstraint(new Constraint('type', '=', 'application/pdf'));
+        $sh->addConstraint(new Constraint('tag', '=', MFWorkorder::getAttachmentOutputsDefinition()['tag']));
+        $sh->addConstraint(new Constraint('entity_id', '=', $entity_id));
+        $sh->setOrderby('print_order', 'ASC');
+
+        $attachments->load($sh);
+        $attachment_paths = [];
+
+        if (count($attachments) > 0) {
+            foreach ($attachments as $attachment)
+            {
+                $file = DataObjectFactory::Factory('File');
+                $file->load($attachment->id);
+                
+                $db = &DB::Instance();
+                
+                $content =$db->BlobDecode($file->file, $file->size); 
+
+                $tpaths = $this->get_paths('123', 'pdf');
+                $fhandle = fopen($tpaths['temp_file_path'], 'w');
+
+                fwrite($fhandle, $content);
+                fclose($fhandle);
+
+                $attachment_paths[] = $tpaths['temp_file_path'];
+            }
+        }
+
+        return $attachment_paths;
+    }
 
 	protected function getPageName($base = null, $action = null)
 	{

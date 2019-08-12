@@ -94,6 +94,154 @@ class PorderlinesController extends Controller {
 		$this->refresh();
 	}
 	
+	/**
+	 * Add a line to purchase against a Work Order Routing Outside Operation
+	 */
+	public function new_wopurchase()
+	{
+
+		$flash = Flash::Instance();
+
+		parent::_new();
+		
+		// Get the Order Line Object - if loaded, this is an edit
+		$porderline = $this->_uses[$this->modeltype];
+		
+		if (!$porderline->isLoaded())
+		{
+			if (empty($this->_data['order_id']))
+			{
+				$flash->addError('No Purchase Order supplied');
+				sendBack();
+			}
+			
+			$porderline->order_id	= $this->_data['order_id'];
+			$porderline->status		= $porderline->newStatus();
+		}
+		
+		$porder = DataObjectFactory::Factory('POrder');
+		
+		$porder->load($porderline->order_id);
+
+		$_plmaster_id=$porder->plmaster_id;
+		
+		if (isset($this->_data[$this->modeltype]))
+		{
+		// We've had an error so refresh the page
+			$_plmaster_id = $this->_data['POrder']['plmaster_id'];
+			
+			$porderline->line_number = $this->_data[$this->modeltype]['line_number'];
+			
+			//$_product_search = $this->_data[$this->modeltype]['product_search'];
+			
+			if (!empty($this->_data[$this->modeltype]['productline_id']))
+			{
+				$_productline_id = $this->_data[$this->modeltype]['productline_id'];
+			}
+			else
+			{
+				$_productline_id = '';
+			}
+			
+			$_glaccount_id = $this->_data[$this->modeltype]['glaccount_id'];
+			
+		}
+		elseif ($porderline->isLoaded())
+		{
+			$_product_search=$porderline->description;
+			$_productline_id	= $porderline->productline_id;
+			$_glaccount_id		= $porderline->glaccount_id;
+		}
+		else
+		{
+			$_product_search = 'None';
+			
+			$porderline->due_despatch_date = $porder->despatch_date;
+			$porderline->due_delivery_date = $porder->due_date;
+		}
+		
+		if ($porderline->lineAwaitingDelivery())
+		{
+			$porderlines = new POrderLineCollection();
+			
+			$porderlines->getAuthSummary($porder->id);
+			
+			if (EGS_USERNAME==$porder->checkAuthLimits($porderlines))
+			{
+				$this->view->set('amend_qty', true);
+			}
+		}
+		
+		$display_fields = $porderline->getDisplayFields();
+		
+		$options = $porderline::getWorkOrdersNeedingPurchase(['plmaster_id' => $_plmaster_id]);
+		
+		$productlines = new POProductlineCollection();
+		foreach($options as $values) {
+			$comp[] = $values['po_productline_header_id'];
+		}
+
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('productline_header_id', 'in', '('.implode(',', $comp).')'));
+		//$cc->add(new Constraint('productline_header_id', '=', $options[key($options)]['po_productline_header_id']));
+		$cc->add(new Constraint('plmaster_id', '=', $_plmaster_id));
+		$sh = new SearchHandler($productlines, false);
+		$sh->addConstraint($cc);
+		$productlines->load($sh);
+
+		$op_options = [];
+		$first_wo = $options[key($options)]['id'];
+		foreach ($productlines as $p) {
+			foreach ($options as $opt){
+				if ($opt['po_productline_header_id'] == $p->productline_header_id && $opt['id'] == $first_wo) {
+					$op_options[$p->id] = [
+						'op_no' => $opt['op_no'],
+						'op_id' => $opt['op_id'],
+						'description' => $p->description
+					];
+					$this->view->set('default_description', $p->description);
+					$this->view->set('default_price', $p->price);
+					$this->view->set('net_value', number_format($options[key($options)]['order_qty'] * $p->price, 2));
+					$this->view->set('default_due_date', date('d/m/Y', strtotime("+{$opt['lead_time']} weekdays")));
+				}
+			}
+		}
+		$productlines->rewind();
+
+		uasort($op_options, function ($a, $b) { return strcmp($a["op_no"], $b["op_no"]); });
+		
+		if (empty($_productline_id)) {
+			$_productline_id = $productlines->current()->id;
+		}
+		
+		$this->view->set('display_fields', $display_fields);
+		//$this->view->set('product_search', $_product_search);
+		$this->view->set('productline_options', $productline_options);
+		
+		$data = $this->getProductLineData($_productline_id);
+		
+		$this->view->set('stuom_options', $data['stuom_id']);
+		$this->view->set('glaccount_options', $data['glaccount_id']);
+		
+		if (empty($_glaccount_id))
+		{
+			$_glaccount_id=key($data['glaccount_id']);
+		}
+		
+		$wo_options = [];
+		foreach ($options as $v) {
+			$wo_options[$v['id']] = $v['workorder'];
+		}
+
+		$this->view->set('work_order_qty', $options[key($options)]['order_qty']);
+		$this->view->set('glcentre_options', $this->getCentre($_glaccount_id, $_productline_id));
+		$this->view->set('taxrate_options', $data['tax_rate_id']);
+		$this->view->set('porder', $porder);
+		$this->view->set('wo_options', $wo_options);
+		$this->view->set('op_options', $op_options);
+		$this->view->set('page_title', 'Work Order Purchase');
+	}
+
 	public function _new()
 	{
 
@@ -331,7 +479,20 @@ class PorderlinesController extends Controller {
 					$other+=array('ajax'=>'');
 				}
 				
-				sendTo($this->name, 'new', $this->_modules, $other);
+				if(isset($data['mf_workorders_id'])) {
+					$available_wo_purchase = POrderLine::getWorkOrdersNeedingPurchase(['plmaster_id' => $porder->plmaster_id]);
+					if (count($available_wo_purchase) != 0) {
+						sendTo($this->name, 'new_wopurchase', $this->_modules, $other);
+					} else {
+						$flash->addMessage('No more Work Order purchases required for this supplier');
+						unset($other);
+						$action		= 'view';
+						$controller	= 'porders';
+						$other		= array('id'=>$data['order_id']);
+					}
+				} else {
+					sendTo($this->name, 'new', $this->_modules, $other);
+				}
 			}
 			else
 			{
@@ -603,6 +764,13 @@ class PorderlinesController extends Controller {
 		$data['glaccount_id']	= $this->buildSelect('', 'glaccount_id', $data['glaccount_id']);
 		$data['tax_rate_id']	= $this->buildSelect('', 'tax_rate_id', $data['tax_rate_id']);
 
+		// Add the lead time in weekdays to today's date
+		if(isset($this->_data['op_id'])) {
+			$op = new MFOperation();
+			$op->load($this->_data['op_id']);
+			$data['due_delivery_date'] = date('d/m/Y', strtotime("+{$op->lead_time} weekdays"));
+		}
+
 		foreach ($data as $field=>$values)
 		{
 			$output[$field] = array('data'=>$values, 'is_array'=>is_array($values));
@@ -613,6 +781,98 @@ class PorderlinesController extends Controller {
 		$this->view->set('data',$output);
 		$this->setTemplateName('ajax_multiple');
 				
+	}
+
+	/**
+	 * Return a response containing updated Work Order operation/productline information
+	 * 
+	 * Called via XHR when a work order is selected for a new work order purchase PO line
+	 * 
+	 * @see PordelinesControllers::new_wopurchase
+	 */
+	public function getWorkOrderOperationLines()
+	{
+
+		$ajax = isset($this->_data['ajax']);
+		unset($this->_data['ajax']);
+
+		$mfworkorder_id = $this->_data['mfworkorder_id'];
+		$plmaster_id = $this->_data['plmaster_id'];
+
+		$work_order_ops = POrderLine::getWorkOrdersNeedingPurchase(['plmaster_id' => $plmaster_id, 'workorder_id' => $mfworkorder_id]);
+		
+		foreach($work_order_ops as $values) {
+			$plid[] = $values['po_productline_header_id'];
+		}
+
+		$productlines = new POProductlineCollection();
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('productline_header_id', 'in', '('.implode(',', $plid).')'));
+		$cc->add(new Constraint('plmaster_id', '=', $plmaster_id));
+		$sh = new SearchHandler($productlines, false);
+		$sh->addConstraint($cc);
+		$productlines->load($sh);
+
+		$op_options = [];
+		foreach ($work_order_ops as $r) {
+			foreach ($productlines as $p) {
+				if ($r['po_productline_header_id'] == $p->productline_header_id) {
+					$op_options[$p->id] = [
+						'op_no' => $r['op_no'],
+						'op_id' => $r['op_id'],
+						'description' => $p->description
+					];
+				}
+			}
+		}
+		
+		//$data = $this->getProductLineData(key(op_options));
+		foreach ($productlines as $p) {
+			if ($p->id == key($op_options)) {
+				$productline = $p;
+			}
+		}
+
+		$data['description']	= $productline->description;
+		$data['price']			= $productline->getPrice();
+		$data['stuom_id']		= array($productline->product_detail->stuom_id=>$productline->product_detail->uom_name);
+		
+		$account = DataObjectFactory::Factory('GLAccount');
+		$account->load($productline->glaccount_id);
+		$data['glaccount_id']	= array($account->id=>$account->account.' - '.$account->description);
+		
+		$tax_rate = DataObjectFactory::Factory('TaxRate');
+		$tax_rate->load($productline->product_detail->tax_rate_id);
+		$data['tax_rate_id']	= array($tax_rate->id=>$tax_rate->description);
+
+		$data['stuom_id']		= $this->buildSelect('', 'stuom_id', $data['stuom_id']);
+		$data['glaccount_id']	= $this->buildSelect('', 'glaccount_id', $data['glaccount_id']);
+		$data['tax_rate_id']	= $this->buildSelect('', 'tax_rate_id', $data['tax_rate_id']);
+
+		foreach ($data as $field=>$values)
+		{
+			$output[$field] = array('data'=>$values, 'is_array'=>is_array($values));
+		}
+
+		$first_op = $op_options[key($op_options)]['op_id'];
+		$template = '<select id="POrderLine_productline_id" data-field="productline_id" name="POrderLine[productline_id]" class="nonone">';
+		foreach ($op_options as $pl => $op) {
+			$template .= "<option value=\"{$pl}\" data-opid=\"{$op['op_id']}\">{$op['op_no']} - {$op['description']}</option>";
+		}
+		$template .= '</select><input type="hidden" id="POrderLine_mf_operations_id" data-field="mf_operations_id" name="POrderLine[mf_operations_id]" value="{$first_op}">';
+
+		$output['productline_id'] = [
+			'data' => $template,
+			'is_array' => false
+		];
+
+		$output['revised_qty'] = [
+			'data' => $work_order_ops[0]['order_qty'],
+			'is_array' => false
+		];
+
+		$this->view->set('data', $output);
+		$this->setTemplateName('ajax_multiple');
 	}
 	
 	protected function getPageName($base = null, $action = null)

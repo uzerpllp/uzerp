@@ -21,7 +21,6 @@ class Report extends DataObject {
             $this->idField='id';
             $this->identifierField='tablename';
             $this->orderby = 'description';
-
       }
 
       function createDataObject ($fields, &$idField='', $columns) {
@@ -236,22 +235,18 @@ class Report extends DataObject {
 
             $db=DB::Instance();
 
-            $tables=$db->MetaTables('VIEWS', true);
+            $tables=$db->getAll(
+                  "SELECT viewname FROM pg_catalog.pg_views
+                  WHERE schemaname = 'reports';"
+            );
 
-            // ATTENTION: this is not a permanent solution, we cannot rely on substring
-            // the table name to see if it has "reports." on the front of it
-
-            $array = array();
-
+            $array = [];
             foreach ($tables as $key=>$table) {
-                  if(substr($table, 0, 8) == 'reports.')
-                        $array[$table]=$table;
+                  $array[$table['viewname']]=$table['viewname'];
             }
 
             asort($array);
-
             return $array;
       }
-
 }
 ?>

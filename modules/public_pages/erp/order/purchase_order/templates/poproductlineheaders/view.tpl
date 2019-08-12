@@ -17,6 +17,7 @@
 				{view_data attribute="start_date"}
 				{view_data attribute="end_date"}
 				{view_data attribute="tax_rate"}
+				{view_data attribute="commodity_code"}
 			{/with}
 			{with model=$POProductlineHeader->item_detail}
 				{view_data attribute="latest_cost"}

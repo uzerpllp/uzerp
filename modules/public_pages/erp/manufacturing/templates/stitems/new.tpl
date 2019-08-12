@@ -56,10 +56,31 @@
 						{select attribute='comp_class' }
 					{/if}
 					{select attribute='abc_class' }
+
+					{if $module_prefs['use-only-default-cost-basis'] == 'on' && $self.action !== 'edit'}
+						{view_data  attribute='cost_basis' value=$module_prefs['default-cost-basis']}
+						{input type='hidden' attribute='cost_basis' value=$module_prefs['default-cost-basis']}
+					{else if $module_prefs['use-only-default-cost-basis'] == 'on'}
+						{view_data  attribute='cost_basis' }
+						{input type='hidden' attribute='cost_basis'}
+					{else}
+    					{if $inuse && $model->comp_class=='M'}
+    						{view_data  attribute='cost_basis' }
+    						{input type='hidden' attribute='cost_basis'}
+    					{else if !$inuse || $model->comp_class=='M'}
+    						<div id="cost_basis_container">
+    						{if $self.action !== 'edit'}
+    						{select attribute='cost_basis' value=$module_prefs['default-cost-basis']}
+    						{else}
+    						{select attribute='cost_basis'}
+    						{/if}
+    						</div>
+    					{/if}
+    				{/if}
 					{if !$inuse || $model->comp_class=='B'}
-						<div id="latest_mat_container">
-							{input type='text' label='Materials Cost' attribute='latest_mat' }
-						</div>
+					<div id="latest_mat_container">
+						{input type='text' label='Materials Cost' attribute='latest_mat' }
+					</div>
 					{/if}
 					{input type='text'  attribute='batch_size' }
 					{input type='text'  attribute='lead_time' }

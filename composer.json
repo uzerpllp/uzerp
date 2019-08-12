@@ -1,25 +1,20 @@
 {
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/uzerpllp/adodb.git"
-        }
-    ],
-
     "require": {
-        "robmorgan/phinx": "*",
-        "smarty/smarty": "3.1.21",
-        "adodb/adodb-php": "@dev",
-        "riimu/kit-csrf": "2.*",
-        "symfony/http-foundation": "^3.1",
-        "symfony/yaml": "^3.1",
+        "robmorgan/phinx": "^0.9.2",
+        "smarty/smarty": "^3.1",
+        "riimu/kit-csrf": "^2.4",
+        "symfony/http-foundation": "^3.4",
+        "symfony/yaml": "^3.4",
         "ircmaxell/random-lib": "^1.2",
-        "sentry/sentry": "^1.6"
+        "sentry/sentry": "^1.9.1",
+        "phpmailer/phpmailer": "~6.0",
+        "league/oauth2-client": "^2.4",
+        "adodb/adodb-php": "^5.20"
     },
 
     "autoload": {
-        "files" : [
-            "vendor/adodb/adodb-php/adodb-xmlschema03.inc.php"
+        "classmap": [
+            "plugins/jobqueue/"
         ],
         "psr-4": {
             "UzerpPhinx\\": "schema/phinx/classes/"

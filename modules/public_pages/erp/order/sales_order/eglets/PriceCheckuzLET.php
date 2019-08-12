@@ -17,6 +17,7 @@ class PriceCheckuzLET extends SimpleEGlet {
 	
 	function populate() {
 //		$orderline=new SOrderLine();
+		$this->contents = [];
 		$this->contents['orderline']=new SOproductline();
 	}
 	

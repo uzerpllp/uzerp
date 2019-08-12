@@ -5,7 +5,7 @@
  *
  *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
  *	@license GPLv3 or later
- *	@copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *	@copyright (c) 2019 uzERP LLP (support#uzerp.com). All rights reserved.
  *
  *	uzERP is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -185,6 +185,7 @@ class SorderlinesController extends printController
         $this->view->set('glcentre_options', $this->getCentre($_glaccount_id, $_productline_id));
         $this->view->set('taxrate_options', $data['tax_rate_id']);
         $this->view->set('sorder', $sorder);
+        $this->view->set('display_stock', $this->displaySalesStock());
     }
 
     public function save()
@@ -291,6 +292,15 @@ class SorderlinesController extends printController
         return $accounts->getAll($cc);
     }
 
+    private function displaySalesStock() {
+        $system_prefs = SystemPreferences::instance();
+        $pref = $system_prefs->getPreferenceValue('soline-entry-stock', 'sales_order');
+        if ($pref === 'on') {
+            return true;
+        }
+        return false;
+    }
+
     private function getProductLineData($_productline_id = '', $_slmaster_id = '')
     {
         $data = array();
@@ -299,6 +309,11 @@ class SorderlinesController extends printController
             $productline = DataObjectFactory::Factory('SOProductline');
 
             $productline->load($_productline_id);
+            
+            $header = DataObjectFactory::Factory('SOProductlineHeader');
+            $header->load($productline->productline_header_id);
+            $stitem = DataObjectFactory::Factory('STItem');
+            $stitem->load($header->stitem_id);
 
             if ($productline->isLoaded()) {
                 $data['description'] = $productline->description;
@@ -306,6 +321,10 @@ class SorderlinesController extends printController
                 $data['stuom_id'] = array(
                     $productline->product_detail->stuom_id => $productline->product_detail->uom_name
                 );
+
+                if ($stitem->isLoaded()) {
+                    $data['sales_stock'] = $stitem->pickableBalance();
+                }
 
                 $account = DataObjectFactory::Factory('GLAccount');
                 $account->load($productline->glaccount_id);

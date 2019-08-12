@@ -1,5 +1,8 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 /**
  *	uzERP Users Controller
  *
@@ -65,9 +68,19 @@ class UsersController extends printController
 
                 $subject = 'Password reset';
                 $to = $user->email;
-                $headers = 'From: ' . get_config('ADMIN_EMAIL') . "\r\n" . 'X-Mailer: PHP/' . phpversion();
 
-                mail($to, $subject, $message, $headers);
+                if ($to != '') {
+                    $mail = new PHPMailer(true);
+                    try {
+                        $mail->setFrom(get_config('ADMIN_EMAIL'));
+                        $mail->addAddress($to);
+                        $mail->Subject = $subject;
+                        $mail->Body = $message;
+                        $mail->send();
+                    } catch (Exception $e) {
+                        $flash->addError("New password email could not be sent. Mailer Error: {$mail->ErrorInfo}");
+                    }
+                }
             }
 
             sendBack();

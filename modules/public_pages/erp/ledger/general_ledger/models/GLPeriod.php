@@ -74,20 +74,37 @@ class GLPeriod extends DataObject
 		$this->loadBy($sh);
 	}
 	
+	/**
+	 * Return current GL period
+	 * 
+	 * Returns one row containing the 'current' GL period
+	 * i.e. the oldest period that is still open
+	 * 
+	 * @returns object DB row
+	 */
 	function getCurrentPeriod()
 	{
-//
-//	Returns one row containing the 'current' period
-//  i.e. the oldest period that is still open
-//	
 		$sh = new SearchHandler(new GLPeriodCollection($this),false);
-		
 		$sh->fields = '*';
-		
 		$sh->addConstraint(new Constraint('closed', 'is not', 'true'));
-		
 		$sh->setOrderby('enddate','ASC');
-		
+		$this->loadBy($sh);
+	}
+
+	/**
+	 * Return current Tax period
+	 * 
+	 * Returns one row containing the 'current' tax period
+	 * i.e. the oldest period that is still open
+	 * 
+	 * @returns object DB row
+	 */
+	function getCurrentTaxPeriod()
+	{
+		$sh = new SearchHandler(new GLPeriodCollection($this),false);
+		$sh->fields = '*';
+		$sh->addConstraint(new Constraint('tax_period_closed', 'is not', 'true'));
+		$sh->setOrderby('enddate','ASC');
 		$this->loadBy($sh);
 	}
 	
@@ -128,22 +145,35 @@ class GLPeriod extends DataObject
 		
 	}
 	
+	/**
+	 * Return tax period numbers for the specified year
+	 * 
+	 * @param string $year
+	 * 
+	 * @return array Returns array of tax period numbers
+	 */
 	public static function getTaxPeriods($year = null)
 	{
 		$db = DB::Instance();
-		
+		$qvars = [EGS_COMPANY_ID];
+
+		if ($year !== null)
+		{
+			array_push($year, $qvars);
+		}
+
 		$query = 'SELECT DISTINCT tax_period
 					FROM gl_periods
-					WHERE usercompanyid = '.EGS_COMPANY_ID;
-		
+					WHERE tax_period != 0 AND usercompanyid = ?';
+
 		if ($year)
 		{
-			$query .= ' AND year = '.$db->qstr($year);
+			$query .= ' AND year = ?';
 		}
-		
+
 		$query .= ' ORDER BY tax_period ASC';
-		
-		return $db->GetCol($query);
+
+		return $db->GetCol($query, $qvars);
 	}
 	
 	public static function getFuturePeriods($period, $year)

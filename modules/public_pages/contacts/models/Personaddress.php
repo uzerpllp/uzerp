@@ -30,6 +30,7 @@ class Personaddress extends DataObject
  		$this->belongsTo('Country', 'countrycode', 'country');
  		$this->belongsTo('Person', 'person_id', 'person');
 		$this->setConcatenation('address',array('street1','street2','street3','town','county','postcode','country'),',');
+		$this->orderby = ['address'];
 	}
 	
 	function getAddresses($_person_id, $cc = '')

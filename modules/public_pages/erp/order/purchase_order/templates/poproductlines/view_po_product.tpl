@@ -13,6 +13,7 @@
 				{view_data attribute='product_group'}
 				{view_data attribute='uom_name'}
 				{view_data attribute="tax_rate"}
+				{view_data attribute="commodity_code"}
 			</dl>
 		    <dl class="float-right" >
 				{view_data attribute="gl_account"}

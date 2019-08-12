@@ -72,7 +72,10 @@ class POrderLine extends SPOrderLine
  		$this->belongsTo('POProductline', 'productline_id', 'product_description'); 
  		$this->belongsTo('STuom', 'stuom_id', 'uom_name'); 
  		$this->belongsTo('STItem', 'stitem_id', 'stitem'); 
- 		$this->hasOne('POrder', 'order_id', 'header');
+		$this->hasOne('POrder', 'order_id', 'header');
+
+		$this->belongsTo('MFWorkOrder', 'mf_workorders_id', 'workorder');
+		$this->belongsTo('MFOperation', 'mf_operations_id', 'operation');
 
 		// Define field formats
  		$params			= DataObjectFactory::Factory('GLParams');
@@ -619,7 +622,52 @@ class POrderLine extends SPOrderLine
 			return '';
 		}
 	}
-	
+
+	/**
+	 * Return Work Order Operations that require purchases
+	 * 
+	 * I.e. outside processing operations
+	 * 
+	 * @param $params array  ('plmaster_id' => plmaster table id, 'workorder_id' => mf_workorder table id)
+	 * @return array  ADODB result assoc array
+	 */
+	public static function getWorkOrdersNeedingPurchase($params=[]) {
+$query = <<<QUERY
+SELECT mfw.id, mfw.wo_number || ': ' || sti.item_code || ' - ' || sti.description as workorder, mfw.order_qty, mfo.po_productline_header_id, mfo.id as op_id, mfo.op_no, mfo.lead_time
+FROM mf_workorders mfw
+JOIN mf_operations mfo ON mfo.stitem_id = mfw.stitem_id
+JOIN st_items sti ON sti.id = mfw.stitem_id
+left join po_lines pol ON pol.mf_workorders_id = mfw.id AND pol.mf_operations_id = mfo.id AND pol.status != 'X'
+left join po_product_lines ppl on ppl.productline_header_id = mfo.po_productline_header_id
+WHERE (mfo.end_date is null OR (mfo.start_date <= now() AND mfo.end_date >= now()))
+	AND mfo.type='O' AND mfw.status !='C'
+	AND mfo.po_productline_header_id is not null
+	AND pol.id is null
+QUERY;
+
+		$db=&DB::Instance();
+
+		if (isset($params['plmaster_id'])) {
+			$query .= ' AND ppl.plmaster_id = ?';
+		}
+
+		if (isset($params['workorder_id'])) {
+			$query .= ' AND mfw.id = ?';
+		}
+		
+		$query .= ' ORDER BY mfw.wo_number';
+
+		if (is_array($params)) {
+			$result=$db->Execute($query, $params);
+		} else {
+			$result=$db->Execute($query);
+		}
+		
+		if (!$result) {
+			return false;
+		}
+		return $result->getArray();
+	}
 }
 
 // end of POrderLine.php

@@ -495,6 +495,40 @@ class system
         }
 
         /**
+         * Get job messages
+         */
+        $messages = uzJobMessages::Factory(EGS_USERNAME, EGS_COMPANY_ID);
+        $messages->displayJobMessages();
+
+/*         $flash = Flash::Instance();
+        $cache = Cache::Instance();
+        $key_part = EGS_USERNAME . "_" . EGS_COMPANY_ID;
+        $tokens = json_decode($cache->get("{$key_part}_job_messages"), true);
+        $new_tokens = [];
+        if ($tokens) {
+            foreach ($tokens as $token) {
+                $job_message = json_decode($cache->get("{$key_part}_{$token}"), true);
+                if ($job_message) {
+                    switch ($job_message['type']) {
+                        case 'warning':
+                            $flash->addWarning($job_message['message']);
+                            break;
+                        case 'error':
+                            $flash->addError($job_message['message']);
+                            break;
+                        case 'success':
+                            $flash->addMessage($job_message['message']);
+                            break;
+                    }
+                    $cache->delete("{$key_part}_{$token}");
+                } else {
+                    $new_tokens[] = $token;
+                    $cache->add("{$key_part}_job_messages", json_encode($new_tokens));
+                }
+            }
+        } */
+
+        /**
          * *BEGIN CACHE CHECK*****
          */
         if (! defined('EGS_COMPANY_ID')) {

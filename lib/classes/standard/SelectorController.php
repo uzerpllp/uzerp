@@ -1395,20 +1395,31 @@ class SelectorController extends PrintController
         exit();
     }
 
-    /*
-     * Private Functions
+     //Private Functions
+
+    /**
+     * Get the descritpion of the next level in the selector hierarchy
+     * 
+     * @param string $description Current level in hierarchy
+     * 
+     * @return mixed string/false
      */
-    private function getNextDescription($description = '')
+     private function getNextDescription($description = '')
     {
+        // Return the description of the top level of the hierarchy
         $first = reset($this->itemFields);
         if (empty($description)) {
             return $first;
         }
-        foreach ($this->itemFields as $field) {
-            if ($field == $description) {
-                return current($this->itemFields);
+
+        // Return the description of the next level in the hierarchy
+        while ($this->itemFields) {
+            if (current($this->itemFields) == $description) {
+                return next($this->itemFields);
             }
+            next($this->itemFields);
         }
+
         return false;
     }
 

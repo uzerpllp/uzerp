@@ -12,7 +12,16 @@
  */
 
 $(document).ready(function() {
-																																						
+
+	/* planned orders -> createorder */
+	$('#purchase_order-poplanned-index').on('change', '#select-all', function() {
+		$('input:checkbox.select').not(this).prop('checked', this.checked);
+	});
+
+	$('input:checkbox.select').on('click', function() {
+		$('input#select-all').prop('checked', false);
+	});
+
 	/* purchase_order -> porders -> new */
 
 	$('#default_receive_action', '#purchase_order-porders-new').live('change', function() {
@@ -97,13 +106,13 @@ $(document).ready(function() {
 	
 	/* purchase_order -> porders -> view */
 	
-	$('.edit-line a, .add_lines_related a').live('click', function(event) {
+	$('.edit-line a, .add_lines_related a, .add_work_order_purchase_related a' ).live('click', function(event) {
 		
 		event.preventDefault();
 		
 		var $self = $(this);
 		
-		if ($self.parent('li').hasClass('add_lines_related')) {
+		if ($self.parent('li').hasClass('add_lines_related') || $self.parent('li').hasClass('add_work_order_purchase_related')) {
 			var title	= 'Add Purchase Order Line';
 			var type	= 'add';
 		} else {
@@ -137,13 +146,40 @@ $(document).ready(function() {
 	
 	/* purchase_order -> porderlines -> new */
 	
-	$('select, input', '#purchase_order-porderlines-new').live('change',function() {
+	$('select, input, #purchase_order-porderlines-new, #purchase_order-porderlines-new_wopurchase').live('change',function() {
 		
 		/* get the field name */
 		var $self	= $(this),
 			field	= $self.data('field');
 		
 		switch(field) {
+
+			case 'mf_workorders_id':
+
+				var optionSelected = $("option:selected", this);
+				
+				$.uz_ajax({
+					target:[
+						{
+							element	: '#POrderLine_productline_id',
+							field	: 'productline_id'
+						},
+						{
+							element	: '#POrderLine_revised_qty',
+							field	: 'revised_qty'
+						}
+					],
+					data: {
+						module			: 'purchase_order',
+						controller		: 'porderlines',
+						action			: 'getWorkOrderOperationLines',
+						plmaster_id		: $('#POrder_plmaster_id').val(),
+						mfworkorder_id	: $('#POrderLine_mf_workorders_id').val(),
+						ajax			: ''
+					}
+				});
+
+				break;
 		
 			case 'product_search':
 				
@@ -163,6 +199,9 @@ $(document).ready(function() {
 				
 			case 'productline_id':
 				
+			var optionSelected = $("option:selected", this);
+			$('#POrderLine_mf_operations_id').val(optionSelected.data('opid'));
+
 				$.uz_ajax({
 					target:[
 						{
@@ -184,6 +223,10 @@ $(document).ready(function() {
 						{
 							element	: '#POrderLine_tax_rate_id',
 							field	: 'tax_rate_id'
+						},
+						{
+							element	: '#POrderLine_due_delivery_date',
+							field	: 'due_delivery_date'
 						}
 					],
 					data: {
@@ -193,6 +236,7 @@ $(document).ready(function() {
 						productline_id	: $self.val(),
 						plmaster_id		: $('#POrder_plmaster_id').val(),
 						product_search	: $('#POrderLine_product_search').val(),
+						op_id			: $('#POrderLine_mf_operations_id').val(),
 						ajax			: ''
 					}
 				});

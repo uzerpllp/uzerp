@@ -2843,6 +2843,7 @@ class DataObject implements Iterator
     {
         $db = DB::Instance();
         $tablename = $this->_tablename;
+        $col2name = '';
 
         if ($use_collection) {
             $collection_name = get_class($this) . 'Collection';
@@ -2880,7 +2881,14 @@ class DataObject implements Iterator
             $fields = $this->identifierField;
         }
 
-        $query = 'SELECT ' . $this->idField . ', ' . $fields . ' FROM ' . $tablename;
+        // GetAssoc will not return any records with a query containing the same column twice (ADODB 5.20.x).
+        // Fixing that here as there seem to be a number of places in the code where the identifier field is twiddled.
+        if ($this->idField == $this->identifierField) {
+            $col2name = "AS {$this->identifierField}_2";
+            error_log("WARNING: DataObject::getAll adding the same DB column twice to the query", 0);
+        }
+
+        $query = "SELECT {$this->idField}, {$fields} {$col2name} FROM {$tablename}";
         $constraint = $uc->__toString();
 
         if (! empty($constraint)) {

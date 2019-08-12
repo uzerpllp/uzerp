@@ -1,7 +1,7 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
+{**
+ *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *
+ *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.5 $ *}
 {content_wrapper}
@@ -12,6 +12,7 @@
 			{view_data model=$transaction attribute="uom_name"}
 			{view_data model=$transaction attribute="comp_class"}
 			{view_data model=$transaction attribute="type_code"}
+			{view_data model=$transaction attribute="cost_basis"}
 			{view_data model=$transaction attribute="product_group"}
 		</dl>
 	</div>

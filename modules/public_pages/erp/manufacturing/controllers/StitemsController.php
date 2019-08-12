@@ -19,6 +19,10 @@ class StitemsController extends printController
         $this->_templateobject = DataObjectFactory::Factory('STItem');
 
         $this->uses($this->_templateobject);
+
+        // Get module preferences
+        $this->module_prefs = ManufacturingController::getPreferences();
+        $this->view->set('module_prefs', $this->module_prefs);
     }
 
     public function index()
@@ -90,6 +94,12 @@ class StitemsController extends printController
 
         $flash = Flash::Instance();
 
+        // Check cost basis preferences
+        if (! $this->costBasisValid($this->_data[$this->modeltype]['cost_basis'])) {
+            $flash->addError('Cost basis not allowed by module settings');
+            sendBack();
+        }
+
         $db = DB::Instance();
 
         $db->StartTrans();
@@ -108,6 +118,16 @@ class StitemsController extends printController
             $stitem->load($data['id']);
         }
 
+        // Set the cost basis for items with a non-manufactured comp_class
+        if ($data['comp_class'] !== 'M') {
+            $data['cost_basis'] = $this->module_prefs['default-cost-basis'];
+        }
+
+        // Update the cost, some operations may be batch ops
+        if ($stitem->isLoaded() && ($stitem->batch_size != $data['batch_size'])) {
+            $update_cost = true;
+        }
+
         if ($data['comp_class'] == 'B') {
             $data['latest_cost'] = $data['latest_mat'];
             $data['latest_lab'] = 0;
@@ -115,6 +135,7 @@ class StitemsController extends printController
             $data['latest_ohd'] = 0;
 
             if ($stitem->isLoaded()) {
+
                 $old_costs = array(
                     $stitem->latest_cost,
                     $stitem->latest_mat,
@@ -159,8 +180,7 @@ class StitemsController extends printController
 
             // Indicate that the user wants the description change cascaded to all
             // linked products and product lines
-            if ((isset($this->_data[$this->modeltype]['cascade_description_change_so']) && $this->_data[$this->modeltype]['cascade_description_change_so'] === 'on')
-                || (isset($this->_data[$this->modeltype]['cascade_description_change_po']) && $this->_data[$this->modeltype]['cascade_description_change_po'] === 'on')) {
+            if ((isset($this->_data[$this->modeltype]['cascade_description_change_so']) && $this->_data[$this->modeltype]['cascade_description_change_so'] === 'on') || (isset($this->_data[$this->modeltype]['cascade_description_change_po']) && $this->_data[$this->modeltype]['cascade_description_change_po'] === 'on')) {
                 $product_data['description'] = 'description';
             }
         }
@@ -253,7 +273,7 @@ class StitemsController extends printController
 
         $this->_data[$this->modeltype]['item_code'] = strtoupper($this->_data[$this->modeltype]['item_code']);
 
-        if ($this->_data[$this->modeltype]['copy_so_product_prices'] == 'on' && !isset($this->_data[$this->modeltype]['copy_so_products'])) {
+        if ($this->_data[$this->modeltype]['copy_so_product_prices'] == 'on' && ! isset($this->_data[$this->modeltype]['copy_so_products'])) {
             $errors[] = 'Cannot copy prices without product';
         }
 
@@ -304,8 +324,7 @@ class StitemsController extends printController
                         $cc->add(currentDateConstraint());
                     }
 
-
-                    if (isset($so_product_id) && !is_null($so_product_id) && $do_name == 'SOProductLine') {
+                    if (isset($so_product_id) && ! is_null($so_product_id) && $do_name == 'SOProductLine') {
                         $do = DataObjectFactory::Factory($do_name);
                         $cc = new ConstraintChain();
                         $cc->add(new Constraint('productline_header_id', '=', $so_product_id));
@@ -318,7 +337,7 @@ class StitemsController extends printController
                         $children = $do->getAll($cc);
                     }
 
-                    if (!empty($children)) {
+                    if (! empty($children)) {
                         foreach ($children as $child_id => $value) {
                             $child = DataObjectFactory::Factory($do_name);
 
@@ -335,12 +354,13 @@ class StitemsController extends printController
 
                                 if ($do_name == 'SOProductLineHeader') {
                                     $child->start_date = $this->_data[$this->modeltype]['pstart_date'];
-                                    $child->description = $this->_data[$this->modeltype]['description'];
+                                    $child->description = $this->_data[$this->modeltype]['item_code'] . ' - ' . $this->_data[$this->modeltype]['description'];
+                                    $child->ean = '';
                                 }
 
-                                if (isset($so_product_id) && !is_null($so_product_id) && $do_name == 'SOProductLine') {
+                                if (isset($so_product_id) && ! is_null($so_product_id) && $do_name == 'SOProductLine') {
                                     $child->productline_header_id = $new_so_product_id;
-                                    $child->description = $this->_data[$this->modeltype]['description'];
+                                    $child->description = $this->_data[$this->modeltype]['item_code'] . ' - ' . $this->_data[$this->modeltype]['description'];
                                     $child->start_date = $this->_data[$this->modeltype]['pstart_date'];
                                 } else {
                                     $child->stitem_id = $stitem_id;
@@ -361,7 +381,6 @@ class StitemsController extends printController
                                     $so_product_id = $child_id;
                                     $new_so_product_id = $test;
                                 }
-
                             } else {
                                 $errors[] = 'Failed to load ' . $do_name;
                                 break;
@@ -478,26 +497,6 @@ class StitemsController extends printController
             );
         }
 
-        $sidebarlist['cost_sheet'] = array(
-            'tag' => 'Show Cost Sheet',
-            'link' => array(
-                'module' => 'costing',
-                'controller' => 'STCosts',
-                'action' => 'costSheet',
-                'stitem_id' => $id
-            )
-        );
-
-        $sidebarlist['cost_history'] = array(
-            'tag' => 'Show Cost History',
-            'link' => array(
-                'module' => 'costing',
-                'controller' => 'STCosts',
-                'action' => 'index',
-                'stitem_id' => $id
-            )
-        );
-
         if ($transaction->po_products->count() > 0 || $transaction->workorders->count() > 0 || $transaction->wo_structures->count() > 0) {
             $sidebarlist['po_supply'] = array(
                 'tag' => 'Purchasing Supply/Demand',
@@ -562,8 +561,75 @@ class StitemsController extends printController
 
         $sidebar->addList('This Item', $sidebarlist);
 
-        $this->sidebarRelatedItems($sidebar, $transaction);
+        // MF Structures, operations and costing
+        if ($transaction->comp_class == 'M' || $transaction->comp_class == 'S') {
+            $sidebarlist = [];
+            $sidebarlist['Structure'] = array(
+                'tag' => 'View Structures',
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => 'mfstructures',
+                    'action' => 'index',
+                    'stitem_id' => $id
+                )
+            );
+            if ($transaction->comp_class !== 'S') {
+                $sidebarlist['Operations'] = array(
+                    'tag' => 'View Operations',
+                    'link' => array(
+                        'modules' => $this->_modules,
+                        'controller' => 'mfoperations',
+                        'action' => 'index',
+                        'stitem_id' => $id
+                    )
+                );
+            }
+            $sidebarlist['OutsideOperations'] = array(
+                'tag' => 'View Outside Operations',
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => 'mfoutsideoperations',
+                    'action' => 'index',
+                    'stitem_id' => $id
+                )
+            );
+            $sidebarlist['cost_sheet'] = array(
+                'tag' => 'View Cost Sheet',
+                'link' => array(
+                    'module' => 'costing',
+                    'controller' => 'STCosts',
+                    'action' => 'costSheet',
+                    'stitem_id' => $id
+                )
+            );
+            $sidebarlist['cost_history'] = array(
+                'tag' => 'View Cost History',
+                'link' => array(
+                    'module' => 'costing',
+                    'controller' => 'STCosts',
+                    'action' => 'index',
+                    'stitem_id' => $id
+                )
+            );
+            $sidebar->addList('Stucture and Operations', $sidebarlist);
+        }
 
+        //Related Items
+        $this->sidebarRelatedItems($sidebar, $transaction, [
+            'balances',
+            'transactions',
+            'uom_conversions',
+            'where_used',
+            'workorders',
+            'purchase_orders',
+            'purchase_invoices',
+            'sales_orders',
+            'sales_invoices',
+            'so_products_prices',
+            'po_product_prices',
+            'so_products',
+            'po_products'
+        ]);
         $sidebar->addList('related_items', array(
             'documents' => array(
                 'tag' => 'Show Documents',
@@ -637,7 +703,10 @@ class StitemsController extends printController
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
 
-        $this->view->set('page_title', $this->getPageName('', 'View'));
+        $stitem = new STItem;
+        $stitem->load($this->_data['id']);
+        $identifier = $stitem->getIdentifierValue;
+        $this->view->set('page_title', "Stock Balances for {$stitem->item_code} - {$stitem->description}");
     }
 
     public function viewOutside_Operations()
@@ -1188,6 +1257,7 @@ class StitemsController extends printController
             'id',
             'order_id',
             'order_number',
+            'type',
             'customer',
             'order_qty',
             'revised_qty',
@@ -1823,6 +1893,21 @@ class StitemsController extends printController
     protected function getPageName($base = null, $action = null)
     {
         return parent::getPageName((empty($base) ? 'Stock Items' : $base), $action);
+    }
+
+    /**
+     * Check that a cost basis is valid with the current module settings
+     *
+     * @return boolean
+     */
+    protected function costBasisValid($cost_basis)
+    {
+        if (($this->module_prefs['use-only-default-cost-basis'] == 'on' &&
+                $this->module_prefs['default-cost-basis'] !== $cost_basis) &&
+                $this->_data[$this->modeltype]['comp_class'] == 'M') {
+            return false;
+        }
+        return true;
     }
 
     /**

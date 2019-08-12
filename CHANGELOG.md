@@ -1,5 +1,212 @@
 # Change Log
+
 All notable changes to this project will be documented in this file.
+
+## [1.17] 2019-06-26
+
+### Fixed
+
+- Sales Summary uzLET is now responsive
+- Corrected column header alignmet on Aged Debtors Summary uzLET
+- Chart widgets can be scrolled horizontally on small screens
+- Exclude sales quotations from supply/demand views
+- Sort company and person addresses on drop-downs
+- Show correct stock transactions for dates selected in search
+
+### Changed
+
+- Removed reliance on uzERP ADODB fork and updated dependency to use upstream releases
+
+### Added
+
+- Add Gov-Client-Device-ID header to Making Tax Digital VAT interactions
+- Documents attached to stock items can be selected to be printed with work orders for the item.
+- Search for manufacturing product groups
+
+### Removed
+
+- The password strength meter has been removed
+
+## [1.16] 2019-05-24
+
+**Testing Release**
+
+### Added
+
+- Time based operation costing
+    - Select *cost basis* for Stock Items, *volume* or *time*
+    - Operation entry/edit forms respond to the item cost basis
+    - New Manufacturing module settings:
+        - Default units for operation volume/time
+        - Default cost basis for new Stock Items
+        - Use only the default cost basis for new Stock Items
+
+- Manufacturing operations can be marked as batch operations, causing the per item labour and overhead cost to be divided by the item's batch size (if set).
+
+- Manufacturing Centres have an *Available Qty* field. This can be used to indicate the number of machines of a type available, for example. This number has no effect in uzERP, but may be used by external planning tools like frePPLe.
+
+- Outside operations can be placed in the manufactured item routing with a lead time and linked to a purchase product line that holds supplier and price information.
+    - The outside operation supplier(s) are available to print on the operations/route card output.
+    - Outside operation purchasing - purchase against work order routing outside operations, using the *Add Work Order Purchase* from the purchase order side-bar.
+    - New Manufacturing module settings:
+        - Product Group for routing outside operation purchases, all outside op purchase product lines must be linked to the chosen product group.
+        - Work Centre for routing outside operations, the work centre used in work order operations.
+        - Resource for routing outside operations, the MF resource for outside operations.
+
+- Integration with frePPLe - the open source, production planning and scheduling solution - https://frepple.com:
+    - Import Work Orders, Sales & Purchase Orders, inventory, etc. from uzERP into frePPLe to generate planned work orders and purchase orders.
+    - Export selected orders or a complete plan back in to uzERP for execution.
+        - Planned purchase review and order creation - lists planned purchase requirements directly in uzERP, create purchase orders for individual items or group them on one purchase order.
+        - Work orders are created directly in uzERP from frePPLe, with start dates, ready to release.
+    - See our frePPLe connector: https://github.com/uzerpllp/uzerpfrepple.
+
+- Delayed/Async Jobs
+    - Tasks can now be queued and run by a worker in the background
+    - Latest cost recalculation and cost roll-over have been moved to jobs
+
+### Changed
+
+- Allow printing of Work Order documentation from the Work Order list view.
+    - Work Order documents can be printed ahead of release or re-printed while open.
+    - Printing at release time, by selecting both 'release' and 'print'.
+    - This option must be enabled in the Manufacturing module preferences found under Setup > Manufacturing Setup > MF Module Preferences.
+
+- Updated workflow for Operations, Outside Operations and Structures
+    - New sidebar group for ops, structures and costing when viewing a stock item
+    - One click to view the current ops, structure, etc.
+    - Clicking on the op or structure line number will show the edit form
+    - All forms have 'Save and Add...' buttons to speed up datat entry
+    - Form 'cancel' links allow easy return to the ops/structure list for the item
+
+### Fixed
+
+    - Ensure email address string is displayed correctly in print/output dialog
+    - Sales price check uzLET failed ajax requests
+
+## [1.15.2] 2019-05-13
+
+- Fix error when viewing product list under product selector level.
+- Allow multiple recipients, separated by a comma, to be added when outputting to email.
+
+## [1.15.1] 2019-04-23
+
+- Minor bug fix
+
+## [1.15] 2019-04-23
+
+### Added
+
+- Functions added to phinx UzerpMigration base class to make adding/removing module components easier.
+
+### Changed
+
+- Main VAT return view now allows listing and searching for returns and is not restricted to a single return.
+- All actions related to individual VAT returns (period close, submit, etc.) have been moved to the individual return view.
+
+### Fixed
+
+- Prevent Making Tax Digital re-authorisation on Oauth2 access token expiry.
+- VAT transaction reports can be output to CSV, print, email, etc.
+
+## [1.14.1] 2019-04-10
+
+- Minor fixes for PHP 7.1+ compatibility
+- Move VAT reports to VAT Return View
+
+## [1.14] 2019-03-25
+
+Support for Making Tax Digital for VAT
+
+## [1.13] 2019-02-11
+
+### Added
+
+VAT Report views can be output to CSV by using the 'Output' button in the search area.
+
+### Fixed
+
+VAT Report views and transaction printing updated to use new calculations, matching the VAT return.
+
+## [1.12.3] 2018-12-12
+
+### Added
+
+- Add Sales Order module preference to show current pickable stock balance when entering new order lines
+
+### Fixed
+
+- Product selector links added at wrong level of the hierarchy
+- Use of pdftk for PDF merging replaced by qpdf. pdftk no longer available in Ubuntu 18.04 repos
+
+### Changed
+
+- The 1.12.3 release package contains an update to the ADODB database library, making it compatible with PHP 7.1
+
+## [1.12.2] 2018-11-12
+
+### Fixed
+
+- Use PHPMailer for user emails
+
+## [1.12.1] 2018-11-09
+
+### Changed
+
+- Use PHPMailer class to send email from uzERP
+
+### Fixed
+
+- Prevent error when viewing Cashbook Account details, See [issue 181](https://github.com/uzerpllp/uzerp/issues/181).
+
+## [1.12] 2018-09-06
+
+### Changed
+
+- Move EAN number to sales product header and add validation
+- Remove EAN from purchased productlines
+- Move dashboard edit link
+
+### Fixed
+
+- Item cloning
+  - Clear EAN when cloning an item with a sales product
+  - Concatenate new item number and description as new sales product description
+- Set default GL centre from product header when entering a new sales or purchase product
+- Prevent hidden model fields from being selected for display in data grids
+
+### Added
+
+- Make Order detail, EAN number, stock item code and customer code available to sales order item labels
+- Commodity code field for sales and purchased product headers
+
+## [1.11] 2018-08-08
+
+### Changed
+
+- Dashboards now use CSS grid layout
+- Quicklinks have been removed from all dashboards
+- VAT
+  - Add facility to pay/receive VAT via the cashbook
+  - Move closing the VAT period to a separate action
+  - Performance improvements 
+
+### Fixed
+
+- When editing uzLETs on a dashboard the listed order is the same as the display order
+- The Home dashboard will not display any uzLETs until the user sets their preferred list
+- 'Top 10' Sales uzLETsnot restricted to products linked to stock items
+
+## [1.10.4] 2018-07-19
+
+### Fixed
+
+- Set correct billing and shipping address when creating an order directly from a company/person
+
+## [1.10.3] 2018-07-11
+
+### Added
+
+- Validate billing and shipping address selection on sales orders when saving.
 
 ## [1.10.2] 2018-04-08
 
@@ -244,7 +451,7 @@ All notable changes to this project will be documented in this file.
 - Closing final period of year fails when trying to update assets
 
 ### Added
-- Make VAT amounts availabe to Sales Order Acknowledgement print
+- Make VAT amounts available to Sales Order Acknowledgement print
 
 ## [2014.3.9] - 2014-12-01
 ### Fixed
@@ -311,7 +518,7 @@ All notable changes to this project will be documented in this file.
 ## [2014.3.5] - 2014-08-20
 ### Fixed
 - Broken link on view purchase order supply/demand
-- Parentheses arround address fields cause SQL error
+- Parentheses around address fields cause SQL error
 
 ### Added
 - Print company bank account details on pro-forma invoice
@@ -329,7 +536,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2014.3.2] - 2014-06-24
 ### Added
-- Allow selection of a custom XSL report defintion for reports.
+- Allow selection of a custom XSL report definition for reports.
 
 ## [2014.3.1] - 2014-06-11
 ### Fixed
@@ -345,9 +552,20 @@ All notable changes to this project will be documented in this file.
 ## [2014.3] - 2014-05-27
 ### Changed
 - First Git controlled release on bitbucket
-- Older release notes at [uzerp.com](http://www.uzerp.com/releases)
 
-
+[1.17]: https://github.com/uzerpllp/uzerp/compare/1.16...1.17
+[1.16]: https://github.com/uzerpllp/uzerp/compare/1.15.2...1.16
+[1.15.2]: https://github.com/uzerpllp/uzerp/compare/1.15.1...1.15.2
+[1.15.1]: https://github.com/uzerpllp/uzerp/compare/1.15...1.15.1
+[1.15]: https://github.com/uzerpllp/uzerp/compare/1.14.1...1.15
+[1.14.1]: https://github.com/uzerpllp/uzerp/compare/1.14...1.14.1
+[1.14]: https://github.com/uzerpllp/uzerp/compare/1.13...1.14
+[1.13]: https://github.com/uzerpllp/uzerp/compare/1.12.3...1.13
+[1.12.2]: https://github.com/uzerpllp/uzerp/compare/1.12.1...1.12.2
+[1.12.1]: https://github.com/uzerpllp/uzerp/compare/1.12...1.12.1
+[1.12]: https://github.com/uzerpllp/uzerp/compare/1.11...1.12
+[1.11]: https://github.com/uzerpllp/uzerp/compare/1.10.4...1.11
+[1.10.3]: https://github.com/uzerpllp/uzerp/compare/1.10.2...1.10.3
 [1.10.2]: https://github.com/uzerpllp/uzerp/compare/1.10.1...1.10.2
 [1.10.1]: https://github.com/uzerpllp/uzerp/compare/1.10...1.10.1
 [1.10]: https://github.com/uzerpllp/uzerp/compare/1.9.1...1.10
@@ -376,4 +594,3 @@ All notable changes to this project will be documented in this file.
 [2014.3.3]: https://github.com/uzerpllp/uzerp/compare/2014.3.2...2014.3.3
 [2014.3.2]: https://github.com/uzerpllp/uzerp/compare/2014.3.1...2014.3.2
 [2014.3.1]: https://github.com/uzerpllp/uzerp/compare/2014.3...2014.3.1
-
