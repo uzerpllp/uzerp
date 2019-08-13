@@ -19,8 +19,7 @@
 					{view_data attribute='ni' label='NI Number'}
 					{view_data attribute='dob' label='Date of Birth'}
 					{view_data attribute='start_date' label='Start Date'}
-					{view_data attribute='finished_date'}
-					{view_data attribute='pay_frequency'}
+					{view_data attribute='finished_date'}					
 					{view_data attribute='employee_grade_id'}
 					{view_data value=$days_left label='Holiday: Days Left'}	
 					{view_data attribute='expenses_balance' label='Expenses Balance'}	

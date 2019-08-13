@@ -32,7 +32,7 @@
 					{input type='text' attribute='department' label='department' value=$person->department}
 					{select attribute='mfdept_id' label='or Select from list'}
 					{select attribute='reports_to' label='Line Manager' options=$reports_to value=$person->reports_to}
-					{select attribute='pay_frequency_id' }
+					{select attribute='pay_basis' }
 				{/view_section}
 			</dl>
 	

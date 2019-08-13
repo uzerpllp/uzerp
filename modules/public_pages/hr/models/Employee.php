@@ -13,7 +13,9 @@ class Employee extends DataObject {
 	protected $defaultDisplayFields = array(
 		'employee_number'	=> 'employee_number',
 		'employee'			=> 'employee',
+		'gender'			=> 'gender',
 		'works_number'		=> 'works_number',
+		'pay_basis'			=> 'pay_basis',
 		'employee_grade'	=> 'employee_grade',
 		'department'		=> 'department',
 		'ni'				=> 'NI Number',
@@ -45,17 +47,13 @@ class Employee extends DataObject {
  		$this->belongsTo('User', 'alteredby', 'alteredby'); 
 		$this->belongsTo('Company', 'company_id', 'company');
 		$this->belongsTo('EmployeeGrade', 'employee_grade_id', 'employee_grade');
-		$this->belongsTo('EmployeePayFrequency', 'pay_frequency_id', 'pay_frequency');
 		$this->belongsTo('Address', 'address_id', 'address');
 		$this->belongsTo('ContactMethod', 'contact_phone_id', 'phone');
 		$this->belongsTo('ContactMethod', 'contact_mobile_id', 'mobile');
 		$this->belongsTo('ContactMethod', 'contact_email_id', 'email');
-
 		$this->belongsTo('MFDept', 'mfdept_id', 'department');
-		
 		$this->hasOne('Person', 'person_id', 'person');
 		$this->hasOne('Address', 'address_id', 'personal_address');
-		
 		$this->hasMany('EmployeeRate', 'employee_rates', 'employee_id');
 		$this->hasMany('ExpenseAuthoriser', 'expense_authorisers', 'employee_id');
 		$this->hasMany('HolidayAuthoriser', 'holiday_authorisers', 'employee_id');
@@ -80,6 +78,15 @@ class Employee extends DataObject {
             'O' => 'Other',
 			'D' => 'Declined to answer'
 		));
+		
+		$this->setEnum(
+			'pay_basis',
+			array(
+					'M'	=> 'Monthly',
+					'W'	=> 'Weekly',
+			)
+		);
+		
 		
 		// Define default values
 		$params			= DataObjectFactory::Factory('GLParams');
