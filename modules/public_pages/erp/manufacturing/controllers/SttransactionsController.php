@@ -461,7 +461,9 @@ class SttransactionsController extends ManufacturingController {
 			if ($from_location->haveBalances($from_whlocation_ids)) {
 				$stock_items=STBalance::getStockList($from_whlocation_ids);
 			} else {
-				$stock_items=$stitem->getAll();
+				$cc = new ConstraintChain;
+				$cc->add(new Constraint('obsolete_date', 'is', 'NULL'));
+				$stock_items=$stitem->getAll($cc);
 			}
 			if (empty($_stitem_id)) {
 				$_stitem_id=key($stock_items);

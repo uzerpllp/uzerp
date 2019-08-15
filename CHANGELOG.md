@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Fixed
+
+- Do not allow obsolete items to be chosen for stock transactions
+
 ## [1.17] 2019-06-26
 
 ### Fixed
