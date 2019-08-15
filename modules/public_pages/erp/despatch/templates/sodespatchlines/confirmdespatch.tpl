@@ -8,11 +8,14 @@
 	{form controller="sodespatchlines" action="confirm_despatch"}
 		{data_table}
 			{heading_row}
-				{heading_cell field='despatch_number' class='right'}
+				{heading_cell field='despatch_number'}
 					Despatch Note
 				{/heading_cell}
 				{heading_cell field='despatch_date'}
 					Due Date
+				{/heading_cell}
+				{heading_cell field='order_number'}
+					Order
 				{/heading_cell}
 				{heading_cell field='customer'}
 					Customer
@@ -23,11 +26,14 @@
 			{/heading_row}
 			{foreach name=datagrid item=model from=$orders}
 				{grid_row}
-					{grid_cell cell_num=1 model=$model field='despatch_number' class='numeric'}
+					{grid_cell cell_num=1 model=$model field='despatch_number'}
 						{$model->despatch_number}
 					{/grid_cell}
 					{grid_cell cell_num=9 model=$model field='despatch_date'}
 						{$model->getFormatted('despatch_date')}
+					{/grid_cell}
+					{grid_cell cell_num=1 model=$model field='order_number'}
+						{$model->order_number}
 					{/grid_cell}
 					{grid_cell cell_num=9 model=$model field='customer' no_escape=true}
 						{$model->customer}

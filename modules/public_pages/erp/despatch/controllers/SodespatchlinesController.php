@@ -695,6 +695,7 @@ class SodespatchlinesController extends printController
 
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
+        $this->view->set('page_title', 'Confirm Despatches');
     }
 
     /* protected functions */
