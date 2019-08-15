@@ -11,6 +11,19 @@
  * 
  */
 
+/* Delegated event handlers - select input initial content for the user, on click*/
+$(document).on('click', '#purchase_order-porderlines-new #POrderLine_revised_qty', function() {
+	if (Number($(this).val()) == 0) {
+		$(this).select();
+	}
+});
+
+$(document).on('click', '#purchase_order-porderlines-new #POrderLine_price',function() {
+	if (Number($(this).val()) == 0) {
+		$(this).select();
+	}
+});
+
 $(document).ready(function() {
 
 	/* planned orders -> createorder */
