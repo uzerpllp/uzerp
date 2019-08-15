@@ -233,7 +233,9 @@ class WhlocationsController extends printController
 		$sidebar->addList('Show', $sidebarlist);
         $this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+		// disable selection of display fields - uses fixed template
+		$this->view->set('display_fields','');
+		$this->view->set('selected_fields','');
 	}
 
 	public function viewTransactions()

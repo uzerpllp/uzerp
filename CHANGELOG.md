@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Do not allow obsolete items to be chosen for stock transactions
+- Clicking an item when viewing location balances now shows the transactions for that item only
 
 ## [1.17] 2019-06-26
 
