@@ -2590,12 +2590,16 @@ class printController extends Controller
         }
 
         $list = ReportDefinition::getReportsByType($_report_type_id);
+        $defs = [];
+        foreach ($list as $key => $report) {
+            $defs[$report] = $report;
+        }
 
         if ($ajax) {
-            $this->view->set('options', $list);
+            $this->view->set('options', $defs);
             $this->setTemplateName('select_options');
         } else {
-            return $list;
+            return $defs;
         }
     }
     // ATTN: these need to be moved?
