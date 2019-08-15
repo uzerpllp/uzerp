@@ -51,7 +51,7 @@
 					{/if}
 
 					{if $model->so_products->count()>0}
-						{input type='date' attribute='pstart_date' label='Product Start Date' value=$smarty.now class="compulsory"}
+						{input type='date' attribute='pstart_date' label='SO Product Start Date' value=$smarty.now class="compulsory"}
 					{/if}
 		    	</dl>
 			</div>
