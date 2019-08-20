@@ -952,44 +952,27 @@ class VatController extends printController
 		{
 			case 1:
 			case 6:
-				$title = 'Outputs '.$title;
+				$title = "VAT Outputs {$title}";
 				break;
 			case 4:
 			case 7:
-				$title = 'Inputs '.$title;
+				$title = "VAT Inputs {$title}";
 				break;
 			case 8:
-				$title = 'EU Sales '.$title;
+				$title = "VAT EU Sales {$title}";
 				break;
 			case 2:
 			case 9:
-				$title = 'EU Purchases '.$title;
+				$title = "VAT EU Purchases {$title}";
 				break;
 		}
 		
-		$total_vat	= 0;
-		$total_net	= 0;
-		$account	= '';
-		$centre		= '';
-		
-		foreach ($gltransactions as $vat)
-		{
-			$total_vat	+=	$vat->vat;
-			$total_net	+=	$vat->net;
-			$account	=	$vat->account;
-			//$centre		=	$vat->cost_centre;
-		}
-		
 		$extra = array(
-			'total_vat'	=> $total_vat,
-			'total_net'	=> $total_net,
-			'account'	=> $account,
-			'centre'	=> $centre,
 			'title'		=> $title
 		);
 					
 		// generate the xml and add it to the options array
-		$options['xmlSource'] = $this->generateXML(
+		$options['xmlSource'] = $this->generate_xml(
 			array(
 				'model'					=> $gltransactions,
 				'extra'					=> $extra,
@@ -999,7 +982,7 @@ class VatController extends printController
 
 		$options['query'] = $gltransactions->query;
 		
-		echo $this->constructOutput($this->_data['print'], $options);
+		echo $this->generate_output($this->_data['print'], $options);
 		exit;
 		
 	}
