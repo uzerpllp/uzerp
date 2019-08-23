@@ -1412,6 +1412,8 @@ class system
      */
     private function csrfValid()
     {
+        $flash = Flash::Instance();
+
         $safe_methods = ['get', 'head', 'options', 'trace'];
         $request_method = strtolower($this->request->getMethod());
 
@@ -1422,12 +1424,16 @@ class system
                 $csrf->validateRequest(true);
             } catch (\Riimu\Kit\CSRF\InvalidCSRFTokenException $ex) {
                 error_log('Bad or missing CSRF token: ' . $this->request->getURI());
-                header('HTTP/1.0 400 Bad Request');
-                exit('Bad CSRF Token');
+                $flash->addError('Action cancelled: invalid or missing CSRF Token<br/><em>You may have a problem with your network or internet connection</em>');
+                if ($this->request->headers->get('x-requested-with') != 'XMLHttpRequest') {
+                    // uzERP's ajax can't handle this, only set for html form responses
+                    http_response_code (400);
+                }
+                return false;
             }
         }
 
-        return TRUE;
+        return true;
     }
 }
 ?>
