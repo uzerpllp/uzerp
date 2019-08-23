@@ -354,11 +354,6 @@ class SystemobjectpolicysController extends Controller
 			$module_component = DataObjectFactory::Factory('ModuleComponent');
 			$module_component->load($_module_components_id);
 			
-			if (!$module_component->isLoaded())
-			{
-				break;
-			}
-			
 			$model = DataObjectFactory::Factory($module_component->name);
 			
 			if ($_field_name == $model->idField)
