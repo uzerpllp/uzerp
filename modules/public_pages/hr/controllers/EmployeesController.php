@@ -799,13 +799,7 @@ class EmployeesController extends Controller
 							 ,'action'		=>'view_hours_summary'
 							 ,'person_id'	=>$employee->person_id
 							 ,'start_date'	=>$week_dates['week_start_date']
-							 ,'end_date'	=>$week_dates['week_end_date']),
-				'new'=>array('modules'		=>$this->_modules
-							,'controller'	=>'hours'
-							,'action'		=>'new'
-							,'person_id'	=>$employee->person_id
-							,'start_date'	=>$week_dates['week_start_date']
-							,'end_date'		=>$week_dates['week_end_date'])
+							 ,'end_date'	=>$week_dates['week_end_date'])
 			 );
 
 			$sidebarlist['payhistory'] = array(
@@ -813,11 +807,7 @@ class EmployeesController extends Controller
 				'link'=>array('modules'		=>$this->_modules
 							 ,'controller'	=>'employeepayhistorys'
 							 ,'action'		=>'view_employee'
-							 ,'employee_id'	=>$idvalue),
-				'new'=>array('modules'		=>$this->_modules
-							,'controller'	=>'employeepayhistorys'
-							,'action'		=>'new'
-							,'employee_id'	=>$idvalue)
+							 ,'employee_id'	=>$idvalue)
 			 );
 		
 		}
