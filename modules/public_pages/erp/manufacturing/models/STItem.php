@@ -1117,10 +1117,6 @@ class STItem extends DataObject
 	 */
 	public function getOperations($type=['R', 'B'])
 	{
-		if ($this->operations) {
-			return $this->operations;
-		}
-
 		$cc = new ConstraintChain;
 		if (!is_array($type)) {
 			$cc->add(new Constraint('type', '=', $type));
@@ -1141,6 +1137,7 @@ class STItem extends DataObject
 		$cc->add(new Constraint('', '', '('.$between.')'));
 
 		$mfoperations = DataObjectFactory::Factory('MFOperation');
+		$mfoperations->identifierField = 'op_no';
 
 		$mfoperations = array_keys($mfoperations->getAll($cc));
 
@@ -1188,6 +1185,7 @@ class STItem extends DataObject
 		$cc->add(new Constraint('', '', '('.$between.')'));
 
 		$mfoutsideops = DataObjectFactory::Factory('MFOutsideOperation');
+		$mfoutsideops->identifierField = 'op_no';
 
 		$mfoutsideops = array_keys($mfoutsideops->getAll($cc));
 
