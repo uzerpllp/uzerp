@@ -1351,10 +1351,6 @@ class STItem extends DataObject
 		$db = DB::Instance();
 		$db->StartTrans();
 
-		registerProgress(0, 'costs_update');
-
-		$total_items = count($parents);
-
 		foreach ($parents as $parent)
 		{
 			set_time_limit(5);
@@ -1407,8 +1403,6 @@ class STItem extends DataObject
 				$success = false;
 				break;
 			}
-
-			registerProgress(round($count*100/$total_items, 0), 'costs_update');
 		}
 
 		$db->CompleteTrans();
