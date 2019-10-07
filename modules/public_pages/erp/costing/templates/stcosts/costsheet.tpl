@@ -406,39 +406,21 @@
 	<p><strong>Total Costs</strong></p>
 	{data_table}
 		{heading_row}
-			{if $type == 'std'}
-				{heading_cell field="std_mat" class='right'}
-					Materials
-				{/heading_cell}
-				{heading_cell field="std_lab" class='right'}
-					Labour
-				{/heading_cell}
-				{heading_cell field="std_osc" class='right'}
-					Outside Contract
-				{/heading_cell}
-				{heading_cell field="std_ohd" class='right'}
-					Overhead
-				{/heading_cell}
-				{heading_cell field="std_cost" class='right'}
-					Total
-				{/heading_cell}
-			{else}
-				{heading_cell field="latest_mat" class='right'}
-					Materials
-				{/heading_cell}
-				{heading_cell field="latest_lab" class='right'}
-					Labour
-				{/heading_cell}
-				{heading_cell field="latest_osc" class='right'}
-					Outside Contract
-				{/heading_cell}
-				{heading_cell field="latest_ohd" class='right'}
-					Overhead
-				{/heading_cell}
-				{heading_cell field="latest_cost" class='right'}
-					Total Cost
-				{/heading_cell}
-			{/if}
+			{heading_cell field="std_mat" class='right'}
+				Materials
+			{/heading_cell}
+			{heading_cell field="std_lab" class='right'}
+				Labour
+			{/heading_cell}
+			{heading_cell field="std_osc" class='right'}
+				Outside Contract
+			{/heading_cell}
+			{heading_cell field="std_ohd" class='right'}
+				Overhead
+			{/heading_cell}
+			{heading_cell field="std_cost" class='right'}
+				Total
+			{/heading_cell}
 		{/heading_row}
 		{grid_row model=$stitem}
 			{if $type == 'std'}
