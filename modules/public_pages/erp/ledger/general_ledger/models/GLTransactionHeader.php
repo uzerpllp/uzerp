@@ -50,9 +50,9 @@ class GLTransactionHeader extends DataObject
 									  ,'O' => 'Posted'
 									  ));
 
-		$this->setEnum('type', array('S' => 'Standard'
-									,'T' => 'Template'));
-
+		$this->setEnum('type', ['S' => 'Standard',
+								'Y' => 'Opening Balance',
+								'T' => 'Template']);
 	}
 
 	function delete(&$errors = array())
@@ -279,6 +279,11 @@ class GLTransactionHeader extends DataObject
 		return 'S';
 	}
 
+	function closingBalanceJournal()
+	{
+		return 'Y';
+	}
+
 	function isTemplateJournal()
 	{
 		return ($this->type == $this->templateJournal());
@@ -287,6 +292,11 @@ class GLTransactionHeader extends DataObject
 	function isStandardJournal()
 	{
 		return ($this->type == $this->standardJournal());
+	}
+
+	function isClosingBalanceJournal()
+	{
+		return ($this->type == $this->closingBalanceJournal());
 	}
 
 	function isAccrual()
