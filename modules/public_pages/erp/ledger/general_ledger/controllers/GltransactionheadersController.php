@@ -50,7 +50,14 @@ class GltransactionheadersController extends printController
 									,'action'		=> 'new'
 									)
 					);
-
+		$sidebarlist['newyejournal'] = [
+			'tag'	=> 'New Year-end Journal',
+			'link'	=> [
+				'modules'		=> $this->_modules,
+				'controller'	=> $this->name,
+				'action'		=> 'new_ye_journal'
+			]
+		];
 		$sidebar->addList('Actions',$sidebarlist);
 
 		$this->view->register('sidebar',$sidebar);
@@ -165,8 +172,8 @@ class GltransactionheadersController extends printController
 	public function save()
 	{
 		if (!$this->checkParams($this->modeltype))
-		{
-			$this->dataError();
+		$this->dataError();
+			{
 			sendBack();
 		}
 
