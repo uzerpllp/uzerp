@@ -51,7 +51,7 @@ class GLTransactionHeader extends DataObject
 									  ));
 
 		$this->setEnum('type', ['S' => 'Standard',
-								'Y' => 'Opening Balance',
+								'Y' => 'Closing Balance',
 								'T' => 'Template']);
 	}
 

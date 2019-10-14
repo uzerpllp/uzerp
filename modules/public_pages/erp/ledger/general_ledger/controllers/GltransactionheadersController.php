@@ -129,7 +129,7 @@ class GltransactionheadersController extends printController
 		$this->view->set('transaction_date',un_fix_date($trandate));
 		$this->view->set('transaction_year',$year);
 		$this->view->set('period',$period_text);
-		$this->view->set('page_title', 'New Year End Journal');
+		$this->view->set('page_title', 'New Closing Balance Journal');
 	}
 
     /**
