@@ -44,7 +44,7 @@ class GltransactionheadersController extends printController
 		$sidebarlist = array();
 
 		$sidebarlist['newjournal'] = array(
-					'tag'	=> 'New Journal',
+					'tag'	=> 'New Journal/Template',
 					'link'	=> array('modules'		=> $this->_modules
 									,'controller'	=> $this->name
 									,'action'		=> 'new'
