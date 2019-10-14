@@ -121,7 +121,11 @@ class GLTransactionHeader extends DataObject
 			$data['docref'] = $db->GenID('gl_transactions_docref_seq');
 		}
 
-		$glperiod = GLPeriod::getPeriod(fix_date($data['transaction_date']));
+		if ($data['type'] == 'Y') {
+			$glperiod = GLPeriod::getYEPeriod($data['year']);
+		} else {
+			$glperiod = GLPeriod::getPeriod(fix_date($data['transaction_date']));
+		}
 
 		if ((!$glperiod) || (count($glperiod) == 0))
 		{
