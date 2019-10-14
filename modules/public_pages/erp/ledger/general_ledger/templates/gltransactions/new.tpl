@@ -14,7 +14,9 @@
 				{include file='elements/auditfields.tpl' }
 				{input type='hidden' attribute='id' }
 				{input type='hidden' attribute='docref' value=$gltransaction_header->docref}
+				{if $gltransaction_header->type != 'Y'}
 				{input type="text" attribute="reference" class="reference" value=$gltransaction_header->reference}
+				{/if}
 				{input type="text" attribute="comment" class="comment" value=$gltransaction_header->comment}
 				{select attribute="glaccount_id" options=$accounts selected=$default_account force=true}
 				{select attribute="glcentre_id" options=$centres selected=$default_centre force=true}
