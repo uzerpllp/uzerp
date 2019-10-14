@@ -114,6 +114,24 @@ class GltransactionheadersController extends printController
 
 	}
 
+	public function new_ye_journal()
+	{
+		parent::_new();
+
+		$period = DataObjectFactory::Factory('GLPeriod');
+		$period->getCurrentPeriod();
+		$year = $period->year - 1;
+		$period->loadYEPeriod($year);
+
+		$trandate	 = $period->enddate;
+		$period_text = $period->getIdentifierValue();
+
+		$this->view->set('transaction_date',un_fix_date($trandate));
+		$this->view->set('transaction_year',$year);
+		$this->view->set('period',$period_text);
+		$this->view->set('page_title', 'New Year End Journal');
+	}
+
     /**
      * Edit GL Transaction Header
      *
@@ -149,18 +167,26 @@ class GltransactionheadersController extends printController
 		}
 
 		$flash = Flash::Instance();
-
 		$errors = array();
-
-        // Form data validation
         $period = DataObjectFactory::Factory('GLPeriod');
-        $period = $period->loadPeriod($this->_data[$this->modeltype]['transaction_date']);
+		if ($this->_data[$this->modeltype]['type'] == 'Y') {
+			$period = $period->loadYEPeriod($this->_data['year']);
+			$ref_date = un_fix_date($period->enddate);
+			$this->_data[$this->modeltype]['year'] = $this->_data['year'];
+			$this->_data[$this->modeltype]['accrual_period_id'] = null;
+			$this->_data[$this->modeltype]['accrual'] = false;
+			$this->_data[$this->modeltype]['reference'] = "Year-end Closing balance adjustment as at ${ref_date}";
+		} else {
+			$period = $period->loadPeriod($this->_data[$this->modeltype]['transaction_date']);
+		}
+
+		// Form data validation
         if (! isset($period->_data)) {
             $flash->addError('Invalid GL Period, header not saved');
             sendBack();
         }
 
-        if ($period->closed == 't') {
+        if ($period->closed == 't' && $this->_data[$this->modeltype]['type'] != 'Y') {
             $flash->addError("{$period->year} - period {$period->period} is closed, header not saved");
             sendBack();
         }
