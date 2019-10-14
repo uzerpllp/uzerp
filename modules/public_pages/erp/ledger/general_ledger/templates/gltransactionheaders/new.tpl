@@ -10,7 +10,7 @@
 			{input type='hidden' attribute='id'}
 			{input type='hidden' attribute='docref'}
 			{include file='elements/auditfields.tpl' }
-			{select attribute='type'}
+			{select attribute='type' options=$types}
 			<span class='standard_field'>
 				{input type="date" attribute="transaction_date" value="$transaction_date" label="Transaction Date"} 
 			</span>

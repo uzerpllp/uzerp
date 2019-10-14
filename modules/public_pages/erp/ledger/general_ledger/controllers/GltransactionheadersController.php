@@ -111,6 +111,10 @@ class GltransactionheadersController extends printController
 		$this->view->set('transaction_date',$trandate);
 		$this->view->set('period',$period_text);
 		$this->view->set('periods',$this->getPeriods(un_fix_date($trandate)));
+		$header = new GLTransactionHeader();
+		$types = $header->getEnumOptions('type');
+		unset($types['Y']);
+		$this->view->set('types', $types);
 
 	}
 
