@@ -351,26 +351,28 @@ class GltransactionheadersController extends printController
 				);
 		}
 
-		$sidebarlist['clone'] = array(
-						'tag'	=> 'Create New From This',
-						'link'	=> array('modules'			=> $this->_modules
-										,'controller'		=> $this->name
-										,'action'			=> 'create_from_existing'
-										,$header->idField	=> $header->{$header->idField}
-						)
-				);
+		if (!$header->isClosingBalanceJournal()) {
+			$sidebarlist['clone'] = array(
+							'tag'	=> 'Create New From This',
+							'link'	=> array('modules'			=> $this->_modules
+											,'controller'		=> $this->name
+											,'action'			=> 'create_from_existing'
+											,$header->idField	=> $header->{$header->idField}
+							)
+					);
 
-		if ($header->isPosted() && $header->accrual === 'f')
-		{
-			$sidebarlist['reverse'] = array(
-						'tag'	=> 'Reverse This',
-						'link'	=> array('modules'			=> $this->_modules
-										,'controller'		=> $this->name
-										,'action'			=> 'create_from_existing'
-										,$header->idField	=> $header->{$header->idField}
-										,'reverse'			=> 'yes'
-				)
-			);
+			if ($header->isPosted() && $header->accrual === 'f')
+			{
+				$sidebarlist['reverse'] = array(
+							'tag'	=> 'Reverse This',
+							'link'	=> array('modules'			=> $this->_modules
+											,'controller'		=> $this->name
+											,'action'			=> 'create_from_existing'
+											,$header->idField	=> $header->{$header->idField}
+											,'reverse'			=> 'yes'
+					)
+				);
+			}
 		}
 
 		$sidebar->addList('Actions',$sidebarlist);
@@ -388,6 +390,8 @@ class GltransactionheadersController extends printController
 
 	public function create_from_existing()
 	{
+		$errors = array();
+		$flash = Flash::Instance();
 
 		if (!$this->loadData())
 		{
@@ -396,13 +400,12 @@ class GltransactionheadersController extends printController
 		}
 
 		$header = $this->_uses[$this->modeltype];
-
-		$errors = array();
-
-		$flash = Flash::Instance();
+		if ($header->isClosingBalanceJournal()) {
+			$flash->addError('Cannot create new from existing year-end closing balance');
+			sendBack();
+		}
 
 		$db = DB::Instance();
-
 		$db->StartTrans();
 
 		// Create new header from selected header
@@ -417,11 +420,10 @@ class GltransactionheadersController extends printController
 		{
 			// had an error so go back to view the original header and error
 			$flash->addErrors($errors);
-			$db->FailtTrans();
+			$db->FailTrans();
 		}
 
 		$db->completeTrans();
-
 		sendTo($this->name, 'view', $this->_modules, array($header->idField	=> $header->{$header->idField}));
 	}
 
