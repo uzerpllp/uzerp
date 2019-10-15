@@ -316,7 +316,7 @@ class GltransactionheadersController extends printController
 			// Check unposted journal - journal lines must exist and sum to zero
 			$TransCheck = $header->checkUnpostedTransactions();
 
-			if ($header->isStandardJournal() && $TransCheck['sum'] == 0 && $TransCheck['count'] > 0)
+			if (($header->isStandardJournal() || $header->isClosingBalanceJournal()) && $TransCheck['sum'] == 0 && $TransCheck['count'] > 0)
 			{
 				$sidebarlist['post'] = array(
 						'tag'	=> 'Post Journal',

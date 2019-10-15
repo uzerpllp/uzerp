@@ -16,6 +16,8 @@
 				{input type='hidden' attribute='docref' value=$gltransaction_header->docref}
 				{if $gltransaction_header->type != 'Y'}
 				{input type="text" attribute="reference" class="reference" value=$gltransaction_header->reference}
+				{else}
+				{input type="hidden" attribute="reference" class="reference" value=$gltransaction_header->reference}
 				{/if}
 				{input type="text" attribute="comment" class="comment" value=$gltransaction_header->comment}
 				{select attribute="glaccount_id" options=$accounts selected=$default_account force=true}

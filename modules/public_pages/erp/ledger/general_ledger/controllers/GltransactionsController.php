@@ -142,6 +142,20 @@ class GltransactionsController extends printController
 		
 		
 	}
+
+	/**
+	 * Set the correct model when editing
+	 * 
+	 */
+	public function edit()
+	{
+		$glheader = DataObjectFactory::Factory($this->_header_model);	
+		$unposted = $glheader->unpostedTransactionFactory();
+		$transaction_model = get_class($unposted);
+		$this->_templateobject = DataObjectFactory::Factory($transaction_model);
+		$this->uses($this->_templateobject);
+		parent::edit();
+	}
 	
 	public function _new()
 	{
