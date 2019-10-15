@@ -163,8 +163,8 @@ class GLTransactionHeader extends DataObject
 			return FALSE;
 		}
 
-		// Check it is a standard journal
-		if (!$this->isStandardJournal())
+		// Check it is a standard or closing balance journal
+		if (!$this->isStandardJournal() && !$this->isClosingBalanceJournal())
 		{
 			$errors[] = 'Template Journal cannot be posted';
 			return FALSE;
@@ -191,7 +191,11 @@ class GLTransactionHeader extends DataObject
 
 			GLTransaction::setTwinCurrency($transaction);
 
-			$gltransaction = GLTransaction::Factory($transaction, $errors);
+			$cp_override = false;
+			if ($this->isClosingBalanceJournal()) {
+				$cp_override = true;
+			}
+			$gltransaction = GLTransaction::Factory($transaction, $errors, $cp_override);
 
 			if ($gltransaction == false || !$gltransaction->save())
 			{
