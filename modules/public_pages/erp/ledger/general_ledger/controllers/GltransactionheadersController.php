@@ -172,8 +172,7 @@ class GltransactionheadersController extends printController
 	public function save()
 	{
 		if (!$this->checkParams($this->modeltype))
-		$this->dataError();
-			{
+		{
 			sendBack();
 		}
 
