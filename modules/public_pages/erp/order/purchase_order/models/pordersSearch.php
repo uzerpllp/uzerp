@@ -100,7 +100,7 @@ class pordersSearch extends BaseSearch
         $options = array(
             '0' => 'Select Supplier'
         );
-        $suppliers = $supplier->getAll(null, false, true, '', '');
+        $suppliers = $supplier->getAll(null, false, true, '');
         $options += $suppliers;
         $search->setOptions('plmaster_id', $options);
 
