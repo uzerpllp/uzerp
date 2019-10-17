@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- Year-end opening balance GL journals
+
 ### Fixed
 
 - Do not allow obsolete items to be chosen for stock transactions
