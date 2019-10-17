@@ -50,9 +50,9 @@ class GLTransactionHeader extends DataObject
 									  ,'O' => 'Posted'
 									  ));
 
-		$this->setEnum('type', array('S' => 'Standard'
-									,'T' => 'Template'));
-
+		$this->setEnum('type', ['S' => 'Standard',
+								'Y' => 'Closing Balance',
+								'T' => 'Template']);
 	}
 
 	function delete(&$errors = array())
@@ -121,7 +121,11 @@ class GLTransactionHeader extends DataObject
 			$data['docref'] = $db->GenID('gl_transactions_docref_seq');
 		}
 
-		$glperiod = GLPeriod::getPeriod(fix_date($data['transaction_date']));
+		if ($data['type'] == 'Y') {
+			$glperiod = GLPeriod::getYEPeriod($data['year']);
+		} else {
+			$glperiod = GLPeriod::getPeriod(fix_date($data['transaction_date']));
+		}
 
 		if ((!$glperiod) || (count($glperiod) == 0))
 		{
@@ -148,6 +152,16 @@ class GLTransactionHeader extends DataObject
 		return $this->$method($sh, $ignore_accruals);
 	}
 
+	/**
+	 * Post a Journal to the GL
+	 * 
+	 * For year-end closing journals, this also updates the
+	 * period end balances for the period and period 0 of the
+	 * following year.
+	 *
+	 * @param array $errors
+	 * @return void
+	 */
 	public function post(&$errors = array())
 	{
 		$db = db::Instance();
@@ -159,8 +173,8 @@ class GLTransactionHeader extends DataObject
 			return FALSE;
 		}
 
-		// Check it is a standard journal
-		if (!$this->isStandardJournal())
+		// Check it is a standard or closing balance journal
+		if (!$this->isStandardJournal() && !$this->isClosingBalanceJournal())
 		{
 			$errors[] = 'Template Journal cannot be posted';
 			return FALSE;
@@ -187,7 +201,11 @@ class GLTransactionHeader extends DataObject
 
 			GLTransaction::setTwinCurrency($transaction);
 
-			$gltransaction = GLTransaction::Factory($transaction, $errors);
+			$cp_override = false;
+			if ($this->isClosingBalanceJournal()) {
+				$cp_override = true;
+			}
+			$gltransaction = GLTransaction::Factory($transaction, $errors, $cp_override);
 
 			if ($gltransaction == false || !$gltransaction->save())
 			{
@@ -215,7 +233,41 @@ class GLTransactionHeader extends DataObject
 					$errors[] = 'Error updating GL balance : '.$db->ErrorMsg();
 				}
 			}
+		}
 
+		// Update GL Balances and GL Year End Balances
+		if (count($errors) == 0 && $this->isClosingBalanceJournal()) {
+
+			$period = new GLPeriod();
+			$period->load($this->glperiods_id);
+
+			$next_year = $period->year + 1;
+			$next_period = new GLPeriod();
+			$next_period->loadFirstPeriod($next_year);
+
+			// Remove all the GLBalances for period 0
+			$gl_balances = new GLBalanceCollection();
+			$sh_bal=new SearchHandler(new GLBalanceCollection(), false);
+			$periodsYTD='('.implode(',', [$next_period->id]).')';
+			$sh_bal->addConstraint(new Constraint('glperiods_id', 'in', $periodsYTD));
+			$gl_balances->delete($sh_bal);
+
+			// Remove all the GLPeriodEndBalance(s) period 12
+			$glpe_balances = new GLPeriodEndBalanceCollection();
+			$sh_pe=new SearchHandler(new GLPeriodEndBalanceCollection(), false);
+			$periodsYTD='('.implode(',', [$period->id]).')';
+			$sh_pe->addConstraint(new Constraint('glperiods_id', 'in', $periodsYTD));
+			$glpe_balances->delete($sh_pe);
+
+			// Create GLPeriodEndBalance(s) for period p12
+			$periodendbalances = new GLPeriodEndBalanceCollection(DataObjectFactory::Factory('GLPeriodEndBalance'));
+			if ($periodendbalances->create($period) === FALSE)
+			{
+				$errors[] = 'Error creating period end balances';
+			}
+
+			// Re-run year-end at this period to re-create p0 b/f balances
+			periodHandling::yearEnd($period, $errors, false);
 		}
 
 		// Update the header status if no errors so far
@@ -279,6 +331,11 @@ class GLTransactionHeader extends DataObject
 		return 'S';
 	}
 
+	function closingBalanceJournal()
+	{
+		return 'Y';
+	}
+
 	function isTemplateJournal()
 	{
 		return ($this->type == $this->templateJournal());
@@ -287,6 +344,11 @@ class GLTransactionHeader extends DataObject
 	function isStandardJournal()
 	{
 		return ($this->type == $this->standardJournal());
+	}
+
+	function isClosingBalanceJournal()
+	{
+		return ($this->type == $this->closingBalanceJournal());
 	}
 
 	function isAccrual()

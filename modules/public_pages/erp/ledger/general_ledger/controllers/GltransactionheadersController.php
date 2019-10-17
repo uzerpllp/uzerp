@@ -44,13 +44,20 @@ class GltransactionheadersController extends printController
 		$sidebarlist = array();
 
 		$sidebarlist['newjournal'] = array(
-					'tag'	=> 'New Journal',
+					'tag'	=> 'New Journal/Template',
 					'link'	=> array('modules'		=> $this->_modules
 									,'controller'	=> $this->name
 									,'action'		=> 'new'
 									)
 					);
-
+		$sidebarlist['newyejournal'] = [
+			'tag'	=> 'New Year-end Journal',
+			'link'	=> [
+				'modules'		=> $this->_modules,
+				'controller'	=> $this->name,
+				'action'		=> 'new_ye_journal'
+			]
+		];
 		$sidebar->addList('Actions',$sidebarlist);
 
 		$this->view->register('sidebar',$sidebar);
@@ -111,7 +118,29 @@ class GltransactionheadersController extends printController
 		$this->view->set('transaction_date',$trandate);
 		$this->view->set('period',$period_text);
 		$this->view->set('periods',$this->getPeriods(un_fix_date($trandate)));
+		$header = new GLTransactionHeader();
+		$types = $header->getEnumOptions('type');
+		unset($types['Y']);
+		$this->view->set('types', $types);
 
+	}
+
+	public function new_ye_journal()
+	{
+		parent::_new();
+
+		$period = DataObjectFactory::Factory('GLPeriod');
+		$period->getCurrentPeriod();
+		$year = $period->year - 1;
+		$period->loadYEPeriod($year);
+
+		$trandate	 = $period->enddate;
+		$period_text = $period->getIdentifierValue();
+
+		$this->view->set('transaction_date',un_fix_date($trandate));
+		$this->view->set('transaction_year',$year);
+		$this->view->set('period',$period_text);
+		$this->view->set('page_title', 'New Closing Balance Journal');
 	}
 
     /**
@@ -144,23 +173,30 @@ class GltransactionheadersController extends printController
 	{
 		if (!$this->checkParams($this->modeltype))
 		{
-			$this->dataError();
 			sendBack();
 		}
 
 		$flash = Flash::Instance();
-
 		$errors = array();
-
-        // Form data validation
         $period = DataObjectFactory::Factory('GLPeriod');
-        $period = $period->loadPeriod($this->_data[$this->modeltype]['transaction_date']);
+		if ($this->_data[$this->modeltype]['type'] == 'Y') {
+			$period = $period->loadYEPeriod($this->_data['year']);
+			$ref_date = un_fix_date($period->enddate);
+			$this->_data[$this->modeltype]['year'] = $this->_data['year'];
+			$this->_data[$this->modeltype]['accrual_period_id'] = null;
+			$this->_data[$this->modeltype]['accrual'] = false;
+			$this->_data[$this->modeltype]['reference'] = "Year-end Closing balance adjustment as at ${ref_date}";
+		} else {
+			$period = $period->loadPeriod($this->_data[$this->modeltype]['transaction_date']);
+		}
+
+		// Form data validation
         if (! isset($period->_data)) {
             $flash->addError('Invalid GL Period, header not saved');
             sendBack();
         }
 
-        if ($period->closed == 't') {
+        if ($period->closed == 't' && $this->_data[$this->modeltype]['type'] != 'Y') {
             $flash->addError("{$period->year} - period {$period->period} is closed, header not saved");
             sendBack();
         }
@@ -279,7 +315,7 @@ class GltransactionheadersController extends printController
 			// Check unposted journal - journal lines must exist and sum to zero
 			$TransCheck = $header->checkUnpostedTransactions();
 
-			if ($header->isStandardJournal() && $TransCheck['sum'] == 0 && $TransCheck['count'] > 0)
+			if (($header->isStandardJournal() || $header->isClosingBalanceJournal()) && $TransCheck['sum'] == 0 && $TransCheck['count'] > 0)
 			{
 				$sidebarlist['post'] = array(
 						'tag'	=> 'Post Journal',
@@ -325,26 +361,28 @@ class GltransactionheadersController extends printController
 				);
 		}
 
-		$sidebarlist['clone'] = array(
-						'tag'	=> 'Create New From This',
-						'link'	=> array('modules'			=> $this->_modules
-										,'controller'		=> $this->name
-										,'action'			=> 'create_from_existing'
-										,$header->idField	=> $header->{$header->idField}
-						)
-				);
+		if (!$header->isClosingBalanceJournal()) {
+			$sidebarlist['clone'] = array(
+							'tag'	=> 'Create New From This',
+							'link'	=> array('modules'			=> $this->_modules
+											,'controller'		=> $this->name
+											,'action'			=> 'create_from_existing'
+											,$header->idField	=> $header->{$header->idField}
+							)
+					);
 
-		if ($header->isPosted() && $header->accrual === 'f')
-		{
-			$sidebarlist['reverse'] = array(
-						'tag'	=> 'Reverse This',
-						'link'	=> array('modules'			=> $this->_modules
-										,'controller'		=> $this->name
-										,'action'			=> 'create_from_existing'
-										,$header->idField	=> $header->{$header->idField}
-										,'reverse'			=> 'yes'
-				)
-			);
+			if ($header->isPosted() && $header->accrual === 'f')
+			{
+				$sidebarlist['reverse'] = array(
+							'tag'	=> 'Reverse This',
+							'link'	=> array('modules'			=> $this->_modules
+											,'controller'		=> $this->name
+											,'action'			=> 'create_from_existing'
+											,$header->idField	=> $header->{$header->idField}
+											,'reverse'			=> 'yes'
+					)
+				);
+			}
 		}
 
 		$sidebar->addList('Actions',$sidebarlist);
@@ -362,6 +400,8 @@ class GltransactionheadersController extends printController
 
 	public function create_from_existing()
 	{
+		$errors = array();
+		$flash = Flash::Instance();
 
 		if (!$this->loadData())
 		{
@@ -370,13 +410,12 @@ class GltransactionheadersController extends printController
 		}
 
 		$header = $this->_uses[$this->modeltype];
-
-		$errors = array();
-
-		$flash = Flash::Instance();
+		if ($header->isClosingBalanceJournal()) {
+			$flash->addError('Cannot create new from existing year-end closing balance');
+			sendBack();
+		}
 
 		$db = DB::Instance();
-
 		$db->StartTrans();
 
 		// Create new header from selected header
@@ -391,11 +430,10 @@ class GltransactionheadersController extends printController
 		{
 			// had an error so go back to view the original header and error
 			$flash->addErrors($errors);
-			$db->FailtTrans();
+			$db->FailTrans();
 		}
 
 		$db->completeTrans();
-
 		sendTo($this->name, 'view', $this->_modules, array($header->idField	=> $header->{$header->idField}));
 	}
 

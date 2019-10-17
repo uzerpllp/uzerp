@@ -69,7 +69,15 @@ class GLTransaction extends DataObject
         )
     );
 
-    function __construct($tablename = 'gl_transactions', $source = '', $type = '')
+   /**
+    * GL Transaction Model
+    *
+    * @param string $tablename
+    * @param string $source
+    * @param string $type
+    * @param boolean $cp_override  Removes closed period validation
+    */
+    function __construct($tablename = 'gl_transactions', $source = '', $type = '', $cp_override=false)
     {
         // Register non-persistent attributes
         $this->setAdditional('credit', 'numeric');
@@ -110,7 +118,9 @@ class GLTransaction extends DataObject
             'glaccount_id' => 'glaccount_id',
             'glcentre_id' => 'glcentre_id'
         )));
-        $this->addValidator(new GLPeriodOpenModelValidator($this));
+        if ($cp_override == false) {
+            $this->addValidator(new GLPeriodOpenModelValidator($this));
+        }
 
         // Define enumerated types
         $this->setEnum('type', array(
@@ -1196,14 +1206,23 @@ class GLTransaction extends DataObject
         $data['twinvalue'] = round(bcmul($twin_currency->rate, $data['value'], 4), 2);
     }
 
-    public static function Factory($data, &$errors = array())
+    /**
+     * GL Transaction Factory
+     *
+     * @param $data
+     * @param array $errors
+     * @param boolean $cp_override  Override closed period validation,
+     *   e.g. when posting a closing balance journal
+     * @return void
+     */
+    public static function Factory($data, &$errors = array(), $cp_override=false)
     {
         if (empty($data['source']) || empty($data['type'])) {
             $errors[] = 'GL Transaction : Missing source/type';
             return false;
         }
 
-        $gltransaction = new GLTransaction('gl_transactions', $data['source'], $data['type']);
+        $gltransaction = new GLTransaction('gl_transactions', $data['source'], $data['type'], $cp_override);
 
         return parent::Factory($data, $errors, $gltransaction);
     }

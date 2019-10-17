@@ -144,6 +144,75 @@ class GLPeriod extends DataObject
 		return $this->loadBy($cc);
 		
 	}
+
+	/**
+	 * Load the final period of the financial year
+	 * 
+	 * @param $financial_year
+	 * 
+	 * @return GLPeriod
+	 */
+	public function loadYEPeriod($financial_year)
+	{
+		$subquery = "(SELECT max(enddate) 
+				       FROM gl_periods z
+				      WHERE z.year = '" . $financial_year
+		            ."' AND z.usercompanyid = " . EGS_COMPANY_ID.")";
+		
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('enddate', '=', $subquery));
+		$cc->add(new Constraint('period', '!=', 0));
+		
+		return $this->loadBy($cc);
+	}
+
+	/**
+	 * Load the first period of the financial year
+	 * 
+	 * This will load period 0, containing the brought-forward
+	 * balances from the previous financial year.
+	 * 
+	 * @param $financial_year
+	 * 
+	 * @return GLPeriod
+	 */
+	public function loadFirstPeriod($financial_year)
+	{
+		$subquery = "(SELECT min(period) 
+				       FROM gl_periods z
+				      WHERE z.year = '" . $financial_year
+		            ."' AND z.usercompanyid = " . EGS_COMPANY_ID.")";
+		
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('period', '=', $subquery));
+		$cc->add(new Constraint('year', '=', $financial_year));
+		
+		return $this->loadBy($cc);
+	}
+
+	/**
+	 * Return an array containing data for the
+	 * final period of the financial year
+	 * 
+	 * @param $financial_year
+	 * 
+	 * @return array
+	 */
+	static function getYEPeriod($financial_year)
+	{
+
+		$db = &DB::Instance();
+
+		$query = "SELECT id, enddate, year, period, tax_period, tax_period_closed
+					FROM gl_periods a
+					WHERE period != 0 AND enddate = ( SELECT max(enddate) 
+										FROM gl_periods z
+										WHERE z.year = '" . $financial_year
+										."' AND z.usercompanyid = " . EGS_COMPANY_ID.")";
+
+		$result= $db->GetRow($query);
+		return $result;
+	}
 	
 	/**
 	 * Return tax period numbers for the specified year

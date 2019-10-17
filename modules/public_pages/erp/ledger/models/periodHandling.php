@@ -185,9 +185,19 @@ class periodHandling {
 		
 	}
 	
-	static function yearEnd ($period, &$errors)
+	/**
+	 * Update Year-end GL Balances
+	 *
+	 * @param GLPeriod $period  Instance of GLPeriod
+	 * @param array $errors  Returned errors
+	 * @param boolean $handle_assets  false to skip assets
+	 * @return void
+	 */
+	static function yearEnd ($period, &$errors, $handle_assets=true)
 	{
-		assetHandling::yearEnd($errors);
+		if ($handle_assets == true) {
+			assetHandling::yearEnd($errors);
+		}
 		
 		$period_ids = $period->getIdsYTD($period->period, $period->year);
 
