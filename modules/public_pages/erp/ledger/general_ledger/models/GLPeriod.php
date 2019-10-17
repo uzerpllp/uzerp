@@ -167,6 +167,30 @@ class GLPeriod extends DataObject
 	}
 
 	/**
+	 * Load the first period of the financial year
+	 * 
+	 * This will load period 0, containing the brought-forward
+	 * balances from the previous financial year.
+	 * 
+	 * @param $financial_year
+	 * 
+	 * @return GLPeriod
+	 */
+	public function loadFirstPeriod($financial_year)
+	{
+		$subquery = "(SELECT min(period) 
+				       FROM gl_periods z
+				      WHERE z.year = '" . $financial_year
+		            ."' AND z.usercompanyid = " . EGS_COMPANY_ID.")";
+		
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('period', '=', $subquery));
+		$cc->add(new Constraint('year', '=', $financial_year));
+		
+		return $this->loadBy($cc);
+	}
+
+	/**
 	 * Return an array containing data for the
 	 * final period of the financial year
 	 * 
