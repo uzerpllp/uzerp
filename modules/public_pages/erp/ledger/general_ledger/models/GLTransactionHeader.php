@@ -152,6 +152,16 @@ class GLTransactionHeader extends DataObject
 		return $this->$method($sh, $ignore_accruals);
 	}
 
+	/**
+	 * Post a Journal to the GL
+	 * 
+	 * For year-end closing journals, this also updates the
+	 * period end balances for the period and period 0 of the
+	 * following year.
+	 *
+	 * @param array $errors
+	 * @return void
+	 */
 	public function post(&$errors = array())
 	{
 		$db = db::Instance();
@@ -223,7 +233,41 @@ class GLTransactionHeader extends DataObject
 					$errors[] = 'Error updating GL balance : '.$db->ErrorMsg();
 				}
 			}
+		}
 
+		// Update GL Balances and GL Year End Balances
+		if (count($errors) == 0 && $this->isClosingBalanceJournal()) {
+
+			$period = new GLPeriod();
+			$period->load($this->glperiods_id);
+
+			$next_year = $period->year + 1;
+			$next_period = new GLPeriod();
+			$next_period->loadFirstPeriod($next_year);
+
+			// Remove all the GLBalances for period 0
+			$gl_balances = new GLBalanceCollection();
+			$sh_bal=new SearchHandler(new GLBalanceCollection(), false);
+			$periodsYTD='('.implode(',', [$next_period->id]).')';
+			$sh_bal->addConstraint(new Constraint('glperiods_id', 'in', $periodsYTD));
+			$gl_balances->delete($sh_bal);
+
+			// Remove all the GLPeriodEndBalance(s) period 12
+			$glpe_balances = new GLPeriodEndBalanceCollection();
+			$sh_pe=new SearchHandler(new GLPeriodEndBalanceCollection(), false);
+			$periodsYTD='('.implode(',', [$period->id]).')';
+			$sh_pe->addConstraint(new Constraint('glperiods_id', 'in', $periodsYTD));
+			$glpe_balances->delete($sh_pe);
+
+			// Create GLPeriodEndBalance(s) for period p12
+			$periodendbalances = new GLPeriodEndBalanceCollection(DataObjectFactory::Factory('GLPeriodEndBalance'));
+			if ($periodendbalances->create($period) === FALSE)
+			{
+				$errors[] = 'Error creating period end balances';
+			}
+
+			// Re-run year-end at this period to re-create p0 b/f balances
+			periodHandling::yearEnd($period, $errors, false);
 		}
 
 		// Update the header status if no errors so far
