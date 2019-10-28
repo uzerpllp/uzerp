@@ -285,7 +285,7 @@ class MTD {
                     'vatDueAcquisitions' => round($return->vat_due_acquisitions,2),
                     'totalVatDue' => round($return->total_vat_due,2),
                     'vatReclaimedCurrPeriod' => round($return->vat_reclaimed_curr_period,2),
-                    'netVatDue' => round($return->net_vat_due,2),
+                    'netVatDue' => abs(round($return->net_vat_due,2)),
                     'totalValueSalesExVAT' => round($return->total_value_sales_ex_vat),
                     'totalValuePurchasesExVAT' => round($return->total_value_purchase_ex_vat),
                     'totalValueGoodsSuppliedExVAT' => round($return->total_value_goods_supplied_ex_vat),

@@ -10,8 +10,10 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Hide inactive suppliers when creating invoice from GRN
 - Do not allow obsolete items to be chosen for stock transactions
 - Clicking an item when viewing location balances now shows the transactions for that item only
+- Ensure netVatDue is not negative when posting a VAT return via MTD
 
 ## [1.17] 2019-06-26
 
