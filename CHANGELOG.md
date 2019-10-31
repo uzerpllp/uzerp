@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Filter out employee leavers when creating cashbook transaction
 - Hide inactive suppliers when creating invoice from GRN
 - Do not allow obsolete items to be chosen for stock transactions
 - Clicking an item when viewing location balances now shows the transactions for that item only
@@ -93,8 +94,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-    - Ensure email address string is displayed correctly in print/output dialog
-    - Sales price check uzLET failed ajax requests
+- Ensure email address string is displayed correctly in print/output dialog
+- Sales price check uzLET failed ajax requests
 
 ## [1.15.2] 2019-05-13
 
