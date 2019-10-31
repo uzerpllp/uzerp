@@ -45,9 +45,26 @@ class CBTransaction extends DataObject
         $this->orderdir = 'DESC';
 
         // Define relationships
+        $employees = new EmployeeCollection();
+        $employees_sh = new SearchHandler(new EmployeeCollection());
+        $employee_cc = new ConstraintChain();
+        $employee_cc->add(new Constraint('finished_date', 'IS NOT', 'NULL'));
+        $employees_sh->addConstraintChain($employee_cc);
+        $employees->load($employees_sh);
+        $leavers = [];
+        foreach ($employees as $employee) {
+            $leavers[] = $employee->person_id;
+        }
+
+        $person_filter = null;
+        if (count($leavers) > 0) {
+            $person_filter = new ConstraintChain();
+            $person_filter->add(new Constraint('id', 'NOT IN ', '(' . implode(',', $leavers) . ')'));
+        }
+
         $this->belongsTo('CBAccount', 'cb_account_id', 'cb_account');
         $this->belongsTo('Company', 'company_id', 'company');
-        $this->belongsTo('Person', 'person_id', 'person', null, 'surname || \', \' || firstname');
+        $this->belongsTo('Person', 'person_id', 'person', $person_filter, 'surname || \', \' || firstname');
         $this->belongsTo('Currency', 'currency_id', 'currency');
         $this->belongsTo('Currency', 'twin_currency_id', 'twincurrency');
         $this->belongsTo('Currency', 'basecurrency_id', 'basecurrency');
