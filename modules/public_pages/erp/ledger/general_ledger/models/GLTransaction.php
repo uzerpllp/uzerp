@@ -132,6 +132,7 @@ class GLTransaction extends DataObject
             'E' => 'Expense',
             'I' => 'Invoice',
             'J' => 'Journal',
+            'Y' => 'Closing Balance Journal',
             'N' => 'Net Tax',
             'P' => 'Payment',
             'R' => 'Receipt',
