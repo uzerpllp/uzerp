@@ -19,8 +19,7 @@
 					{view_data attribute='ni' label='NI Number'}
 					{view_data attribute='dob' label='Date of Birth'}
 					{view_data attribute='start_date' label='Start Date'}
-					{view_data attribute='finished_date'}
-					{view_data attribute='pay_frequency'}
+					{view_data attribute='finished_date'}					
 					{view_data attribute='employee_grade_id'}
 					{view_data value=$days_left label='Holiday: Days Left'}	
 					{view_data attribute='expenses_balance' label='Expenses Balance'}	
@@ -46,6 +45,8 @@
 					{input type='text' attribute="phone" label="phone"}
 					{input type='hidden' attribute="contact_mobile_id" label="mobile"}
 					{input type='text' attribute="mobile" label="mobile"}
+					{input type='hidden' attribute="contact_email_id" label="email"}
+					{input type='text' attribute="email" label="email"}
 					{select attribute='address_id' nonone=true options=$addresses value=$address->id label='Address'}
 					{if $model->address_id==''}
 						<div id='address'>

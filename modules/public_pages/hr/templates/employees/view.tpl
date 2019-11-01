@@ -16,7 +16,8 @@
 					{view_data attribute='dob' label='Date of Birth'}
 					{view_data attribute='start_date' label='Start Date'}
 					{view_data attribute='finished_date'}
-					{view_data attribute='pay_frequency'}
+					{view_data attribute='gender'}
+					{view_data attribute='pay_basis'}
 					{view_data attribute='employee_grade_id'}
 					{view_data attribute='expenses_balance' label='Expenses Balance'}	
 				{/view_section}
@@ -76,6 +77,7 @@
 				{with model=$Employee}
 					{view_data attribute="contact_phone_id" label="phone"}
 					{view_data attribute="contact_mobile_id" label="mobile"}
+					{view_data attribute="contact_email_id" label="email"}
 					{view_data attribute="address_id" label="address"}
 				{/with}
 			{/view_section}

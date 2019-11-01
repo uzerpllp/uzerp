@@ -47,6 +47,56 @@ class EmployeetrainingplansController extends Controller {
 		$this->refresh();
 
 	}
+
+	public function _new()
+	{
+		parent::_new();
+
+		$flash = Flash::Instance();
+		
+		$employeeTrainingPlan = $this->_uses[$this->modeltype];
+		
+		if ($employeeTrainingPlan->isLoaded())
+		{
+			$employee_id = $employeeTrainingPlan->employee_id;
+		}
+		elseif($this->_data['employee_id'])
+		{
+			$employee_id = $this->_data['employee_id'];
+		}
+		else
+		{
+			$flash = Flash::Instance();
+			$flash->addError('No employee selected');
+			sendBack();
+		}
+		
+		$employee = DataObjectFactory::Factory('Employee');
+		
+		$employee->load($employee_id);
+
+		if (!$employee->isLoaded())
+		{
+			$flash->addError('Error loading employee details');
+			sendBack();
+		}
+		
+		if (!is_null($employee->finished_date) && $employee->finished_date < fix_date(date(DATE_FORMAT)))
+		{
+			$flash->addError('Employee has left');
+			sendBack();
+		}
+		
+		$this->view->set('employee', $employee);
+		
+		$collection = new EmployeeTrainingPlanCollection($this->_templateobject);
+		
+		$sh = $this->setSearchHandler($collection);
+		
+		$sh->addConstraint(new Constraint('employee_id', '=', $employee_id));
+		
+		parent::index($collection, $sh);
+	}
 	
 }
 

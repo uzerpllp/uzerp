@@ -9,7 +9,7 @@
 		{with model=$models.Expense legend="Expense Details"}
 			{input type='hidden'  attribute='id' }
 			{include file='elements/auditfields.tpl' }
-			{select attribute='employee_id' }
+			{select attribute='employee_id' use_collection=true force=true options=$employees}
 			{if $model->expense_number <> ''}
 				{view_data attribute='expense_number'}
 			{/if}

@@ -115,6 +115,8 @@ class HolidayentitlementsController extends Controller
 	public function _new()
 	{
 		parent::_new();
+
+		$flash = Flash::Instance();
 		
 		$holidayEntitlement = $this->_uses[$this->modeltype];
 		
@@ -136,6 +138,18 @@ class HolidayentitlementsController extends Controller
 		$employee = DataObjectFactory::Factory('Employee');
 		
 		$employee->load($employee_id);
+
+		if (!$employee->isLoaded())
+		{
+			$flash->addError('Error loading employee details');
+			sendBack();
+		}
+		
+		if (!is_null($employee->finished_date) && $employee->finished_date < fix_date(date(DATE_FORMAT)))
+		{
+			$flash->addError('Employee has left');
+			sendBack();
+		}
 		
 		$this->view->set('employee', $employee);
 		

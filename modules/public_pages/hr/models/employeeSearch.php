@@ -17,6 +17,8 @@ class employeeSearch extends BaseSearch
 	{
 		
 		$search = new employeeSearch($defaults);
+
+		$employee = DataObjectFactory::Factory('Employee');
 		
 		// Employee Name
 		$search->addSearchField(
@@ -35,14 +37,38 @@ class employeeSearch extends BaseSearch
 			'',
 			'basic'
 		);
+
+		// Employee Gender
+		$search->addSearchField(
+			'gender',
+			'Gender',
+			'select',
+			'',
+			'basic'
+		);
+		$options = array(''=>'All');
+		$options += $employee->getEnumOptions('gender');
+		$search->setOptions('gender', $options);
 		
+		// Employee Pay Basis
+		$search->addSearchField(
+			'pay_basis',
+			'Pay Basis',
+			'select',
+			'',
+			'basic'
+		);
+		$options = array(''=>'All');
+		$options += $employee->getEnumOptions('pay_basis');
+		$search->setOptions('pay_basis', $options);
+
 		// Employee Grade
 		$search->addSearchField(
 			'employee_grade_id',
 			'employee_grades',
 			'select',
 			'',
-			'basic'
+			'advanced'
 		);
 		$grade = DataObjectFactory::Factory('employeeGrade');
 		$grades = $grade->getAll(null, TRUE, TRUE);
@@ -56,8 +82,10 @@ class employeeSearch extends BaseSearch
 			'department_contains',
 			'contains',
 			'',
-			'basic'
+			'advanced'
 		);
+
+
 		
 		// Date of Leaving
 		$search->addSearchField(

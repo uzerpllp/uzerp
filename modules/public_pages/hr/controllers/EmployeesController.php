@@ -177,7 +177,7 @@ class EmployeesController extends Controller
 		
 		// TODO: Need to move the saving of Party data to appropriate model
 		// See also where saved in SordersController, CompanysController and PersonsController
-		foreach (array('phone', 'mobile') as $contact_type)
+		foreach (array('phone', 'mobile', 'email') as $contact_type)
 		{
 			if (!empty($this->_data[$this->modeltype][$contact_type]))
 			{
@@ -578,7 +578,7 @@ class EmployeesController extends Controller
 								   ,$idfield	=>$idvalue)
 		);
 		
-		if (!$readonly)
+		if (!$readonly && is_null($employee->finished_date))
 		{
 			$sidebarlist['edit_employee'] = array(
 						'tag' => 'Edit Employee Details',
@@ -604,60 +604,76 @@ class EmployeesController extends Controller
 									   ,$idfield	=>$idvalue)
 			);
 			
-			if (is_null($employee->finished_date))
-			{
-				$sidebarlist['make_leaver'] = array(
+			$sidebarlist['make_leaver'] = array(
 							'tag' => 'Leaver',
 							'link' => array('modules'	=>$this->_modules
 										   ,'controller'=>$this->name
 										   ,'action'	=>'leaver'
 										   ,$idfield	=>$idvalue)
-				);
-			}
+			);
+
 		}
 		
 		$sidebar->addList('currently_viewing', $sidebarlist);
 
 		$sidebarlist = array();
 		
-		$sidebarlist['expenses'] = array(
-					'tag'=>'View Expenses',
-					'link'=>array('modules'		=>$this->_modules
-								 ,'controller'	=>'expenses'
-								 ,'action'		=>'viewemployee'
-								 ,'employee_id'	=>$idvalue),
-					'new'=>array('modules'		=>$this->_modules
-								,'controller'	=>'expenses'
-								,'action'		=>'new'
-								,'employee_id'	=>$idvalue)
-				 );
+		//restrict expenses to just viewing if leaver
+		if (is_null($employee->finished_date))
+		{
+			$sidebarlist['expenses'] = array(
+				'tag'=>'View Expenses',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>'expenses'
+							 ,'action'		=>'viewemployee'
+							 ,'employee_id'	=>$idvalue),
+				'new'=>array('modules'		=>$this->_modules
+							,'controller'	=>'expenses'
+							,'action'		=>'new'
+							,'employee_id'	=>$idvalue)
+			 );
+	
+			$sidebarlist['expenses_for_payment'] = array(
+				'tag'=>'Expenses Awaiting Authorisation',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>'expenses'
+							 ,'action'		=>'viewemployee'
+							 ,'employee_id'	=>$idvalue
+							 ,'status'		=>Expense::statusAwaitingAuthorisation())
+			 );
+	
+			$sidebarlist['make_payment'] = array(
+				'tag'=>'Make Payment',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>$this->name
+							 ,'action'		=>'make_payment'
+							 ,'employee_id'	=>$idvalue)
+			 );
+	
+			$sidebarlist['allocate_expenses'] = array(
+				'tag'=>'Allocate Expenses to Payments',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>$this->name
+							 ,'action'		=>'allocate'
+							 ,'employee_id'	=>$idvalue)
+			 );
+
+		}
+		else
+		{
+			$sidebarlist['expenses'] = array(
+				'tag'=>'View Expenses',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>'expenses'
+							 ,'action'		=>'viewemployee'
+							 ,'employee_id'	=>$idvalue)
+			 );
+
+		}
+
+		$week_dates = $this->getWeekDates();
 		
-		$sidebarlist['expenses_for_payment'] = array(
-					'tag'=>'Expenses Awaiting Authorisation',
-					'link'=>array('modules'		=>$this->_modules
-								 ,'controller'	=>'expenses'
-								 ,'action'		=>'viewemployee'
-								 ,'employee_id'	=>$idvalue
-								 ,'status'		=>Expense::statusAwaitingAuthorisation())
-				 );
-		
-		$sidebarlist['make_payment'] = array(
-					'tag'=>'Make Payment',
-					'link'=>array('modules'		=>$this->_modules
-								 ,'controller'	=>$this->name
-								 ,'action'		=>'make_payment'
-								 ,'employee_id'	=>$idvalue)
-				 );
-		
-		$sidebarlist['allocate_expenses'] = array(
-					'tag'=>'Allocate Expenses to Payments',
-					'link'=>array('modules'		=>$this->_modules
-								 ,'controller'	=>$this->name
-								 ,'action'		=>'allocate'
-								 ,'employee_id'	=>$idvalue)
-				 );
-		
-		if ($restrict_inserts)
+		if ($restrict_inserts || !is_null($employee->finished_date))
 		{
 			$sidebarlist['holidayentitlement'] = array(
 					'tag'=>'Holiday Entitlement',
@@ -665,6 +681,54 @@ class EmployeesController extends Controller
 								 ,'controller'	=>'holidayentitlements'
 								 ,'action'		=>'viewemployee'
 								 ,'employee_id'	=>$idvalue)
+			);
+			$sidebarlist['holidayrequest'] = array(
+				'tag'=>'Holiday Request',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>$this->name
+							 ,'action'		=>'viewholidayrequests'
+							 ,'employee_id'	=>$employee->id)
+			 );
+	
+			$sidebarlist['trainingplan'] = array(
+				'tag'=>'Training Plan',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>'employeetrainingplans'
+							 ,'action'		=>'viewemployeetrainingplans'
+							 ,'employee_id'	=>$idvalue)
+			 );
+		
+			$sidebarlist['employeerates'] = array(
+				'tag'=>'Pay Rates',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>'employeerates'
+							 ,'action'		=>'view_employee'
+							 ,'employee_id'	=>$idvalue)
+			);
+
+			$sidebarlist['employeecontractdetails'] = array(
+				'tag'=>'Contract Details',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>'employeecontractdetails'
+							 ,'action'		=>'viewemployee'
+							 ,'employee_id'	=>$idvalue)
+			);
+			$sidebarlist['hours'] = array(
+				'tag'=>'Timesheet Hours',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>$this->name
+							 ,'action'		=>'view_hours_summary'
+							 ,'person_id'	=>$employee->person_id
+							 ,'start_date'	=>$week_dates['week_start_date']
+							 ,'end_date'	=>$week_dates['week_end_date'])
+			);
+			
+			$sidebarlist['payhistory'] = array(
+					'tag'=>'Pay History',
+					'link'=>array('modules'	=>$this->_modules
+							,'controller'	=>'employeepayhistorys'
+							,'action'		=>'view_employee'
+							,'employee_id'	=>$idvalue)
 			);
 		}
 		else
@@ -680,9 +744,9 @@ class EmployeesController extends Controller
 								,'action'		=>'new'
 								,'employee_id'	=>$idvalue)
 				 );
-		}
 		
-		$sidebarlist['holidayrequest'] = array(
+		
+			$sidebarlist['holidayrequest'] = array(
 					'tag'=>'Holiday Request',
 					'link'=>array('modules'		=>$this->_modules
 								 ,'controller'	=>$this->name
@@ -694,7 +758,7 @@ class EmployeesController extends Controller
 								 ,'employee_id'	=>$idvalue)
 				 );
 		
-		$sidebarlist['trainingplan'] = array(
+			$sidebarlist['trainingplan'] = array(
 					'tag'=>'Training Plan',
 					'link'=>array('modules'		=>$this->_modules
 								 ,'controller'	=>'employeetrainingplans'
@@ -705,19 +769,6 @@ class EmployeesController extends Controller
 								 ,'action'		=>'new'
 								 ,'employee_id'	=>$idvalue)
 				 );
-		
-		if ($restrict_inserts)
-		{
-			$sidebarlist['employeerates'] = array(
-					'tag'=>'Pay Rates',
-					'link'=>array('modules'		=>$this->_modules
-								 ,'controller'	=>'employeerates'
-								 ,'action'		=>'view_employee'
-								 ,'employee_id'	=>$idvalue)
-			);
-		}
-		else
-		{
 			$sidebarlist['employeerates'] = array(
 					'tag'=>'Pay Rates',
 					'link'=>array('modules'		=>$this->_modules
@@ -729,20 +780,6 @@ class EmployeesController extends Controller
 								,'action'		=>'new'
 								,'employee_id'	=>$idvalue)
 				 );
-		}
-		
-		if ($restrict_inserts)
-		{
-			$sidebarlist['employeecontractdetails'] = array(
-					'tag'=>'Contract Details',
-					'link'=>array('modules'		=>$this->_modules
-								 ,'controller'	=>'employeecontractdetails'
-								 ,'action'		=>'viewemployee'
-								 ,'employee_id'	=>$idvalue)
-			);
-		}
-		else
-		{
 			$sidebarlist['employeecontractdetails'] = array(
 					'tag'=>'Contract Details',
 					'link'=>array('modules'		=>$this->_modules
@@ -753,50 +790,26 @@ class EmployeesController extends Controller
 								,'controller'	=>'employeecontractdetails'
 								,'action'		=>'new'
 								,'employee_id'	=>$idvalue)
-				 );
-		}
-		
-		$week_dates = $this->getWeekDates();
-		
-		$sidebarlist['hours'] = array(
-					'tag'=>'Timesheet Hours',
-					'link'=>array('modules'		=>$this->_modules
-								 ,'controller'	=>$this->name
-								 ,'action'		=>'view_hours_summary'
-								 ,'person_id'	=>$employee->person_id
-								 ,'start_date'	=>$week_dates['week_start_date']
-								 ,'end_date'	=>$week_dates['week_end_date']),
-					'new'=>array('modules'		=>$this->_modules
-								,'controller'	=>'hours'
-								,'action'		=>'new'
-								,'person_id'	=>$employee->person_id
-								,'start_date'	=>$week_dates['week_start_date']
-								,'end_date'		=>$week_dates['week_end_date'])
-				 );
-		
-		if ($restrict_inserts)
-		{
-			$sidebarlist['payhistory'] = array(
-					'tag'=>'Pay History',
-					'link'=>array('modules'	=>$this->_modules
-							,'controller'	=>'employeepayhistorys'
-							,'action'		=>'view_employee'
-							,'employee_id'	=>$idvalue)
 			);
-		}
-		else
-		{
+
+			$sidebarlist['hours'] = array(
+				'tag'=>'Timesheet Hours',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>$this->name
+							 ,'action'		=>'view_hours_summary'
+							 ,'person_id'	=>$employee->person_id
+							 ,'start_date'	=>$week_dates['week_start_date']
+							 ,'end_date'	=>$week_dates['week_end_date'])
+			 );
+
 			$sidebarlist['payhistory'] = array(
-					'tag'=>'Pay History',
-					'link'=>array('modules'		=>$this->_modules
-								 ,'controller'	=>'employeepayhistorys'
-								 ,'action'		=>'view_employee'
-								 ,'employee_id'	=>$idvalue),
-					'new'=>array('modules'		=>$this->_modules
-								,'controller'	=>'employeepayhistorys'
-								,'action'		=>'new'
-								,'employee_id'	=>$idvalue)
-				 );
+				'tag'=>'Pay History',
+				'link'=>array('modules'		=>$this->_modules
+							 ,'controller'	=>'employeepayhistorys'
+							 ,'action'		=>'view_employee'
+							 ,'employee_id'	=>$idvalue)
+			 );
+		
 		}
 		
 		$sidebar->addList('related_items', $sidebarlist);

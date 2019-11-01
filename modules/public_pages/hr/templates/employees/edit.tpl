@@ -23,6 +23,7 @@
 					{input type='text' attribute='works_number' class="compulsory" }
 					{input type='text' attribute='ni' class="compulsory" label='NI_Number'}
 					{input type='date' attribute='dob' class="compulsory" label='date_of_birth'}
+					{select attribute='gender' forceselect="true"}
 					{select attribute='employee_grade_id' }
 				{/view_section}
 				{view_section heading="Job Details" expand='open'}
@@ -31,7 +32,7 @@
 					{input type='text' attribute='department' label='department' value=$person->department}
 					{select attribute='mfdept_id' label='or Select from list'}
 					{select attribute='reports_to' label='Line Manager' options=$reports_to value=$person->reports_to}
-					{select attribute='pay_frequency_id' }
+					{select attribute='pay_basis' }
 				{/view_section}
 			</dl>
 	
