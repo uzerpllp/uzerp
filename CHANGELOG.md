@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Prevent adding of holiday requests/entitlement expenses and training plans for empoyee leavers
 - Filter out employee leavers when creating cashbook transaction
 - Hide inactive suppliers when creating invoice from GRN
 - Do not allow obsolete items to be chosen for stock transactions
