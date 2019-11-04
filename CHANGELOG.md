@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.18] 2019-11-04
 
 ### Added
 
@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
 - Ensure netVatDue is not negative when posting a VAT return via MTD
 
 ## [1.17] 2019-06-26
+
+**Testing Release**
 
 ### Fixed
 
@@ -568,6 +570,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 ### Changed
 - First Git controlled release on bitbucket
 
+[1.18]: https://github.com/uzerpllp/uzerp/compare/1.17...1.18
 [1.17]: https://github.com/uzerpllp/uzerp/compare/1.16...1.17
 [1.16]: https://github.com/uzerpllp/uzerp/compare/1.15.2...1.16
 [1.15.2]: https://github.com/uzerpllp/uzerp/compare/1.15.1...1.15.2
