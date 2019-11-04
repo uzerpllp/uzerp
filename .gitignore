@@ -37,3 +37,6 @@ apc.php
 
 # vscode
 .vscode/**
+
+# FOP PDF
+PDF/
