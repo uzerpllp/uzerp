@@ -19,17 +19,22 @@ class VatCollection extends DataObjectCollection {
 		$this->setTablename('tax_eu_arrivals');
 		$this->title='VAT EU Arrivals';
 		$fields=array('id'
-					, 'delivery_terms'
-					, 'received_date'
-					, 'received_qty'
+					, 'commodity_code'
+					, 'country_code'
+					, 'sterling_order_line_value'
 					, 'net_mass'
+					, 'received_qty'
 					, 'uom_name'
 					, 'item_description'
+					, 'received_date'
 					, 'delivery_note'
+					, 'delivery_terms'			
 					, 'invoice_number'
 					, 'supplier'
 					, 'order_number');
-		$sh->setorderby(array('delivery_terms'
+		$sh->setorderby(array('commodity_code'
+							,'country_code'
+							,'delivery_terms'
 							,'received_date'
 							,'supplier'
 							,'item_description'));
@@ -40,16 +45,21 @@ class VatCollection extends DataObjectCollection {
 		$this->setTablename('tax_eu_despatches');
 		$this->title='VAT EU Despatches';
 		$fields=array('id'
-					, 'delivery_terms'
-					, 'despatch_date'
-					, 'despatch_qty'
+					, 'commodity_code'
+					, 'country_code'
+					, 'sterling_order_line_value'
 					, 'net_mass'
+					, 'despatch_qty'
 					, 'uom_name'
 					, 'item_description'
+					, 'despatch_date'
+					, 'delivery_terms'
 					, 'invoice_number'
 					, 'customer'
 					, 'order_number');
-		$sh->setorderby(array('delivery_terms'
+		$sh->setorderby(array('commodity_code'
+							,'country_code'
+							,'delivery_terms'
 							,'despatch_date'
 							,'customer'
 							,'item_description'));

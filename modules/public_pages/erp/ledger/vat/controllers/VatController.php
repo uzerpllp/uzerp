@@ -210,9 +210,9 @@ class VatController extends printController
 		
 		$collection->eu_arrivals($sh);
 		
-		$measure_fields=array('delivery_terms'=>'');
+		$measure_fields=array('commodity_code'=>'', 'country_code'=>'');
 		
-		$aggregate_fields=array('net_mass'=>array('decimal_places'=>2));
+		$aggregate_fields=array('sterling_order_line_value'=>array('decimal_places'=>2),'net_mass'=>array('decimal_places'=>2));
 		
 		$this->setBreakLevels($measure_fields, $aggregate_fields);
 		
@@ -245,9 +245,9 @@ class VatController extends printController
 		
 		$collection->eu_despatches($sh);
 		
-		$measure_fields = array('delivery_terms'=>'');
+		$measure_fields = array('commodity_code'=>'', 'country_code'=>'');
 		
-		$aggregate_fields = array('net_mass'=>array('decimal_places'=>2));
+		$aggregate_fields = array('sterling_order_line_value'=>array('decimal_places'=>2),'net_mass'=>array('decimal_places'=>2));
 		
 		$this->setBreakLevels($measure_fields, $aggregate_fields);
 		
