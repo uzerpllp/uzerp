@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.18.1] 2019-11-12
+
+### Added
+
+- Incorporate sales and purchase product commodity codes in VAT reporting for Intrastat
+
 ## [1.18] 2019-11-04
 
 ### Added
@@ -281,7 +287,9 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Allow user theme.css to have a suffix for browser cache-busting. e.g. add the date to the filename when changed -- theme-20170727.css.
 
 ## [1.8.2] 2017-07-14
+
 ### Fixed
+
 - Prevent further GRNs being created for part received purchase orders that have reverted to requisitions.
 
 - Product selector fixes
@@ -291,26 +299,34 @@ VAT Report views and transaction printing updated to use new calculations, match
 
 
 ### Added
+
 - Site specific Works Order document injector classes are loaded from user/classes
 - WOOperationsReport injector class, e.g. to produce a route card document with operations (define a report definition with Name = wo_operations). Add the class in Setup > System Admin > Injector Classes, as required.
 - Site specific modules can be created in user/modules
 
 ### Changed
+
 - Works Order documents can be selected, then printed or viewed
 - Works Order documents can be sent to a selected printer
 
 ## [1.8.1] 2017-06-08
+
 ### Fixed
+
 - Allow gulp to be run using 'npm run gulp'
 
 ### Added
+
 - Add jquery.watermark.js, used by autocomplete fields
 
 ### Changed
+
 - Replace clear_memcached.php script with flush_memcached.php
 
 ## [1.8] 2017-05-27
+
 ### Fixed
+
 - Adding a holiday request now uses the correct allocation period.
 - Resetting user passwords now sends email notifications.
 - Error when cancelling Sales Order product selector actions.
@@ -322,9 +338,11 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Replace functions removed in PHP7.
 
 ### Added
+
 - Delete action for Sales Order product selectors.
 
 ### Changed
+
 - Javascript and less/css is now complied at build time.
     - Use grunt.js to build static assets.
     - Remove /theme and /data/resource_c directories.
@@ -332,17 +350,23 @@ VAT Report views and transaction printing updated to use new calculations, match
     - Create /user/theme.css for custom colours, etc.
 
 ### Removed
+
 - Manual status change on HR expense actions.
 
 ## [1.7.1] 2016-12-13
+
 ### Fixed
+
 - Error when saving new CRM activity
 
 ## [1.7] - 2016-12-07
+
 ### Fixed
+
 - Various Sales Order product selector fixes
 
 ### Added
+
 - Print item labels from Sales Order. Requires a Report Definition called 'SOItemLabel'
 - Transfer outstanding Sales Order lines to a new order (cancels existing lines)
 - View line notes from the Sales Order sidebar
@@ -352,6 +376,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Custom model sort (see: http://wiki.uzerp.com/doku.php/dev_guide#custom_sort_in_views) allows the default view sorting to be changed.
 
 ### Changed
+
 - Security
     - Passwords are hashed using PHP 5.5+ Password hashing API
         - New passwords must now be at least 10 characters long but existing passwords remain unchanged.
@@ -363,7 +388,9 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Unused PHPBarcode library
 
 ## [1.6.2] - 2016-05-23
+
 ### Fixed
+
 - Error on 'save as new' in sales orders
 - Error on 'save as new credit' from sales invoice
 - Error on adding a new credit note from customer view
@@ -371,30 +398,37 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Ensure that CRM activity attachments are only listed on their own activity
 
 ### Added
+
 - UI to allow deletion of contact notes
 - Optional stop controls to prevent creation of sales orders, quotes and templates while a customer account is on stop
 - Show note form when placing a customer account on stop
 
 ## [1.6.1] - 2016-04-07
+
 ### Fixed
+
 - Load correct address when creating new sales order for a person
 - Add project_id to SO product views
 - Fix product search not returning items when adding sales order lines
 - Use concurrency control when updating GL Balances
 
 ### Added
+
 - Add customer account number to sales order acknowledgement XML output
 - Add customer account and sales order number to purchase order XML output
 - Add customer account number to invoice XML output
 
 ## [1.6] - 2016-02-16
+
 ### Fixed
+
 - Setting a custom theme now uses that theme instead of the default
 - Sales order add-line was showing multiple prices for an item
 - LDAP login fails if user or system company access disabled
 - Prevent Apache FOP errors by encoding less-than '<' as `&#60;` in XML output data
 
 ### Added
+
 - Allow Sales Invoices to be allocated to Projects and Tasks
 - Works order view from Projects
 - Add audit fields to projects
@@ -413,84 +447,112 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Sales orders/quotes list and 'new' action from Person side-bar
 
 ### Changed
+
 - Simplify template for getting opportunity details from a project
 - Phinx migrations moved to schema/phinx/migrations
 - Project Budget Controller to show budgets correctly
 
 ### Removed
+
 - Unnecessary action in the Task sidebar removed
 - Redundant EGS reports from projects
 
 
 ## [1.5.2] - 2015-05-15
+
 ### Fixed
+
 - Report module not working
 
 ### Changed
+
 - adodb will be installed from our fork of v5.18 at https://bitbucket.org/uzerp/adodb
 
 ## [1.5.1] - 2015-04-09
+
 ### Changed
+
 - Make changelog more useful to users - [keepachangelog.com](http://keepachangelog.com/)
 - Modify Sales Invoice VAT handling for Prompt Payment Discounts to agree with new UK legislation, [HMRC Brief 49 (2014): VAT - Prompt Payment Discounts](https://www.gov.uk/government/publications/revenue-and-customs-brief-49-2014-vat-prompt-payment-discounts/revenue-and-customs-brief-49-2014-vat-prompt-payment-discounts)
   - Stage 1 - Don't adjust invoice VAT/net, store gross discount
 
 ### Added
+
 - Add an option to sales orders to print an address label. You will need to add a permission for controller: SordersController, action: printAddressLabel and create a Report Definition called 'SOAddressLabel'.
 
 ## [1.5.0] - 2015-03-20
+
 ### Fixed
+
 - View purchase orders/invoices while viewing a PO Product Line
 
 ### Changed
+
 - adodb and less-php libraries must now be installed via [composer](https://getcomposer.org/) and not distributed in the *plugins* folder.
 
 ## [1.4.0] - 2015-03-10
+
 ### Fixed
+
 - A person added without a company link will now be visible in the list of people
 
 ### Added
+
 - Controller smarty templates can be overridden by users
 - Support for logging to [Sentry](https://getsentry.com/)
 
 ### Changed
+
 - The smarty php library must now be installed via [composer](https://getcomposer.org/) and not distributed in the *plugins* folder.
 
 ## [1.3.11] - 2015-02-17
+
 ### Fixed
+
 - Stop Sales Invoice being created for customers on stop
 
 ### Added
+
 - Allow empty sales orders to be cancelled
 
 ## [1.3.10] - 2015-01-20
+
 ### Fixed
+
 - Closing final period of year fails when trying to update assets
 
 ### Added
+
 - Make VAT amounts available to Sales Order Acknowledgement print
 
 ## [2014.3.9] - 2014-12-01
+
 ### Fixed
+
 - Warehouse locations without GL Accounts should be visible
 - Empty response when selecting User Space Tables from the menu
 - When editing a task the project should not be changed
 - Add NOT NULL constraint on project_id column in tasks table
 
 ### Added
+
 - Make admin from email address configurable
 
 ### Changes to Projects Module
+
 - Changes expenses to link to make task selection dependent on project selection in expenses header
 - Add project tasks to purchase order header and make dependent on project. Also fix small annoyance where address heading incorrect on view.
 - Add Purchase orders sidebar link on projects
 -  Changes to allow projects and tasks in entered purchase invoices
 
 ## [2014.3.8] - 2014-10-09
+
 ### Fixed
+
 - CSV outputs are empty
 
 ### Changes to Projects Module
+
 - Changes to projects module
 - Tidy up projects controller:
   - Removed code for old ezPDF 'reports' that no longer work
@@ -520,56 +582,76 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Add database migration for project module updates
 								  
 ## [2014.3.7] - 2014-09-15
+
 ### Fixed
+
 - Duplicate NI number should be allowed in combination with finish date in HR - New Employee
 
 ## [2014.3.6] - 2014-09-09
+
 ### Fixed
+
 - Regression in report definitions
 - VAT totals incorrect on Sales Order Quote print
 - Error adding periodic payment for Sales/Purchase Ledger Source
 
 ### Added
+
 - Show person name on Sales Quote print
 
 ## [2014.3.5] - 2014-08-20
+
 ### Fixed
+
 - Broken link on view purchase order supply/demand
 - Parentheses around address fields cause SQL error
 
 ### Added
+
 - Print company bank account details on pro-forma invoice
 - Show customer phone numbers on confirm sale
 - Show line due dates on sales order acknowledgement
 - Show sales order number on sales invoice
 
 ## [2014.3.4] - 2014-07-22
+
 ### Fixed
+
 - Remove call by reference outside function definitions for PHP 5 compatibility
 
 ## [2014.3.3] - 2014-07-08
+
 ### Added
+
 - Open up project job number for editing and enhance the search options
 
 ## [2014.3.2] - 2014-06-24
+
 ### Added
+
 - Allow selection of a custom XSL report definition for reports.
 
 ## [2014.3.1] - 2014-06-11
+
 ### Fixed
+
 - Sales Order Acknowledgement Print, lines overwrite header
 - CRM Activities view loads calendar instead of activities
 - Adding a project fails due to system policy error
 - OS Value on batch payments not being set to zero
 
 ### Added
+
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
 ## [2014.3] - 2014-05-27
+
 ### Changed
+
 - First Git controlled release on bitbucket
 
+[1.18.1]: https://github.com/uzerpllp/uzerp/compare/1.18...1.18.1
 [1.18]: https://github.com/uzerpllp/uzerp/compare/1.17...1.18
 [1.17]: https://github.com/uzerpllp/uzerp/compare/1.16...1.17
 [1.16]: https://github.com/uzerpllp/uzerp/compare/1.15.2...1.16
