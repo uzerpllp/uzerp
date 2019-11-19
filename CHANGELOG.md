@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Fixed
+
+- Fix holiday calendar UI interactions
+  - Click to add holiday request
+  - Right click to approve, cancel or decline a request
+
 ## [1.18.1] 2019-11-12
 
 ### Added
