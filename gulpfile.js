@@ -45,8 +45,8 @@ var jsFiles = [
         'assets/js/lib/uz-collection/charts/jquery.uz-bar-chart.js',
         'assets/js/vendor/fullcalendar/fullcalendar.min.js',
         'assets/js/vendor/fullcalendar/gcal.js',
-        'assets/js/vendor/contextMenu/jquery.contextMenu.js',
-        'assets/js/vendor/contextMenu/jquery.ui.position.js',
+        'assets/js/vendor/jQuery-contextMenu-2.9.0/dist/jquery.contextMenu.js',
+        'assets/js/vendor/jQuery-contextMenu-2.9.0/dist/jquery.ui.position.js',
         'assets/js/vendor/collapsibleCheckboxTree/jquery.collapsibleCheckboxTree.js',
         'assets/js/vendor/tabby/tabby.js',
         'assets/js/vendor/scrollTo/jquery.scrollTo-1.4.2-min.js',
@@ -78,7 +78,7 @@ var jsFiles = [
         `${less_source_libs}/fullcalendar/fullcalendar.css`,
         'assets/js/vendor/collapsibleCheckboxTree/jquery.collapsibleCheckboxTree.css',
         'assets/js/vendor/jqPagination/css/style.css',
-        'assets/js/vendor/contextMenu/jquery.contextMenu.css',
+        'assets/js/vendor/jQuery-contextMenu-2.9.0/dist/jquery.contextMenu.css',
         'modules/public_pages/**/resources/css/**/*.css',
     ];
 
