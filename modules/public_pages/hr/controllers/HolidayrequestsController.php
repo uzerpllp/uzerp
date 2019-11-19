@@ -30,9 +30,15 @@ class HolidayrequestsController extends HrController
 		$status_enums=$this->_templateobject->getEnumOptions('status');
 		
 		$this->view->set('status_enums',$status_enums);
+			$legend=array($status_enums['A']=>'fc_green',
+			$status_enums['C']=>'fc_grey',
+			$status_enums['D']=>'fc_red',
+			$status_enums['W']=>'fc_yellow'
+		);
+		$this->view->set('legend',$legend);
 		
 		$s_data = array();
-		$errors = array();
+		//$errors = array();
 
 		$this->setSearch('holidaySearch', 'useDefault', $s_data);
 
@@ -40,12 +46,10 @@ class HolidayrequestsController extends HrController
 
         parent::index(new HolidayrequestCollection($this->_templateobject));
 
-		
 		$sidebar = new SidebarController($this->view);
 		
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
 	}
 	
 	public function _new()
@@ -171,7 +175,17 @@ class HolidayrequestsController extends HrController
 			
 			parent::index($hr, $sh);
 			
-			$this->view->set('clickaction','view');
+			//$this->view->set('clickaction','view');
+			$status_enums=$this->_templateobject->getEnumOptions('status');
+		
+			$this->view->set('status_enums',$status_enums);
+				$legend=array($status_enums['A']=>'fc_green',
+				$status_enums['C']=>'fc_grey',
+				$status_enums['D']=>'fc_red',
+				$status_enums['W']=>'fc_yellow'
+			);
+			$this->view->set('legend',$legend);
+			$this->view->set('employee_id', $employee_id);
 		}
 		else
 		{
@@ -445,13 +459,17 @@ class HolidayrequestsController extends HrController
 		
 		$holidays = new HolidayRequestCollection();
 		
-		$s_data = array();
+		$s_data = ['status' => 'W', 'C', 'A'];
 		$this->setSearch('holidaySearch', 'useDefault', $s_data);
 				
 		$sh = $this->setSearchHandler($holidays);
 		
 		$sh->addConstraint(new Constraint('end_date', '>=', date('Y-m-d H:i:s', $this->_data['start'])));
 		$sh->addConstraint(new Constraint('start_date', '<', date('Y-m-d H:i:s', $this->_data['end'])));
+
+		if (isset($this->_data['employee_id'])) {
+			$sh->addConstraint(new Constraint('employee_id', '=', $this->_data['employee_id']));
+		}
 		
 		$sh->addConstraint($this->search->toConstraintChain());
 		
@@ -492,7 +510,10 @@ class HolidayrequestsController extends HrController
 			
 			// Also need to check user's permissions for each holiday request
 			// as to whether they can edit the requests for the employee
-			$editable = ($employee->isLoaded() && $access_allowed && ($authoriser || $value['status'] == 'W'));
+			$editable = false;
+			if ($value['status'] == 'W') {
+				$editable = ($employee->isLoaded() && $access_allowed && ($authoriser || $value['status'] == 'W'));
+			}
 			
 			//echo $value['employee'].' start_date:'	.$value['start_date'].' status:'.$value['status'].' all_day:'.$value['all_day'];		
 			$output_events[]=array('id'=>$value['id'],
@@ -589,6 +610,12 @@ class HolidayrequestsController extends HrController
 		{
 			return $days;
 		}
+	}
+
+	public function updateEvent()
+	{
+		echo json_encode($this->_data);
+		exit();
 	}
 	
 	/*

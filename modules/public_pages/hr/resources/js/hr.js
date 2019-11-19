@@ -13,9 +13,7 @@
 
 $(document).ready(function() {
 	
-    $(document).bind("contextmenu",function(e){
-        return false;
-    }); 
+
     
     /* hr -> employees -> new */
 	
@@ -660,6 +658,12 @@ $(document).ready(function() {
 					}
 			};
 	
+		var employee_id = $('#calendar').data('employee');
+		var url = "/?module=hr&controller=holidayrequests&action=getHolidays";
+
+		if (employee_id) {
+			url = "/?module=hr&controller=holidayrequests&action=getHolidays"+'&employee_id='+employee_id;
+		}
 		$calendar.fullCalendar({
 			header: {
 				left	: 'prev,next today',
@@ -675,7 +679,7 @@ $(document).ready(function() {
 			selectable		: true,
 			selectHelper	: true,
 //			slotMinutes		: 15,
-			events			: "/?module=hr&controller=holidayrequests&action=getHolidays",
+			events			: url,
 			
 		    eventRender: function(event, element) {
 		    	// Rules for drop down menu
@@ -695,99 +699,100 @@ $(document).ready(function() {
 			    	if (event.authoriser && event.status=='W') {
 			            items['authorise_request'] = {name: 'Authorise Request', icon: 'authorise_request'};
 			            items['decline_request'] = {name: 'Decline Request', icon: 'decline_request'};
-			    	}
-			    	$.contextMenu({
+					}
 
-			            selector: ('#'+event.id),//note the selector this will apply context to all events 
-			            trigger: 'right',
-			            callback: function(key, options) {
+					// Make contextMenu work with olf jQuery missing addBack()
+					$.fn.addBack = $.fn.andSelf;
+					
+					console.log(items);
+					if (!$.isEmptyObject(items)) {
+						$.contextMenu({
+							selector: ('#'+event.id),//note the selector this will apply context to all events
+							trigger: 'right',
+							callback: function(key, options) {
 
-			                action = key;
-			                
-			                switch(key)
-			                {
-			                case 'cancel_request':
-								var action='delete';
-
-			                case 'authorise_request':
+								action = key;
 								
-								$.ajax({
-									type:'POST',
-									url: '/?module=hr&controller=holidayrequests&action='+action+'&id='+event.id+'&ajax=&dialog=',
-									dataType: "html",
-									success: function(data) {
-										if (data !== undefined && data !== null) {
-										
-											if (data.substr(0, 1) == '{') {
-												var jsondata = JSON.parse(data);
+								switch(key)
+								{
+								case 'cancel_request':
+									var action='delete';
+
+								case 'authorise_request':
+									$.ajax({
+										type:'POST',
+										url: '/?module=hr&controller=holidayrequests&action='+action+'&id='+event.id+'&ajax=&dialog=',
+										dataType: "html",
+										success: function(data) {
+											if (data !== undefined && data !== null) {
 											
-												if (jsondata.status==true) {
-													$calendar.data('event_status', true);											
-													$('#add_event').dialog('close');
+												if (data.substr(0, 1) == '{') {
+													var jsondata = JSON.parse(data);
 												
+													if (jsondata.status==true) {
+														$calendar.data('event_status', true);
+														$('#add_event').dialog('close');
+													}
+												
+												} else {
+													// if data is empty then close the dialog, otherwise
+													// probably had an error so just need to refresh the current dialog
+													// with the returned html data
+													if (data=="") {
+														$('#add_event').dialog('close');
+													}
+													else {
+														$('#add_event').html(data);
+													}
 												}
-											
-											} else {
-												// if data is empty then close the dialog, otherwise
-												// probably had an error so just need to refresh the current dialog
-												// with the returned html data
-												if (data=="") {
-													$('#add_event').dialog('close');
-												}
-												else {
-													$('#add_event').html(data);
-												}
+												$calendar.fullCalendar('refetchEvents');
 											}
-										
 										}
-									}
-								});
-
-			                  break;
-			                case 'decline_request':
-								var action='decline_request';
-
-								$('#add_event').uz_ajax({
-									url			: '/?module=hr&controller=holidayrequests&action='+action+'&id='+event.id + '&ajax=&dialog=',
-									highlight	: false,
-									data		: '',
-									type		: "POST",
-									success		: function(response, base) {
-										if (response !== undefined && response !== null) {
+									});
 									
-											// Check the response; the called form may have reported an error
-											// or other response that requires a redirect
-											if (response.status!== undefined && response.status==true) {
+								break;
+								case 'decline_request':
+									var action='decline_request';
+
+									$('#add_event').uz_ajax({
+										url			: '/?module=hr&controller=holidayrequests&action='+action+'&id='+event.id + '&ajax=&dialog=',
+										highlight	: false,
+										data		: '',
+										type		: "POST",
+										success		: function(response, base) {
+											if (response !== undefined && response !== null) {
 										
-												if(response.redirect!=undefined && response.redirect!='') {
-													window.location.href=response.redirect;
+												// Check the response; the called form may have reported an error
+												// or other response that requires a redirect
+												if (response.status!== undefined && response.status==true) {
+											
+													if(response.redirect!=undefined && response.redirect!='') {
+														window.location.href=response.redirect;
+													}
+												}
+												else
+												{
+												// Output the response to the dialog box
+													base.processResponse(response);
+													
+													var buttons	= {};
+													
+													$.extend(buttons, closeButton);
+													$.extend(buttons, saveButton);
+
+													$('#add_event').dialog("option", "title", 'Edit Holiday Request');
+													$('#add_event').dialog("option", "buttons", buttons);
+													$('#add_event').dialog('open');
 												}
 											}
-											else
-											{
-											// Output the response to the dialog box
-												base.processResponse(response);
-												
-												var buttons	= {};
-												
-												$.extend(buttons, closeButton);
-												$.extend(buttons, saveButton);
-
-												$('#add_event').dialog("option", "title", 'Edit Holiday Request');
-												$('#add_event').dialog("option", "buttons", buttons);
-												$('#add_event').dialog('open');
-											}
+											$calendar.fullCalendar('refetchEvents');
 										}
-									}
-								});
-			                  break;
-
-			                }
-
-
-			            },
-			            items: items
-			        });
+									});
+								}
+							},
+							items: items
+						});
+					}
 		    	}
 		    },
 		    
@@ -931,9 +936,13 @@ $(document).ready(function() {
 			},
 			loading: function( isLoading, view ) {
 				if(isLoading==true) {
-					$(".page_title").html("Holidays calendar [loading...]");
+					$(".page_title").html("Holidays Calendar [loading...]");
 				} else {
-					$(".page_title").html("Holidays Calendar");
+					if (employee_id) {
+						$(".page_title").html("Your Holidays Calendar");
+					} else {
+						$(".page_title").html("Holidays Calendar");
+					}
 				}
 			       
 			},
@@ -1055,47 +1064,33 @@ $(document).ready(function() {
 		if (document.getElementById('calendar'))	{
 			$('#save_form').addClass('ignore_rules');
 		}
-	
-		var public_holidays =  $.fullCalendar.gcalFeed(
-//			'http://www.google.com/calendar/feeds/en.uk%23holiday%40group.v.calendar.google.com/public/basic',
-			'https://www.google.com/calendar/feeds/nhlu96v728ekb5cp8tprfhrnbg%40group.calendar.google.com/public/basic',
-			{
-				// put your options here
-				className:'fc_public_holidays',
-				editable:false,
-				currentTimezone:'Europe/London'
-			}
-		);
-		$calendar.fullCalendar('addEventSource', public_holidays);
-	
+
+		// Get public holidays from gov.uk
+		function getPublicHolidays(){
+			return $.ajax({
+				url: 'https://www.gov.uk/bank-holidays.json',
+				type: "GET",
+				crossDomain: true,
+				dataType: "json",
+			});
+		}
+
+		var ph = getPublicHolidays();
+
+		ph.success(function (data) {
+			$calendar.fullCalendar('addEventSource', data['england-and-wales']['events']);
+			$('#calendar').fullCalendar('option', 'height', 800);
+		});
+
+		ph.error(function(xhr, status) {
+			console.error('Failed to retrieve public holidays.')
+			$calendar.fullCalendar();
+			
+		});
 	}
 
 	hr_calendar();
 	
-	$('#search_submit, #search_clear', "#hr-holidayrequests-index").live('click', function (event) {
 
-		event.preventDefault();
-		
-		var form = $(event.currentTarget).parents('form');
-		
-		// if we want to set other rules for the form, include the ignore_rules class
-
-		// jQuery will not serialize submit buttons, so append the button name and value to the data
-		var form_data = form.serialize() + "&" + $(this).attr("name") + "=" + $(this).attr("value") + "&ajax=''";
-		
-		$('#included_file').uz_ajax({
-			type		: 'POST',
-			async		: false,
-			url			: form.attr('action') + "&ajax=",
-			data		: form_data,
-			highlight	: false,
-			complete	: function() {
-				check_if_table_needs_scroll_bar();	
-			}
-		});
-			
-		hr_calendar();
-		
-	});
 	
 });
