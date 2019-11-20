@@ -1,10 +1,5 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **}
-{* $Revision: 1.6 $ *}
-	<h1 class="page_title">{$page_title}</h1>
+
+{content_wrapper}
 	<div id="calendar" data-employee="{$employee_id}"></div>
 	<div id="add_event" style="display: none;" >
 		<input type="hidden" id="event_status" />
@@ -19,3 +14,4 @@
 			{/foreach}
 		</ul>
 	</div>
+{/content_wrapper}

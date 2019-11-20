@@ -26,9 +26,7 @@ class HolidayrequestsController extends HrController
 
 	public function index()
 	{
-		
 		$status_enums=$this->_templateobject->getEnumOptions('status');
-		
 		$this->view->set('status_enums',$status_enums);
 			$legend=array($status_enums['A']=>'fc_green',
 			$status_enums['C']=>'fc_grey',
@@ -38,16 +36,64 @@ class HolidayrequestsController extends HrController
 		$this->view->set('legend',$legend);
 		
 		$s_data = array();
-		//$errors = array();
-
 		$this->setSearch('holidaySearch', 'useDefault', $s_data);
-
 		$this->view->set('clickaction', 'view');
 
         parent::index(new HolidayrequestCollection($this->_templateobject));
 
+		$hol_sidebar = [];
+		$hol_sidebar['new_request'] = [
+			'link' => [
+				'modules'=>$this->_modules,
+				'controller'=>$this->name,
+				'action'=>'_new'
+			],
+			'tag'=>'New Request'
+		];
+		$hol_sidebar['list_view'] = [
+			'link' => [
+				'modules'=>$this->_modules,
+				'controller'=>$this->name,
+				'action'=>'holidayrequestslist'
+			],
+			'tag'=>'View List'
+		];
 		$sidebar = new SidebarController($this->view);
+		$sidebar->addList('Actions', $hol_sidebar);
+
+		$this->view->register('sidebar',$sidebar);
+		$this->view->set('sidebar',$sidebar);
+	}
+
+	public function holidayRequestsList()
+	{	
+		$s_data = array();
+		$this->setSearch('holidaySearch', 'useDefault', $s_data);
+		$this->view->set('clickaction', 'view');
+		$collection = new HolidayrequestCollection($this->_templateobject);
+		$collection->orderby = ['start_date'];
+		$collection->direction = ['DESC'];
+		parent::index($collection);
 		
+		$hol_sidebar = [];
+		$hol_sidebar['new_request'] = [
+			'link' => [
+				'modules'=>$this->_modules,
+				'controller'=>$this->name,
+				'action'=>'_new'
+			],
+			'tag'=>'New Request'
+		];
+		$hol_sidebar['cal_view'] = [
+			'link' => [
+				'modules'=>$this->_modules,
+				'controller'=>$this->name,
+				'action'=>'index'
+			],
+			'tag'=>'View Calendar'
+		];
+		$sidebar = new SidebarController($this->view);
+		$sidebar->addList('Actions', $hol_sidebar);
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
@@ -459,7 +505,7 @@ class HolidayrequestsController extends HrController
 		
 		$holidays = new HolidayRequestCollection();
 		
-		$s_data = ['status' => 'W', 'C', 'A'];
+		$s_data['status'] = ['W', 'C', 'A', 'D'];
 		$this->setSearch('holidaySearch', 'useDefault', $s_data);
 				
 		$sh = $this->setSearchHandler($holidays);
@@ -479,7 +525,7 @@ class HolidayrequestsController extends HrController
 		
 		$sh->setFields($fields);
 		$holidayrequests = $holidays->load($sh, '', RETURN_ROWS);
-		
+
 		$output_events=array();
 		
 		$colours=array('A'=>'fc_green',
