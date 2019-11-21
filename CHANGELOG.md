@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+[Unreleased]
+
+### Fixed
+
+- SO product prices missing from 'related items' sidebar on Stock Items
+- Return to Stock Item Work Orders view after adding Work Order from sidebar
+
 ## [1.18.2] 2019-10-21
 
 ### Fixed
