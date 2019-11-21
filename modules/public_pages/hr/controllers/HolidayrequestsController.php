@@ -34,12 +34,6 @@ class HolidayrequestsController extends HrController
 			$status_enums['W']=>'fc_yellow'
 		);
 		$this->view->set('legend',$legend);
-		
-		$s_data = array();
-		$this->setSearch('holidaySearch', 'useDefault', $s_data);
-		$this->view->set('clickaction', 'view');
-
-        parent::index(new HolidayrequestCollection($this->_templateobject));
 
 		$hol_sidebar = [];
 		$hol_sidebar['new_request'] = [
@@ -60,7 +54,6 @@ class HolidayrequestsController extends HrController
 		];
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList('Actions', $hol_sidebar);
-
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
@@ -206,7 +199,6 @@ class HolidayrequestsController extends HrController
 	public function view_my_holiday_requests()
 	{
 		$flash = Flash::Instance();
-		
 		$employee_id = $this->get_employee_id();
 		
 		if (!empty($employee_id))
@@ -231,12 +223,14 @@ class HolidayrequestsController extends HrController
 				$status_enums['W']=>'fc_yellow'
 			);
 			$this->view->set('legend',$legend);
+			$sidebar = new SidebarController($this->view);
+			$this->view->register('sidebar',$sidebar);
+			$this->view->set('sidebar',$sidebar);
 			$this->view->set('employee_id', $employee_id);
 		}
 		else
 		{
 			$flash->addError('You have not been set up as an employee');
-			
 			sendBack();
 		}
 		
@@ -502,47 +496,29 @@ class HolidayrequestsController extends HrController
 	 */
 	public function getHolidays()
 	{
-		
 		$holidays = new HolidayRequestCollection();
-		
-		$s_data['status'] = ['W', 'C', 'A', 'D'];
-		$this->setSearch('holidaySearch', 'useDefault', $s_data);
-				
-		$sh = $this->setSearchHandler($holidays);
-		
-		$sh->addConstraint(new Constraint('end_date', '>=', date('Y-m-d H:i:s', $this->_data['start'])));
-		$sh->addConstraint(new Constraint('start_date', '<', date('Y-m-d H:i:s', $this->_data['end'])));
-
+		$sh = new SearchHandler($holidays,false);
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('end_date', '>=', date('Y-m-d H:i:s', $this->_data['start'])));
+		$cc->add(new Constraint('start_date', '<', date('Y-m-d H:i:s', $this->_data['end'])));
 		if (isset($this->_data['employee_id'])) {
-			$sh->addConstraint(new Constraint('employee_id', '=', $this->_data['employee_id']));
+			$cc->add(new Constraint('employee_id', '=', $this->_data['employee_id']));
 		}
-		
-		$sh->addConstraint($this->search->toConstraintChain());
-		
-		$fields = $sh->fields;
-		$fields[] = 'reason_declined';
-		$fields[] = 'all_day';
-		
-		$sh->setFields($fields);
+		$sh->addConstraintChain($cc);
 		$holidayrequests = $holidays->load($sh, '', RETURN_ROWS);
 
 		$output_events=array();
-		
 		$colours=array('A'=>'fc_green',
 					   'C'=>'fc_grey',
 					   'D'=>'fc_red',
 					   'W'=>'fc_yellow'
 		);
-		
 		$accessobject = AccessObject::Instance();
 		$access_allowed = $accessobject->hasPermission('hr','holidayrequests','edit');
-		
 		$current_employee = $this->get_employee_id();
 		
 		foreach($holidayrequests as $key=>$value)
 		{
-//			$self = ($value['employee_id'] == $current_employee);
-			
 			$employee = DataObjectFactory::Factory('Employee');
 			
 			$employee->authorisationPolicy($employee->holiday_model());
