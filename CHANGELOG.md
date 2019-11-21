@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - SO product prices missing from 'related items' sidebar on Stock Items
 - Return to Stock Item Work Orders view after adding Work Order from sidebar
+- Completely hide 'print' column in work order list unless enables in MF module settings
 
 ## [1.18.2] 2019-10-21
 
