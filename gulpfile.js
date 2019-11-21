@@ -43,8 +43,8 @@ var jsFiles = [
         'assets/js/lib/uz-collection/charts/jquery.uz-pie-chart.js',
         'assets/js/lib/uz-collection/charts/jquery.uz-line-chart.js',
         'assets/js/lib/uz-collection/charts/jquery.uz-bar-chart.js',
-        'assets/js/vendor/fullcalendar/fullcalendar.min.js',
-        'assets/js/vendor/fullcalendar/gcal.js',
+        'assets/js/vendor/fullcalendar-1.6.6/fullcalendar/fullcalendar.min.js',
+        'assets/js/vendor/fullcalendar-1.6.6/fullcalendar/gcal.js',
         'assets/js/vendor/jQuery-contextMenu-2.9.0/dist/jquery.contextMenu.js',
         'assets/js/vendor/jQuery-contextMenu-2.9.0/dist/jquery.ui.position.js',
         'assets/js/vendor/collapsibleCheckboxTree/jquery.collapsibleCheckboxTree.js',
@@ -75,7 +75,8 @@ var jsFiles = [
     cssFiles = [
         // jQuery CSS files
         `${less_source_libs}/jquery.watermark-3.1.1/jquery.watermark.css`,
-        `${less_source_libs}/fullcalendar/fullcalendar.css`,
+        //`${less_source_libs}/fullcalendar/fullcalendar.css`,
+	'assets/js/vendor/fullcalendar-1.6.6/fullcalendar/fullcalendar.css',
         'assets/js/vendor/collapsibleCheckboxTree/jquery.collapsibleCheckboxTree.css',
         'assets/js/vendor/jqPagination/css/style.css',
         'assets/js/vendor/jQuery-contextMenu-2.9.0/dist/jquery.contextMenu.css',
