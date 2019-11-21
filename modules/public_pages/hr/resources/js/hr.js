@@ -12,8 +12,6 @@
  */
 
 $(document).ready(function() {
-	
-
     
     /* hr -> employees -> new */
 	
@@ -680,7 +678,13 @@ $(document).ready(function() {
 			selectHelper	: true,
 //			slotMinutes		: 15,
 			events			: url,
-			
+			viewRender: function(view) {
+				//Sync month selector
+				var t = new Date(view.visStart);
+				t.setDate(t.getDate() + 7);
+				var selected = view.visStart.getFullYear()+'-'+t.getMonth()+'-01';
+				$('#months').val(selected);
+			},
 		    eventRender: function(event, element) {
 		    	// Rules for drop down menu
 		    	// 1) Only editable events are enabled (status authorised or awaiting authorisation)
@@ -704,7 +708,6 @@ $(document).ready(function() {
 					// Make contextMenu work with olf jQuery missing addBack()
 					$.fn.addBack = $.fn.andSelf;
 					
-					console.log(items);
 					if (!$.isEmptyObject(items)) {
 						$.contextMenu({
 							selector: ('#'+event.id),//note the selector this will apply context to all events
@@ -807,7 +810,7 @@ $(document).ready(function() {
 					end_month		= formatMonth(end.getMonth()),
 					end_hour		= formatHour(end.getHours()),
 					end_minute		= formatMinute(end.getMinutes()),
-					end_date		= start_day+'/'+start_month+'/'+start.getFullYear();
+					end_date		= end_day+'/'+end_month+'/'+end.getFullYear();
 				
 				$('#add_event').dialog('open');
 			
@@ -835,8 +838,9 @@ $(document).ready(function() {
 								$('#add_event').dialog('open');
 								
 								if (start.getFullYear()+'-'+start_month+'-'+start_day < $("#Holidayrequest_today").val()) {
-									alert("Warning:\n\nStart Date is before today");
+									$('#hr-holidayrequest-new #Holidayrequest_start_date_label').parent().before('<dt></dt><dd>WARNING: This request starts in the past</dd>');
 								}
+								
 								
 							}
 						}
@@ -1087,10 +1091,39 @@ $(document).ready(function() {
 			$calendar.fullCalendar();
 			
 		});
+
+		$('.fc-header-right').append('<select id="months" type=select></select>');
 	}
 
 	hr_calendar();
 	
+	// Initialize Month Selector
+	var $monthsd = $('#months');
+	var $fcal = $('#calendar');
+	const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-	
+	$('#months').on('change', function() {
+		var sparts = $(this).val().split('-');
+		var syear = sparts[0];
+		var smonth = sparts[1];
+		debug.log(sparts);
+		$fcal.fullCalendar('gotoDate', syear, smonth);
+	});
+
+	buildMonthList();
+
+	function buildMonthList() {
+		$('#months').empty();
+		var month = $fcal.fullCalendar('getDate');
+		var initial = month.getFullYear() + '-' + month.getMonth();
+		month.setMonth(month.getMonth() -12);
+		for (var i = 0; i < 25; i++) {
+			var opt = document.createElement('option');
+			opt.value = month.getFullYear() + '-' + month.getMonth() + '-01';
+			opt.text = month.getFullYear() + ' ' + monthNames[month.getMonth()];
+			opt.selected = initial === month.getFullYear() + '-' + month.getMonth();
+			$monthsd.append(opt);
+			month.setMonth(month.getMonth() +1)
+		}
+	}
 });
