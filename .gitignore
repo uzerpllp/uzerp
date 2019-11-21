@@ -2,30 +2,30 @@
 *~
 
 # npm/gulp
-node_modules/
-dist/
+/node_modules/
+/dist/
 
 # These should go in /var on production systems, but we'll leave them for now
-data/cache/**
-data/resource_cache/**
-data/templates_c/**
-data/tmp/**
-data/users/**
-data/print_debug/**
+/data/cache/**
+/data/resource_cache/**
+/data/templates_c/**
+/data/tmp/**
+/data/users/**
+/data/print_debug/**
 
 # User/site modules and template overrides
-user/**
+/user/**
 
 # Exclude local changes to the config file
-conf/config.php
-conf/custom-model-order.yml
-conf/model-config.yml
-conf/selector-config.yml
-conf/oauth.yml
+/conf/config.php
+/conf/custom-model-order.yml
+/conf/model-config.yml
+/conf/selector-config.yml
+/conf/oauth.yml
 
 # Exclude composer installed stuff
 #composer.lock
-vendor/**
+/vendor/**
 
 # Exclude PHP APC monitor
 apc.php
@@ -39,4 +39,4 @@ apc.php
 .vscode/**
 
 # FOP PDF
-PDF/
+/PDF/
