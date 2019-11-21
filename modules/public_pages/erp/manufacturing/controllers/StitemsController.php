@@ -1552,7 +1552,7 @@ class StitemsController extends printController
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
 
-        $this->view->set('page_title', $this->getPageName('', 'View'));
+        $this->view->set('page_title', 'Viewing Work Orders for Stock Item: ' . $stitem->item_code);
     }
 
     public function where_Used()

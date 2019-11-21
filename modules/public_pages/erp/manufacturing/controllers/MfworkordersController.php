@@ -396,11 +396,10 @@ class MfworkordersController extends ManufacturingController
 			}
 			else
 			{
-				// sendTo('STItems'
-				// 		,'viewWorkorders'
-				// 		,$this->_modules
-				// 		,array('id'=>$data->stitem_id));
-				sendTo('mfworkorders', 'index', 'manufacturing');
+				 sendTo('STItems',
+				 		'viewWorkorders',
+				 		$this->_modules,
+				 		array('id'=>$data->stitem_id));
 			}
 		}
 
