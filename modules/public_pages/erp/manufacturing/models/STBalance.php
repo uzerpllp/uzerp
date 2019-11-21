@@ -58,7 +58,13 @@ class STBalance extends DataObject
         
 	static function getStockList($whlocation_id='')
 	{
-		$db = &DB::Instance();
+		//Get the obsolete items
+		$stitems = new STItem();
+		$sc = new ConstraintChain;
+		$sc->add(new Constraint('obsolete_date', 'is not', 'NULL'));
+		$obs_items = $stitems->getAll($sc);
+		$obs_ids = array_keys($obs_items);
+		$obsolete_ids = '(' . implode('),(', $obs_ids) . ')';
 		
 		$stbalance = DataObjectFactory::Factory('STBalance');
 		
@@ -73,6 +79,10 @@ class STBalance extends DataObject
 		{
 			$cc->add(new Constraint('whlocation_id', 'in', '('.implode($whlocation_id, ',').')'));
 		}
+
+		if (count($obsolete_ids) > 0) {
+			$cc->add(new Constraint('stitem_id','<> ANY', "(VALUES {$obsolete_ids})"));
+		}
 		
 		$cc->add(new Constraint('balance', '>', 0));
 		
@@ -81,7 +91,7 @@ class STBalance extends DataObject
 		
 		$stbalance->orderby = 'stitem';
 		
-		return $stbalance->getAll($cc);
+		return $stbalance->getAll($cc, false, true);
 	}
 
 	static function getBinList($stitem_id, $whlocation_id)
