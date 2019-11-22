@@ -50,13 +50,12 @@
 							{/if}
 						{/if}
 					</td>
-					<td>
 					{if (($model->status == 'N') && in_array($module_prefs['allow-wo-print'], ['A', 'N']))
 						|| (($model->status == 'R') && in_array($module_prefs['allow-wo-print'], ['A', 'R']))}
-						<input title='Print documents to default printer' type="checkbox" name="print[{$model->id}]" id="print{$model->id}" class="checkbox" />
-					{else}-
+						<td>
+							<input title='Print documents to default printer' type="checkbox" name="print[{$model->id}]" id="print{$model->id}" class="checkbox" />
+						</td>
 					{/if}
-					</td>
 				{/grid_row}
 			{foreachelse}
 				<tr>

@@ -625,7 +625,7 @@ class StitemsController extends printController
             'purchase_invoices',
             'sales_orders',
             'sales_invoices',
-            'so_products_prices',
+            'so_product_prices',
             'po_product_prices',
             'so_products',
             'po_products'
@@ -1552,7 +1552,7 @@ class StitemsController extends printController
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
 
-        $this->view->set('page_title', $this->getPageName('', 'View'));
+        $this->view->set('page_title', 'Viewing Work Orders for Stock Item: ' . $stitem->item_code);
     }
 
     public function where_Used()
