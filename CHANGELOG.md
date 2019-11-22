@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-[Unreleased]
+## [1.18.3] 2019-11-22
 
 ### Fixed
 
@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 - Return to Stock Item Work Orders view after adding Work Order from sidebar
 - Completely hide 'print' column in work order list unless enabled in MF module settings
 
-## [1.18.2] 2019-10-21
+## [1.18.2] 2019-11-21
 
 ### Fixed
 
@@ -671,6 +671,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 
 - First Git controlled release on bitbucket
 
+[1.18.3]: https://github.com/uzerpllp/uzerp/compare/1.18.2...1.18.3
 [1.18.2]: https://github.com/uzerpllp/uzerp/compare/1.18.1...1.18.2
 [1.18.1]: https://github.com/uzerpllp/uzerp/compare/1.18...1.18.1
 [1.18]: https://github.com/uzerpllp/uzerp/compare/1.17...1.18
