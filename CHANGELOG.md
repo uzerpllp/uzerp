@@ -8,19 +8,19 @@ All notable changes to this project will be documented in this file.
 
 - SO product prices missing from 'related items' sidebar on Stock Items
 - Return to Stock Item Work Orders view after adding Work Order from sidebar
-- Completely hide 'print' column in work order list unless enables in MF module settings
+- Completely hide 'print' column in work order list unless enabled in MF module settings
 
 ## [1.18.2] 2019-10-21
 
 ### Fixed
 
-- Fix holiday calendar UI interactions
+- Fix holiday requests calendar UI interactions
   - Click a day or select a range of dates to add holiday request
   - Right click to approve, cancel or decline a request
 
 ### Added
 
-- Enable switching to list view from calendar
+- Enable switching to list view from holiday requests calendar
 
 ## [1.18.1] 2019-11-12
 
