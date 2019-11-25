@@ -24,16 +24,6 @@
 						{assign var=label value='OR '}
 					{/if}
 					{input type='file' name='file' label=$label|cat:'upload new logo'}
-					{input type='checkbox' attribute='debug_enabled'}
-					<input type="hidden" name="DebugOption[id]" id="debug_id" value={$debug_id}>
-					<dt>
-						<label for="debug_options">Debug Options</label>
-					</dt>
-					<dd class="for_multiple">
-						<select name="Systemcompany[debug_options][]" id="debug_options" multiple="multiple">
-							{html_options options=$debug_options selected=$selected_options}
-						</select>
-					</dd>
 				{/with}
 			{/view_section}
 		</dl>

@@ -11,7 +11,6 @@
 				{view_data attribute="company" value=$company->name}
 				{view_data attribute="access_enabled"}
 				{view_data attribute="audit_enabled"}
-				{view_data attribute="debug_enabled"}
 				{view_data attribute="published"}
 				{view_data attribute="published_owner"}
 			</dl>
