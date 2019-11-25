@@ -1110,7 +1110,9 @@ $(document).ready(function() {
 		$fcal.fullCalendar('gotoDate', syear, smonth);
 	});
 
-	buildMonthList();
+	if (typeof $fcal.fullcalendar !== 'undefined') {
+		buildMonthList();
+	}
 
 	function buildMonthList() {
 		$('#months').empty();
