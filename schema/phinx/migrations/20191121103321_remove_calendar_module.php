@@ -3,31 +3,22 @@
 
 use UzerpPhinx\UzerpMigration;
 
+/**
+ * Remove calendar module records and tables
+ */
 class RemoveCalendarModule extends UzerpMigration
 {
-    /**
-     * Change Method.
-     *
-     * Write your reversible migrations using this method.
-     *
-     * More information on writing migrations is available here:
-     * http://docs.phinx.org/en/latest/migrations.html#the-abstractmigration-class
-     *
-     * The following commands can be used in this method and Phinx will
-     * automatically reverse them when rolling back:
-     *
-     *    createTable
-     *    renameTable
-     *    addColumn
-     *    renameColumn
-     *    addIndex
-     *    addForeignKey
-     *
-     * Remember to call "create()" or "update()" and NOT "save()" when working
-     * with the Table class.
-     */
-    public function change()
+    public function up()
     {
+        $this->execute('DROP TABLE calendars CASCADE');
+        $this->execute('DROP TABLE calendar_events CASCADE');
+        $this->execute('DROP TABLE calendar_event_attendees CASCADE');
+        $this->execute('DROP TABLE calendar_shares CASCADE');
 
+        $query = $this->query("SELECT id FROM modules WHERE name = 'calendar'");
+        $cal_module_id = $query->fetchAll();
+
+        $this->execute("DELETE FROM module_components WHERE module_id = {$cal_module_id[0]['id']}");
+        $this->execute("DELETE FROM modules WHERE id = {$cal_module_id[0]['id']}");
     }
 }
