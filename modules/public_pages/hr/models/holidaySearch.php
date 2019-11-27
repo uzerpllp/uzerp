@@ -20,12 +20,17 @@ class holidaySearch extends BaseSearch
 		
 		// Employee Name
 		$search->addSearchField(
-			'employee',
-			'name_contains',
-			'contains',
+			'employee_id',
+			'Employee',
+			'select',
 			'',
 			'basic'
 		);
+		$employees = DataObjectFactory::Factory('Employee');
+		$employees = $employees->getAll(null, TRUE, TRUE);
+		$options = [''=>'all'];
+		$options += $employees;
+		$search->setOptions('employee_id',$options);
 		
 		// Employee Grade
 		$search->addSearchField(
@@ -57,10 +62,29 @@ class holidaySearch extends BaseSearch
 				'status',
 				'multi_select',
 				array($request->authorise(), $request->newRequest()),
-				'advanced'
+				'basic'
 		);
 		$search->setOptions('status',$request->getEnumOptions('status'));
 		
+		// Start date
+		$search->addSearchField(
+			'start_date',
+			'Start Date between',
+			'between',
+			'',
+			'advanced'
+		);
+
+		// Start date
+		$search->addSearchField(
+			'end_date',
+			'End Date between',
+			'between',
+			'',
+			'advanced'
+		);
+
+
 		$search->setSearchData($search_data,$errors);
 		
 		return $search;
