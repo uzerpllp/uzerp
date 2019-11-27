@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Print output from employee holiday list
+- Add more search options to employee holiday list
+
 ### Removed
 
 - Debug option UI setting for system company
