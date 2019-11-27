@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Removed
+
+- Debug option UI setting for system company
+- Calendar module
+
 ## [1.18.3] 2019-11-22
 
 ### Fixed
