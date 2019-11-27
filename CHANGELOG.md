@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - Print output from employee holiday list
 - Add more search options to employee holiday list
+- Get initial currency from the source transaction when refunding in the cash book
 
 ### Removed
 

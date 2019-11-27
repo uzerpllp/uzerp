@@ -4,7 +4,6 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {* $Revision: 1.3 $ *}
-{debug}
 {content_wrapper}
 	{form controller=$self.controller action="save"}
 		{with model=$CBTransaction}
