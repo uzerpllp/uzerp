@@ -2737,7 +2737,8 @@ class printController extends Controller
             $xml .= "\t" . "<record " . $row_class . ">" . "\n";
 
             foreach ($row as $field => $value) {
-
+                // less-than causes issues in XML
+                $value = str_replace('<', '&#60;', $value);
                 $cell_class = array();
 
                 if (! empty($headings[$field])) {

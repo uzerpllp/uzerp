@@ -611,7 +611,8 @@ class ReportsController extends PrintController {
 						
 						foreach ($row as $field => $value)
 						{
-							
+							// less-than causes issues in XML
+							$value = str_replace('<', '&#60;', $value);
 							$cell_class = array();
 							
 							if (isset($options[$field]['normal_red_negative_numbers']) && $options[$field]['normal_red_negative_numbers']=="true" && $value<0)
@@ -664,7 +665,7 @@ class ReportsController extends PrintController {
 				$xsl = $this->build_custom_xsl(
 					$doc,
 					$report_definition_name,
-					$report->description,
+					str_replace('<', '&#60;', $report->description), // less-than causes issues in XML
 					$headings,
 					$col_widths,
 					$options
@@ -1385,10 +1386,10 @@ class ReportsController extends PrintController {
 				// ATTN: should this be key=>value?!
 				foreach ($fields as $key => $fieldname)
 				{
-					
+					// less-than causes issues in XML/HTML
+					$model[$key] = str_replace('<', '&#60;', $model[$key]);	
 					if ($break === '' && isset($measure_fields[$key]))
 					{
-					
 						if ($model[$key] === '')
 						{
 							$model_value = 'None';
