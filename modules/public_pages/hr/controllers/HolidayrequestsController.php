@@ -20,7 +20,7 @@ class HolidayrequestsController extends HrController
 		$this->_templateobject = DataObjectFactory::Factory('Holidayrequest');
 		
 		$this->uses($this->_templateobject);
-		$this->view->set('controller', 'Holidayrequest');
+		$this->view->set('controller', 'Holidayrequests');
 
 	}
 
@@ -63,10 +63,30 @@ class HolidayrequestsController extends HrController
 		$s_data = array();
 		$this->setSearch('holidaySearch', 'useDefault', $s_data);
 		$this->view->set('clickaction', 'view');
+
 		$collection = new HolidayrequestCollection($this->_templateobject);
 		$collection->orderby = ['start_date'];
 		$collection->direction = ['DESC'];
 		parent::index($collection);
+
+		// Handle the print dialog as this isn't 'index'
+		if (isset($this->search))
+		{
+			$sh = $this->search;
+			 if ($this->isPrintDialog())
+			 {
+					 $_SESSION['printing'][$this->_data['index_key']]['search_id']=$sh->search_id;
+					 return $this->printCollection();
+			 }
+			 elseif ($this->isPrinting())
+			 {
+					 $_SESSION['printing'][$this->_data['index_key']]['search_id']=$sh->search_id;
+					 $sh->setLimit(0);
+					 $collection->load($sh);
+					 $this->printCollection($collection);
+					 exit;
+			 }
+	}	
 		
 		$hol_sidebar = [];
 		$hol_sidebar['new_request'] = [
