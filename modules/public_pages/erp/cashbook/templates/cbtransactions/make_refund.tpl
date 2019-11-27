@@ -4,11 +4,12 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {* $Revision: 1.3 $ *}
+{debug}
 {content_wrapper}
 	{form controller=$self.controller action="save"}
 		{with model=$CBTransaction}
 			{select attribute="cb_account_id" label='Account' force=true}
-			{select attribute='currency_id' value=$currency_id options=$currencies}
+			{select attribute='currency_id' options=$currencies}
 			{input type="hidden" attribute="type"}
 			{input type="text" attribute="net_value" }
 			{select attribute="tax_rate_id"}
