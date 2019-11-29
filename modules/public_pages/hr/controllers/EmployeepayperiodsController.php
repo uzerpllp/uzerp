@@ -224,13 +224,20 @@ class EmployeepayperiodsController extends Controller {
 		//	1)	only close off the period if the previous period is closed
 		if ($pay_period->closed == 'f')
 		{
-			$sidebarlist['closeperiod'] = array(
-					'tag' => 'Close Period',
+			$sidebarlist['enterpayments'] = array(
+					'tag' => 'Enter Payments for Period',
 					'link' => array('modules'				=> $this->_modules
-								   ,'controller'			=> $this->name
-								   ,'action'				=> 'close_period'
+								   ,'controller'			=> 'employeepayhistories'
+								   ,'action'				=> 'new'
 								   ,$pay_period->idField	=> $pay_period->{$pay_period->idField})
 			);
+			$sidebarlist['closeperiod'] = array(
+				'tag' => 'Close Period',
+				'link' => array('modules'				=> $this->_modules
+							   ,'controller'			=> $this->name
+							   ,'action'				=> 'close_period'
+							   ,$pay_period->idField	=> $pay_period->{$pay_period->idField})
+		);
 		}
 		
 		$sidebar->addList('Actions', $sidebarlist);
