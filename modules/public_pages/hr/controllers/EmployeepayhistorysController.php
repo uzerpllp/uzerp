@@ -83,29 +83,16 @@ class EmployeepayhistorysController extends printController
 		
 		$pay_history = $this->_uses[$this->modeltype];
 		
-		$employee = DataObjectFactory::Factory('employee');
-		
-		$employee->orderby = 'employee';
-		
-		$employee->authorisationPolicy();
-		
 		$employee_pay_periods		= $this->getPayPeriods('', FALSE);
 		reset($employee_pay_periods);
+
+		$current_pay_period_id		= key($employee_pay_periods);
 		
-//		Get current employees and leavers in current period
-		$cc = new ConstraintChain();
-		
-		$cc->add(new Constraint('finished_date', 'is', 'NULL'));
-		$cc->add(new Constraint('finished_date', '>=', $this->getPayPeriodStartDate(key($employee_pay_periods))), 'OR');
-		
-		$employees					= $employee->getAll($cc, TRUE, TRUE);
-//		$employees					= $employee->getAll(null, TRUE, TRUE);
+		$employees					= $this->getEmployeesForPeriod($current_pay_period_id);
 		
 		$pay_history->employee_id	= $employee_id = (empty($this->_data['employee_id']))?key($employees):$this->_data['employee_id'];
 		$period_start_date			= $pay_history->getLatestPeriodStart($employee_id);
-		
-		$current_pay_period_id		= key($employee_pay_periods);
-		
+				
 		// Need to get the earliest pay period that has no employee pay history
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('employee_id', '=', $employee_id));
@@ -556,6 +543,39 @@ class EmployeepayhistorysController extends printController
 		
 	}
 	
+	public function getEmployeesForPeriod($_employee_pay_periods_id='')
+	{
+		if(isset($this->_data['ajax']))
+		{
+			if(!empty($this->_data['employee_pay_periods_id'])) {	$_employee_pay_periods_id = $this->_data['employee_pay_periods_id']; }
+		}
+
+		$employee = DataObjectFactory::Factory('employee');
+		$employee->orderby = 'employee';
+		$employee->authorisationPolicy();
+
+		//Get current employees and leavers in current period
+		$cc = new ConstraintChain();
+		
+		$cc->add(new Constraint('pay_basis', '=' , $this->getPayPeriodPayBasis($_employee_pay_periods_id) ));
+		$cc->add(new Constraint('finished_date', 'is', 'NULL'));
+		$cc->add(new Constraint('finished_date', '>=', $this->getPayPeriodStartDate($_employee_pay_periods_id)), 'OR');
+
+		$employees = $employee->getAll($cc, TRUE, TRUE);
+
+		if(isset($this->_data['ajax']))
+		{
+			$this->view->set('options', $employees);
+            $this->setTemplateName('select_options');
+		}
+		else
+		{
+			return $employees;
+		}
+		
+	}
+
+
 	/*
 	 * Private Functions
 	 */
@@ -595,6 +615,16 @@ class EmployeepayhistorysController extends printController
 		$employee_pay_period->load($_pay_period_id);
 		
 		return $employee_pay_period->period_start_date;
+	}
+
+	private function getPayPeriodPayBasis($_pay_period_id)
+	{
+		
+		$employee_pay_period = DataObjectFactory::Factory('EmployeePayPeriod');
+		
+		$employee_pay_period->load($_pay_period_id);
+		
+		return $employee_pay_period->pay_basis;
 	}
 	
 }

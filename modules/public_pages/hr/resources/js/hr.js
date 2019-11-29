@@ -13,11 +13,7 @@
 
 $(document).ready(function() {
 	
-    $(document).bind("contextmenu",function(e){
-        return false;
-    }); 
-    
-    /* hr -> employees -> new */
+	/* hr -> employees -> new */
 	
 	$("#Employee_person_id", "#hr-employees-new").live('change',function(){
 		
@@ -350,12 +346,33 @@ $(document).ready(function() {
 	
 	/* hr -> employeepayhistory -> new */
 	
-	$('#hour_types input:visible:enabled:first').focus();
-	
+	/*$('#hour_types input:visible:enabled:first').focus();*/
+
+	$("#EmployeePayHistory_employee_pay_periods_id", "#hr-employeepayhistorys-new").live('change',function(){
+
+		$.uz_ajax({
+			target:[
+				{
+					element	: "#EmployeePayHistory_employee_id",
+					//field	: 'employee_id'
+				}
+			],
+			data:{
+				module					: 'hr',
+				controller				: 'employeepayhistorys',
+				action					: 'getEmployeesForPeriod',
+				employee_pay_periods_id	: $('#EmployeePayHistory_employee_pay_periods_id').val(),
+				ajax					: ''
+			}
+		});
+		
+		//$('#hour_types input:visible:enabled:first').focus();
+		
+	});
+
 	$("#EmployeePayHistory_employee_pay_periods_id, #EmployeePayHistory_employee_id", "#hr-employeepayhistorys-new").live('change',function(){
 		
 		$.uz_ajax({
-			async:	false,
 			target:[
 		    	{
 					element	: "#hour_types",
