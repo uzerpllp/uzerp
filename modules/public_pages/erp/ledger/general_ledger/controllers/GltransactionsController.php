@@ -303,7 +303,7 @@ class GltransactionsController extends printController
 		
 		$this->_data[$transaction_model]['source']	= 'G';
 		$this->_data[$transaction_model]['type']	= 'J';
-		if ($glheader->type = 'Y') {
+		if ($glheader->type == 'Y') {
 			$this->_data[$transaction_model]['type']	= 'Y';
 		}
 		
