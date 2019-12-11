@@ -2,12 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.19] 2019-12-11
 
 ### Fixed
 
 - Print output from employee holiday list
-- Add more search options to employee holiday list
 - Get initial currency from the source transaction when refunding in the cash book
 - Ensure that output containing '<' character can print
 - Ensure that GL journal transactions are tagged with the correct type
@@ -15,6 +14,9 @@ All notable changes to this project will be documented in this file.
 - Re-introduce manufactured item structure substitution
 - Error when sorting Purchase Order Received Lines view by item description
 
+### Changed
+
+- Add more search options to employee holiday list
 
 ### Removed
 
