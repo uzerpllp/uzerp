@@ -11,7 +11,10 @@ All notable changes to this project will be documented in this file.
 - Get initial currency from the source transaction when refunding in the cash book
 - Ensure that output containing '<' character can print
 - Ensure that GL journal transactions are tagged with the correct type
-- Contrain employee dropdown by pay period frequency in emplyee payments
+- Constrain employee dropdown by pay period frequency in emplyee payments
+- Re-introduce manufactured item structure substitution
+- Error when sorting Purchase Order Received Lines view by item description
+
 
 ### Removed
 
