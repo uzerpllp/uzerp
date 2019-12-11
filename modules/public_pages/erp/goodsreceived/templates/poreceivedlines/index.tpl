@@ -32,7 +32,7 @@
 			{heading_cell field="uom_name" }
 				UoM
 			{/heading_cell}
-			{heading_cell field="description"}
+			{heading_cell field="item_description"}
 				Description
 			{/heading_cell}
 			{heading_cell field="status" }
