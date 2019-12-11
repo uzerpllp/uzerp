@@ -357,6 +357,23 @@ class MfstructuresController extends PrintController
 		]), false, false);
 		$this->view->set('cancel_link', $cancel_url);
 
+		$sidebar = new SidebarController($this->view);
+
+		$sidebar->addList(
+			'Actions', [
+				'view' => [
+					'tag' => 'Substitute Item',
+					'link' => [
+						'modules'=>$this->_modules,
+						'controller'=>$this->name,
+						'action'=>'view',
+						'id'=>$mfstructure->id,
+					]
+				]
+			]);
+
+		$this->view->register('sidebar', $sidebar);
+		$this->view->set('sidebar', $sidebar);
 	}
 
 	public function save()

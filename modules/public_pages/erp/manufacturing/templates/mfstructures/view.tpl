@@ -33,13 +33,13 @@
 			{input type='hidden' model=$transaction attribute='stitem_id' }
 			<dl id="view_data_right">
 				<dt class="heading">Substitute Part Item</dt>
-				{select model=$substitute attribute='ststructure_id' options=$ststructures label='Part Item' }
+				{select model=$substitute attribute='ststructure_id' options=$ststructures label='Part Item' value=$MFStructure->ststructure_id }
 				{input type='date' model=$substitute attribute='start_date' }
 				{input type='date' model=$substitute attribute='end_date' }
-				{input type='text' model=$substitute attribute='remarks' }
-				{input type='text' model=$substitute attribute='qty' }
+				{input type='text' model=$substitute attribute='remarks' value=$MFStructure->remarks}
+				{input type='text' model=$substitute attribute='qty' value=$MFStructure->qty}
 				{select model=$substitute attribute='uom_id' options=$uom_list selected=$uom_id}
-				{input type='text' model=$substitute label="Waste %" attribute='waste_pc' }
+				{input type='text' model=$substitute label="Waste %" attribute='waste_pc' value=$MFStructure->waste_pc}
 				<dt class="submit"></dt>
 				<dd class="submit">{submit value="Save Substitution" tags="none"}</dd>
 			</dl>
