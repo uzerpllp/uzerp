@@ -86,7 +86,7 @@ class Flash {
 			$return = $this->{'_' . $type . '_show'};
 
 			// If we have errors, send them to Sentry.
-			// It's done here, when the errors for display so we don't have to add this for all modulr actions.
+			// It's done here, when the errors for display so we don't have to add this for all module actions.
 			if ($type == 'errors' and defined('SENTRY_DSN'))
 			{
 				$this->sentrySend($return);
@@ -239,7 +239,12 @@ class Flash {
 	 */
 	private function sentrySend($ferrors)
 	{
-		//ignore if no username or nagios request
+		// ignore access denied
+		if (in_array('You do not have access to the requested action.', $ferrors ))
+		{
+			return;
+		}
+		// ignore if no username or nagios request
 		if(EGS_USERNAME or strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'nagios') !== false) {
 			try
 			{
