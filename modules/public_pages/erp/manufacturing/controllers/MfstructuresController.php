@@ -331,6 +331,10 @@ class MfstructuresController extends PrintController
 			$ststructure_id = key($ststructures);
 		}
 
+		// If we have an MFStructure, ensure its child stitem_id is used
+		if ($mfstructure->isLoaded() ) {
+			$ststructure_id = $mfstructure->ststructure_id;
+		}
 
 		$this->view->set('ststructures',$ststructures);
 		$this->view->set('clickaction','edit');
