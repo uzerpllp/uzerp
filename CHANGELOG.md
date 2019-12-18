@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Fixed
+
+- Ensure that the correct UOMs are available when editing an item structure (BOM) line
+
 ## [1.19] 2019-12-11
 
 ### Fixed
