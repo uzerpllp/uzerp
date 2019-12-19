@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Fixed
+
+- Set despatched quantity to zero when saving and existing sales order/quote as new
+
 ## [1.19.1] 2019-12-18
 
 ### Fixed
