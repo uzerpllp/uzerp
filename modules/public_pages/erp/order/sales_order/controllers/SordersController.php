@@ -262,6 +262,7 @@ class SordersController extends printController
                         break;
                     case 'del_qty':
                         $data[$modelname][$fieldname][$line_count] = 0;
+                        break;
                     case 'order_id':
                         $data[$modelname][$fieldname][$line_count] = '';
                         break;
