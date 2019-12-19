@@ -260,6 +260,8 @@ class SordersController extends printController
                     case 'actual_despatch_date':
                     case 'delivery_note':
                         break;
+                    case 'del_qty':
+                        $data[$modelname][$fieldname][$line_count] = 0;
                     case 'order_id':
                         $data[$modelname][$fieldname][$line_count] = '';
                         break;
