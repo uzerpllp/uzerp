@@ -255,6 +255,11 @@ class MfworkordersController extends ManufacturingController
 
 		$this->view->set('documents', $wodocs->getAssoc('name'));
 
+		// We only want non-archived projects
+		$projects = Project::getLiveProjects();
+		$this->view->set('projects', $projects);
+		
+
 		$order_id = (empty($this->_data['order_id']))?'':$this->_data['order_id'];
 
 		$this->view->set('sales_orders', $this->getSalesOrders($order_id));

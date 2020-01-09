@@ -312,6 +312,17 @@ class Project extends DataObject {
 
 		return array('total_invoiced'=>$totals['net_value']);
 	}
+
+	// Return non-archived projects
+	static function getLiveProjects(){
+
+		$project = DataObjectFactory::Factory('Project');
+
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('archived', '=', FALSE));
+
+		return $project->getAll($cc, true, true);
+	}
 	
 }
 ?>

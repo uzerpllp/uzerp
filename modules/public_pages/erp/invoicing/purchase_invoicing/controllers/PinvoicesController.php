@@ -589,6 +589,11 @@ class PinvoicesController extends printController {
 			$pinvoice->project_id = $this->_data['project_id'];
 		}
 		
+		// We only want non-archived projects
+        $projects = Project::getLiveProjects();
+        $this->view->set('projects', $projects);
+
+        // Now get tasks for the selected project
 		$this->view->set('tasks', $this->getTaskList($pinvoice->project_id));
 			
 	}
