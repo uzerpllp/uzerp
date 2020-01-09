@@ -16,7 +16,7 @@
 			{input type='date' attribute='expense_date'}
 			{input type='text'  attribute='our_reference'}
 			{select attribute='currency_id' value=$base_currency}
-			{select attribute='project_id' force=true}
+			{select attribute='project_id' options=$projects force=true}
 			{select attribute='task_id' force=true options=$tasks}
 			{textarea  attribute='description'}
 		{/with}
