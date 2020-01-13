@@ -12,6 +12,9 @@
 
 require 'vendor/autoload.php';
 use Symfony\Component\HttpFoundation\Request;
+use Monolog\Logger;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Processor\WebProcessor;
 
 class system
 {
@@ -96,6 +99,9 @@ class system
 
     // http request object;
     protected $request;
+
+    // logger - access from controllers as $this->_injector->logger
+    public $logger;
 
     /*
      * The permissions context for this request
@@ -298,6 +304,17 @@ class system
 
         // set the path names before checking the system
         // otherwise we won't have access to setting functions
+
+        // set-up the logger
+        $config = Config::Instance();
+        $logfile = $config->get('UZERP_LOG_PATH');
+
+        if($logfile != '') {
+            $file = new RotatingFileHandler($logfile, Logger::DEBUG);
+            $this->logger = new Logger('uzerp');
+            $this->logger->pushHandler($file);
+            $this->logger->pushProcessor(new WebProcessor());
+        }
 
         // set the loaded flag to true
         $loaded = TRUE;
