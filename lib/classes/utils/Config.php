@@ -57,9 +57,10 @@ class Config {
 				'SYSTEM_STATUS'				=> '',
 				'SYSTEM_VERSION'			=> '',
 				'BASE_TITLE'				=> 'uzERP',
-				'ADMIN_EMAIL'				=> 'admin@' . $_SERVER['HTTP_HOST'],
-				'ADMIN_FROM_EMAIL'			=> 'admin@' . $_SERVER['HTTP_HOST'],
+				'ADMIN_EMAIL'				=> '',
+				'ADMIN_FROM_EMAIL'			=> '',
 				'AUDIT_LOGIN'				=> TRUE,
+				'UZERP_LOG_PATH'			=> '',
 		
 				// MEMCACHED
 				'MEMCACHED_HOST'			=> 'localhost',
