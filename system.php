@@ -11,6 +11,8 @@
  **/
 
 require 'vendor/autoload.php';
+
+use Monolog\Handler\ErrorLogHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Monolog\Logger;
 use Monolog\Handler\RotatingFileHandler;
@@ -308,13 +310,14 @@ class system
         // set-up the logger
         $config = Config::Instance();
         $logfile = $config->get('UZERP_LOG_PATH');
+        $handler = new ErrorLogHandler();
 
-        if($logfile != '') {
-            $file = new RotatingFileHandler($logfile, Logger::DEBUG);
-            $this->logger = new Logger('uzerp');
-            $this->logger->pushHandler($file);
-            $this->logger->pushProcessor(new WebProcessor());
+        if($logfile !== '') {
+            $handler = new RotatingFileHandler($logfile, Logger::DEBUG);
         }
+        $this->logger = new Logger('uzerp');
+        $this->logger->pushHandler($handler);
+        $this->logger->pushProcessor(new WebProcessor());
 
         // set the loaded flag to true
         $loaded = TRUE;
