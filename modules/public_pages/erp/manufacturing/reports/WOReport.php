@@ -62,7 +62,8 @@ abstract class WOReport
                 $MFWorkorders,
                 $operations,
                 $os_operations
-            ]
+            ],
+            'call_model_func' => $model_func
         ]);
 
         $this->data['printtype'] = $args['printtype'];
