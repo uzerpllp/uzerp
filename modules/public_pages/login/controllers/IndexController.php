@@ -66,6 +66,9 @@ class IndexController extends Controller
         $injector = $this->_injector;
         $authentication = $injector->Instantiate('LoginHandler');
 
+        // set log 'channel' for authentication error/audit messages
+        $logger = $this->_injector->logger->withName('uzerp_authentication');
+
         $flash = Flash::Instance();
 
         if ($authentication->interactive()) {
@@ -147,14 +150,13 @@ class IndexController extends Controller
                 clean_tmp_directory(DATA_USERS_ROOT . $_SESSION['username'] . '/TMP/');
 
                 if (AUDIT || get_config('AUDIT_LOGIN')) {
-                    $audit = Audit::Instance();
-                    $audit->write('login', TRUE, (microtime(TRUE) - START_TIME));
-                    $audit->update();
+                    $logger->info('SUCCESSFUL LOGIN', array('username' => $this->username));
                 }
 
                 sendTo($controller, $action, $module, $_POST);
             } else {
-                $flash->addError('Your account is disabled');
+                $flash->addError('Incorrect username or password');
+                $logger->warning('FAILED LOGIN, account disabled', array('username' => $this->username));
                 if (! $authentication->interactive()) {
                     $this->view->display($this->getTemplateName('logout'));
                     exit();
@@ -162,11 +164,13 @@ class IndexController extends Controller
             }
         } else {
             if (! $authentication->interactive()) {
-                $flash->addError('System company access disabled');
+                $flash->addError('Incorrect username or password');
+                $logger->warning('FAILED LOGIN, System company access disabled', array('username' => $this->username));
                 $this->view->display($this->getTemplateName('logout'));
                 exit();
             }
-            $flash->addError('Incorrect username/password combination, please try again');
+            $flash->addError('Incorrect username or password');
+            $logger->warning('FAILED LOGIN, Incorrect username or password', array('username' => $this->username));
         }
         $this->index();
         $this->_templateName = $this->getTemplateName('index');
