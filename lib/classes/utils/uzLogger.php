@@ -11,7 +11,7 @@ use Monolog\Processor\WebProcessor;
  * Logs to a file defined in the uzERP config
  * or to the PHP error_log if not.
  *
- * @author uzERP LLP, Steve Blamey <blameys@blueloop.net>
+ * @author uzERP LLP, Steve Blamey <sblamey@uzerp.com>
  * @license GPLv3 or later
  * @copyright (c) 2020 uzERP LLP (support#uzerp.com). All rights reserved.
  */
