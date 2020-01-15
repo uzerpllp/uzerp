@@ -66,8 +66,9 @@ class IndexController extends Controller
         $injector = $this->_injector;
         $authentication = $injector->Instantiate('LoginHandler');
 
+        $logger = uzLogger::Instance();
         // set log 'channel' for authentication error/audit messages
-        $logger = $this->_injector->logger->withName('uzerp_authentication');
+        $logger = $logger->withName('uzerp_authentication');
 
         $flash = Flash::Instance();
 
