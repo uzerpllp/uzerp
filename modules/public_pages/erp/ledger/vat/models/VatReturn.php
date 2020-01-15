@@ -40,6 +40,19 @@ class VatReturn extends DataObject
         $this->idField='id';
         $this->orderby = ['year', 'tax_period'];
         $this->orderdir = ['desc', 'desc'];
+        // Ensure that these are not shown in the available fields list
+        // as they are not available in the collection DB view
+        $hidden_fields = [
+            'processing_date',
+            'period_key',
+            'charge_ref_number',
+            'form_bundle',
+            'payment_indicator',
+            'receipt_id_header'
+        ];
+        foreach ($hidden_fields as $field_name) {
+            $this->setHidden($field_name);
+        }
         // Add this field object, _data is loaded from the collection
         // but it does not exist in the vat_return table
         $this->setAdditional('tax_period_closed', 'boolean');
