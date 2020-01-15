@@ -32,6 +32,11 @@ class uzLogger extends Logger
         $this->pushProcessor(new WebProcessor());
     }
 
+    /**
+     * Return a logger instance
+     *
+     * @return instance  Monolog\Logger
+     */
     public static function &Instance()
     {
 
