@@ -165,7 +165,7 @@ class IndexController extends Controller
         } else {
             if (! $authentication->interactive()) {
                 $flash->addError('Incorrect username or password');
-                $logger->warning('FAILED LOGIN, System company access disabled', array('username' => $this->username));
+                $logger->warning('FAILED LOGIN, either the username was not found in the database or system access is disabled', array('username' => $this->username));
                 $this->view->display($this->getTemplateName('logout'));
                 exit();
             }
