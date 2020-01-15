@@ -4,13 +4,12 @@
 	{/if}
 	<div id="view_page" class="clearfix">
 		<dl id="view_data_left">
-			<dt class="heading">Submission</dt>
+			<dt class="heading" data-period-key="{$model->period_key}">Submission</dt>
 			{view_data model=$model attribute="year"}
 			{view_data model=$model attribute="tax_period"}
 			{view_data model=$model attribute="finalised" label="Submitted"}
 			{if $model->finalised == 't'}
-			{view_data model=$model attribute="alteredby" label="Submitted By"}	
-			{view_data model=$model attribute="period_key"}
+			{view_data model=$model attribute="alteredby" label="Submitted By"}
 			{view_data model=$model attribute="processing_date"}
 			{view_data model=$model attribute="form_bundle"}
 			{view_data model=$model attribute="charge_ref_number"}
