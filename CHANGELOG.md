@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - Output correct required quntities on the Work Order structure document
 
+### Added
+
+- Logging of user authorisation events and Making Tax Digital return submissions
+
 ## [1.19.2] 2020-01-07
 
 ### Fixed
