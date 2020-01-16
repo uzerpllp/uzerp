@@ -14,6 +14,11 @@ use Monolog\Processor\WebProcessor;
  * @author uzERP LLP, Steve Blamey <sblamey@uzerp.com>
  * @license GPLv3 or later
  * @copyright (c) 2020 uzERP LLP (support#uzerp.com). All rights reserved.
+ * 
+ * uzERP is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
  */
 class uzLogger extends Logger
 {
@@ -35,17 +40,14 @@ class uzLogger extends Logger
     /**
      * Return a logger instance
      *
-     * @return instance  Monolog\Logger
+     * @return instance
      */
     public static function &Instance()
     {
-
         static $logger;
-
         if (empty($logger)) {
             $logger = new uzLogger();
         }
         return $logger;
-
     }
 }
