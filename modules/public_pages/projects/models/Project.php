@@ -39,24 +39,25 @@ class Project extends DataObject {
  		$this->belongsTo('Person', 'person_id', 'person', null, "surname || ', ' || firstname");
 		$cc=new ConstraintChain();
 		$cc->add(new Constraint('company_id', '=', EGS_COMPANY_ID));
+		$cc->add(new Constraint('end_date', 'IS', 'NULL'));
  		$this->belongsTo('Person','key_contact_id','key_contact', $cc, "surname || ', ' || firstname");
  		$this->belongsTo('Opportunity', 'opportunity_id', 'opportunity');
  		$this->belongsTo('Projectcategory', 'category_id', 'category');
  		$this->belongsTo('Projectworktype', 'work_type_id', 'work_type');
 		$this->belongsTo('Projectphase', 'phase_id', 'phase'); 
-		$this->hasMany('ProjectBudget','budgets');
+//		$this->hasMany('ProjectBudget','budgets');
 		$this->hasMany('Task','tasks');
 //		$this->hasMany('ProjectIssue','issues');
 		$this->hasMany('ProjectNote','notes');
 		$this->hasMany('Hour','hours');
 		$this->hasMany('Expense','expenses');
-		$this->hasMany('Resource','resources');
+//		$this->hasMany('Resource','resources');
 		// Note: 'projectattachment' model does not exist - it is here to generate
 		// the sidebar related link to projectattachmentcontroller
 		$this->hasMany('projectattachment','attachments');
-		$this->hasMany('LoggedCall','calls');
-		$this->hasMany('ProjectEquipmentAllocation', 'equipment_allocations', 'project_id');
-		$this->hasMany('ProjectCostCharge', 'actuals', 'project_id');
+//		$this->hasMany('LoggedCall','calls');
+//		$this->hasMany('ProjectEquipmentAllocation', 'equipment_allocations', 'project_id');
+//		$this->hasMany('ProjectCostCharge', 'actuals', 'project_id');
 //		$this->hasMany('ProjectCostCharge', 'purchase_orders', 'project_id');
 //		$this->hasMany('ProjectCostCharge', 'sales_invoices', 'project_id');
 		$this->hasMany('POrder','porders');
@@ -90,45 +91,44 @@ class Project extends DataObject {
 								)
 						);
 
-
-// Define link rules for sidebar related view
-		$this->linkRules=array('expenses'=>array('modules'=>array('link'=>array('module'=>'hr')
-																 ,'new'=>array('module'=>'hr'))
-												,'actions'=>array('link','new')
-												,'rules'=>array()
-												),
-										'mfworkorders'=>array('modules'=>array('link'=>array('module'=>'manufacturing')
-																 )
+// Define link rules for sidebar related view - might be better to have a custom 'related' sidebar in the controller
+// Removed the ability to create new from here at the moment
+// in addition possibly need 'custom' listings rather than the default field list from the related model
+		$this->linkRules=array('expenses'=>array('modules'=>array('link'=>array('module'=>'hr'))
 												,'actions'=>array('link')
 												,'rules'=>array()
-												,'label'=>'Show Works Orders'
+												, 'label'=>'Expenses'
 												),		
-										'porders'=>array('modules'=>array('link'=>array('module'=>'purchase_order')
+								'porders'=>array('modules'=>array('link'=>array('module'=>'purchase_order')
 																 ,'new'=>array('module'=>'purchase_order'))
-												,'actions'=>array('link','new')
+												,'actions' =>array('link')
 												,'rules'=>array()
-												,'label'=>'Show Purchase Orders'
+												,'label'=>'Purchase Orders'
 												),
-										'pinvoices'=>array('modules'=>array('link'=>array('module'=>'purchase_invoicing')
+								'pinvoices'=>array('modules'=>array('link'=>array('module'=>'purchase_invoicing')
 																 ,'new'=>array('module'=>'purchase_invoicing'))
-												,'actions'=>array('link','new')
+												,'actions'=>array('link')
 												,'rules'=>array()
-												,'label'=>'Show Purchase Invoices'
+												,'label'=>'Purchase Invoices'
 												),
-										'sorders'=>array('modules'=>array('link'=>array('module'=>'sales_order')
+								'sorders'=>array('modules'=>array('link'=>array('module'=>'sales_order')
 																 ,'new'=>array('module'=>'sales_order'))
 												,'actions'=>array('link')
 												,'rules'=>array()
-												,'label'=>'Show Sales Orders'
+												,'label'=>'Sales Orders'
 												),
-										'sinvoices'=>array('modules'=>array('link'=>array('module'=>'sales_invoicing')
+								'sinvoices'=>array('modules'=>array('link'=>array('module'=>'sales_invoicing')
 																 ,'new'=>array('module'=>'sales_invoicing'))
 												,'actions'=>array('link')
 												,'rules'=>array()
-												,'label'=>'Show Sales Invoices'
+												,'label'=>'Sales Invoices'
+												),
+								'mfworkorders'=>array('modules'=>array('link'=>array('module'=>'manufacturing')
+																	)
+												,'actions' =>array('link')
+												,'rules'=>array()
+												,'label'=>'Works Orders'
 												)
-																							
-												
 							);
 							
 	}
@@ -313,13 +313,17 @@ class Project extends DataObject {
 		return array('total_invoiced'=>$totals['net_value']);
 	}
 
-	// Return non-archived projects
+	// Return new and active projects
 	static function getLiveProjects(){
 
 		$project = DataObjectFactory::Factory('Project');
 
 		$cc = new ConstraintChain();
-		$cc->add(new Constraint('archived', '=', FALSE));
+		
+		//$cc->add(new Constraint('archived', '=', FALSE));
+		// Completed
+		$cc->add(new Constraint('status', '=', 'N'));
+		$cc->add(new Constraint('status', '=', 'A'), 'OR');
 
 		return $project->getAll($cc, true, true);
 	}
