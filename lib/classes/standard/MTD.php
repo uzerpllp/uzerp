@@ -5,7 +5,7 @@
  * 
  * @author uzERP LLP and Steve Blamey <sblamey@uzerp.com>
  * @license GPLv3 or later
- * @copyright (c) 2019 uzERP LLP (support#uzerp.com). All rights reserved.
+ * @copyright (c) 2020 uzERP LLP (support#uzerp.com). All rights reserved.
  *
  * uzERP is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,12 @@ class MTD {
     private $fraud_protection_headers;
     private $vrn;
     private $config_key;
+    private $logger;
     
     function __construct($config_key='mtd-vat') {
+        $logger = uzLogger::Instance();
+        // set log 'channel' for MTD log messages
+        $this->logger = $logger->withName('uzerp_mtd');
         $this->config_key = $config_key;
         $company = DataObjectFactory::Factory('Systemcompany');
         $company->load(EGS_COMPANY_ID);
@@ -213,9 +217,11 @@ class MTD {
             $api_errors = json_decode($e->getResponse()->getBody()->getContents());
             if (count($api_errors) > 1) {
                 foreach ($api_errors->errors as $error) {
+                    $this->logger->error("{$error->code} {$error->message}", [__METHOD__]);
                     $flash->addError("{$error->code} {$error->message}");
                 }
             } else {
+                $this->logger->error("{$api_errors->code} {$api_errors->message}", [__METHOD__]);
                 $flash->addError("{$api_errors->code} {$api_errors->message}");
             }
             return false;
@@ -244,6 +250,7 @@ class MTD {
         }
         catch (VatReturnStorageException $e)
         {
+            $this->logger->error($e->getMessage(), ['class_method' => __METHOD__]);
             $flash->addError($e->getMessage());
             return false;
         }
@@ -273,12 +280,12 @@ class MTD {
                 try {
                     $return->setVatReturnPeriodKey($year, $tax_period, $obligation['periodKey']);
                 } catch (VatReturnStorageException  $e) {
+                    $this->logger->error($e->getMessage(), ['class_method' => __METHOD__]);
                     $flash->addError($e->getMessage());
                     $flash->addError("Failed to submit return for {$year}/{$tax_period}");
                     return false;
                 }
                 
-                //var_dump($returnx->enddate);
                 $body = [
                     'periodKey' => $obligation['periodKey'],
                     'vatDueSales' => round($return->vat_due_sales,2),
@@ -308,16 +315,25 @@ class MTD {
 
                 try
                 {
+                    $this->logger->info('Submitting VAT return', [
+                        'vat_return_data' => $body,
+                        'class_method' =>__METHOD__]);
                     $response = $this->provider->getResponse($request);
                     $rbody = json_decode($response->getBody(), true);
                     $rheader['Receipt-ID'] = $response->getHeader('Receipt-ID')[0];
                     $details = array_merge($rbody, $rheader);
+                    $this->logger->info('VAT return submission response', [
+                        'http_status' => $response->getStatusCode(),
+                        'http_response_message' => $response->getReasonPhrase(),
+                        'http_response_body' => $rbody,
+                        'class_method' => __METHOD__]);
                     $return->saveSubmissionDetail($year, $tax_period, $details); //catch exception and log this info, it may fail to save
                     $flash->addMessage("VAT Return Submitted for {$year}/{$tax_period}");
                     return true;
                 }
                 catch (VatReturnStorageException $e)
                 {
+                    $this->logger->error('VAT return storage error', ['error_message' => $e->getMessage(), 'class_method' => __METHOD__]);
                     $flash->addError("VAT Return {$year}/{$tax_period} submitted, but not updated in uzERP");
                     return false;
                 }
@@ -325,9 +341,12 @@ class MTD {
                 {
                     $api_errors = json_decode($e->getResponse()->getBody()->getContents());
                     foreach ($api_errors->errors as $error) {
+                        $this->logger->error("HMRC API ERROR: {$error->code} {$error->message}", [
+                            'http_status' => $e->getResponse()->getStatusCode(),
+                            'class_method' => __METHOD__]);
                         $flash->addError("HMRC API ERROR: {$error->code} {$error->message}");
-                        return false;
                     }
+                    return false;
                 }
             }
         }
