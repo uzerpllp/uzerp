@@ -41,9 +41,9 @@ class Task extends DataObject {
 		$this->hasMany('Task','tasks','parent_id');		
 		$this->hasMany('Hour','hours');
 		$this->hasMany('Expense','expenses');
- 		$this->hasMany('Resource','resources');
+// 		$this->hasMany('Resource','resources');
 		$this->hasMany('taskattachment','attachments');
-		$this->hasMany('ProjectEquipmentAllocation', 'equipment_allocations', 'task_id');
+//		$this->hasMany('ProjectEquipmentAllocation', 'equipment_allocations', 'task_id');
 		//$this->hasMany('ProjectCostCharge', 'purchase_orders', 'task_id');
 		//$this->hasMany('ProjectCostCharge', 'sales_invoices', 'task_id');
 		$this->hasMany('POrder','porders');
