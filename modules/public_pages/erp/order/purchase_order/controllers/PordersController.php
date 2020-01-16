@@ -367,6 +367,11 @@ class PordersController extends printController
             $porder->project_id = $this->_data['project_id'];
         }
 
+        // We only want non-archived projects
+        $projects = Project::getLiveProjects();
+        $this->view->set('projects', $projects);
+
+        // Now get tasks for the selected project
         $this->view->set('tasks', $this->getTaskList($porder->project_id));
 
         // PO to SO link
@@ -1951,7 +1956,11 @@ class PordersController extends printController
             $pinvoiceheader['transaction_type'] = 'I';
             $pinvoiceheader['invoice_date'] = $this->_data['invoice_date'];
             $pinvoiceheader['description'] = implode(', ', $porder_descriptions);
-
+            // If there is a single order save the project & task from the order header
+            if (count($porder_descriptions)==1){
+                $pinvoiceheader['project_id'] = $order->project_id;
+                $pinvoiceheader['task_id'] = $order->task_id;
+            };
             $pinvoice = PInvoice::Factory($pinvoiceheader, $errors);
 
             // Save the header

@@ -58,6 +58,14 @@ class ProjectSearch extends BaseSearch {
 		$options += $cats;
 		$search->setOptions('category_id',$options);
 
+		$search->addSearchField(
+			'archived',
+			'show_archived',
+			'show',
+			false,
+			'advanced'
+		);
+
 		$search->setSearchData($search_data,$errors);
 		return $search;
 	}

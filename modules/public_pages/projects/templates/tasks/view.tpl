@@ -12,6 +12,7 @@
 				{view_data attribute="name"}
 				{view_data attribute="project" link_to='"module":"projects", "controller":"projects", "action":"view", "id":"'|cat:$model->project_id|cat:'"'}
 				{view_data attribute="parent" link_to='"module":"projects", "controller":"tasks", "action":"view", "id":"'|cat:$model->parent_id|cat:'"'}
+				{view_data attribute="owner"}
 				{view_data attribute="milestone"}
 				{view_data attribute="deliverable"}
 			{/view_section}

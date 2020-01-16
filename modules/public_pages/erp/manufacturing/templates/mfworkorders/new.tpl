@@ -31,7 +31,7 @@
 			    <dl class="float-left" >
 					{select attribute='documentation' options=$documents multiple=true size="10" value=$selected_docs}
 					{select attribute='data_sheet_id'}
-					{select attribute='project_id' value=$project}
+					{select attribute='project_id' options=$projects value=$project}
 					{select  attribute='order_id' options=$sales_orders force=true forceselect=true}
 					{input type='hidden'  attribute='current_orderline_id' value=$model->orderline_id}
 					{select  attribute='orderline_id' options=$order_lines nonone=true forceselect=true}

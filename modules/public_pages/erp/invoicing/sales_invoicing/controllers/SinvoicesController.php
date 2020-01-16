@@ -1617,6 +1617,7 @@ class SinvoicesController extends printController
         $cc = new ConstraintChain();
         if ($customer->isLoaded()) {
             $cc = new ConstraintChain();
+            $cc->add(new Constraint('archived', '=', FALSE));
             $cc->add(new Constraint('company_id', '=', $customer->company_id));
             $this->_templateobject->belongsTo[$this->_templateobject->belongsToField['project_id']]['cc'] = $cc;
         }

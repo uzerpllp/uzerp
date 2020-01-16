@@ -91,6 +91,15 @@ class ProjectsController extends Controller {
 			sendBack();
 		}
 	}
+
+	public function archive() {
+		if (isset($this->_data['id'])) {
+			$project=$this->_uses['Project'];
+			$project->load($this->_data['id']);
+			$project->update($this->_data['id'],'archived',true);
+			sendBack();
+		}
+	}
 	
 	public function view() {
 		
@@ -112,28 +121,46 @@ class ProjectsController extends Controller {
 			sendTo($this->name,'index',$this->_modules);
 		}
 		
-		$viewing_sidebar = array(
-			$project->name => array(
+		$viewing_sidebar = array();
+		
+			$viewing_sidebar[$project->name] = array(
 				'tag'	=> $project->name,
 				'link'	=> array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'view','id'=>$project->id)
-			),
-			'edit' => array(
-				'tag'	=> 'Edit',
-				'link'	=> array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'edit','id'=>$project->id)
-			),
-			'delete' => array(
-				'tag'	=> 'Delete',
-				'link'	=> array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'delete','id'=>$project->id)
-			),
-			'mark_as_complete' => array(
-				'tag'	=> 'Mark as Complete',
-				'link'	=> array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'complete','id'=>$project->id)
-			),
-	        	'time-shift' => array(
-				'tag'	=> 'time-shift',
-				'link'	=> array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'timeshift','id'=>$project->id)
-			)
 			);
+
+			if ($project->status!='C')
+			{
+				$viewing_sidebar['edit'] = array(
+					'tag'	=> 'Edit',
+					'link'	=> array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'edit','id'=>$project->id)
+				);
+
+				$viewing_sidebar['delete'] = array(
+					'tag'	=> 'Delete',
+					'link'	=> array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'delete','id'=>$project->id)
+				);
+
+				$viewing_sidebar['mark_as_complete'] = array(
+					'tag'	=> 'Mark as Complete',
+					'link'	=> array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'complete','id'=>$project->id)
+				);
+			} 
+			else
+			{
+				if ($project->archived == 'f')
+				{
+					$viewing_sidebar['archive'] = array(
+					'tag'	=> 'Archive this project',
+					'link'	=> array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'archive','id'=>$project->id)
+					);
+				}
+			};	
+			// Remove time-shift
+	        //	'time-shift' => array(
+			//	'tag'	=> 'time-shift',
+			//	'link'	=> array('modules'=>$this->_modules,'controller'=>$this->name,'action'=>'timeshift','id'=>$project->id)
+			//)
+			//);
 		
 		
 		$sidebar=new SidebarController($this->view);
@@ -150,15 +177,11 @@ class ProjectsController extends Controller {
 				)			)
 		);
 
+		$sidebar->addList('currently_viewing', $viewing_sidebar);
 
-
-		$sidebar->addList(
-			'currently_viewing',
-			$viewing_sidebar
-		);
-
+		// It might be better to not use the Related Items sidebar but create a custom list 
+		// to give more control over adding and editing 
 		$this->sidebarRelatedItems($sidebar, $project);
-
 	
 		$sidebarlist['view_project_totals']= array('tag'=>'view_project_totals'
 												  ,'link'=> array('modules'=>$this->_modules
@@ -166,6 +189,8 @@ class ProjectsController extends Controller {
 												  				 ,'action'=>'viewproject_totals'
 												  				 ,'id'=>$project->id)
 												  );
+
+
 		$sidebar->addList('related_items',$sidebarlist);
 		
 		$this->view->register('sidebar', $sidebar);
@@ -227,7 +252,7 @@ class ProjectsController extends Controller {
 	
 	}
 	
-	public function viewpurchase_orders () {
+	public function view_purchase_orders () {
 		
 		if (!$this->loadData()) {
 			$this->dataError();

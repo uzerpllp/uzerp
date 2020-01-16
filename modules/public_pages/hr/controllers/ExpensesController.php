@@ -180,10 +180,16 @@ class ExpensesController extends HrController
         $tax_rates = $tax_rates->getAll();
         $this->view->set('taxrates', $tax_rates);
 
+        // This bit allows for projects and tasks
         if (! $expense->isLoaded() && ! empty($this->_data['project_id'])) {
             $expense->project_id = $this->_data['project_id'];
         }
 
+        // We only want non-archived projects
+        $projects = Project::getLiveProjects();
+        $this->view->set('projects', $projects);
+
+        // Now get tasks for the selected project
         $this->view->set('tasks', $this->getTaskList($expense->project_id));
 
         $this->view->set('employee', $employee);

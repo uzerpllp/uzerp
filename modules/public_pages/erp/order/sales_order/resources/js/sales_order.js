@@ -235,7 +235,7 @@ $(document).ready(function() {
 	});
 	
 	/* sales_orders -> sorders -> new .... get task list from project */
-	$("#SOrder_project_id", "#sales_order-sorders-new").on('change',function(){
+	$("#SOrder_project_id", "#sales_order-sorders-new").live('change',function(){
 		
 		$.uz_ajax({
 			target:{

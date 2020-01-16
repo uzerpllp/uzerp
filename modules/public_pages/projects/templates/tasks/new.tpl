@@ -16,6 +16,7 @@
 			{/if}	
 			{input type='text'  attribute='name' }
 			{select attribute='parent_id' data=$parent_tasks force=true}
+			{select attribute='owner' force=true}
 			{select attribute='progress' readonly=$readonly}
 			{datetime attribute='start_date' value=$start_date readonly=$readonly}
 			{datetime attribute='end_date' value=$end_date readonly=$readonly}

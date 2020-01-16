@@ -37,7 +37,7 @@
 				{/view_section}
 				{view_section heading="project_status" expand='open'}		
 					{view_data attribute="status"}
-					{view_data attribute="invoiced"}
+					{* {view_data attribute="invoiced"} *}
 					{view_data attribute="archived"}
 				{/view_section}
 				{view_section heading="access_details" expand='closed'}

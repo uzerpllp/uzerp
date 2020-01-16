@@ -42,12 +42,12 @@
 					{input type='text'  attribute='url' }
 					{select  attribute='phase_id' }
 				{/view_section}
-				{if $action<>'new'}
+				{* {if $action<>'new'}
 					{view_section heading="project_status"}
 						{input type='checkbox'  attribute='invoiced' }
 						{input type='checkbox'  attribute='archived' }
 					{/view_section}
-				{/if}
+				{/if} *}
 			</dl>	
 		</div>			
 		{/with}
