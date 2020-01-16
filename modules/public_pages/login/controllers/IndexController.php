@@ -10,7 +10,7 @@ use PHPMailer\PHPMailer\Exception;
  * @package login
  * @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
  * @license GPLv3 or later
- * @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ * @copyright (c) 2020 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
 class IndexController extends Controller
 {
@@ -65,6 +65,10 @@ class IndexController extends Controller
     {
         $injector = $this->_injector;
         $authentication = $injector->Instantiate('LoginHandler');
+
+        $logger = uzLogger::Instance();
+        // set log 'channel' for authentication error/audit messages
+        $logger = $logger->withName('uzerp_authentication');
 
         $flash = Flash::Instance();
 
@@ -147,14 +151,13 @@ class IndexController extends Controller
                 clean_tmp_directory(DATA_USERS_ROOT . $_SESSION['username'] . '/TMP/');
 
                 if (AUDIT || get_config('AUDIT_LOGIN')) {
-                    $audit = Audit::Instance();
-                    $audit->write('login', TRUE, (microtime(TRUE) - START_TIME));
-                    $audit->update();
+                    $logger->info('SUCCESSFUL LOGIN', array('username' => $this->username));
                 }
 
                 sendTo($controller, $action, $module, $_POST);
             } else {
-                $flash->addError('Your account is disabled');
+                $flash->addError('Incorrect username or password');
+                $logger->warning('FAILED LOGIN, account disabled', array('username' => $this->username));
                 if (! $authentication->interactive()) {
                     $this->view->display($this->getTemplateName('logout'));
                     exit();
@@ -162,11 +165,13 @@ class IndexController extends Controller
             }
         } else {
             if (! $authentication->interactive()) {
-                $flash->addError('System company access disabled');
+                $flash->addError('Incorrect username or password');
+                $logger->warning('FAILED LOGIN, either the username was not found in the database or system access is disabled', array('username' => $this->username));
                 $this->view->display($this->getTemplateName('logout'));
                 exit();
             }
-            $flash->addError('Incorrect username/password combination, please try again');
+            $flash->addError('Incorrect username or password');
+            $logger->warning('FAILED LOGIN, Incorrect username or password', array('username' => $this->username));
         }
         $this->index();
         $this->_templateName = $this->getTemplateName('index');

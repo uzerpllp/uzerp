@@ -2,7 +2,7 @@
 /**
  * @author uzERP LLP and Steve Blamey <sblamey@uzerp.com>
  * @license GPLv3 or later
- * @copyright (c) 2019 uzERP LLP (support#uzerp.com). All rights reserved.
+ * @copyright (c) 2020 uzERP LLP (support#uzerp.com). All rights reserved.
  *
  * uzERP is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +19,18 @@ class VatReturn extends DataObject
     public $gl_period_closed;
     
     protected $defaultDisplayFields = [
-        year,
-        tax_period,
-        vat_due_sales, //Box 1 - VAT Due On Sales
-        vat_due_acquisitions, //Box 2 - VAT Due On EU Purchases
-        total_vat_due, // Box 3 - Output Tax - CHECK THIS!!
-        vat_reclaimed_curr_period, //Box 4 - Input Tax - CHECK THIS!!
-        net_vat_due, //Box 5 - Net Tax
-        total_value_sales_ex_vat, //Box 6 - Sales Exc. VAT
-        total_value_purchase_ex_vat, //Box 7 - Purchases Exc. VAT
-        total_value_goods_supplied_ex_vat, //Box 8 - EU Sales Exc. VAT
-        total_acquisitions_ex_vat, //Box 9 -EU Purchases Exc. VAT
-        tax_period_closed,
+        'year',
+        'tax_period',
+        'vat_due_sales', //Box 1 - VAT Due On Sales
+        'vat_due_acquisitions', //Box 2 - VAT Due On EU Purchases
+        'total_vat_due', // Box 3 - Output Tax - CHECK THIS!!
+        'vat_reclaimed_curr_period', //Box 4 - Input Tax - CHECK THIS!!
+        'net_vat_due', //Box 5 - Net Tax
+        'total_value_sales_ex_vat', //Box 6 - Sales Exc. VAT
+        'total_value_purchase_ex_vat', //Box 7 - Purchases Exc. VAT
+        'total_value_goods_supplied_ex_vat', //Box 8 - EU Sales Exc. VAT
+        'total_acquisitions_ex_vat', //Box 9 -EU Purchases Exc. VAT
+        'tax_period_closed',
         'finalised' => 'submitted'
     ];
 
@@ -70,12 +70,8 @@ class VatReturn extends DataObject
 
         // Convert the UTC processing time from HMRC to the local timezone
         if ($this->_data['processing_date']) {
-            $utc_date = DateTime::createFromFormat(
-                'Y-m-d G:i:s',
-                $this->_data['processing_date'],
-                new DateTimeZone('UTC')
-            );
-            $this->getfield('processing_date')->value = $utc_date->setTimeZone(new DateTimeZone(date_default_timezone_get()))->format('Y-m-d H:i:s');
+            $utc_date = date_create($this->_data['processing_date'], new DateTimeZone('UTC'));
+            $this->getfield('processing_date')->value = $utc_date->setTimeZone(new DateTimeZone(date_default_timezone_get()))->format('Y-m-d H:i:s.u');
         }
     }
 

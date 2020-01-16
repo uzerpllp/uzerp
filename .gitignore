@@ -23,6 +23,9 @@
 /conf/selector-config.yml
 /conf/oauth.yml
 
+# Exclude logs
+*.log
+
 # Exclude composer installed stuff
 #composer.lock
 /vendor/**
