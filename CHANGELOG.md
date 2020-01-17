@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.19.3] 2020-01-17
 
 ### Fixed
 
-- Output correct required quntities on the Work Order structure document
+- Output correct required qauntities on the Work Order structure document
 
 ### Added
 
@@ -708,10 +708,8 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
-## [2014.3] - 2014-05-27
-
-### Changed
-
+[1.19.3]: https://github.com/uzerpllp/uzerp/compare/1.19.2...1.19.3
+[1.19.2]: https://github.com/uzerpllp/uzerp/compare/1.19.1...1.19.2
 [1.19.1]: https://github.com/uzerpllp/uzerp/compare/1.19...1.19.1
 [1.19]: https://github.com/uzerpllp/uzerp/compare/1.18.3...1.19
 [1.18.3]: https://github.com/uzerpllp/uzerp/compare/1.18.2...1.18.3
