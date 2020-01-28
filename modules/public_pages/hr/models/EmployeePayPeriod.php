@@ -11,13 +11,13 @@ class EmployeePayPeriod extends DataObject
 
 	protected $version = '$Revision: 1.7 $';
 	
-	protected $defaultDisplayFields = array('period_start_date'
-										   ,'period_end_date'
-										   ,'tax_year'
+	protected $defaultDisplayFields = array('tax_year'
 										   ,'tax_month'
 										   ,'tax_week'
 										   ,'calendar_week'
 										   ,'pay_basis'
+										   ,'period_start_date'
+										   ,'period_end_date' 
 										   ,'closed'
 										   ,'processed_date'
 										   ,'processed_period'
@@ -31,7 +31,7 @@ class EmployeePayPeriod extends DataObject
 		// Contruct the object
 		parent::__construct($tablename);
 		
-		$this->identifierField = array('tax_year', 'tax_week', 'pay_basis');
+		$this->identifierField = array('tax_year', 'tax_month', 'tax_week', 'pay_basis');
 		$this->orderby = array('period_start_date', 'pay_basis');
 		$this->orderdir = array('DESC', 'ASC');
 		
