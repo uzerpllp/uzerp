@@ -227,9 +227,9 @@ class EmployeepayperiodsController extends Controller {
 			$sidebarlist['enterpayments'] = array(
 					'tag' => 'Enter Payments for Period',
 					'link' => array('modules'				=> $this->_modules
-								   ,'controller'			=> 'employeepayhistories'
+								   ,'controller'			=> 'employeepayhistorys'
 								   ,'action'				=> 'new'
-								   ,$pay_period->idField	=> $pay_period->{$pay_period->idField})
+								   ,'employee_pay_periods_id'=> $pay_period->{$pay_period->idField})
 			);
 			$sidebarlist['closeperiod'] = array(
 				'tag' => 'Close Period',
