@@ -42,23 +42,23 @@ class EmployeepayhistorysController extends printController
 		
 		parent::index(new EmployeePayHistoryCollection());
 		
-		$sidebar = new SidebarController($this->view);
-		
-		$sidebarlist = array();
-		
-		$sidebarlist['new'] = array(
-					'tag' => 'Enter Payments',
-					'link' => array('modules'	=> $this->_modules
-								   ,'controller'=> $this->name
-								   ,'action'	=> 'new')
-		);
-		
-		$sidebar->addList('Actions', $sidebarlist);
-		
-		$this->view->register('sidebar',$sidebar);
-		
-		$this->view->set('sidebar',$sidebar);
-		
+//		$sidebar = new SidebarController($this->view);
+//		
+//		$sidebarlist = array();
+//		
+//		$sidebarlist['new'] = array(
+//					'tag' => 'Enter Payments',
+//					'link' => array('modules'	=> $this->_modules
+//								   ,'controller'=> $this->name
+//								   ,'action'	=> 'new')
+//		);
+//		
+//		$sidebar->addList('Actions', $sidebarlist);
+//		
+//		$this->view->register('sidebar',$sidebar);
+//		
+//		$this->view->set('sidebar',$sidebar);
+//		
 		$this->view->set('clickaction', 'none');
 	}	
 	
@@ -83,16 +83,28 @@ class EmployeepayhistorysController extends printController
 		
 		$pay_history = $this->_uses[$this->modeltype];
 		
-		$employee_pay_periods		= $this->getPayPeriods('', FALSE);
-		reset($employee_pay_periods);
+		if (!empty($this->_data['employee_pay_periods_id'])){
+			$current_pay_period_id		= $this->_data['employee_pay_periods_id'];
+			$period_start_date = $this->getPayPeriodStartDate($current_pay_period_id);
+			// restrict to just the current period?
+			$employee_pay_periods		= $this->getPayPeriods('', FALSE);
+		}
+		else{
+			// get all the open periods
+			$employee_pay_periods		= $this->getPayPeriods('', FALSE);
+			reset($employee_pay_periods);
+			// current period is the first open period
+			$current_pay_period_id		= key($employee_pay_periods);
+			$period_start_date = $this->getPayPeriodStartDate($current_pay_period_id);
+		}
 
-		$current_pay_period_id		= key($employee_pay_periods);
-		
 		$employees					= $this->getEmployeesForPeriod($current_pay_period_id);
-		
 		$pay_history->employee_id	= $employee_id = (empty($this->_data['employee_id']))?key($employees):$this->_data['employee_id'];
+/*
+		This is not required anymore... leaving just in case it wants to be added back
+
 		$period_start_date			= $pay_history->getLatestPeriodStart($employee_id);
-				
+		
 		// Need to get the earliest pay period that has no employee pay history
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('employee_id', '=', $employee_id));
@@ -119,7 +131,7 @@ class EmployeepayhistorysController extends printController
 			
 			$pay_history->idField = $idField;
 		}
-		
+*/		
 		$this->view->set('employees', $employees);
 		$this->view->set('employee_pay_periods', $employee_pay_periods);
 		$this->view->set('current_pay_period', $current_pay_period_id);
