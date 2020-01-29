@@ -1,9 +1,9 @@
 <?php
 
 /** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2020 uzERP LLP (support#uzerp.com). All rights reserved.
  * 
- *	Released under GPLv3 license; see LICENSE. 
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class Employee extends DataObject {
@@ -22,6 +22,53 @@ class Employee extends DataObject {
 		'start_date'		=> 'start_date',
 		'finished_date'		=> 'finished_date'
 	);
+
+	/**
+	 * Identify field names on this model that may contain personal data
+	 *
+	 * @var array  Associative array
+	 *  [<DB field name> => [
+	 *    'label' => <Text on forms, messages, etc.>,
+	 *    'value' => <Value that should overwrite stored values>]]
+	 */
+	protected $personal_data_fields = [
+		'ni' => [
+			'label' => 'NI Number',
+			'value' => ''],
+		'dob' => [
+			'label' => 'Date of Birth',
+			'value' => ''],
+		'gender' => [
+			'label' => 'Gender',
+			'value' => 'O'],
+		'next_of_kin' => [
+			'label' => 'Next of Kin Name',
+			'value' => ''],
+		'nok_address' => [
+			'label' => 'Next of Kin Address',
+			'value' => ''],
+		'nok_phone' => [
+			'label' => 'Next of Kin Phone',
+			'value' => ''],
+		'nok_relationship' => [
+			'label' => 'Next of Kin Relationship',
+			'value' => ''],
+		'bank_name' => [
+			'label' => 'Bank Name',
+			'value' => ''],
+		'bank_address' => [
+			'label' => 'Bank Address',
+			'value' => ''],
+		'bank_account_name' => [
+			'label' => 'Bank Account Name',
+			'value' => ''],
+		'bank_account_number' => [
+			'label' => 'Bank Account Number',
+			'value' =>''],
+		'bank_sort_code' => [
+			'label' =>'Bank Sort Code',
+			'value' => '']
+	];
 	
 	protected $user_person_id;
 	
@@ -44,7 +91,6 @@ class Employee extends DataObject {
 		
 		// Define relationships
 		$this->belongsTo('Person', 'person_id', 'employee', '', "surname ||' '|| firstname");
- 		$this->belongsTo('User', 'alteredby', 'alteredby'); 
 		$this->belongsTo('Company', 'company_id', 'company');
 		$this->belongsTo('EmployeeGrade', 'employee_grade_id', 'employee_grade');
 		$this->belongsTo('Address', 'address_id', 'address');
@@ -374,6 +420,10 @@ class Employee extends DataObject {
 		
 		return false;
 		
+	}
+
+	public function getPersonalDataFields () {
+		return $this->personal_data_fields;
 	}
 
 	/*

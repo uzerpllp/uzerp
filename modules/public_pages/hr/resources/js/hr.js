@@ -1,5 +1,5 @@
 /**
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
+ *	(c) 2000-2020 uzERP LLP (support#uzerp.com). All rights reserved.
  *
  *	Released under GPLv3 license; see LICENSE.
  **/
@@ -1149,4 +1149,36 @@ $(document).ready(function() {
 			month.setMonth(month.getMonth() +1)
 		}
 	}
+
+	//
+	// Employee (leaver), delete personal data
+	//
+	// Displays a jQuery UI modal dialog for selection of employee data to delete
+	// and submits the underlying html form. The html source for the dialog
+	// is included in the HTML output by smarty (template: employees/delete_dialog.html)
+	//
+
+	var dialog = $("#dialog-form-container").dialog({
+		autoOpen: false,
+		height: 400,
+		width: 450,
+		modal: true,
+		buttons: {
+			"Delete Data": function(){
+				dialog.dialog("close");
+				$("#delete-data-form").submit();
+			},
+			Cancel: function() {
+				dialog.dialog("close");
+			}
+		},
+		open: function() {
+			dialog.dialog().scrollTop("0");
+		}
+	});
+
+	$('#delete_personal_data').live('click', function (event){
+		event.preventDefault();
+		dialog.dialog( "open" );
+	});
 });
