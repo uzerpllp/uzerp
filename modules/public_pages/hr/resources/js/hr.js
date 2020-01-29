@@ -1163,6 +1163,7 @@ $(document).ready(function() {
 		height: 400,
 		width: 450,
 		modal: true,
+		draggable: false,
 		buttons: {
 			"Delete Data": function(){
 				dialog.dialog("close");
