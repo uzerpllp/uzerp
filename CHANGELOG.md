@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- Personal data deletion for employees that have left
+
 ## [1.19.3] 2020-01-17
 
 ### Fixed

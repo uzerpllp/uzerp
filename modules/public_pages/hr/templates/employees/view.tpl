@@ -1,5 +1,5 @@
 {** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2020 uzERP LLP (support#uzerp.com). All rights reserved.
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
@@ -33,9 +33,9 @@
 					{/foreach}
 				{/view_section}
 				{view_section heading="Authorisers" expand='closed'}
-					{view_data value=$can_authorise label='can_authorise'}	
-					{view_data value=$expense_authorisers label='Expenses Authorised by'}	
-					{view_data value=$holiday_authorisers label='Holidays Authorised by'}	
+					{view_data value=$can_authorise label='can_authorise'}
+					{view_data value=$expense_authorisers label='Expenses Authorised by'}
+					{view_data value=$holiday_authorisers label='Holidays Authorised by'}
 				{/view_section}
 			</dl>
 		{/with}
@@ -90,11 +90,11 @@
 				{/view_section}
 				{view_section heading="Access Details" expand='closed'}
 					{view_data attribute='created' label='date created'}
-					{view_data attribute='createdby' label='created by'}
-					{view_data attribute='lastupdated' label='date last updated'}	
-					{view_data attribute='updatedby' label='last updated by'}	
+					{view_data attribute='lastupdated' label='date last updated'}
+					{view_data attribute='alteredby' label='last updated by'}
 				{/view_section}
 			{/with}
 		</dl>
 	</div>
 {/content_wrapper}
+{include file="./dialog_employees_data_delete.tpl"}

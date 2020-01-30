@@ -1,0 +1,34 @@
+.formgrid {
+    display: grid;
+    grid-template-columns: 1fr 1em 2fr;
+    grid-gap: 0.3em 0.6em;
+    grid-auto-flow: dense;
+    align-items: center;
+
+    input, output, textarea, select, button {
+        grid-column: 2 ~"/" 4;
+        width: auto;
+        margin: 0;
+    }
+
+    input[type="checkbox"], input[type="radio"] {
+        grid-column: 1 ~"/" 3;
+        justify-self: end;
+        margin: 0;
+        top: unset;
+      }
+
+    label, input[type="checkbox"] + label, input[type="radio"] + label {
+    width: auto;
+    padding: 0;
+    margin: 0;
+    }
+
+    textarea + label {
+        align-self: start;
+    }
+}
+
+.formgrid-legend {
+    margin: 1em 0 2em 0;
+}

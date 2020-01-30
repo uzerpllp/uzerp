@@ -1,9 +1,9 @@
 <?php
 
 /** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2020 uzERP LLP (support#uzerp.com). All rights reserved.
  * 
- *	Released under GPLv3 license; see LICENSE. 
+ *	Released under GPLv3 license; see LICENSE.
  **/
 
 class EmployeesController extends Controller
@@ -613,6 +613,18 @@ class EmployeesController extends Controller
 			);
 
 		}
+
+		if (!is_null($employee->finished_date)) {
+			$sidebarlist['delete_personal_data'] = [
+				'tag' => 'Delete Personal Data',
+				'link' => ['modules' => $this->_modules,
+				   'controller' => $this->name,
+				   'action' => 'deletePersonalData',
+					$idfield => $idvalue],
+				'id' => 'delete_personal_data'
+			];
+		}
+
 		
 		$sidebar->addList('currently_viewing', $sidebarlist);
 
@@ -915,14 +927,21 @@ class EmployeesController extends Controller
 	}
 
 	public function edit() {
+		$flash = Flash::Instance();
 
 		if (!isset($this->_data) || !$this->loadData()) {
-// we are editing data, but either no id has been provided
-// or the data for the supplied id does not exist
-// or access to the record is denied
+			// we are editing data, but either no id has been provided
+			// or the data for the supplied id does not exist
+			// or access to the record is denied
 			$this->dataError($this->_no_access_msg);
 			sendBack();
-		}	
+		}
+
+		$employee = $this->_uses[$this->modeltype];
+		if (!is_null($employee->finished_date)) {
+			$flash->addError('Employee data cannot be edited, employee is a leaver');
+			sendBack();
+		}
 		
 		parent::edit();
 		
@@ -1439,6 +1458,106 @@ class EmployeesController extends Controller
 		$this->view->register('sidebar',$sidebar);
 		
 		$this->view->set('sidebar',$sidebar);
+	}
+
+	/**
+	 * Remove employee leaver personal data and contact details
+	 *
+	 * Removes fields defined on the Employee Model as containing
+	 * personal data and any phone numbers, email addresses,
+	 * postal addresses, etc. found attached to the employees
+	 * Person/Party.
+	 *
+	 * @return void
+	 */
+	public function deletePersonalData() {
+		$this->checkRequest(['post']);
+
+		$flash = Flash::Instance();
+		$errors = [];
+
+		if (count($this->_data['employee']) == 0) {
+			$flash->addMessage('No data types were selected for deletion');
+			sendBack();
+		}
+
+		$employee = $this->_uses[$this->modeltype];
+		$employee->load($this->_data['id']);
+		if(!$employee->isLoaded()) {
+			$flash->addError('Employee record could not be loaded');
+			sendBack();
+		}
+
+		if (!$this->loadData()) {
+			$this->_uses[$this->modeltype]->authorisationPolicy();
+			if (!$this->loadData()) {
+				$this->dataError($this->_no_access_msg);
+				sendBack();
+			}
+		}
+
+		if (is_null($employee->finished_date)) {
+			$flash->addError('Personal data cannot be deleted, employee is not a leaver');
+			sendBack();
+		}
+
+		foreach($employee->getPersonalDataFields() as $fieldname => $params) {
+			if(array_key_exists($fieldname, $this->_data['employee'])) {
+				$employee->$fieldname = $params['value'];
+			}
+		}
+
+		$party = new Party();
+		$person = new Person();
+
+		$person->load($employee->person_id);
+		$methods = $person->getContactMethods();
+		$party->load($person->party_id);
+
+		$addresses = new PartyAddressCollection();
+		$address_sh = new SearchHandler($addresses, false);
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('party_id', '=', $party->id));
+		$address_sh->addConstraintChain($cc);
+		$addresses->load($address_sh);
+
+		$db = DB::Instance();
+		$db->StartTrans();
+
+		if ($this->_data['employee']['contact_methods'] === 'on') {
+			foreach($methods as $method) {
+				$partymethod = new PartyContactMethod();
+				$partymethod->delete($method->id, $errors);
+			};
+		}
+
+		if ($this->_data['employee']['addresses'] === 'on') {
+			foreach($addresses as $address) {
+				$partyaddress = new PartyAddress();
+				$partyaddress->delete($address->id, $errors);
+			};
+		}
+
+		if(count($errors) > 0) {
+			$db->FailTrans();
+			$flash->addErrors($errors);
+			sendBack();
+		}
+
+		$employee->address_id = '';
+		$employee->contact_phone_id = '';
+		$employee->contact_mobile_id = '';
+		$employee->contact_email_id = '';
+
+		if(!$employee->save()) {
+			$db->FailTrans();
+			$flash->addError('Failed to delete employee personal data');
+			sendBack();
+		}
+
+		$db->CompleteTrans();
+		$flash->addMessage('Employee personal data deleted successfully');
+		sendBack();
 	}
 
 	/*
