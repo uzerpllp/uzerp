@@ -1180,6 +1180,10 @@ $(document).ready(function() {
 
 	$('#delete_personal_data').live('click', function (event){
 		event.preventDefault();
+		if ($.uz_ajax.isLoggedIn() === false) {
+			location.reload();
+			return false;
+		}
 		dialog.dialog( "open" );
 	});
 });
