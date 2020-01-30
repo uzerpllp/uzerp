@@ -97,4 +97,4 @@
 		</dl>
 	</div>
 {/content_wrapper}
-{include file="./delete_dialog.tpl"}
+{include file="./dialog_employees_data_delete.tpl"}
