@@ -43,13 +43,13 @@ class CompanySearch extends BaseSearch
 		
 		// Search by Assigned to Me
 		$search->addSearchField(
-			'assigned',
+			'assigned_to',
 			'assigned_to_me',
 			'hide',
 			false,
 			'advanced'
 		);
-		$search->setOnValue('assigned',EGS_USERNAME);
+		$search->setOnValue('assigned_to',EGS_USERNAME);
 		
 		// Search by Phone Number
 		$search->addSearchField(
