@@ -1,7 +1,7 @@
 <?php
 
 /** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2020 uzERP LLP (support#uzerp.com). All rights reserved.
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
@@ -209,20 +209,31 @@ class Party extends DataObject
 
 	public function delete($id = null, &$errors = array(), $archive = FALSE, $archive_table = null, $archive_schema = null)
 	{
-		
 		$db = DB::Instance();
 		$db->startTrans();
-		
+
+		// Only for Party, not sub classes
+		if (isset($id)) {
+			$this->load($id);
+			$adr = $this->addresses;
+			$sh = new SearchHandler(new PartyAddressCollection(), false);
+			$sh->addConstraint(new Constraint('party_id', '=', $this->party_id));
+			$adr->load($sh);
+
+			$cmt = $this->contactmethods;
+			$sh = new SearchHandler(new ContactmethodCollection(), false);
+			$sh->addConstraint(new Constraint('party_id', '=', $this->party_id));
+			$cmt->load($sh);
+		}
+
 		$address_ids = array();
-		
-		foreach ($this->addresses as $partyaddress)
+		foreach ($adr as $partyaddress)
 		{
 			$address_ids[$partyaddress->address_id] = $partyaddress->address_id;
 		}
 		
 		$contact_methods_ids = array();
-		
-		foreach ($this->contactmethods as $contactmethod)
+		foreach ($cmt as $contactmethod)
 		{
 			$contact_methods_ids[$contactmethod->contactmethod_id] = $contactmethod->contactmethod_id;
 		}
@@ -238,7 +249,7 @@ class Party extends DataObject
 		}
 		else
 		{
-			$result	= parent::delete(null, $errors);
+			$result	= parent::delete($id, $errors);
 		}
 		
 		if ($result && count($address_ids) > 0)
