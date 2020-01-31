@@ -19,7 +19,7 @@
                 {select attribute='type_id' }
                 {select attribute='campaign_id' }
                 {select attribute='company_id' constrains='person_id'}
-                {select attribute='person_id' depends='company_id' }
+                {select attribute='person_id' depends='company_id' options=$people}
                 {select attribute='assigned'}
                 {textarea  attribute='description' force=true}
                 {submit}

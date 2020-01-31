@@ -14,7 +14,7 @@
 					{if !empty($company)}
 						{view_data attribute='company' value=$company}
 					{/if}
-					{select attribute="person_id"}
+					{select attribute="person_id" options=$people}
 					{if !empty($person)}
 						{view_data attribute='person_id' value=$person}
 					{/if}
