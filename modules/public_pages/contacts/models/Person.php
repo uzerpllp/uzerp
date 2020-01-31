@@ -42,8 +42,8 @@ class Person extends Party
 		$this->orderby = array('surname', 'firstname');
 
 		$this->identifier			= 'surname';
-		$this->identifierField		= 'firstname || \' \' || surname';
-		$this->identifierFieldJoin	= ', ';
+		$this->identifierField		= ['firstname', 'surname'];
+		$this->identifierFieldJoin	= ' ';
 		
 // Define relationships
 		$this->hasMany('PartyContactMethod','contactmethods', 'party_id', 'party_id', null, TRUE);
