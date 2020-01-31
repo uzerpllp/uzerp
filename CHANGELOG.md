@@ -4,9 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Deleting of contact records for companies, people and leads
+
 ### Added
 
 - Personal data deletion for employees that have left
+- Confirmation required when deleting companies, people and leads
+
+### Removed
+
+- Company branches, or parent/child relationships
 
 ## [1.19.3] 2020-01-17
 
