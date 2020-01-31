@@ -166,7 +166,9 @@ class LeadsController extends printController
 				),
 				'delete' => array(
 					'tag' => 'Delete',
-					'link' => array('module'=>'contacts','controller'=>'leads','action'=>'delete','id'=>$company->id)
+					'link' => array('module'=>'contacts','controller'=>'leads','action'=>'delete','id'=>$company->id),
+					'class' => 'confirm',
+					'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This cannot be undone."]
 				),
 				'sharing' => array(
 					'tag' => 'Sharing',

@@ -97,7 +97,10 @@ class CompanysController extends printController
 				),
 				'delete' => array(
 					'tag' => 'Delete',
-					'link' => array('module'=>'contacts','controller'=>'companys','action'=>'delete',$companyidfield=>$companyid)
+					'link' => array('module'=>'contacts','controller'=>'companys','action'=>'delete',$companyidfield=>$companyid),
+					'class' => 'confirm',
+					'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This cannot be undone.",
+									'data_uz-action-id' => $companyid]
 				),
 				'sharing' => array(
 					'tag' => 'Sharing',
@@ -258,6 +261,8 @@ class CompanysController extends printController
 
 	public function delete()
 	{
+		$this->checkRequest(['post'], true);
+		
 		$flash	= Flash::Instance();
 		$errors = array();
 		
@@ -277,12 +282,10 @@ class CompanysController extends printController
 
 		if (!$company->delete(null, $errors))
 		{
-			exit;
 			$errors[] = 'Error deleting '.$company->getIdentifierValue();
 			$flash->addErrors($errors);
 			sendTo($this->name, 'view', $this->_modules, array($company->idField=>$company->{$company->idField}));
 		}
-		exit;
 		$flash->addMessage($company->getIdentifierValue().' deleted successfully');
 		sendTo($this->name, 'index', $this->_modules);
 		

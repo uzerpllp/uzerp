@@ -224,11 +224,30 @@ class PersonsController extends printController
                 )
             ));
         } else {
-            $sidebar->addCurrentBox('currently_viewing', $person->fullname, array(
-                'module' => 'contacts',
-                'controller' => 'persons',
-                'id' => $person->id
-            ));
+            $sidebar->addList(
+                'currently_viewing',
+                array(
+                    $person->fullname => array(
+                        'tag' => $person->fullname,
+                        'link' => array('module'=>'contacts','controller'=>'persons','action'=>'view','id'=>$person_id)
+                    ),
+                    'edit' => array(
+                        'tag' => 'Edit',
+                        'link' => array('module'=>'contacts','controller'=>'persons','action'=>'edit','id'=>$person_id)
+                    ),
+                    'delete' => array(
+                        'tag' => 'Delete',
+                        'link' => array('module'=>'contacts','controller'=>'persons','action'=>'delete','id'=>$person_id),
+                        'class' => 'confirm',
+                        'data_attr' => ['data_uz-confirm-message' => "Delete {$person->fullname}?|This cannot be undone.",
+                                        'data_uz-action-id' => $person_id]
+                    ),
+                    'sharing' => array(
+                        'tag' => 'Sharing',
+                        'link' => array('module'=>'contacts','controller'=>'persons','action'=>'sharing','id'=>$person_id,'model'=>'Person')
+                    )
+                )
+            );
         }
 
         $items = array();
