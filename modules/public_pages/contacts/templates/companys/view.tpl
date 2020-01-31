@@ -13,7 +13,6 @@
 				{view_data attribute="accountnumber"}
 				{view_data attribute="owner"}
 				{view_data attribute="assigned"}
-				{view_data attribute="parent" label="parent_account"}
 				{view_data attribute="categories" value=$categories}
 			{/view_section}
 			{view_section heading="organisation_details"}

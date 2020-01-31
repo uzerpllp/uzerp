@@ -43,16 +43,16 @@ class Company extends Party {
 		$this->hasMany('PartyAddress', 'mainaddress', 'party_id', 'party_id');
  		
  		$this->belongsTo('User', 'assigned', 'assigned_to');
-		$this->belongsTo('Company', 'parent_id', 'company_parent');
+		//$this->belongsTo('Company', 'parent_id', 'company_parent');
 		$this->belongsTo('CompanyClassification','classification_id', 'company_classification');
 		$this->belongsTo('CompanyIndustry', 'industry_id', 'company_industry');
 		$this->belongsTo('CompanyRating', 'rating_id', 'company_rating');
 		$this->belongsTo('CompanySource', 'source_id', 'company_source');
 		$this->belongsTo('CompanyStatus', 'status_id', 'company_status');
 		$this->belongsTo('CompanyType', 'type_id', 'company_type');
-		$this->addValidator(new DistinctValidator(array('id', 'parent_id'), 'Account cannot be it\'s own parent'));
- 		$this->actsAsTree('parent_id');
-		$this->setParent();
+		//$this->addValidator(new DistinctValidator(array('id', 'parent_id'), 'Account cannot be it\'s own parent'));
+ 		//$this->actsAsTree('parent_id');
+		//$this->setParent();
 
 		$this->hasOne('Party', 'party_id', 'party');
 		
@@ -223,7 +223,7 @@ class Company extends Party {
 			
 			$cc->add(new Constraint($this->parent_field, 'in', '(' . implode(',', array_keys($_company_ids)) . ')'));
 			
-			$_company_ids += $this->getChildren($this->getAll($cc, TRUE));
+			$_company_ids += $this->getAll($cc, TRUE);
 			
 			return $_company_ids;
 		}

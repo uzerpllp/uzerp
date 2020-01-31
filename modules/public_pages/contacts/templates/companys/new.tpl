@@ -19,7 +19,6 @@
 					{view_section heading="account_details"}
 						{input type='text'  attribute='name' class="compulsory" }
 						{input type='text'  attribute='accountnumber' class="compulsory" }
-						{select attribute="parent_id"}
 						{select attribute="assigned"}
 						{select attribute="owner"}
 					{/view_section}
