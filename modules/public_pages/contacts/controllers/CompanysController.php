@@ -54,7 +54,7 @@ class CompanysController extends printController
 		//$sh->addConstraint(new Constraint('category_id', '=', '3'));
 		
 		parent::index($collection, $sh);
-		$this->view->set('page_title', 'Companies by Category');
+		$this->view->set('page_title', 'Company by Category');
 	}
 
 	public function index()
@@ -84,7 +84,7 @@ class CompanysController extends printController
 			array(
 				'new'=>array(
 					'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'new'),
-					'tag'=>'new_account'
+					'tag'=>'new_company'
 				),
 				'new_lead'=>array(
 					'link'=>array('module'=>'contacts','controller'=>'leads','action'=>'new'),
