@@ -10,12 +10,21 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Category list view for companies to generate lists of customers or suppliers
+- Allow setting of end/inactive date for companies and people
+- Filter company and person list views by active/inactive status
 - Personal data deletion for employees that have left
-- Confirmation required when deleting companies, people and leads
+- User confirmation when deleting companies, people and leads
 
 ### Removed
 
 - Company branches, or parent/child relationships
+- Categories on people
+- Contact sharing options
+
+### Changed
+
+- The label 'Accounts' on the contacts menu has changed to 'Companies'
 
 ## [1.19.3] 2020-01-17
 
