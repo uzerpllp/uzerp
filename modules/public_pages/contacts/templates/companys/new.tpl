@@ -21,6 +21,7 @@
 						{input type='text'  attribute='accountnumber' class="compulsory" }
 						{select attribute="assigned"}
 						{select attribute="owner"}
+						{input type='date' attribute='date_inactive'}
 					{/view_section}
 					{view_section heading="organisation_details"}
 						{input type='text'  attribute='tax_description' }
