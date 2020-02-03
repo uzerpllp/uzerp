@@ -236,45 +236,47 @@ class CompanysController extends printController
 		$ledger_category = DataObjectFactory::Factory('LedgerCategory');
 
 		$can_delete = true;
-		
-		foreach ($ledger_category->getCompanyTypes($current_categories) as $model_name=>$model_detail)
-		{
-			$do = DataObjectFactory::Factory($model_name);
-			
-			$do->loadBy('company_id', $company->{$company->idField});
 
-			if ($do->isLoaded())
+		if (count($current_categories) > 0) {
+			foreach ($ledger_category->getCompanyTypes($current_categories) as $model_name=>$model_detail)
 			{
-				$can_delete = false;
-				$sidebar->addList(
-					'related_items',
-					array(
-						$model_name=>array(
-							'tag'=>$do->getTitle(),
-							'link'=>array('module'=>$model_detail['module']
-										 ,'controller'=>$model_detail['controller']
-										 ,'action'=>'view'
-										 ,$do->idField=>$do->{$do->idField})
+				$do = DataObjectFactory::Factory($model_name);
+				
+				$do->loadBy('company_id', $company->{$company->idField});
+
+				if ($do->isLoaded())
+				{
+					$can_delete = false;
+					$sidebar->addList(
+						'related_items',
+						array(
+							$model_name=>array(
+								'tag'=>$do->getTitle(),
+								'link'=>array('module'=>$model_detail['module']
+											,'controller'=>$model_detail['controller']
+											,'action'=>'view'
+											,$do->idField=>$do->{$do->idField})
+							)
 						)
-					)
-				);
-			}
-			else
-			{
-				$sidebar->addList(
-					'related_items',
-					array(
-						$model_name=>array(
-							'tag'=>$do->getTitle(),
-							'new'=>array('module'=>$model_detail['module']
-										 ,'controller'=>$model_detail['controller']
-										 ,'action'=>'new'
-										 ,'company_id'=>$company->{$company->idField})
+					);
+				}
+				else
+				{
+					$sidebar->addList(
+						'related_items',
+						array(
+							$model_name=>array(
+								'tag'=>$do->getTitle(),
+								'new'=>array('module'=>$model_detail['module']
+											,'controller'=>$model_detail['controller']
+											,'action'=>'new'
+											,'company_id'=>$company->{$company->idField})
+							)
 						)
-					)
-				);
+					);
+				}
+			
 			}
-		
 		}
 
 		// No need to show a delete action. If this company account
@@ -288,7 +290,7 @@ class CompanysController extends printController
 						'tag' => 'Delete',
 						'link' => array('module'=>'contacts','controller'=>'companys','action'=>'delete',$companyidfield=>$companyid),
 						'class' => 'confirm',
-						'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This cannot be undone.",
+						'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This will also delete projects, people and associated contact and CRM records. It cannot be undone.",
 										'data_uz-action-id' => $companyid]
 					)
 				)
