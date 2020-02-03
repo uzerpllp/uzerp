@@ -28,8 +28,20 @@ class CompanyCategorySearch extends BaseSearch
             'select',
             array_key_first($options)
         );
-
         $search->setOptions('category_id',$options);
+
+        		// Search by Active/Inactive Status
+		$search->addSearchField(
+			'date_inactive',
+			'Show Companies',
+			'null',
+			'null',
+			'advanced'
+		);
+		$options = ['' => 'All',
+					'not null' => 'Inactive',
+					'null' => 'Active'];
+		$search->setOptions('date_inactive', $options);
 
         $search->setSearchData($search_data,$errors);
         

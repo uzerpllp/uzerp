@@ -28,7 +28,8 @@ SELECT cic.company_id,
     c.accountnumber,
     c.phone,
     c.email,
-    c.website
+    c.website,
+    c.date_inactive
     FROM companies_in_categories cic
     JOIN contact_categories cc ON cc.id = cic.category_id
     JOIN companyoverview c ON c.id = cic.company_id
