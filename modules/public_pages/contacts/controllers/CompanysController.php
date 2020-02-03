@@ -55,6 +55,20 @@ class CompanysController extends printController
 		
 		parent::index($collection, $sh);
 		$this->view->set('page_title', 'Company by Category');
+
+		$sidebar = new SidebarController($this->view);
+		$sidebar->addList(
+			'Views',
+			array(
+				'companyies'=>array(
+					'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'index'),
+					'tag'=>'view companies'
+				)									
+			)
+		);
+
+		$this->view->register('sidebar',$sidebar);
+		$this->view->set('sidebar',$sidebar);
 	}
 
 	public function index()
