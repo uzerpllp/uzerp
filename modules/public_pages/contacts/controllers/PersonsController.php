@@ -241,10 +241,6 @@ class PersonsController extends printController
                         'class' => 'confirm',
                         'data_attr' => ['data_uz-confirm-message' => "Delete {$person->fullname}?|This cannot be undone.",
                                         'data_uz-action-id' => $person_id]
-                    ),
-                    'sharing' => array(
-                        'tag' => 'Sharing',
-                        'link' => array('module'=>'contacts','controller'=>'persons','action'=>'sharing','id'=>$person_id,'model'=>'Person')
                     )
                 )
             );
@@ -506,42 +502,6 @@ class PersonsController extends printController
         $category = DataObjectFactory::Factory('peopleInCategories');
         $this->view->set('categories', implode(',', $category->getCategorynames($person_id)));
 
-        $current_categories = $category->getCategoryID($person_id);
-
-        $ledger_category = DataObjectFactory::Factory('LedgerCategory');
-
-        foreach ($ledger_category->getPersonTypes($current_categories) as $model_name => $model_detail) {
-            $do = DataObjectFactory::Factory($model_name);
-
-            $do->loadBy('person_id', $person_id);
-
-            if ($do->isLoaded()) {
-                $sidebar->addList('related_items', array(
-                    $model_name => array(
-                        'tag' => $do->getTitle(),
-                        'link' => array(
-                            'module' => $model_detail['module'],
-                            'controller' => $model_detail['controller'],
-                            'action' => 'view',
-                            $do->idField => $do->{$do->idField}
-                        )
-                    )
-                ));
-            } else {
-                $sidebar->addList('related_items', array(
-                    $model_name => array(
-                        'tag' => $do->getTitle(),
-                        'new' => array(
-                            'module' => $model_detail['module'],
-                            'controller' => $model_detail['controller'],
-                            'action' => 'new',
-                            'person_id' => $person->{$person->idField}
-                        )
-                    )
-                ));
-            }
-        }
-
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
 
@@ -587,6 +547,8 @@ class PersonsController extends printController
 
     public function delete()
     {
+        $this->checkRequest(['post'], true);
+
         $flash = Flash::instance();
 
         $person = $this->_templateobject;

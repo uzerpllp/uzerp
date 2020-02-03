@@ -75,6 +75,8 @@ class LeadsController extends printController
 
 	public function delete()
 	{
+		$this->checkRequest(['post'], true);
+
 		$flash = Flash::Instance();
 		
 		$company=$this->_uses['Lead'];
@@ -168,12 +170,9 @@ class LeadsController extends printController
 					'tag' => 'Delete',
 					'link' => array('module'=>'contacts','controller'=>'leads','action'=>'delete','id'=>$company->id),
 					'class' => 'confirm',
-					'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This cannot be undone."]
-				),
-				'sharing' => array(
-					'tag' => 'Sharing',
-					'link' => array('module'=>'contacts','controller'=>'companys','action'=>'sharing','id'=>$company->id)
-				),
+					'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This cannot be undone.",
+									'data_uz-action-id' => $company->id]
+				)
 				'convert_to_account' => array(
 					'tag' => 'convert_to_account',
 					'link' => array('module'=>'contacts','controller'=>'leads','action'=>'converttoaccount','id'=>$company->id)

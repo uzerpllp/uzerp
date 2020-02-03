@@ -13,7 +13,6 @@
 					{view_data attribute='company'}
 					{view_data attribute='person_assigned_to'}
 					{view_data attribute='end_date'}
-					{view_data attribute="categories" value=$categories}
 				{/view_section}
 				
 				{view_section heading="Job Details" expand='open'}

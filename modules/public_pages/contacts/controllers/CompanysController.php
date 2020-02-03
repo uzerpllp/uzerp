@@ -82,7 +82,6 @@ class CompanysController extends printController
 		$companyid=$company->id;
 		$partyid=$company->party_id;
 		$sidebar = new SidebarController($this->view);
-		// If we own it, we can do anything we like.
 
 		$sidebar->addList(
 			'currently_viewing',
@@ -94,20 +93,10 @@ class CompanysController extends printController
 				'edit' => array(
 					'tag' => 'Edit',
 					'link' => array('module'=>'contacts','controller'=>'companys','action'=>'edit',$companyidfield=>$company->$companyidfield)
-				),
-				'delete' => array(
-					'tag' => 'Delete',
-					'link' => array('module'=>'contacts','controller'=>'companys','action'=>'delete',$companyidfield=>$companyid),
-					'class' => 'confirm',
-					'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This cannot be undone.",
-									'data_uz-action-id' => $companyid]
-				),
-				'sharing' => array(
-					'tag' => 'Sharing',
-					'link' => array('module'=>'contacts','controller'=>'companys','action'=>'sharing',$companyidfield=>$companyid,'model'=>'Company')
 				)
 			)
 		);
+
 		$sidebar->addList(
 			'related_items',
 			array(
@@ -199,6 +188,8 @@ class CompanysController extends printController
 		$current_categories	= $category->getCategoryID($company->{$company->idField});
 
 		$ledger_category = DataObjectFactory::Factory('LedgerCategory');
+
+		$can_delete = true;
 		
 		foreach ($ledger_category->getCompanyTypes($current_categories) as $model_name=>$model_detail)
 		{
@@ -208,6 +199,7 @@ class CompanysController extends printController
 
 			if ($do->isLoaded())
 			{
+				$can_delete = false;
 				$sidebar->addList(
 					'related_items',
 					array(
@@ -237,6 +229,24 @@ class CompanysController extends printController
 				);
 			}
 		
+		}
+
+		// No need to show a delete action. If this company account
+		// is linked to an SL or PL master, then delete will be blocked
+		// by a DB contraint.
+		if ($can_delete === true) {
+			$sidebar->addList(
+				'currently_viewing',
+				array(
+					'delete' => array(
+						'tag' => 'Delete',
+						'link' => array('module'=>'contacts','controller'=>'companys','action'=>'delete',$companyidfield=>$companyid),
+						'class' => 'confirm',
+						'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This cannot be undone.",
+										'data_uz-action-id' => $companyid]
+					)
+				)
+			);
 		}
 		
 		if($company instanceof Company)

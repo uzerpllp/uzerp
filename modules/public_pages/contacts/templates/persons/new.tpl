@@ -35,19 +35,6 @@
 					{select attribute='reports_to' label='Line Manager' depends='company_id' ignore_parent_rel=true}
 					{select  attribute='lang' label='Language' class="compulsory" }
 				{/view_section}
-				{if "categories"|prettify <> 'EGS_HIDDEN_FIELD'}
-						{view_section heading="categories"}
-							<dt>
-								<label for="category_id">
-								</label>
-							</dt>
-							<dd class="for_textarea">
-								<select name="ContactCategories[category_id][]" multiple="multiple" size="7">
-									{html_options options=$contact_categories selected=$selected_categories}
-								</select>
-							</dd>
-						{/view_section}
-				{/if}
 			</dl>
 			<dl class="float-right">
 				{view_section heading="contact_details"}
