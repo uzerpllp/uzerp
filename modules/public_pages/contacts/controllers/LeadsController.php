@@ -170,9 +170,9 @@ class LeadsController extends printController
 					'tag' => 'Delete',
 					'link' => array('module'=>'contacts','controller'=>'leads','action'=>'delete','id'=>$company->id),
 					'class' => 'confirm',
-					'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This cannot be undone.",
+					'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This will also delete people and associated contact and CRM records. It cannot be undone.",
 									'data_uz-action-id' => $company->id]
-				)
+				),
 				'convert_to_account' => array(
 					'tag' => 'convert_to_account',
 					'link' => array('module'=>'contacts','controller'=>'leads','action'=>'converttoaccount','id'=>$company->id)

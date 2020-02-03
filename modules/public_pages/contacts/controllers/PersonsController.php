@@ -239,7 +239,7 @@ class PersonsController extends printController
                         'tag' => 'Delete',
                         'link' => array('module'=>'contacts','controller'=>'persons','action'=>'delete','id'=>$person_id),
                         'class' => 'confirm',
-                        'data_attr' => ['data_uz-confirm-message' => "Delete {$person->fullname}?|This cannot be undone.",
+                        'data_attr' => ['data_uz-confirm-message' => "Delete {$person->fullname}?|This will also delete associated contact and CRM records. It cannot be undone.",
                                         'data_uz-action-id' => $person_id]
                     )
                 )
