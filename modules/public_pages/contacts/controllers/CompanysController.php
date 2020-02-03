@@ -22,6 +22,41 @@ class CompanysController extends printController
 		$this->related['addresses']=array('clickaction'=>'edit');
 	}
 
+	public function viewcategories()
+	{
+		unset($this->related['addresses']);
+		$this->view->set('clickaction', 'view');
+		$s_data=array();
+		$this->setSearch('CompanyCategorySearch', 'useDefault', $s_data);
+		
+		//$this->_templateobject = DataObjectFactory::Factory('CompanyInCategories');
+		//$this->uses($this->_templateobject);
+		//parent::index(new CompanyInCategoriesCollection($this->_templateobject));
+
+		$this->_templateobject = new CompanyInCategories();
+		$this->uses($this->_templateobject);
+		$this->idField = 'company_id';
+		
+		$collection = new CompanyInCategoriesCollection($this->_templateobject);
+		$collection->orderby = ['company'];
+		//$collection->direction = ['DESC'];
+		$sh = $this->setSearchHandler($collection);
+
+		// id field from the collection used for the click action
+		$collection->idField = 'company_id';
+
+		$systemCompany = DataObjectFactory::Factory('Company');
+		$systemCompany->load(COMPANY_ID);
+		
+		$_company_ids = $systemCompany->getSystemRelatedCompanies(array($systemCompany->id=>$systemCompany->getIdentifierValue()));
+		
+		$sh->addConstraint(new Constraint('id', 'NOT IN', '(' . implode(',', array_keys($_company_ids)) . ')'));
+		//$sh->addConstraint(new Constraint('category_id', '=', '3'));
+		
+		parent::index($collection, $sh);
+		$this->view->set('page_title', 'Companies by Category');
+	}
+
 	public function index()
 	{
 		$this->view->set('clickaction', 'view');
@@ -61,6 +96,17 @@ class CompanysController extends printController
 				)									
 			)
 		);
+
+		$sidebar->addList(
+			'Views',
+			array(
+				'companybycategory'=>array(
+					'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'viewcategories'),
+					'tag'=>'company_by_category'
+				)									
+			)
+		);
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}

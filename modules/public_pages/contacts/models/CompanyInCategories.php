@@ -10,6 +10,14 @@ class CompanyInCategories extends DataObject
 {
 
 	protected $version = '$Revision: 1.10 $';
+
+	protected $defaultDisplayFields = [
+		'company',
+		'accountnumber',
+		'phone',
+		'email',
+		'website'
+	];
 	
 	function __construct($tablename = 'companies_in_categories')
 	{
