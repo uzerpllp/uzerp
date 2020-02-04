@@ -78,7 +78,6 @@ class CompanysController extends printController
 		$_company_ids = $systemCompany->getSystemRelatedCompanies(array($systemCompany->id=>$systemCompany->getIdentifierValue()));
 		
 		$sh->addConstraint(new Constraint('id', 'NOT IN', '(' . implode(',', array_keys($_company_ids)) . ')'));
-		//$sh->addConstraint(new Constraint('category_id', '=', '3'));
 		
 		parent::index($collection, $sh);
 		$this->view->set('page_title', 'Company by Category');
