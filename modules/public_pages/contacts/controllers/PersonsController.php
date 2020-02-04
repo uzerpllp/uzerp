@@ -490,6 +490,48 @@ class PersonsController extends printController
         }
     }
 
+    /**
+     * View and search company related people
+     * 
+     * Called from the related items sidebar when viewing a company
+     *
+     * @return void
+     */
+    public function viewcompany ()
+    {
+        $s_data = [];
+        if (isset($this->_data['company_id'])) {
+            $s_data['company_id'] = $this->_data['company_id'];
+        }
+
+        $this->setSearch('PeopleSearch', 'useDefault', $s_data);
+        $this->view->set('clickaction', 'view');
+        $people = new PersonCollection($this->_templateobject);
+        $sh = $this->setSearchHandler($people);
+        $cc = new ConstraintChain();
+        $cc->add(new Constraint('company_id', '=', $this->_data['company_id']));
+        $sh->addConstraint($cc);
+
+        
+        if (isset($this->search))
+        {
+            if ($this->isPrintDialog())
+            {
+                $_SESSION['printing'][$this->_data['index_key']]['search_id']=$sh->search_id;
+                return $this->printCollection();
+            }
+            elseif ($this->isPrinting())
+            {
+                $_SESSION['printing'][$this->_data['index_key']]['search_id']=$sh->search_id;
+                $sh->setLimit(0);
+                $people->load($sh);
+                $this->printCollection($people);
+                exit;
+            }
+        } 
+        parent::index($people, $sh);
+    }
+
     public function publish()
     {
         $flash = Flash::Instance();

@@ -32,12 +32,14 @@ class PeopleSearch extends BaseSearch
 			'begins'
 		);
 		
-		// Search by Comapny name
-		$search->addSearchField(
-			'company',
-			'company_name',
-			'begins'
-		);
+		// Search by Company name
+		if(!isset($defaults['company_id'])) {
+			$search->addSearchField(
+				'company',
+				'company_name',
+				'begins'
+			);
+		}
 		
 		// Search by Assigned to Me
 		$search->addSearchField(
