@@ -60,10 +60,6 @@ class CompanysController extends printController
 		$this->view->set('clickaction', 'view');
 		$s_data=array();
 		$this->setSearch('CompanyCategorySearch', 'useDefault', $s_data);
-		
-		//$this->_templateobject = DataObjectFactory::Factory('CompanyInCategories');
-		//$this->uses($this->_templateobject);
-		//parent::index(new CompanyInCategoriesCollection($this->_templateobject));
 
 		$this->_templateobject = new CompanyInCategories();
 		$this->uses($this->_templateobject);
@@ -71,7 +67,6 @@ class CompanysController extends printController
 		
 		$collection = new CompanyInCategoriesCollection($this->_templateobject);
 		$collection->orderby = ['company'];
-		//$collection->direction = ['DESC'];
 		$sh = $this->setSearchHandler($collection);
 
 		// id field from the collection used for the click action
