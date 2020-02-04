@@ -58,37 +58,7 @@ class PersonsController extends printController
         parent::index($people, $sh);
 
         $sidebar = new SidebarController($this->view);
-        $sidebar->addList('Actions', array(
-            'new' => array(
-                'link' => array(
-                    'module' => 'contacts',
-                    'controller' => 'persons',
-                    'action' => 'new'
-                ),
-                'tag' => 'new_person'
-            ),
-            'new_account' => array(
-                'link' => array(
-                    'module' => 'contacts',
-                    'controller' => 'companys',
-                    'action' => 'new'
-                ),
-                'tag' => 'new_account'
-            ),
-            'new_lead' => array(
-                'link' => array(
-                    'module' => 'contacts',
-                    'controller' => 'leads',
-                    'action' => 'new'
-                ),
-                'tag' => 'new_lead'
-            )
-				/*,
-				'import'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'persons','action'=>'import'),
-					'tag'=>'import_contacts'
-				)*/
-			));
+        $sidebar->addList('Actions', CompanysController::$nav_list);
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
     }

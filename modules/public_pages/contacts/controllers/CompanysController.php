@@ -13,6 +13,38 @@ class CompanysController extends printController
 	
 	protected $_templateobject;
 
+	public static $nav_list = array(
+		'companies'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'index'),
+			'tag'=>'view_companies'
+		),
+		'companybycategory'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'viewcategories'),
+			'tag'=>'view_company_by_category'
+		),
+		'people'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'persons','action'=>'index'),
+			'tag'=>'view_people'
+		),
+		'leads'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'leads','action'=>'index'),
+			'tag'=>'view_leads'
+		),
+		'spacer',
+		'new'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'new'),
+			'tag'=>'new_company'
+		),
+		'new_lead'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'leads','action'=>'new'),
+			'tag'=>'new_lead'
+		),
+		'new_person'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'persons','action'=>'new'),
+			'tag'=>'new_person'
+		)
+		);
+
 	public function __construct($module=null,$action=null)
 	{
 		parent::__construct($module, $action);
@@ -57,15 +89,7 @@ class CompanysController extends printController
 		$this->view->set('page_title', 'Company by Category');
 
 		$sidebar = new SidebarController($this->view);
-		$sidebar->addList(
-			'Views',
-			array(
-				'companyies'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'index'),
-					'tag'=>'view companies'
-				)									
-			)
-		);
+		$sidebar->addList('Actions', $this::$nav_list);
 
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
@@ -93,33 +117,7 @@ class CompanysController extends printController
 		parent::index($collection, $sh);
 		
 		$sidebar = new SidebarController($this->view);
-		$sidebar->addList(
-			'Actions',
-			array(
-				'new'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'new'),
-					'tag'=>'new_company'
-				),
-				'new_lead'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'leads','action'=>'new'),
-					'tag'=>'new_lead'
-				),
-				'new_person'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'persons','action'=>'new'),
-					'tag'=>'new_person'
-				)									
-			)
-		);
-
-		$sidebar->addList(
-			'Views',
-			array(
-				'companybycategory'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'viewcategories'),
-					'tag'=>'company_by_category'
-				)									
-			)
-		);
+		$sidebar->addList('Actions', $this::$nav_list);
 
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
