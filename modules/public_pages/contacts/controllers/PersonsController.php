@@ -497,7 +497,7 @@ class PersonsController extends printController
      *
      * @return void
      */
-    public function viewcompany ()
+    public function viewcompany()
     {
         $s_data = [];
         if (isset($this->_data['company_id'])) {
@@ -512,13 +512,11 @@ class PersonsController extends printController
 
         $this->_templateobject->setDefaultDisplayFields(
             ['name' => 'Name',
-             'company' => 'Company',
-             'accountnumber' => 'Account',
+            'end_date',
              'jobtitle' => 'Job Title',
              'phone' => 'Phone',
              'mobile' => 'Mobile',
-            'email' => 'Email',
-            'end_date']
+             'email' => 'Email']
         );
         $people = new PersonCollection($this->_templateobject);
         $sh = $this->setSearchHandler($people);
