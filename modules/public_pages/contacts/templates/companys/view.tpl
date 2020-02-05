@@ -14,6 +14,7 @@
 				{view_data attribute="owner"}
 				{view_data attribute="assigned"}
 				{view_data attribute="categories" value=$categories}
+				{view_data attribute="date_inactive"}
 			{/view_section}
 			{view_section heading="organisation_details"}
 				{view_data attribute="vatnumber" label=$model->tax_description}

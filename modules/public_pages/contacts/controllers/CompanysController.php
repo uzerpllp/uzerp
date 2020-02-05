@@ -288,7 +288,7 @@ class CompanysController extends printController
 		// No need to show a delete action. If this company account
 		// is linked to an SL or PL master, then delete will be blocked
 		// by a DB contraint.
-		if ($can_delete === true) {
+		if ($can_delete === true && $company->isSystemCompany() === false) {
 			$sidebar->addList(
 				'currently_viewing',
 				array(
@@ -327,7 +327,7 @@ class CompanysController extends printController
 		$company=$this->_templateobject;
 		$company->load($this->_data['id']);
 
-		if (!$company->isLoaded())
+		if (!$company->isLoaded() || $company->isSystemCompany())
 		{
 			$flash->addError('You do not have permission to delete this contact.');
 			sendTo($this->name, 'view', $this->_modules, array($company->idField=>$company->{$company->idField}));
@@ -518,6 +518,17 @@ class CompanysController extends printController
 			{
 				// No errors and some new categories to assign to the company
 				$result = $company_category->insert($insert_categories, $company->$companyidfield);
+			}
+
+			// Update end_date on Persons if set
+			if ($company->date_inactive !== "null" && !$company->isSystemCompany() && $result) {
+				// Make a collection using the table. The default is to use the
+				// database view and we can't update via that.
+				$people = new PersonCollection('Person', 'person');
+				$sh = new SearchHandler($people, false);
+				$sh->addConstraint(new Constraint('company_id', '=', $company->id));
+				$people->load($sh);
+				$result = $people->update('end_date', $company->date_inactive, $sh);
 			}
 			
 			if ($result)

@@ -226,6 +226,22 @@ class Company extends Party {
 		
 		return array();
 	}
+
+	/**
+	 * Check if this Company instance is
+	 * connected to a system company
+	 *
+	 * @return boolean
+	 */
+	function isSystemCompany()
+	{
+		$system_company = new Systemcompany();
+		$system_company->loadBy('company_id', $this->{$this->idField});
+		if ($system_company->isLoaded()) {
+			return true;
+		}
+		return false;
+	}
 }
 
 

@@ -504,8 +504,22 @@ class PersonsController extends printController
             $s_data['company_id'] = $this->_data['company_id'];
         }
 
+        // Initially and on clear, show ALL people
+        $s_data['end_date'] = '';
+
         $this->setSearch('PeopleSearch', 'useDefault', $s_data);
         $this->view->set('clickaction', 'view');
+
+        $this->_templateobject->setDefaultDisplayFields(
+            ['name' => 'Name',
+             'company' => 'Company',
+             'accountnumber' => 'Account',
+             'jobtitle' => 'Job Title',
+             'phone' => 'Phone',
+             'mobile' => 'Mobile',
+            'email' => 'Email',
+            'end_date']
+        );
         $people = new PersonCollection($this->_templateobject);
         $sh = $this->setSearchHandler($people);
         $cc = new ConstraintChain();
