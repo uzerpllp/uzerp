@@ -2906,6 +2906,7 @@ class SordersController extends printController
             $cc = new ConstraintChain();
 
             $cc->add(new Constraint('company_id', '=', $customer->company_id));
+            $cc->add(new Constraint('end_date', 'IS', 'NULL'));
 
             $this->_templateobject->belongsTo[$this->_templateobject->belongsToField['person_id']]['cc'] = $cc;
         }

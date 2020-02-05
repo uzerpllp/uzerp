@@ -11,10 +11,11 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Category list view for companies to generate lists of customers or suppliers
-- Allow setting of end/inactive date for companies and people (ending company also ends associated people)
+- Allow setting of end/inactive date for companies and people (ending company also sets end date on associated people)
 - Filter company and person list views by active/inactive status
-- Personal data deletion for employees that have left
+- Inactive people not available when entering sales orders, invoices or credit notes
 - User confirmation when deleting companies, people and leads
+- Personal data deletion for employees that have left
 
 ### Removed
 
