@@ -38,9 +38,13 @@ class Opportunity extends DataObject
 		
 // Define relationships
 		$this->belongsTo('Opportunitystatus', 'status_id', 'status');
- 		$this->belongsTo('Campaign', 'campaign_id', 'campaign');
- 		$this->belongsTo('Company', 'company_id', 'company');
- 		$this->belongsTo('Person', 'person_id', 'person', null, 'surname || \', \' || firstname');
+		$this->belongsTo('Campaign', 'campaign_id', 'campaign');
+		$company_cc = new ConstraintChain();
+		$company_cc->add(new Constraint('date_inactive', 'IS', 'NULL'));
+		$this->belongsTo('Company', 'company_id', 'company', $company_cc);
+		$person_cc = new ConstraintChain();
+		$person_cc->add(new Constraint('end_date', 'IS', 'NULL'));
+ 		$this->belongsTo('Person', 'person_id', 'person', $person_cc, 'surname || \', \' || firstname');
  		$this->belongsTo('User', 'owner', 'opportunity_owner');
  		$this->belongsTo('User', 'assigned', 'opportunity_assigned');
  		$this->belongsTo('User', 'alteredby', 'opportunity_alteredby');

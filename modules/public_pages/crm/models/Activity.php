@@ -36,8 +36,12 @@ class Activity extends DataObject
         $this->belongsTo('User', 'assigned', 'username');
         $this->belongsTo('Opportunity', 'opportunity_id', 'opportunity');
         $this->belongsTo('Campaign', 'campaign_id', 'campaign');
-        $this->belongsTo('Company', 'company_id', 'company');
-        $this->belongsTo('Person', 'person_id', 'person', null, 'surname || \', \' || firstname');
+        $company_cc = new ConstraintChain();
+		$company_cc->add(new Constraint('date_inactive', 'IS', 'NULL'));
+        $this->belongsTo('Company', 'company_id', 'company', $company_cc);
+        $person_cc = new ConstraintChain();
+        $person_cc->add(new Constraint('end_date', 'IS', 'NULL'));
+        $this->belongsTo('Person', 'person_id', 'person', $person_cc, 'surname || \', \' || firstname');
     }
 }
 ?>
