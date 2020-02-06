@@ -28,7 +28,7 @@
             </li>
             <li>
                 <label>Report Group</label>
-                <input type="text" value="{$report_group}" id="Report_group" name="Report[report_group]" />
+                <input type="text"  class="required uz-validate-required" value="{$report->report_group}" id="Report_group" name="Report[report_group]" />
             </li>
             <li>
                 <label>Report Format Definition</label>
