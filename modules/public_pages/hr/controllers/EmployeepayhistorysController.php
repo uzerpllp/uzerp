@@ -82,16 +82,22 @@ class EmployeepayhistorysController extends printController
 		parent::_new();
 		
 		$pay_history = $this->_uses[$this->modeltype];
-		
+	
 		if (!empty($this->_data['employee_pay_periods_id'])){
 			$current_pay_period_id		= $this->_data['employee_pay_periods_id'];
 			$period_start_date = $this->getPayPeriodStartDate($current_pay_period_id);
-			// restrict to just the current period?
-			$employee_pay_periods		= $this->getPayPeriods('', FALSE);
+			$period_end_date = $this->getPayPeriodEndDate($current_pay_period_id);
+			// restrict selection to just the current period by sending an empty periods array to the template
+			// display the period dates in template title
+			$employee_pay_periods = array();
+			$startdate = new DateTime($period_start_date);
+			$enddate = new DateTime($period_end_date);
+			$this->_templateobject->setTitle(' payments - '. $startdate->format('jS M Y') .' to '. $enddate->format('jS M Y'));
 		}
 		else{
 			// get all the open periods
-			$employee_pay_periods		= $this->getPayPeriods('', FALSE);
+			$employee_pay_periods = $this->getOpenPeriods();
+			ksort($employee_pay_periods);
 			reset($employee_pay_periods);
 			// current period is the first open period
 			$current_pay_period_id		= key($employee_pay_periods);
@@ -591,32 +597,35 @@ class EmployeepayhistorysController extends printController
 	/*
 	 * Private Functions
 	 */
-	private function getPayPeriods($_period_start_date = '', $_closed = '')
+
+	private function getOpenPeriods()
 	{
-		$employee_pay_periods = DataObjectFactory::Factory('EmployeePayPeriod');
+		$employee_pay_periods = new EmployeePayPeriodCollection(DataObjectFactory::Factory('EmployeePayPeriod'));
 		
-		return $employee_pay_periods->getPayPeriods($_period_start_date, $_closed);
+		$sh = new SearchHandler($employee_pay_periods, false);
 		
-	}
-	
-	private function getPayPeriodByDate($_period_start_date, $_pay_basis = '')
-	{
+		$sh->addConstraint(new Constraint('closed', 'is', FALSE));
 		
-		$employee_pay_period = DataObjectFactory::Factory('EmployeePayPeriod');
-		
-		$employee_pay_period->getPayPeriodByDate($_period_start_date, $_pay_basis);
-		
-		return $employee_pay_period;
-	}
-	
-	private function getNextPayPeriodByDate($_period_start_date, $_pay_basis = '')
-	{
-		
-		$employee_pay_period = DataObjectFactory::Factory('EmployeePayPeriod');
-		
-		$employee_pay_period->getPayPeriodByDate($_period_start_date, $_pay_basis);
-		
-		return $employee_pay_period;
+		$open_periods = array();
+				
+		$the_pay_periods = $employee_pay_periods->load($sh, '', RETURN_ROWS);
+
+		foreach ($the_pay_periods as $pay_period)
+		{
+			$startdate = new DateTime($pay_period['period_start_date']);
+			$enddate = new DateTime($pay_period['period_end_date']);
+			if ($pay_period['pay_basis']=='W')  {
+				$basis = 'Week';
+			}
+			else {
+				$basis = 'Month';
+			}
+
+			$open_periods[$pay_period['id']] = $basis.' '.$startdate->format('jS M Y') .' to '. $enddate->format('jS M Y');
+		}
+
+		return $open_periods;
+
 	}
 	
 	private function getPayPeriodStartDate($_pay_period_id)
@@ -627,6 +636,16 @@ class EmployeepayhistorysController extends printController
 		$employee_pay_period->load($_pay_period_id);
 		
 		return $employee_pay_period->period_start_date;
+	}
+
+	private function getPayPeriodEndDate($_pay_period_id)
+	{
+		
+		$employee_pay_period = DataObjectFactory::Factory('EmployeePayPeriod');
+		
+		$employee_pay_period->load($_pay_period_id);
+		
+		return $employee_pay_period->period_end_date;
 	}
 
 	private function getPayPeriodPayBasis($_pay_period_id)
