@@ -41,15 +41,20 @@ class EmployeepayperiodsController extends Controller {
 
 		$sidebar = new SidebarController($this->view);
 		
-		$sidebarlist = array();
+		$sidebarlist = array();	
 		
-		$sidebarlist['new'] = array(
-					'tag' => 'New Pay Period',
-					'link' => array('modules'	=> $this->_modules
-								   ,'controller'=> $this->name
-								   ,'action'	=> 'new')
-		);
-		
+		foreach ($this->_templateobject->getEnumOptions('pay_basis') as $key => $description) {
+            $sidebarlist['new' . $description] = array(
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => $this->name,
+                    'action' => 'new',
+                    'pay_basis' => $key
+                ),
+                'tag' => 'new ' . $description .' Pay Period'
+            );
+        }
+
 		$sidebar->addList('Actions', $sidebarlist);
 		
 		$this->view->register('sidebar',$sidebar);
@@ -88,19 +93,45 @@ class EmployeepayperiodsController extends Controller {
 		else
 		{
 //			$pay_basis = key($pay_period->getEnumOptions('pay_basis'));
+
+			if (isset($this->_data['pay_basis'])) {
+				$pay_period->pay_basis = $this->_data['pay_basis'];
+			}
 			
-//			$pay_history->period_start_date	= $period_start_date = $pay_period->getNextPeriodStart($pay_basis);
-//			$pay_history->period_end_date	= $this->getPeriodEndDate($pay_period->period_start_date, $pay_basis);
-			
-			$pay_period->getLatestPeriod();
+			if (! is_null($pay_period->pay_basis)) {
+				$pay_basis_desc = $pay_period->getFormatted('pay_basis') . ' Pay Period';
+				$this->view->set('pay_basis_desc', $pay_basis_desc);
+				$this->_templateobject->setTitle($pay_basis_desc);
+			} else {
+				$this->_templateobject->setTitle('Pay Period');
+			}
+
+			$pay_period->getLatestPeriod($this->_data['pay_basis']);
 			
 			if ($pay_period->isLoaded())
 			{
 				$pay_period->{$pay_period->idField}	= '';
-				$pay_period->period_start_date		= $pay_period->period_end_date;
+				//get the start date/time based on pay basis
+				$pay_period->period_start_date		= $this->getNextPeriodStart($pay_period->period_end_date, $pay_period->pay_basis);
+				// now we need to get the closing date based on new start date/time and pay basis
 				$pay_period->period_end_date		= $this->getPeriodEndDate($pay_period->period_start_date, $pay_period->pay_basis);
-				$pay_period->tax_year				= $pay_period->tax_year;
-				$pay_period->tax_month				= $pay_period->tax_month;
+				// tax year and tax week can be set up as well
+				if (strtolower($pay_period->pay_basis) == 'm'){
+					if ($pay_period->tax_month==12){
+						$pay_period->tax_year			= $pay_period->tax_year+1;
+						$pay_period->tax_month			= 1;
+					}
+					else{
+						$pay_period->tax_year			= $pay_period->tax_year;
+						$pay_period->tax_month			= $pay_period->tax_month+1;
+					}
+				}
+				// we can't do the calcs for weekly automagically so trust the user to change accordingly
+				else {
+					$pay_period->tax_year				= $pay_period->tax_year;
+					$pay_period->tax_month				= $pay_period->tax_month;
+				}
+				// again we can't calc the tax week automagically for either so trust the user to do the right thing
 				$pay_period->tax_week				= $pay_period->tax_week+1;
 			}
 		}
@@ -162,6 +193,8 @@ class EmployeepayperiodsController extends Controller {
 				}
 			}
 		}
+
+
 		
 		foreach (array('period_start_date','period_end_date') as $fieldname)
 		{
@@ -227,9 +260,9 @@ class EmployeepayperiodsController extends Controller {
 			$sidebarlist['enterpayments'] = array(
 					'tag' => 'Enter Payments for Period',
 					'link' => array('modules'				=> $this->_modules
-								   ,'controller'			=> 'employeepayhistories'
+								   ,'controller'			=> 'employeepayhistorys'
 								   ,'action'				=> 'new'
-								   ,$pay_period->idField	=> $pay_period->{$pay_period->idField})
+								   ,'employee_pay_periods_id'=> $pay_period->{$pay_period->idField})
 			);
 			$sidebarlist['closeperiod'] = array(
 				'tag' => 'Close Period',
@@ -333,6 +366,36 @@ class EmployeepayperiodsController extends Controller {
 		}
 		
 	}
+
+	public function getNextPeriodStart($_prev_end_date, $_pay_basis)
+	{	
+		if(isset($this->_data['ajax']))
+		{
+			if(!empty($this->_data['pay_basis'])) { $_pay_basis=$this->_data['pay_basis']; }
+			if(!empty($this->_data['period_start_date'])) { $_prev_start_date=fix_date($this->_data['period_start_date']); }
+		}
+		
+		if (empty($_prev_end_date) || empty($_pay_basis))
+		{
+			return '';
+		}
+			// if we make the assumption all periods end at 23:59 then the new start date/time is 1 minute after the previous close
+		$next_start_date = date(DATE_TIME_FORMAT, strtotime($_prev_end_date."+1minutes"));
+		
+		// If date is empty (i.e. no current records), need to check pay basis
+		// if Monthly, return first of current month
+		// if Weekly, get week start day from HR Parameters and return
+		// the date of the previous week start day (with week start time?)
+		
+		return $next_start_date;
+		
+	}
+
+	
+
+
+
+
 	
 	public function getPeriodEndDate($_period_start_date, $_pay_basis)
 	{
@@ -347,9 +410,17 @@ class EmployeepayperiodsController extends Controller {
 			return '';
 		}
 		
-		$basis = (strtolower(substr($_pay_basis, 0, 1)) == 'm')?'+1month':'+1week';
-		
-		$period_end_date = date(DATE_TIME_FORMAT, strtotime($_period_start_date.$basis));
+		if (strtolower($_pay_basis) == 'm')
+		{
+			// monthly get last day of month
+			$period_end_date = DateTime::createFromFormat(DATE_TIME_FORMAT, $_period_start_date)->format("Y-m-t 23:59");
+		}
+		else{
+			// weekly add 7 days
+			$a_date = DateTime::createFromFormat(DATE_TIME_FORMAT, $_period_start_date);
+			$a_date->add(new DateInterval('P6D'));
+			$period_end_date = $a_date->format("Y-m-d 23:59");
+		}
 		
 		if(isset($this->_data['ajax']))
 		{

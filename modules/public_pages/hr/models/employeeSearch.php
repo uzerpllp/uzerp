@@ -233,16 +233,7 @@ class employeeSearch extends BaseSearch
 		$search = new employeeSearch($defaults);
 		
 		$pay_period = DataObjectFactory::Factory('EmployeePayPeriod');
-		
-		// Period Start Date
-		$search->addSearchField(
-			'period_start_date',
-			'period_start_date',
-			'between',
-			'',
-			'basic'
-		);
-		
+
 		// Pay Basis
 		$search->addSearchField(
 			'pay_basis',
@@ -255,13 +246,22 @@ class employeeSearch extends BaseSearch
 		$options += $pay_period->getEnumOptions('pay_basis');
 		$search->setOptions('pay_basis', $options);
 		
+		// Period Start Date
+		$search->addSearchField(
+			'period_start_date',
+			'period_start_date',
+			'between',
+			'',
+			'basic'
+		);
+		
 		// Pay Period
 		$search->addSearchField(
 			'tax_week',
 			'tax_week',
 			'equal',
 			'',
-			'basic'
+			'advanced'
 		);
 		
 		// Tax Year
@@ -270,7 +270,15 @@ class employeeSearch extends BaseSearch
 			'tax_year',
 			'equal',
 			'',
-			'basic'
+			'advanced'
+		);
+
+		$search->addSearchField(
+			'closed',
+			'show_closed_periods',
+			'show',
+			false,
+			'advanced'
 		);
 		
 		$search->setSearchData($search_data, $errors, 'payPeriods');

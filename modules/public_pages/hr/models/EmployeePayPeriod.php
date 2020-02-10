@@ -11,13 +11,13 @@ class EmployeePayPeriod extends DataObject
 
 	protected $version = '$Revision: 1.7 $';
 	
-	protected $defaultDisplayFields = array('period_start_date'
-										   ,'period_end_date'
-										   ,'tax_year'
+	protected $defaultDisplayFields = array('tax_year'
 										   ,'tax_month'
 										   ,'tax_week'
 										   ,'calendar_week'
 										   ,'pay_basis'
+										   ,'period_start_date'
+										   ,'period_end_date' 
 										   ,'closed'
 										   ,'processed_date'
 										   ,'processed_period'
@@ -30,8 +30,10 @@ class EmployeePayPeriod extends DataObject
 		
 		// Contruct the object
 		parent::__construct($tablename);
-		
-		$this->identifierField = array('tax_year', 'tax_week', 'pay_basis');
+		$db = DB::Instance();
+		$this->identifierField = array('pay_basis', $db->qstr(':').' as c1', 'period_start_date', $db->qstr('to').' as c2', 'period_end_date');
+		$this->identifierFieldJoin = ' ';
+		//$this->identifierFieldJoin = ' to ';
 		$this->orderby = array('period_start_date', 'pay_basis');
 		$this->orderdir = array('DESC', 'ASC');
 		
@@ -41,7 +43,9 @@ class EmployeePayPeriod extends DataObject
 		
 		// Define field formats
 		
+				
 		// set formatters, more set in load() function
+
 
 		// Define enumerated types
 		$this->setEnum(
@@ -80,34 +84,21 @@ class EmployeePayPeriod extends DataObject
 		
 		return parent::Factory($data, $errors, $do_name);
 	}
-	
-	public function getNextPeriodStart($_pay_basis)
-	{
-		$cc = new ConstraintChain();
-		
-		$cc->add(new Constraint('pay_basis', '=', $_pay_basis));
-		
-		$next_start_date = $this->getMax('period_end_date', $cc);
-		
-		// If date is empty (i.e. no current records), need to check pay basis
-		// if Monthly, return first of current month
-		// if Weekly, get week start day from HR Parameters and return
-		// the date of the previous week start day (with week start time?)
-		
-		return $next_start_date;
-		
-	}
-	
+
 	public function getLatestPeriod($_pay_basis = '')
 	{
 		
 		$next_start_date = $this->getMax('period_start_date');
-		
 		$fields = array('period_start_date');
 		$values = array($next_start_date);
 		
 		if (!empty($_pay_basis))
 		{
+			$cc = new ConstraintChain();
+			$cc->add(new Constraint('pay_basis', '=', $_pay_basis));
+			$next_start_date = $this->getMax('period_start_date', $cc);
+			$fields = array('period_start_date');
+			$values = array($next_start_date);
 			$fields[] = 'pay_basis';
 			$values[] = $_pay_basis;
 		}
