@@ -21,7 +21,7 @@
                 {select attribute='company_id' constrains='person_id'}
                 {select attribute='person_id' depends='company_id' options=$people}
                 {select attribute='assigned'}
-                {textarea  attribute='description' force=true}
+                {textarea  attribute='description'}
                 {submit}
             {/view_section}
         {/with}
