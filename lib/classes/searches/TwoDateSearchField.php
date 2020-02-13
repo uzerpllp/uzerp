@@ -52,7 +52,7 @@ class TwoDateSearchField extends SearchField {
 			$to = '';
 		}
 		
-		$html = '<input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . '][from]" value="' . $from . '" /><span> to </span><input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '_to" name="Search[' . $this->fieldname . '][to]" value="' . $to . '" /></li>';
+		$html = '<input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . '][from]" value="' . $from . '" /><span class="search-twofield-sep"> to </span><input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '_to" name="Search[' . $this->fieldname . '][to]" value="' . $to . '" /></li>';
 		return $this->labelHTML() . $html;
 		
 	}
