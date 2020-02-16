@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 - Category list view for companies to generate lists of customers or suppliers
 - Allow setting of end/inactive date for companies and people (ending company also sets end date on associated people)
+- Company and associted people are set inactive when an Sales/Purchase ledger entry is made inactive
 - Filter company and person list views by active/inactive status
 - Inactive people not available when entering sales orders, invoices or credit notes
 - User confirmation when deleting companies, people and leads
@@ -26,6 +27,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - The label 'Accounts' on the contacts menu has changed to 'Companies'
+- SL/PL master delete and inactive actions require confirmation
 
 ## [1.19.3] 2020-01-17
 
