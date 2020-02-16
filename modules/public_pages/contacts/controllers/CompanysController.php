@@ -520,15 +520,17 @@ class CompanysController extends printController
 				$result = $company_category->insert($insert_categories, $company->$companyidfield);
 			}
 
-			// Update end_date on Persons if set
-			if ($company->date_inactive !== "null" && !$company->isSystemCompany() && $result) {
-				// Make a collection using the table. The default is to use the
-				// database view and we can't update via that.
-				$people = new PersonCollection('Person', 'person');
-				$sh = new SearchHandler($people, false);
-				$sh->addConstraint(new Constraint('company_id', '=', $company->id));
-				$people->load($sh);
-				$result = $people->update('end_date', $company->date_inactive, $sh);
+			// Make Company and associated People inactive
+			try
+			{
+				$result = $company->makeInactive();
+			}
+			catch(Exception $e)
+			{
+				$flash->addWarning($e->getMessage());
+				if ($e->getCode == 0) {
+					$result = true;
+				}
 			}
 			
 			if ($result)

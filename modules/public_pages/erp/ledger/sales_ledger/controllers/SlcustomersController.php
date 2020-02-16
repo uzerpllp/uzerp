@@ -294,7 +294,9 @@ class SlcustomersController extends LedgerController
                 'action' => 'updatestatus',
                 $idField => $idValue,
                 'account_status' => ($customer->accountStopped() ? $customer->openStatus() : $customer->stopStatus())
-            )
+            ),
+            'class' => 'protected',
+            'data_attr' => ['data_uz-action-id' => $idValue]
         );
 
         if ($customer->canDelete()) {
@@ -305,7 +307,10 @@ class SlcustomersController extends LedgerController
                     'controller' => $this->name,
                     'action' => 'delete',
                     $idField => $idValue
-                )
+                ),
+                'class' => 'confirm',
+                'data_attr' => ['data_uz-confirm-message' => "Delete Customer?|This cannot be undone.",
+                                'data_uz-action-id' => $idValue]
             );
         }
 
@@ -317,7 +322,9 @@ class SlcustomersController extends LedgerController
                     'controller' => $this->name,
                     'action' => 'make_active',
                     $idField => $idValue
-                )
+                ),
+                'class' => 'protected',
+                'data_attr' => ['data_uz-action-id' => $idValue]
             );
         } elseif (! $customer->hasCurrentActivity()) {
             $sidebarlist['inactive'] = array(
@@ -327,7 +334,10 @@ class SlcustomersController extends LedgerController
                     'controller' => $this->name,
                     'action' => 'make_inactive',
                     $idField => $idValue
-                )
+                ),
+                'class' => 'confirm',
+                'data_attr' => ['data_uz-confirm-message' => "Make Customer Inactive?|No sales can be entered for this customer once they are inactive.",
+                                'data_uz-action-id' => $idValue]
             );
         }
 
@@ -482,6 +492,7 @@ class SlcustomersController extends LedgerController
 
     public function make_active()
     {
+        $this->checkRequest(['post'], true);
         if (! $this->loadData()) {
             $this->dataError();
             sendBack();
@@ -497,8 +508,15 @@ class SlcustomersController extends LedgerController
         $db->StartTrans();
 
         if (! $customer->save()) {
-            $flash->addError('Error making customer inactive: ' . $db->ErrorMsg());
+            $flash->addError('Error making customer active: ' . $db->ErrorMsg());
             $db->FailTrans();
+        }
+
+        if (!$customer->companydetail->makeActive()) {
+            $flash->addError('Error making customer contact active: ' . $db->ErrorMsg());
+            $db->FailTrans();
+        } else {
+            $flash->addMessage('Customer marked as active');
         }
 
         $db->CompleteTrans();
@@ -508,6 +526,7 @@ class SlcustomersController extends LedgerController
 
     public function make_inactive()
     {
+        $this->checkRequest(['post'], true);
         if (! $this->loadData()) {
             $this->dataError();
             sendBack();
@@ -547,10 +566,33 @@ class SlcustomersController extends LedgerController
                 }
             }
 
+            // Make contact and associated people inactive
+            try
+            {
+                $result = $customer->companydetail->makeInactive(fix_date(date(DATE_FORMAT)), 'SL');
+                if (!$result) {
+                    $flash->addError('Error making customer contact inactive: ' . $db->ErrorMsg());
+                    $db->FailTrans();
+                }
+            }
+            catch(Exception $e)
+            {
+                $flash->addWarning($e->getMessage());
+                if ($e->getCode == 1) {
+					$db->FailTrans();
+				}
+                
+            }
+
             $db->CompleteTrans();
         }
 
         sendBack();
+    }
+
+    public function delete() {
+        $this->checkRequest(['post'], true);
+        parent::delete();
     }
 
     public function getCustomerList()
@@ -1382,6 +1424,7 @@ class SlcustomersController extends LedgerController
 
     public function updatestatus()
     {
+        $this->checkRequest(['post'], true);
         if (! $this->checkParams(array(
             'id',
             'account_status'
@@ -1404,7 +1447,7 @@ class SlcustomersController extends LedgerController
         // If we're changing to stopped status, show the new Party Note form
         if (!$customer->accountStopped())
         {
-            sendTo('partynotes', 'new', 'contacts', array(
+            sendTo('partynotes', 'new', ['contacts'], array(
                 'party_id' => $customer->getPartyID(), 'title' => 'Account stopped', 'note_type' => 'contacts'
             ));
         } else {
