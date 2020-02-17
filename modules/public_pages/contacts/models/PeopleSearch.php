@@ -32,12 +32,14 @@ class PeopleSearch extends BaseSearch
 			'begins'
 		);
 		
-		// Search by Comapny name
-		$search->addSearchField(
-			'company',
-			'company_name',
-			'begins'
-		);
+		// Search by Company name
+		if(!isset($defaults['company_id'])) {
+			$search->addSearchField(
+				'company',
+				'company_name',
+				'begins'
+			);
+		}
 		
 		// Search by Assigned to Me
 		$search->addSearchField(
@@ -47,8 +49,20 @@ class PeopleSearch extends BaseSearch
 			false,
 			'advanced'
 		);
-		
 		$search->setOnValue('assigned_to',EGS_USERNAME);
+
+		// Search by Active/Inactive Status
+		$search->addSearchField(
+			'end_date',
+			'Show People',
+			'null',
+			'null',
+			'advanced'
+		);
+		$options = ['' => 'All',
+					'not null' => 'Inactive',
+					'null' => 'Active'];
+		$search->setOptions('end_date', $options);
 		
 		// Search by Phone Number
 		$search->addSearchField(

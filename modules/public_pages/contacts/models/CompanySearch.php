@@ -43,14 +43,38 @@ class CompanySearch extends BaseSearch
 		
 		// Search by Assigned to Me
 		$search->addSearchField(
-			'assigned',
+			'assigned_to',
 			'assigned_to_me',
 			'hide',
 			false,
 			'advanced'
 		);
-		$search->setOnValue('assigned',EGS_USERNAME);
-		
+		$search->setOnValue('assigned_to',EGS_USERNAME);
+
+		// Search by Active/Inactive Status
+		$search->addSearchField(
+			'date_inactive',
+			'Show Companies',
+			'null',
+			'null',
+			'advanced'
+		);
+		$options = ['' => 'All',
+					'not null' => 'Inactive',
+					'null' => 'Active'];
+		$search->setOptions('date_inactive', $options);
+
+		// $search->addSearchField(
+		// 	'categories',
+		// 	'Category',
+		// 	'null',
+		// 	'null',
+		// 	'advanced'
+		// );
+		// $categories = new Contactcategory();
+		// $options = $categories->getAll();
+		// $search->setOptions('categories', $options);
+
 		// Search by Phone Number
 		$search->addSearchField(
 			'phone',

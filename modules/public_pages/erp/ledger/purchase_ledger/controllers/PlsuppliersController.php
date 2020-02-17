@@ -939,39 +939,44 @@ class PlsuppliersController extends LedgerController
 		if ($supplier->canDelete())
 		{
 			$sidebarlist['delete'] = array(
-					'tag'	=> 'delete',
-					'link'	=> array('modules'		=> $this->_modules
-									,'controller'	=> $this->name
-									,'action'		=> 'delete'
-									,$idField		=> $idValue
-					)
+				'tag'	=> 'delete',
+				'link'	=> array('modules'		=> $this->_modules
+								,'controller'	=> $this->name
+								,'action'		=> 'delete'
+								,$idField		=> $idValue
+			),
+			'class' => 'confirm',
+			'data_attr' => ['data_uz-confirm-message' => "Delete Supplier?|This cannot be undone.",
+							'data_uz-action-id' => $idValue]
 			);
-
 		}
 
 		if (!is_null($supplier->date_inactive))
 		{
 			$sidebarlist['inactive'] = array(
-					'tag'	=> 'Make Active',
-					'link'	=> array('modules'		=> $this->_modules
-									,'controller'	=> $this->name
-									,'action'		=> 'make_active'
-									,$idField		=> $idValue
-					)
+				'tag'	=> 'Make Active',
+				'link'	=> array('modules'		=> $this->_modules
+								,'controller'	=> $this->name
+								,'action'		=> 'make_active'
+								,$idField		=> $idValue
+				),
+				'class' => 'protected',
+				'data_attr' => ['data_uz-action-id' => $idValue]
 			);
-
 		}
 		elseif (!$supplier->hasCurrentActivity())
 		{
 			$sidebarlist['inactive'] = array(
-					'tag'	=> 'Make Inactive',
-					'link'	=> array('modules'		=> $this->_modules
-									,'controller'	=> $this->name
-									,'action'		=> 'make_inactive'
-									,$idField		=> $idValue
-					)
+				'tag'	=> 'Make Inactive',
+				'link'	=> array('modules'		=> $this->_modules
+								,'controller'	=> $this->name
+								,'action'		=> 'make_inactive'
+								,$idField		=> $idValue
+				),
+				'class' => 'confirm',
+				'data_attr' => ['data_uz-confirm-message' => "Make Supplier Inactive?|No purchases can be made from this supplier once they are inactive.",
+								'data_uz-action-id' => $idValue]
 			);
-
 		}
 
 		$sidebar->addList(
@@ -1087,26 +1092,34 @@ class PlsuppliersController extends LedgerController
 
 	public function make_active()
 	{
+		$this->checkRequest(['post'], true);
 		if (!$this->loadData())
 		{
 			$this->dataError();
 			sendBack();
 		}
 
-		$customer=$this->_uses[$this->modeltype];
+		$supplier=$this->_uses[$this->modeltype];
 
 		$flash = Flash::Instance();
 
-		$customer->date_inactive = null;
+		$supplier->date_inactive = null;
 
 		$db = DB::Instance();
 		$db->StartTrans();
 
-		if (!$customer->save())
+		if (!$supplier->save())
 		{
-			$flash->addError('Error making customer inactive: '.$db->ErrorMsg());
+			$flash->addError('Error making supplier active: '.$db->ErrorMsg());
 			$db->FailTrans();
 		}
+
+		if (!$supplier->companydetail->makeActive()) {
+            $flash->addError('Error making supplier contact active: ' . $db->ErrorMsg());
+            $db->FailTrans();
+        } else {
+            $flash->addMessage('Supplier marked as active');
+        }
 
 		$db->CompleteTrans();
 
@@ -1116,7 +1129,7 @@ class PlsuppliersController extends LedgerController
 
 	public function make_inactive()
 	{
-
+		$this->checkRequest(['post'], true);
 		if (!$this->loadData())
 		{
 			$this->dataError();
@@ -1167,13 +1180,34 @@ class PlsuppliersController extends LedgerController
 
 			}
 
+            // Make contact and associated people inactive
+            try
+            {
+                $result = $supplier->companydetail->makeInactive(fix_date(date(DATE_FORMAT)), 'PL');
+                if (!$result) {
+                    $flash->addError('Error making supplier contact inactive: ' . $db->ErrorMsg());
+                    $db->FailTrans();
+                }
+            }
+            catch(Exception $e)
+            {
+				if ($e->getCode() === 1) {
+					$flash->addError($e->getMessage());
+					$db->FailTrans();
+				} else {
+					$flash->addWarning($e->getMessage());
+				}
+            }
+
 			$db->CompleteTrans();
-
 		}
-
 		sendBack();
-
 	}
+
+	public function delete() {
+        $this->checkRequest(['post'], true);
+        parent::delete();
+    }
 
 	public function viewcontact_methods ()
 	{

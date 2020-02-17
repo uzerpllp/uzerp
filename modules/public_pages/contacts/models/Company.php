@@ -43,16 +43,12 @@ class Company extends Party {
 		$this->hasMany('PartyAddress', 'mainaddress', 'party_id', 'party_id');
  		
  		$this->belongsTo('User', 'assigned', 'assigned_to');
-		$this->belongsTo('Company', 'parent_id', 'company_parent');
 		$this->belongsTo('CompanyClassification','classification_id', 'company_classification');
 		$this->belongsTo('CompanyIndustry', 'industry_id', 'company_industry');
 		$this->belongsTo('CompanyRating', 'rating_id', 'company_rating');
 		$this->belongsTo('CompanySource', 'source_id', 'company_source');
 		$this->belongsTo('CompanyStatus', 'status_id', 'company_status');
 		$this->belongsTo('CompanyType', 'type_id', 'company_type');
-		$this->addValidator(new DistinctValidator(array('id', 'parent_id'), 'Account cannot be it\'s own parent'));
- 		$this->actsAsTree('parent_id');
-		$this->setParent();
 
 		$this->hasOne('Party', 'party_id', 'party');
 		
@@ -142,6 +138,93 @@ class Company extends Party {
 		return $people;
 	}
 
+	/**
+	 * Make company contact and associated people inactive
+	 *
+	 * @param Date $date
+	 * @param string $ledger_type
+	 * @throws Exception code 0 = Informational, code 1 = Error
+	 * @return bool true = success, false = failure
+	 */
+	public function makeInactive($date = null, $ledger_type = null)
+	{
+		$result = false;
+
+		$customer = new SLCustomer();
+		$supplier = new PLSupplier();
+		$has_customer = $customer->loadBy('company_id', $this->{$this->idField});
+		$has_supplier = $supplier->loadBy('company_id', $this->{$this->idField});
+
+		// When called while making a Sales/Purchase Ledger entry inactive, this method
+		// should have a ledger type set, PL or SL. If an active entry exists
+		// then don't make the contact details inactive.
+		if ($ledger_type !== null) {
+			$category = DataObjectFactory::Factory('LedgerCategory');
+			$categories = $category->checkCompanyUsage($this->company_id);
+			$categories = array_filter($categories,
+				function ($key) {
+					return in_array($key, ['PL', 'SL']);
+				}, ARRAY_FILTER_USE_KEY
+			);
+		
+			if (count($categories) > 1) {
+				if ($ledger_type == 'SL' && $has_supplier && $supplier->date_inactive == null) {
+					throw (new Exception('Contact details not ended as Purchase Ledger Supplier in use.'));
+				}
+				if ($ledger_type == 'PL' && $has_customer && $customer->date_inactive == null) {
+					throw (new Exception('Contact details not ended as Sales Ledger Customer in use.'));
+				}
+			}
+		}
+
+		// Don't save the inactive date on a company contact that is linked
+		// to an active Sales/Purchase Ledger entry.
+		if (($ledger_type === null && $has_supplier && $supplier->date_inactive == null && $this->date_inactive !== "null") || ($ledger_type === null && $has_customer && $customer->date_inactive == null && $this->date_inactive !== "null")){
+			$this->date_inactive = '';
+			$this->save();
+			throw (new Exception('Inactive date not set. Contact details linked to an active Sales/Purchase Ledger Customer.', 1));
+		}
+
+		// Set the inactive date
+		if ($date !== null) {
+			$this->date_inactive = $date;
+		}
+		$result = $this->save();
+
+		// Set the inactive date on associated people
+		if ($this->date_inactive !== 'null' && !$this->isSystemCompany() && $result) {
+			// Make a collection using the table. The default is to use the
+			// database view and we can't update via that.
+			$people = new PersonCollection('Person', 'person');
+			$sh = new SearchHandler($people, false);
+			$sh->addConstraint(new Constraint('company_id', '=', $this->{$this->idField}));
+			$sh->addConstraint(new Constraint('end_date', 'IS', 'NULL'));
+			$people->load($sh);
+			$row_count = $people->update('end_date', $date, $sh);
+			if ($row_count !== false) {
+				$result = true;
+			} else {
+				$result = false;
+			}
+			return $result;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Make company contact active
+	 *
+	 * @return bool
+	 */
+	public function makeActive()
+	{
+		$result = false;
+		$this->date_inactive = '';
+		$result = $this->save();
+		return $result;
+	}
+
 	/*
 	 * Static Functions
 	 */
@@ -223,12 +306,28 @@ class Company extends Party {
 			
 			$cc->add(new Constraint($this->parent_field, 'in', '(' . implode(',', array_keys($_company_ids)) . ')'));
 			
-			$_company_ids += $this->getChildren($this->getAll($cc, TRUE));
+			$_company_ids += $this->getAll($cc, TRUE);
 			
 			return $_company_ids;
 		}
 		
 		return array();
+	}
+
+	/**
+	 * Check if this Company instance is
+	 * connected to a system company
+	 *
+	 * @return boolean
+	 */
+	function isSystemCompany()
+	{
+		$system_company = new Systemcompany();
+		$system_company->loadBy('company_id', $this->{$this->idField});
+		if ($system_company->isLoaded()) {
+			return true;
+		}
+		return false;
 	}
 }
 

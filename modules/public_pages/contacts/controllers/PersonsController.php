@@ -58,37 +58,7 @@ class PersonsController extends printController
         parent::index($people, $sh);
 
         $sidebar = new SidebarController($this->view);
-        $sidebar->addList('Actions', array(
-            'new' => array(
-                'link' => array(
-                    'module' => 'contacts',
-                    'controller' => 'persons',
-                    'action' => 'new'
-                ),
-                'tag' => 'new_person'
-            ),
-            'new_account' => array(
-                'link' => array(
-                    'module' => 'contacts',
-                    'controller' => 'companys',
-                    'action' => 'new'
-                ),
-                'tag' => 'new_account'
-            ),
-            'new_lead' => array(
-                'link' => array(
-                    'module' => 'contacts',
-                    'controller' => 'leads',
-                    'action' => 'new'
-                ),
-                'tag' => 'new_lead'
-            )
-				/*,
-				'import'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'persons','action'=>'import'),
-					'tag'=>'import_contacts'
-				)*/
-			));
+        $sidebar->addList('Actions', CompanysController::$nav_list);
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
     }
@@ -224,11 +194,26 @@ class PersonsController extends printController
                 )
             ));
         } else {
-            $sidebar->addCurrentBox('currently_viewing', $person->fullname, array(
-                'module' => 'contacts',
-                'controller' => 'persons',
-                'id' => $person->id
-            ));
+            $sidebar->addList(
+                'currently_viewing',
+                array(
+                    $person->fullname => array(
+                        'tag' => $person->fullname,
+                        'link' => array('module'=>'contacts','controller'=>'persons','action'=>'view','id'=>$person_id)
+                    ),
+                    'edit' => array(
+                        'tag' => 'Edit',
+                        'link' => array('module'=>'contacts','controller'=>'persons','action'=>'edit','id'=>$person_id)
+                    ),
+                    'delete' => array(
+                        'tag' => 'Delete',
+                        'link' => array('module'=>'contacts','controller'=>'persons','action'=>'delete','id'=>$person_id),
+                        'class' => 'confirm',
+                        'data_attr' => ['data_uz-confirm-message' => "Delete {$person->fullname}?|This will also delete associated contact and CRM records. It cannot be undone.",
+                                        'data_uz-action-id' => $person_id]
+                    )
+                )
+            );
         }
 
         $items = array();
@@ -487,42 +472,6 @@ class PersonsController extends printController
         $category = DataObjectFactory::Factory('peopleInCategories');
         $this->view->set('categories', implode(',', $category->getCategorynames($person_id)));
 
-        $current_categories = $category->getCategoryID($person_id);
-
-        $ledger_category = DataObjectFactory::Factory('LedgerCategory');
-
-        foreach ($ledger_category->getPersonTypes($current_categories) as $model_name => $model_detail) {
-            $do = DataObjectFactory::Factory($model_name);
-
-            $do->loadBy('person_id', $person_id);
-
-            if ($do->isLoaded()) {
-                $sidebar->addList('related_items', array(
-                    $model_name => array(
-                        'tag' => $do->getTitle(),
-                        'link' => array(
-                            'module' => $model_detail['module'],
-                            'controller' => $model_detail['controller'],
-                            'action' => 'view',
-                            $do->idField => $do->{$do->idField}
-                        )
-                    )
-                ));
-            } else {
-                $sidebar->addList('related_items', array(
-                    $model_name => array(
-                        'tag' => $do->getTitle(),
-                        'new' => array(
-                            'module' => $model_detail['module'],
-                            'controller' => $model_detail['controller'],
-                            'action' => 'new',
-                            'person_id' => $person->{$person->idField}
-                        )
-                    )
-                ));
-            }
-        }
-
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
 
@@ -539,6 +488,60 @@ class PersonsController extends printController
             ), 'person', $person->firstname . ' ' . $person->surname));
             $pl->save();
         }
+    }
+
+    /**
+     * View and search company related people
+     * 
+     * Called from the related items sidebar when viewing a company
+     *
+     * @return void
+     */
+    public function viewcompany()
+    {
+        $s_data = [];
+        if (isset($this->_data['company_id'])) {
+            $s_data['company_id'] = $this->_data['company_id'];
+        }
+
+        // Initially and on clear, show ALL people
+        $s_data['end_date'] = '';
+
+        $this->setSearch('PeopleSearch', 'useDefault', $s_data);
+        $this->view->set('clickaction', 'view');
+
+        $this->_templateobject->setDefaultDisplayFields(
+            ['name' => 'Name',
+            'end_date',
+             'jobtitle' => 'Job Title',
+             'phone' => 'Phone',
+             'mobile' => 'Mobile',
+             'email' => 'Email']
+        );
+        $people = new PersonCollection($this->_templateobject);
+        $sh = $this->setSearchHandler($people);
+        $cc = new ConstraintChain();
+        $cc->add(new Constraint('company_id', '=', $this->_data['company_id']));
+        $sh->addConstraint($cc);
+
+        
+        if (isset($this->search))
+        {
+            if ($this->isPrintDialog())
+            {
+                $_SESSION['printing'][$this->_data['index_key']]['search_id']=$sh->search_id;
+                return $this->printCollection();
+            }
+            elseif ($this->isPrinting())
+            {
+                $_SESSION['printing'][$this->_data['index_key']]['search_id']=$sh->search_id;
+                $sh->setLimit(0);
+                $people->load($sh);
+                $this->printCollection($people);
+                exit;
+            }
+        } 
+        parent::index($people, $sh);
     }
 
     public function publish()
@@ -568,6 +571,8 @@ class PersonsController extends printController
 
     public function delete()
     {
+        $this->checkRequest(['post'], true);
+
         $flash = Flash::instance();
 
         $person = $this->_templateobject;

@@ -37,6 +37,10 @@ class LoggedcallsController extends Controller {
 			$projects = DataObjectCollection::Merge($company->projects,$projects);
 			$opportunities = DataObjectCollection::Merge($company->opportunities,$opportunities);
 			$activities = DataObjectCollection::Merge($company->activities,$activities);
+			$people = new Person();
+			$cc = new ConstraintChain;
+			$cc->add(new Constraint('company_id', '=', $this->_data['company_id']));
+			$this->view->set('people', $people->getAll($cc));
 			$this->view->set('company', $company->name);
 		}
 		if(isset($this->_data['project_id'])) {

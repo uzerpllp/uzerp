@@ -33,10 +33,14 @@ class Project extends DataObject {
 		$this->orderby='job_no';
 		
 // Define relationships
-		$this->belongsTo('Company', 'company_id', 'company');
+		$company_cc = new ConstraintChain();
+		$company_cc->add(new Constraint('date_inactive', 'IS', 'NULL'));
+		$this->belongsTo('Company', 'company_id', 'company', $company_cc);
  		$this->belongsTo('User', 'owner', 'project_owner');
- 		$this->belongsTo('User', 'altered_by', 'altered');
- 		$this->belongsTo('Person', 'person_id', 'person', null, "surname || ', ' || firstname");
+		$this->belongsTo('User', 'altered_by', 'altered');
+		$person_cc = new ConstraintChain();
+		$person_cc->add(new Constraint('end_date', 'IS', 'NULL'));
+ 		$this->belongsTo('Person', 'person_id', 'person', $person_cc, "surname || ', ' || firstname");
 		$cc=new ConstraintChain();
 		$cc->add(new Constraint('company_id', '=', EGS_COMPANY_ID));
 		$cc->add(new Constraint('end_date', 'IS', 'NULL'));

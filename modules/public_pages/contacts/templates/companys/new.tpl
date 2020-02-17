@@ -19,9 +19,11 @@
 					{view_section heading="account_details"}
 						{input type='text'  attribute='name' class="compulsory" }
 						{input type='text'  attribute='accountnumber' class="compulsory" }
-						{select attribute="parent_id"}
 						{select attribute="assigned"}
 						{select attribute="owner"}
+						{if !$model->isSystemCompany()}
+						{input type='date' attribute='date_inactive'}
+						{/if}
 					{/view_section}
 					{view_section heading="organisation_details"}
 						{input type='text'  attribute='tax_description' }

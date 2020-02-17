@@ -133,13 +133,18 @@ $(document).ready(function () {
 		
 	});
     
-	// custom confirmation message
+	// Show a dialog to confirm an action (e.g. sidebar delete links)
+	//
+	// Uses a POST request to call the action.
+	//
 	$(document).on('click', 'a.confirm', function(event){
 		event.preventDefault();
-		var message = 'Are you sure?';
+		var message = 'Are you sure?|';
+
 		if ($( this ).data('uz-confirm-message') !== undefined) {
-			message = $( this ).data('uz-confirm-message').split('|');
+			message = $( this ).data('uz-confirm-message');
 		}
+		message = message.split('|');
 		
 		var targetUrl = $(this).attr("href");
 		var actionID = $(this).data('uz-action-id');
@@ -183,6 +188,42 @@ $(document).ready(function () {
 			});
 	});
 	
+	// Use a POST request on links that perform actions (e.g. sidebar delete links)
+	//
+	// This is good practice for security. Any UI interaction that will change data
+	// must use a POST request.
+	//
+	$(document).on('click', 'a.protected', function(event){
+		event.preventDefault();
+				
+		var targetUrl = $(this).attr("href");
+		var actionID = $(this).data('uz-action-id');
+
+		if ( typeof actionID != 'undefined' || actionID != null) {
+			$.uz_ajax({
+				async       : false,
+				type        : 'POST',
+				url         : targetUrl,
+				data: {
+					id      : actionID,
+					dialog  : true,
+					ajax    : true
+				},
+				success: function(data) {
+					if (typeof data.redirect != 'undefined' || data.redirect != null) {
+						window.location.href = data.redirect;
+					} else {
+						//uzERP returned empty or unexpected response
+						$('#flash').append("<ul id='errors'><li>Action failed</li></ul>");
+					}
+				},
+			});
+			$( this ).dialog( "close" );
+		} else {
+			//Using GET requests for actions is deprecated, use POST!
+			window.location.href = targetUrl;
+		}
+	});
 	
 	 //*****************************
 	//  GENERIC / NON-SPECIFIC AJAX

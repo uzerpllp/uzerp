@@ -36,23 +36,7 @@ class LeadsController extends printController
 		
 		$sidebar = new SidebarController($this->view);
 		
-		$sidebar->addList(
-			'Actions',
-			array(
-				'new'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'new'),
-					'tag'=>'new_account'
-				),
-				'new_lead'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'leads','action'=>'new'),
-					'tag'=>'new_lead'
-				),
-				'new_person'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'persons','action'=>'new'),
-					'tag'=>'new_person'
-				)									
-			)
-		);
+		$sidebar->addList('Actions', CompanysController::$nav_list);
 		
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
@@ -75,6 +59,8 @@ class LeadsController extends printController
 
 	public function delete()
 	{
+		$this->checkRequest(['post'], true);
+
 		$flash = Flash::Instance();
 		
 		$company=$this->_uses['Lead'];
@@ -166,11 +152,10 @@ class LeadsController extends printController
 				),
 				'delete' => array(
 					'tag' => 'Delete',
-					'link' => array('module'=>'contacts','controller'=>'leads','action'=>'delete','id'=>$company->id)
-				),
-				'sharing' => array(
-					'tag' => 'Sharing',
-					'link' => array('module'=>'contacts','controller'=>'companys','action'=>'sharing','id'=>$company->id)
+					'link' => array('module'=>'contacts','controller'=>'leads','action'=>'delete','id'=>$company->id),
+					'class' => 'confirm',
+					'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This will also delete people and associated contact and CRM records. It cannot be undone.",
+									'data_uz-action-id' => $company->id]
 				),
 				'convert_to_account' => array(
 					'tag' => 'convert_to_account',

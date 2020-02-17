@@ -91,6 +91,13 @@ class ActivitysController extends printController
             $this->_data['company_id'] = $opportunity->company_id;
         }
 
+        if(isset($this->_data['company_id'])) {
+			$people = new Person();
+			$cc = new ConstraintChain;
+			$cc->add(new Constraint('company_id', '=', $this->_data['company_id']));
+			$this->view->set('people', $people->getAll($cc));
+		}
+
         parent::_new();
     }
 

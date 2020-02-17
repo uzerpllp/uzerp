@@ -13,6 +13,38 @@ class CompanysController extends printController
 	
 	protected $_templateobject;
 
+	public static $nav_list = array(
+		'companies'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'index'),
+			'tag'=>'view_companies'
+		),
+		'companybycategory'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'viewcategories'),
+			'tag'=>'view_company_by_category'
+		),
+		'people'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'persons','action'=>'index'),
+			'tag'=>'view_people'
+		),
+		'leads'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'leads','action'=>'index'),
+			'tag'=>'view_leads'
+		),
+		'spacer',
+		'new'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'new'),
+			'tag'=>'new_company'
+		),
+		'new_lead'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'leads','action'=>'new'),
+			'tag'=>'new_lead'
+		),
+		'new_person'=>array(
+			'link'=>array('module'=>'contacts','controller'=>'persons','action'=>'new'),
+			'tag'=>'new_person'
+		)
+		);
+
 	public function __construct($module=null,$action=null)
 	{
 		parent::__construct($module, $action);
@@ -20,6 +52,41 @@ class CompanysController extends printController
 		$this->_templateobject = DataObjectFactory::Factory('Company');
 		$this->uses($this->_templateobject);
 		$this->related['addresses']=array('clickaction'=>'edit');
+	}
+
+	public function viewcategories()
+	{
+		unset($this->related['addresses']);
+		$this->view->set('clickaction', 'view');
+		$s_data=array();
+		$this->setSearch('CompanyCategorySearch', 'useDefault', $s_data);
+
+		$this->_templateobject = new CompanyInCategories();
+		$this->uses($this->_templateobject);
+		$this->idField = 'company_id';
+		
+		$collection = new CompanyInCategoriesCollection($this->_templateobject);
+		$collection->orderby = ['company'];
+		$sh = $this->setSearchHandler($collection);
+
+		// id field from the collection used for the click action
+		$collection->idField = 'company_id';
+
+		$systemCompany = DataObjectFactory::Factory('Company');
+		$systemCompany->load(COMPANY_ID);
+		
+		$_company_ids = $systemCompany->getSystemRelatedCompanies(array($systemCompany->id=>$systemCompany->getIdentifierValue()));
+		
+		$sh->addConstraint(new Constraint('id', 'NOT IN', '(' . implode(',', array_keys($_company_ids)) . ')'));
+		
+		parent::index($collection, $sh);
+		$this->view->set('page_title', 'Company by Category');
+
+		$sidebar = new SidebarController($this->view);
+		$sidebar->addList('Actions', $this::$nav_list);
+
+		$this->view->register('sidebar',$sidebar);
+		$this->view->set('sidebar',$sidebar);
 	}
 
 	public function index()
@@ -44,23 +111,8 @@ class CompanysController extends printController
 		parent::index($collection, $sh);
 		
 		$sidebar = new SidebarController($this->view);
-		$sidebar->addList(
-			'Actions',
-			array(
-				'new'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'new'),
-					'tag'=>'new_account'
-				),
-				'new_lead'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'leads','action'=>'new'),
-					'tag'=>'new_lead'
-				),
-				'new_person'=>array(
-					'link'=>array('module'=>'contacts','controller'=>'persons','action'=>'new'),
-					'tag'=>'new_person'
-				)									
-			)
-		);
+		$sidebar->addList('Actions', $this::$nav_list);
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
@@ -82,7 +134,6 @@ class CompanysController extends printController
 		$companyid=$company->id;
 		$partyid=$company->party_id;
 		$sidebar = new SidebarController($this->view);
-		// If we own it, we can do anything we like.
 
 		$sidebar->addList(
 			'currently_viewing',
@@ -94,26 +145,13 @@ class CompanysController extends printController
 				'edit' => array(
 					'tag' => 'Edit',
 					'link' => array('module'=>'contacts','controller'=>'companys','action'=>'edit',$companyidfield=>$company->$companyidfield)
-				),
-				'delete' => array(
-					'tag' => 'Delete',
-					'link' => array('module'=>'contacts','controller'=>'companys','action'=>'delete',$companyidfield=>$companyid)
-				),
-				'sharing' => array(
-					'tag' => 'Sharing',
-					'link' => array('module'=>'contacts','controller'=>'companys','action'=>'sharing',$companyidfield=>$companyid,'model'=>'Company')
 				)
 			)
 		);
+
 		$sidebar->addList(
 			'related_items',
 			array(
-				'branches'=>array(
-					'tag'=>'Branches',
-					'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'viewbranches','parent_id'=>$companyid),
-					'new'=>array('module'=>'contacts','controller'=>'companys','action'=>'new','parent_id'=>$companyid)
-				),
-				'spacer',
 				'people'=>array(
 					'tag'=>'People',
 					'link'=>array('module'=>'contacts','controller'=>'persons','action'=>'viewcompany','company_id'=>$companyid),
@@ -202,44 +240,67 @@ class CompanysController extends printController
 		$current_categories	= $category->getCategoryID($company->{$company->idField});
 
 		$ledger_category = DataObjectFactory::Factory('LedgerCategory');
-		
-		foreach ($ledger_category->getCompanyTypes($current_categories) as $model_name=>$model_detail)
-		{
-			$do = DataObjectFactory::Factory($model_name);
-			
-			$do->loadBy('company_id', $company->{$company->idField});
 
-			if ($do->isLoaded())
+		$can_delete = true;
+
+		if (count($current_categories) > 0) {
+			foreach ($ledger_category->getCompanyTypes($current_categories) as $model_name=>$model_detail)
 			{
-				$sidebar->addList(
-					'related_items',
-					array(
-						$model_name=>array(
-							'tag'=>$do->getTitle(),
-							'link'=>array('module'=>$model_detail['module']
-										 ,'controller'=>$model_detail['controller']
-										 ,'action'=>'view'
-										 ,$do->idField=>$do->{$do->idField})
+				$do = DataObjectFactory::Factory($model_name);
+				
+				$do->loadBy('company_id', $company->{$company->idField});
+
+				if ($do->isLoaded())
+				{
+					$can_delete = false;
+					$sidebar->addList(
+						'related_items',
+						array(
+							$model_name=>array(
+								'tag'=>$do->getTitle(),
+								'link'=>array('module'=>$model_detail['module']
+											,'controller'=>$model_detail['controller']
+											,'action'=>'view'
+											,$do->idField=>$do->{$do->idField})
+							)
 						)
-					)
-				);
-			}
-			else
-			{
-				$sidebar->addList(
-					'related_items',
-					array(
-						$model_name=>array(
-							'tag'=>$do->getTitle(),
-							'new'=>array('module'=>$model_detail['module']
-										 ,'controller'=>$model_detail['controller']
-										 ,'action'=>'new'
-										 ,'company_id'=>$company->{$company->idField})
+					);
+				}
+				else
+				{
+					$sidebar->addList(
+						'related_items',
+						array(
+							$model_name=>array(
+								'tag'=>$do->getTitle(),
+								'new'=>array('module'=>$model_detail['module']
+											,'controller'=>$model_detail['controller']
+											,'action'=>'new'
+											,'company_id'=>$company->{$company->idField})
+							)
 						)
-					)
-				);
+					);
+				}
+			
 			}
-		
+		}
+
+		// No need to show a delete action. If this company account
+		// is linked to an SL or PL master, then delete will be blocked
+		// by a DB contraint.
+		if ($can_delete === true && $company->isSystemCompany() === false) {
+			$sidebar->addList(
+				'currently_viewing',
+				array(
+					'delete' => array(
+						'tag' => 'Delete',
+						'link' => array('module'=>'contacts','controller'=>'companys','action'=>'delete',$companyidfield=>$companyid),
+						'class' => 'confirm',
+						'data_attr' => ['data_uz-confirm-message' => "Delete {$company->name}?|This will also delete projects, people and associated contact and CRM records. It cannot be undone.",
+										'data_uz-action-id' => $companyid]
+					)
+				)
+			);
 		}
 		
 		if($company instanceof Company)
@@ -258,13 +319,15 @@ class CompanysController extends printController
 
 	public function delete()
 	{
+		$this->checkRequest(['post'], true);
+		
 		$flash	= Flash::Instance();
 		$errors = array();
 		
 		$company=$this->_templateobject;
 		$company->load($this->_data['id']);
 
-		if (!$company->isLoaded())
+		if (!$company->isLoaded() || $company->isSystemCompany())
 		{
 			$flash->addError('You do not have permission to delete this contact.');
 			sendTo($this->name, 'view', $this->_modules, array($company->idField=>$company->{$company->idField}));
@@ -277,12 +340,10 @@ class CompanysController extends printController
 
 		if (!$company->delete(null, $errors))
 		{
-			exit;
 			$errors[] = 'Error deleting '.$company->getIdentifierValue();
 			$flash->addErrors($errors);
 			sendTo($this->name, 'view', $this->_modules, array($company->idField=>$company->{$company->idField}));
 		}
-		exit;
 		$flash->addMessage($company->getIdentifierValue().' deleted successfully');
 		sendTo($this->name, 'index', $this->_modules);
 		
@@ -457,6 +518,19 @@ class CompanysController extends printController
 			{
 				// No errors and some new categories to assign to the company
 				$result = $company_category->insert($insert_categories, $company->$companyidfield);
+			}
+
+			// Make Company and associated People inactive
+			try
+			{
+				$result = $company->makeInactive();
+			}
+			catch(Exception $e)
+			{
+				$flash->addWarning($e->getMessage());
+				if ($e->getCode == 0) {
+					$result = true;
+				}
 			}
 			
 			if ($result)
