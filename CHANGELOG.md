@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.21] 2020-02-19
+
+### Fixed
+
+- Errors when removing employee contact details.
+- Error when trying to use companies in categories view.
+
 ## [1.20] 2020-02-17
 
 ### Fixed
