@@ -156,6 +156,10 @@ class Party extends DataObject
 	public function getContactMethods($type='', $cc='')
 	{
 		$cms = new PartyContactMethodCollection();
+
+		if (get_class($this) == 'Person' && $this->party_id == '') {
+			return $cms;
+		}
 		
 		$sh = new SearchHandler($cms,false);
 		$sh->setOrderby(array('type', 'name'));
