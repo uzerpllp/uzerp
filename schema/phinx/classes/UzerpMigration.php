@@ -58,9 +58,11 @@ class UzerpMigration extends \Phinx\Migration\AbstractMigration {
             }
         }
 
-        $table = $this->table('module_components');
-        $table->insert($components);
-        $table->save();
+        if (count($components) > 0) {
+            $table = $this->table('module_components');
+            $table->insert($components);
+            $table->save();
+        }
     }
 
 
