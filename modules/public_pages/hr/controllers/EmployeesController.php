@@ -1509,33 +1509,39 @@ class EmployeesController extends Controller
 
 		$party = new Party();
 		$person = new Person();
+		$addresses = new PartyAddressCollection();
 
 		$person->load($employee->person_id);
 		$methods = $person->getContactMethods();
-		$party->load($person->party_id);
+		if (count($methods) > 0){
+			$party->load($person->party_id);
 
-		$addresses = new PartyAddressCollection();
-		$address_sh = new SearchHandler($addresses, false);
-		$cc = new ConstraintChain();
-		$cc->add(new Constraint('party_id', '=', $party->id));
-		$address_sh->addConstraintChain($cc);
-		$addresses->load($address_sh);
+			$address_sh = new SearchHandler($addresses, false);
+			$cc = new ConstraintChain();
+			$cc->add(new Constraint('party_id', '=', $party->id));
+			$address_sh->addConstraintChain($cc);
+			$addresses->load($address_sh);
+		}
 
 		$db = DB::Instance();
 		$db->StartTrans();
 
-		if ($this->_data['employee']['contact_methods'] === 'on') {
+		if ($this->_data['employee']['contact_methods'] === 'on' && count($methods) > 0) {
 			foreach($methods as $method) {
 				$partymethod = new PartyContactMethod();
 				$partymethod->delete($method->id, $errors);
 			};
+			$employee->contact_phone_id = '';
+			$employee->contact_mobile_id = '';
+			$employee->contact_email_id = '';
 		}
 
-		if ($this->_data['employee']['addresses'] === 'on') {
+		if ($this->_data['employee']['addresses'] === 'on' && count($addresses) > 0) {
 			foreach($addresses as $address) {
 				$partyaddress = new PartyAddress();
 				$partyaddress->delete($address->id, $errors);
 			};
+			$employee->address_id = '';
 		}
 
 		if(count($errors) > 0) {
@@ -1543,11 +1549,6 @@ class EmployeesController extends Controller
 			$flash->addErrors($errors);
 			sendBack();
 		}
-
-		$employee->address_id = '';
-		$employee->contact_phone_id = '';
-		$employee->contact_mobile_id = '';
-		$employee->contact_email_id = '';
 
 		if(!$employee->save()) {
 			$db->FailTrans();
