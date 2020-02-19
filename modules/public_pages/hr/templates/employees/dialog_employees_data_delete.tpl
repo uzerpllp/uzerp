@@ -1,5 +1,5 @@
 <div id="dialog-form-container" class="dialog-form" title="Delete Employee Personal Data">
-  <form id="delete-data-form" method="post" action="/?module=hr&controller=employees&action=deletePersonalData&id=12">
+  <form id="delete-data-form" method="post" action="/?module=hr&controller=employees&action=deletePersonalData&id={$Employee->id}">
     <fieldset>
         <legend class="formgrid-legend">Please Select data to be deleted for employee <strong>{$Employee->Person->getIdentifierValue()}</strong></legend>
         <input type="hidden" name="csrf_token" id="csrf_token_id" value="{$csrf_token}" />
