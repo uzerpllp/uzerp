@@ -103,7 +103,10 @@ class PartyAddress extends DataObject
 		
 		if ($this->main[0] == 't')
 		{
-			
+			// This will be a 'main' address and must not have a VAT number set.
+			// Make sure it is empty
+			$this->vatnumber = '';
+
 			$cc = new ConstraintChain();
 			
 			$cc->add(new Constraint('party_id', '=' ,$this->party_id));		
