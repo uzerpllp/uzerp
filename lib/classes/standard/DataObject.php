@@ -1897,19 +1897,19 @@ class DataObject implements Iterator
             return $model;
         }
 
+        
         if (isset($this->concatenations[$var])) {
 
             $string = '';
+            $field_data = [];
 
             foreach ($this->concatenations[$var]['fields'] as $fieldname) {
-                // $string.=$this->$fieldname.' ';
-
                 $s = $this->$fieldname;
-
                 if (! empty($s)) {
-                    $string .= $this->$fieldname . $this->concatenations[$var]['separator'];
+                    $field_data[] = $s;
                 }
             }
+            $string = implode($this->concatenations[$var]['separator'], $field_data);
 
             return $string;
         }
