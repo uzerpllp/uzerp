@@ -46,7 +46,7 @@ class VatCollection extends DataObjectCollection {
 		$this->title='VAT EU Despatches';
 		$fields=array('id'
 					, 'commodity_code'
-					, 'country_code'
+					, 'del_countrycode as country_code'
 					, 'sterling_order_line_value'
 					, 'net_mass'
 					, 'despatch_qty'
@@ -80,7 +80,7 @@ class VatCollection extends DataObjectCollection {
 					, 'invoice_number'
 					, 'customer'
 					, 'vat_number'
-					, 'country'
+					, 'del_countrycode as country_code'
 					, 'sales_order_number'
 					, 'base_tax_value'
 					, 'base_net_value');
