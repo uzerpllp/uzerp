@@ -48,5 +48,14 @@ $(document).ready(function() {
 		});
 		
 	});
+
+	$("#PartyAddress_shipping").on('click', function() {
+		if ($(this).prop('checked')) {
+			console.log('checked');
+			$("#PartyAddress_vatnumber").prop('readonly', false);
+		} else {
+			$("#PartyAddress_vatnumber").prop('readonly', true);
+		}
+	});
 	
 });

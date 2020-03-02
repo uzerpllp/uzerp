@@ -25,6 +25,13 @@
 					{input type='hidden'  attribute='address_id' }
 					{input type='hidden' attribute='party_id' }
 					{input type='text'  attribute='name' }
+					{if $model->shipping == 't' && $model->main == 'f'}
+						{input type='text'  attribute='vatnumber' }
+					{elseif $model->main == 'f'}
+					
+						{input type='text'  attribute='vatnumber' readonly=''}
+					{/if}
+
 					{if $model->main=='t'}
 						{view_data attribute='main' }
 					{else}
