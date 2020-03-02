@@ -12,6 +12,7 @@ class PartyAddress extends DataObject
 	protected $version='$Revision: 1.20 $';
 	
 	protected $defaultDisplayFields=array('name'=>'Name'
+										 ,'vatnumber' => 'VAT Number'
 										 ,'fulladdress'=>'Address'
 										 ,'main'=>'Main'
 										 ,'billing'=>'Billing'
