@@ -1319,6 +1319,12 @@ class SinvoicesController extends printController
             // get the delivery address
             $delivery_address = $invoice->customer . ", " . $invoice->getDeliveryAddress()->fulladdress;
             $extra['delivery_address'] = $delivery_address;
+            
+            // get the VAT number associated with the delivery address
+            $ship = DataObjectFactory::Factory('PartyAddress');
+            $ship->loadBy('address_id', $invoice->getDeliveryAddress()->id);
+            $extra['delivery_address_name'] = $ship->name;
+            $extra['delivery_address_vatnumber'] = $ship->vatnumber;
 
             // get the settlement terms
             if ($invoice->transaction_type == 'I') {
