@@ -1325,6 +1325,7 @@ class SinvoicesController extends printController
             $ship->loadBy('address_id', $invoice->getDeliveryAddress()->id);
             $extra['delivery_address_name'] = $ship->name;
             $extra['delivery_address_vatnumber'] = $ship->vatnumber;
+            $extra['delivery_address_notes'] = $ship->notes;
 
             // get the settlement terms
             if ($invoice->transaction_type == 'I') {
