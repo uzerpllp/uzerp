@@ -28,10 +28,9 @@
 					{if $model->shipping == 't' && $model->main == 'f'}
 						{input type='text'  attribute='vatnumber' }
 					{elseif $model->main == 'f'}
-					
 						{input type='text'  attribute='vatnumber' readonly=''}
 					{/if}
-
+					{textarea attribute='notes' rows='30' cols='2'}
 					{if $model->main=='t'}
 						{view_data attribute='main' }
 					{else}
