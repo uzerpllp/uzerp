@@ -1327,6 +1327,11 @@ class SinvoicesController extends printController
             $extra['delivery_address_vatnumber'] = $ship->vatnumber;
             $extra['delivery_address_notes'] = $ship->notes;
 
+            // add sales order text1,2,3 fields
+            $extra['sales_order_header_text1'] = $invoice->order->text1;
+            $extra['sales_order_header_text2'] = $invoice->order->text2;
+            $extra['sales_order_header_text3'] = $invoice->order->text3;
+
             // get the settlement terms
             if ($invoice->transaction_type == 'I') {
 

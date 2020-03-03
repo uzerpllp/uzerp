@@ -53,6 +53,9 @@
 					</div>
 					{select attribute='project_id' force=true}
 					{select attribute='task_id' options=$tasks force=true}
+					{input type="text" attribute="text1"}
+					{input type="text" attribute="text2"}
+					{input type="text" attribute="text3"}
 				</dl>
 				<dl class="view_data_bottom">
 					{textarea  attribute='description' label='Description' }
