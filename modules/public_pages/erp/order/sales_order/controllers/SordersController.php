@@ -3587,6 +3587,18 @@ class SordersController extends printController
         $delivery_address += $this->formatAddress($order->getDeliveryAddress());
         $extra['delivery_address'] = $delivery_address;
 
+        // get the VAT number associated with the delivery address
+        $ship = DataObjectFactory::Factory('PartyAddress');
+        $ship->loadBy('address_id', $order->getDeliveryAddress()->id);
+        $extra['delivery_address_name'] = $ship->name;
+        $extra['delivery_address_vatnumber'] = $ship->vatnumber;
+        $extra['delivery_address_notes'] = $ship->notes;
+
+        // add sales order text1,2,3 fields
+        $extra['sales_order_header_text1'] = $order->text1;
+        $extra['sales_order_header_text2'] = $order->text2;
+        $extra['sales_order_header_text3'] = $order->text3;
+
         // get order details
         $order_details = array();
 
