@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- Addresses have additional fields, which are also added to the output XML for Sales Orders/Invoices:
+  - Vat Number: holds the VAT number of the organisation receiving the goods where this differs from the invoiced organisation. This is only relevant for 'shipping' addresses.
+  - Notes: additional notes
+- Additional text fields added to the Sales Order header
+- Additional information added to 'extra' section of the output XML for Sales Orders/Invoices:
+
+  ```
+  <delivery_address_name>NAME</delivery_address_name>
+  <delivery_address_vatnumber>VATNUMBER</delivery_address_vatnumber>
+  <delivery_address_notes>TEXT</delivery_address_notes>
+  <sales_order_header_text1>TEXT</sales_order_header_text1>
+  <sales_order_header_text2>TEXT</sales_order_header_text2>
+  <sales_order_header_text3>TEXT</sales_order_header_text3>
+  ```
+- Invoice print layouts can be chosen for each customer:
+  1. Define a 'private' report type for invoice layouts
+  2. Add additional report definitions for invoices, tagged with the report type above and set 'user defined' (do not add a report type to 'SalesInvoice', it is the default)
+  3. In Setup > Ledger Setup > Setup, choose the report type to be used for invoicing
+  4. Edit a sales ledger customer to choose a custom invoice layout
+
+### Changed
+
+- Intrastat sales reports use country of delivery address
+
 ## [1.21] 2020-02-19
 
 ### Fixed
