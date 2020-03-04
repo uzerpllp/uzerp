@@ -1205,7 +1205,7 @@ class SlcustomersController extends LedgerController
             }
         }
 
-        if ($module_prefs['sales-invoice-report-type'] !== '') {
+        if ($this->module_prefs['sales-invoice-report-type'] !== '') {
             $invoice_layouts = new ReportDefinitionCollection(new ReportDefinition());
             $sh  = new SearchHandler($invoice_layouts, false);
             $sh->setFields(array(
@@ -1213,7 +1213,7 @@ class SlcustomersController extends LedgerController
                 'name'
             ));
             $sh->addConstraint(new Constraint('user_defined', 'IS', true));
-            $sh->addConstraint(new Constraint('report_type', '=', 'Sales Invoice'));
+            $sh->addConstraint(new Constraint('report_type_id', '=', $this->module_prefs['sales-invoice-report-type']));
 
             $options = [];
             $options[''] = 'Default';
