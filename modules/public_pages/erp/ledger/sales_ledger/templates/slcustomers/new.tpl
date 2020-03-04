@@ -46,6 +46,9 @@
 				{select attribute='despatch_action' label='Despatch From' options=$despatch_actions}
 				{select attribute='sl_analysis_id' }
 				{select attribute='invoice_method' }
+				{if ($module_prefs['sales-invoice-report-type'] !== '')}
+					{select attribute='report_def_id' label='Invoice Print Layout' options=$invoice_layouts nonone=true default='Default' nonew=true}
+				{/if}
 				{select attribute='email_invoice_id' options=$emails}
 				{select attribute='email_statement_id' options=$emails}
 				{select attribute='edi_invoice_definition_id'}

@@ -22,6 +22,7 @@
 			{view_data attribute="so_price_type"}
 			{view_data attribute="sl_analysis"}
 			{view_data attribute="invoice_method"}
+			{view_data attribute="report_def_id" label='Invoice Print Layout'}
 			{view_data attribute="tax_status"}
 			{view_data attribute="delivery_term"}
 			{view_data value=','|implode:$SLCustomer->despatch_from->rules_list('from_location') label='Despatch From'}

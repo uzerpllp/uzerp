@@ -56,6 +56,7 @@ class SLCustomer extends DataObject
         $this->hasOne('PartyContactMethod', 'email_statement_id', 'email_statement');
         $this->hasOne('Currency', 'currency_id', 'currency_detail');
         $this->hasOne('WHAction', 'despatch_action', 'despatch_from');
+        $this->belongsTo('ReportDefinition', 'report_def_id', 'invoice_template');
 
         $this->setComposite('Address', 'billing_address_id', 'billing_address', array(
             'street1',

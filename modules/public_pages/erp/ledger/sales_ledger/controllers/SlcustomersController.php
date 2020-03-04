@@ -13,6 +13,7 @@ class SlcustomersController extends LedgerController
     protected $_templateobject;
 
     protected $search_details;
+    protected $module_prefs;
 
     public function __construct($module = null, $action = null)
     {
@@ -54,6 +55,15 @@ class SlcustomersController extends LedgerController
                 'printaction' => 'print_customer_statements'
             )
         );
+
+        // Get module preferences
+        $system_prefs = SystemPreferences::instance();
+        $module_prefs = $system_prefs->getModulePreferences('ledger_setup');
+        if (! isset($module_prefs['sales-invoice-report-type'])) {
+	        $module_prefs['sales-invoice-report-type'] = '';
+        }
+        $this->module_prefs = $module_prefs;
+        $this->view->set('module_prefs', $module_prefs);
     }
 
     public function index()
@@ -1195,6 +1205,26 @@ class SlcustomersController extends LedgerController
             }
         }
 
+        if ($module_prefs['sales-invoice-report-type'] !== '') {
+            $invoice_layouts = new ReportDefinitionCollection(new ReportDefinition());
+            $sh  = new SearchHandler($invoice_layouts, false);
+            $sh->setFields(array(
+                'id',
+                'name'
+            ));
+            $sh->addConstraint(new Constraint('user_defined', 'IS', true));
+            $sh->addConstraint(new Constraint('report_type', '=', 'Sales Invoice'));
+
+            $options = [];
+            $options[''] = 'Default';
+            $invoice_layouts->load($sh, null);
+            if (count($invoice_layouts > 0)) {
+                foreach($invoice_layouts as $layout) {
+                    $options[$layout->id] = $layout->name;
+                }
+            }
+            $this->view->set('invoice_layouts', $options);
+        }
         $this->view->set('billing_addresses', $customer->getInvoiceAddresses());
         $this->view->set('despatch_actions', WHAction::getDespatchActions());
     }
