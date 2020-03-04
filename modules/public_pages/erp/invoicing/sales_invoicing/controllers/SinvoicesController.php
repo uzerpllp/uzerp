@@ -1208,6 +1208,29 @@ class SinvoicesController extends printController
         // ATTN: would these need an EDI option too?
         $invoice_number = $invoice->invoice_number;
 
+        $customer = $this->getCustomer($invoice->slmaster_id);
+        if (strtolower($this->_data['printaction']) == 'printinvoice') {
+            $invoice_methods = $customer->getEnumOptions('invoice_method');
+            if (isset($invoice_methods[$customer->invoice_method])) {
+                $options['default_print_action'] = strtolower($invoice_methods[$customer->invoice_method]);
+            }
+            $options['email_subject'] = '"Invoice ' . $invoice_number . '"';
+            $options['email'] = $customer->email_invoice();
+        }
+        
+        // Set the XSL:FO template to be used
+        $invoice_layout = 'SalesInvoice';
+
+        // Get ledger_setup module preferences
+        $system_prefs = SystemPreferences::instance();
+        $ledger_prefs = $system_prefs->getModulePreferences('ledger_setup');
+
+        if (!is_null($customer->report_def_id) && isset($ledger_prefs['sales-invoice-report-type']) && $ledger_prefs['sales-invoice-report-type'] !== '') {
+            $def = new ReportDefinition();
+            $def->load($customer->report_def_id);
+            $invoice_layout = $def->name;
+        }
+
         $options = array(
             'type' => array(
                 'pdf' => '',
@@ -1220,19 +1243,11 @@ class SinvoicesController extends printController
                 'view' => ''
             ),
             'emailsubject' => 'Sales Invoice: No: ' . $invoice_number . (is_null($invoice->ext_reference) ? '' : ' Your Ref: ' . $invoice->ext_reference),
-            'report' => 'SalesInvoice',
+            'report' => $invoice_layout,
             'filename' => 'SInv' . $invoice_number
         );
 
-        if (strtolower($this->_data['printaction']) == 'printinvoice') {
-            $customer = $this->getCustomer($invoice->slmaster_id);
-            $invoice_methods = $customer->getEnumOptions('invoice_method');
-            if (isset($invoice_methods[$customer->invoice_method])) {
-                $options['default_print_action'] = strtolower($invoice_methods[$customer->invoice_method]);
-            }
-            $options['email_subject'] = '"Invoice ' . $invoice_number . '"';
-            $options['email'] = $customer->email_invoice();
-        }
+        
 
         // if we're dealing with the dialog, just return the options...
         if (strtolower($status) == 'dialog') {
