@@ -41,7 +41,16 @@ class ReportType extends DataObject
 		$cc->add(new Constraint('public', 'IS', TRUE));
 		
 		return $report_type->getAll($cc);
+	}
+
+	public static function getPrivateReportTypes()
+	{
+		$report_type = DataObjectFactory::Factory('ReportType');
 		
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('public', 'IS', false));
+		
+		return $report_type->getAll($cc);
 	}
 	
 	public static function getReportTypeID($name)
