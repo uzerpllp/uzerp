@@ -2,15 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.22] 2020-03-09
 
 ### Added
 
 - Addresses have additional fields, which are also added to the output XML for Sales Orders/Invoices:
   - Vat Number: holds the VAT number of the organisation receiving the goods where this differs from the invoiced organisation. This is only relevant for 'shipping' addresses.
   - Notes: additional notes
-- Additional text fields added to the Sales Order header
-- Additional information added to 'extra' section of the output XML for Sales Orders/Invoices:
+- Additional text fields (text1, text2, text3) added to the Sales Order header for general use.
+- Additional information added to 'extra' section of the output XML for Sales Orders/Invoices containing:
 
   ```
   <delivery_address_name>NAME</delivery_address_name>
@@ -770,6 +770,8 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.22]: https://github.com/uzerpllp/uzerp/compare/1.21...1.22
+[1.21]: https://github.com/uzerpllp/uzerp/compare/1.20...1.21
 [1.20]: https://github.com/uzerpllp/uzerp/compare/1.19.3...1.20
 [1.19.3]: https://github.com/uzerpllp/uzerp/compare/1.19.2...1.19.3
 [1.19.2]: https://github.com/uzerpllp/uzerp/compare/1.19.1...1.19.2
