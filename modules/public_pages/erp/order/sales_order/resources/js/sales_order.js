@@ -613,10 +613,6 @@ $(document).ready(function() {
 	
 	});
 
-	$('#SOProductline_customer_product_code',"#sales_order-soproductlines-new").live('change', function() {
-		$('#SOProductline_description').val($(this).val());
-	});
-	
 	$('#SOProductline_price',"#sales_order-soproductlines-new").live('change', function() {
 		$('#SOProductline_net_price').val($('#SOProductline_price').val()*(1-($('#SOProductline_discount').val()/100))); //.trigger("change");
 		$('#SOProductline_price').val(roundNumber($(this).val(), 2));
