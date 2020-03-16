@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.23] 2020-03-16
+
+### Fixed
+
+- Problems with paging
+
 ## [1.22.1] 2020-03-16
 
 ### Added
