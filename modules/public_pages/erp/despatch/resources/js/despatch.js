@@ -215,5 +215,16 @@ $(document).ready(function() {
 	});
 	
 	$('.fc-agenda-body').css('height','auto');
+
+
+	function clearForm($form)
+	{
+		$form.find(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
+		$form.find(':checkbox, :radio').prop('checked', false);
+	}
+
+	$('#clear-form').on('click', function() {
+		clearForm($('#save_form'));
+	});
 	
 });

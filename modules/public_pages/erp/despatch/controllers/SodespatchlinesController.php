@@ -8,6 +8,9 @@
  *  @license GPLv3 or later
  *  @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
+use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Yaml\Exception\ParseException;
+
 class SodespatchlinesController extends printController
 {
 
@@ -82,6 +85,21 @@ class SodespatchlinesController extends printController
                 'type' => 'print'
             )),
             'tag' => 'Print Despatch Notes'
+        );
+        // $actions['print-pallet-label'] = array(
+        //     'link' => array_merge($this->_modules, array(
+        //         'controller' => $this->name,
+        //         'printaction' => 'printPalletLabel',
+        //         'action' => 'printDialog',
+        //     )),
+        //     'tag' => 'Print Pallet Label'
+        // );
+        $actions['print-pallet-label'] = array(
+            'link' => array_merge($this->_modules, array(
+                'controller' => $this->name,
+                'action' => 'palletLabelForm'
+            )),
+            'tag' => 'Print Pallet Label'
         );
         $actions['confirm'] = array(
             'link' => array_merge($this->_modules, array(
@@ -705,6 +723,188 @@ class SodespatchlinesController extends printController
     }
 
     /* output functions */
+
+    /**
+     * Load pallet label configuration from a yaml file
+     *
+     * @param string $yaml_file
+     *            File name to load
+     */
+    private function loadLabelConfig($yaml_file = FILE_ROOT . 'conf/label-config.yml')
+    {
+        $flash = Flash::Instance();
+
+        if (is_null($yaml_file)) {
+            return;
+        }
+
+        try {
+            // if the cache key is empty, load it from the file
+            if (file_exists($yaml_file)) {
+                return Yaml::parse(file_get_contents($yaml_file));
+            }
+        } catch (ParseException $e) {
+            $flash->addError('Unable to use model settings from ' . $yaml_file . ': ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Display a form to get pallet label input from the user
+     *
+     * @return void
+     */
+    public function palletLabelForm() {
+        $label_data = $this->loadLabelConfig();
+
+        $label_options = [];
+        foreach ($label_data as $labels) {
+            foreach ($labels['labels'] as $name => $data) {
+                $label_options[$name] = $name;
+            }
+        }
+
+        $customer_items = new SOProductline();
+        $options = $customer_items->getCustomerLines($label_data[0]['slcustomer-id']);
+        
+        if (isset($_SESSION['pallet-form-data'])) {
+            $this->view->set('form_data', $_SESSION['pallet-form-data']);
+        }
+        $this->view->set('label_options', $label_options);
+        $this->view->set('customer_items', $options);
+        $this->view->set('page_title', 'Print Pallet Label');
+    }
+
+    /**
+     * Output a pallet label using uzERP's print dialog
+     *
+     * @param string $status  current status of the dialog
+     * @return void
+     */
+    public function printPalletLabel($status = 'generate')
+    {
+        $label_data = $this->loadLabelConfig();
+
+        // Print Dialog options array
+        $options = array(
+            'type' => array(
+                'pdf' => '',
+                'xml' => ''
+            ),
+            'output' => array(
+                'print' => '',
+                'save' => '',
+                'email' => '',
+                'view' => ''
+            ),
+            'filename' => 'pallet_label' . rand ( 10000 , 99999 ),
+        );
+
+        if (strtolower($status) == "dialog") {
+            return $options;
+        }
+
+        // Prepare data to be converted to XML for FOP
+        $extra=[];
+        $extra['header']['pallet_counter'] = sprintf('%06s', abs(intval($this->_data['pallet-counter'])));
+        $extra['header']['items'] = abs(intval($this->_data['items']));
+        $extra['header']['count'] = sprintf('%04s', abs(intval($this->_data['count'])));
+        $extra['header']['batch'] = strtoupper($this->_data['batchlot']);
+        
+        $productline = new SOProductline();
+        $productline->load($this->_data['item']);
+        if ($productline->slmaster_id == null) {
+            echo json_encode(
+                ['status' => false,
+                 'message' => 'Selected product is not specific to the customer']
+            );
+            exit();
+        }
+
+        $extra['header']['customer_product_code'] = strtoupper($productline->customer_product_code);
+        $extra['header']['product_description'] = strtoupper($productline->description);
+
+        $pallet_data = $label_data[array_search($productline->slmaster_id, array_column($label_data, 'slcustomer-id'))]['labels'][$this->_data['labelname']];
+
+        if (!ReportDefinition::getDefinition($pallet_data['report-def'])->id) {
+            echo json_encode(
+                ['status' => false,
+                 'message' => "Label output definition {$pallet_data['report-def']} not found"]
+            );
+            exit();
+        }
+
+        $gtin = $pallet_data['GTIN'][strtoupper($productline->customer_product_code)];
+
+        if (!isset($gtin)) {
+            echo json_encode(
+                ['status' => false,
+                 'message' => 'No GTIN found matching the customers part number']
+            );
+            exit();
+        }
+        
+        $extra['header']['gtin'] = $gtin;
+        $extra['header']['pallet_type'] = $pallet_data['pallet-type'];
+
+        $sum = 0;
+        foreach (array_reverse(str_split("{$pallet_data['GINC']}{$extra['header']['pallet_counter']}")) as $pos => $digit) {
+            $sum += $digit * ($pos % 2 ? 1 : 3);
+        }
+        $ceil = $sum;
+
+        while ($ceil % 10 != 0) {
+            $ceil++;
+        }
+
+        $cd = $ceil-$sum;
+
+        $extra['header']['sscc'] = "{$pallet_data['GINC']}{$extra['header']['pallet_counter']}{$cd}";
+        
+        $extra['header']['print_date'] = un_fix_date(fix_date(date(DATE_FORMAT)));
+        $extra['header']['print_time'] = date("H:i:s");
+
+        $extra['barcodes'][] = ['barcode' => [
+            'type' => 'product',
+            'code' => "91{$extra['header']['customer_product_code']}-10{$extra['header']['batch']}-90{$pallet_data['pallet-type']}"
+        ]];
+        $extra['barcodes'][] = ['barcode' => [
+            'type' => 'case',
+            'code' => "02{$gtin}-37{$extra['header']['count']}"
+        ]];
+        $extra['barcodes'][] = ['barcode' => [
+            'type' => 'sscc',
+            'code' => "00{$pallet_data['GINC']}{$extra['header']['pallet_counter']}*"
+        ]];
+
+        // Generate the XML
+        $xml = $this->generateXML([
+            'model' => [],
+            'extra' => $extra
+        ]);
+
+        $options['xmlSource'] = $xml;
+        $options['report'] = $pallet_data['report-def'];
+
+        if ($this->_data['increment-counter']) {
+            $this->_data['pallet-counter'] = $this->_data['pallet-counter'] + 1;
+        }
+
+        if ($this->_data['remember-data']) {
+            $_SESSION['pallet-form-data'] = $this->_data;
+        } else {
+            unset($_SESSION['pallet-form-data']);
+        }
+
+        $json_response = $this->generate_output($this->_data['print'], $options);
+        if (isset($this->_data['ajax'])) {
+            echo $json_response;
+        } else {
+            return $json_response;
+        }
+        exit();
+    }
+
+
     public function printDespatchNote($status = 'generate')
     {
         $despatch_number = $this->_data['despatch_number'];

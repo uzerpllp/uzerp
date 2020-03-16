@@ -1,32 +1,65 @@
+
 .formgrid {
     display: grid;
     grid-template-columns: 1fr 1em 2fr;
-    grid-gap: 0.3em 0.6em;
+    grid-gap: 0.5em 0.6em;
     grid-auto-flow: dense;
     align-items: center;
+}
+    
+.gridform {
+    width: 50%;
 
     input, output, textarea, select, button {
-        grid-column: 2 ~"/" 4;
-        width: auto;
-        margin: 0;
+    grid-column: 2 ~"/" 4;
+    margin: 0;
+    width: auto;
     }
 
     input[type="checkbox"], input[type="radio"] {
-        grid-column: 1 ~"/" 3;
-        justify-self: end;
-        margin: 0;
-        top: unset;
-      }
+    grid-column: 1 ~"/" 3;
+    justify-self: end;
+    margin: 0;
+    width: auto;
+    position: unset;
+    }
 
     label, input[type="checkbox"] + label, input[type="radio"] + label {
     width: auto;
     padding: 0;
     margin: 0;
+    
     }
 
-    textarea + label {
-        align-self: start;
+    input, output, textarea, select, button {
+        clear: both;
+        float: right;
+        }
+        
+        label {
+        float: left;
+        text-align: right;
+        }
+        
+        button, input[type="checkbox"], input[type="radio"] {
+        width: auto;
+        float: left;
+        }
+        
+        input[type="checkbox"] + label, input[type="radio"] + label {
+        width: auto;
+        text-align: left;
+        }
     }
+
+.form-buttons {
+    grid-column: 2 ~"/" 4;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.form-buttons button {
+    margin-right: 1em;
 }
 
 .formgrid-legend {

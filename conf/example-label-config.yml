@@ -1,0 +1,9 @@
+- slcustomer-id: 3347
+  labels:
+      'P&G Pallet Label B1':
+        report-def: 'GS1'
+        pallet-type: 'B1'
+        GINC: '10037000535'
+        GTIN:
+          '81000189':
+            '04015600004576'
