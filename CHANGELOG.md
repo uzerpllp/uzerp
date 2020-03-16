@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.22.1] 2020-03-16
+
+### Added
+
+- Printing pallet labels
+
 ## [1.22] 2020-03-09
 
 ### Added
@@ -770,6 +776,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.22.1]: https://github.com/uzerpllp/uzerp/compare/1.22...1.22.1
 [1.22]: https://github.com/uzerpllp/uzerp/compare/1.21...1.22
 [1.21]: https://github.com/uzerpllp/uzerp/compare/1.20...1.21
 [1.20]: https://github.com/uzerpllp/uzerp/compare/1.19.3...1.20
