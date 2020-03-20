@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.24] 2020-03-19
+
+### Fixed
+
+- Delivery VAT number and notes lookup
+
 ## [1.23] 2020-03-16
 
 ### Fixed
@@ -782,6 +788,8 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.24]: https://github.com/uzerpllp/uzerp/compare/1.23...1.24
+[1.23]: https://github.com/uzerpllp/uzerp/compare/1.22...1.23
 [1.22.1]: https://github.com/uzerpllp/uzerp/compare/1.22...1.22.1
 [1.22]: https://github.com/uzerpllp/uzerp/compare/1.21...1.22
 [1.21]: https://github.com/uzerpllp/uzerp/compare/1.20...1.21
