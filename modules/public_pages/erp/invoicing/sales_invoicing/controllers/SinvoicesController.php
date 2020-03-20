@@ -1337,7 +1337,7 @@ class SinvoicesController extends printController
             
             // get the VAT number associated with the delivery address
             $ship = DataObjectFactory::Factory('PartyAddress');
-            $ship->loadBy('address_id', $invoice->getDeliveryAddress()->id);
+            $ship->load($invoice->del_partyaddress_id);
             $extra['delivery_address_name'] = $ship->name;
             $extra['delivery_address_vatnumber'] = $ship->vatnumber;
             $extra['delivery_address_notes'] = $ship->notes;

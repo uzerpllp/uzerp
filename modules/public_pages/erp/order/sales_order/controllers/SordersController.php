@@ -551,6 +551,18 @@ class SordersController extends printController
             $errors[] = 'Invoice address is not valid for the selected customer';
         }
 
+        // Set Delivery PartyAddress
+        // This is used to get the delivery vatnumber and notes directly when required
+        $customer = new SLCustomer();
+        $customer->load($order->slmaster_id);
+
+        $cc = new ConstraintChain();
+        $cc->add(new Constraint('party_id', '=', $customer->companydetail->party_id));
+        $cc->add(new Constraint('address_id', '=', $order->del_address_id));
+        $del_party_address = new PartyAddress();
+        $del_party_address->loadBy($cc);
+        $order->del_partyaddress_id = $del_party_address->id;
+
         $result = false;
 
         if ($order && empty($errors)) {
@@ -3589,7 +3601,7 @@ class SordersController extends printController
 
         // get the VAT number associated with the delivery address
         $ship = DataObjectFactory::Factory('PartyAddress');
-        $ship->loadBy('address_id', $order->getDeliveryAddress()->id);
+        $ship->load($order->del_partyaddress_id);
         $extra['delivery_address_name'] = $ship->name;
         $extra['delivery_address_vatnumber'] = $ship->vatnumber;
         $extra['delivery_address_notes'] = $ship->notes;
