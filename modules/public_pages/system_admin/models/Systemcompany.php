@@ -343,7 +343,7 @@ class Systemcompany extends DataObject {
 		$companyContact = DataObjectFactory::Factory('PartyContactMethod');
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('party_id', '=', $this->systemcompany->party_id));
-		$cc->add(new Constraint('lower(name)', '=', 'statement1'));
+		$cc->add(new Constraint('lower(name)', '=', 'statement'));
 		$cc->add(new Constraint('type', '=', 'E'));
 
 		if (!$companyContact->loadBy($cc)) {
