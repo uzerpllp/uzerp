@@ -1309,19 +1309,12 @@ class SlcustomersController extends LedgerController
 
     public function printStatement($status = 'generate')
     {
-
         // Set the time limit on entry - may be one of a batch of statements
         set_time_limit(30);
 
         $customer = DataObjectFactory::Factory('SLCustomer');
         $customer->load($this->_data['id']);
         $bank_account = $customer->bank_account_detail;
-
-        /*
-         * if (SYSTEM_COMPANY<>'') {
-         * $data['subject']='Statement from '.SYSTEM_COMPANY;
-         * }
-         */
 
         // set options
         $options = array(
@@ -1339,10 +1332,15 @@ class SlcustomersController extends LedgerController
             'filename' => 'Statements_' . fix_date(date(DATE_FORMAT))
         );
 
-        if (strtolower($this->_data['printaction']) == 'printstatement' && ! is_null($customer->email_statement())) {
+        // Emailing a statement directly from the ledger customer or via an output batch.
+        // Set the reply-to address, etc.
+        if ((strtolower($this->_data['printaction']) == 'printstatement' || $this->_data['print']['printaction'] == 'email') && ! is_null($customer->email_statement())) {
             $options['default_print_action'] = 'email';
             $options['email'] = $customer->email_statement();
-            $options['email_subject'] = 'Statement';
+            $options['email_subject']='"Account Statement from ' . SYSTEM_COMPANY . '"';
+            $sc = new Systemcompany();
+            $sc->load(COMPANY_ID);
+            $options['replyto'] = $sc->getStatementReplyToEmailAddress();
         }
 
         // if we're dealing with the dialog, just return the options...
@@ -1407,7 +1405,7 @@ class SlcustomersController extends LedgerController
         ));
 
         // construct the document, capture the response
-        $json_response = $this->constructOutput($this->_data['print'], $options);
+        $json_response = $this->generate_output($this->_data['print'], $options);
 
         // decode response, if it was successful update the print count
         $response = json_decode($json_response, true);
