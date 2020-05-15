@@ -1562,6 +1562,12 @@ class printController extends Controller
                     'replyto' => $params['replyto']
                 );
 
+                // Reply to address will not be in $params when coming from process_output.
+                // For example, when outputting customer statements. Set it from the options instead.
+                if (isset($options['replyto'])) {
+                    $email_params['replyto'] = $options['replyto'];
+                }
+
                 $email = $this->output_file_to_email($email_params, $errors);
                 $message = '';
 
