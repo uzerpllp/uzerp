@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Use 'statement' email address, defined on the system company, when emailing customer account statements.
+- Action not saved and loaded correctly when editing permission
+- Extra parameters not saved for permission
 
 ## [1.24] 2020-03-19
 

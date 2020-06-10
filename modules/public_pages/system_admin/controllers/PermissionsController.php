@@ -74,18 +74,18 @@ class PermissionsController extends Controller {
 						
 						$options['controllers']	= $this->get_controller_list($selected['module']);
 						$options['actions']		= $this->get_action_list($selected['controller']);
-						
+						break;
 						
 					case 'c':
 						$selected['module']		= $permission->module_id;
 						$selected['controller']	= $permission->component_id;
 						
 						$options['controllers']	= $this->get_controller_list($selected['module']);
-						
+						break;
 						
 					case 'm':
 						$selected['module'] = $permission->module_id;
-						
+						break;
 							
 				}
 								
@@ -354,13 +354,16 @@ class PermissionsController extends Controller {
 						$parameter->permissionsid	= $saved_permission->id;
 						$parameter->name			= $parts[0];
 						$parameter->value			= $parts[1];
+
+						//Set the id to 'NULL', otherwise save will fail
+						$parameter->id = 'NULL';
 						
 						$save_result = $parameter->save();
 						
 						if ($save_result === FALSE)
 						{
 							$errors .= '<li>Failed to save parameters</li>';
-							continue;
+							//continue;
 						}
 						
 					}
@@ -376,7 +379,7 @@ class PermissionsController extends Controller {
 			
 		}
 				
-		if (empty($errors))
+		if (empty($eerrors))
 		{		
 			
 			$db->CompleteTrans();
@@ -393,7 +396,9 @@ class PermissionsController extends Controller {
 			echo json_encode(array('success' => FALSE, 'errors' => $errors));
 			
 		}
-		
+
+		// Don't let this function return as the above is all handled via ajax/XHR via the UI.
+		exit();
 	}
 	
 	public function update()
@@ -561,13 +566,19 @@ class PermissionsController extends Controller {
 		$actions = array('' => '');
 		
 		// fetch the methods for the controller
-		$actions['Local Methods'] = get_final_class_methods($controller_id);
-		
+		$local_methods = get_final_class_methods($controller_id);
+		ksort($local_methods);
+
 		// fetch the inherited methods
 		$inherited_methods = get_class_methods($controller_id);
 		$inherited_methods = array_combine($inherited_methods, $inherited_methods);
-		$actions['Inherited Methods'] = array_diff($inherited_methods, $actions['Local Methods']);
-				
+		ksort($inherited_methods);
+		
+		// To have the selected item in a dropdown match an item in the options array,
+		// the array key must be lowercase to match values stored in DB.
+		$actions['Local Methods'] = array_change_key_case($local_methods, CASE_LOWER);
+		$actions['Inherited Methods'] = array_change_key_case($inherited_methods, CASE_LOWER);
+		
 		if (is_ajax() && is_direct_request())
 		{
 			
