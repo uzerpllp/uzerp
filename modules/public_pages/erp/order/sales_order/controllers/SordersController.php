@@ -1378,6 +1378,10 @@ class SordersController extends printController
                 }
             }
 
+            $items[$id]['item_code'] = $stitem->item_code;
+            $items[$id]['item_description'] = $stitem->description;
+            $items[$id]['product_group'] = $stitem->product_group;
+
             $salelocations = WHLocation::getSaleLocations();
 
             if (empty($salelocations)) {
@@ -1403,6 +1407,58 @@ class SordersController extends printController
             } else {
                 $items[$id]['indicator'] = 'red';
             }
+        }
+
+        if ($this->_data['format'] == 'csv') {
+            $column_order = ['item_code',
+                            'item_description',
+                            'product_group',
+                            'uom_name',
+                            'min_qty',
+                            'required',
+                            'for_sale',
+                            'in_stock',
+                            'actual_shortfall',
+                            'on_order',
+                            'shortfall',
+                            'indicator'];
+            
+            // output headers so that the file is downloaded rather than displayed
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename=item_availability.csv');
+
+            // create a file pointer connected to the output stream
+            $handle = fopen('php://output', 'w');
+
+            // output the column headings
+            fputcsv($handle, ['Stock Item',
+                              'Description',
+                              'Product Group',
+                              'UOM',
+                              'Mimimum Stock',
+                              'Required',
+                              'Available',
+                              'In Stock',
+                              'Actual Shortfall',
+                              'On Order',
+                              'Expected Shortfall',
+                              'Indicator']);
+
+            // loop over the rows, outputting them
+            foreach($items as $item) {
+                $item = array_merge(array_flip($column_order), $item);
+                if($item['on_order']['po_value'] > 0){
+                    $item['on_order'] = $item['on_order']['po_value'];
+                } elseif ($item['on_order']['wo_value'] > 0) {
+                    $item['on_order'] = $item['on_order']['wo_value'];
+                } else {
+                    $item['on_order'] = 0;
+                }
+                unset($item['stitem']);
+                fputcsv($handle, $item);
+            }
+            fclose($handle);
+            exit();
         }
 
         $this->view->set('orders', $items);
@@ -1447,7 +1503,19 @@ class SordersController extends printController
             'tag' => 'view quotes/orders'
         );
 
+        $outputs = [];
+        $outputs['export_csv'] = array(
+            'link' => array(
+                'modules' => $this->_modules,
+                'controller' => $this->name,
+                'action' => 'viewbyitems',
+                'format' => 'csv'
+            ),
+            'tag' => 'Export CSV'
+        );
+
         $sidebar->addList('Actions', $actions);
+        $sidebar->addList('Export', $outputs);
 
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
