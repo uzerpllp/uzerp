@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Use 'statement' email address, defined on the system company, when emailing customer account statements.
+
 ## [1.24] 2020-03-19
 
 ### Fixed
