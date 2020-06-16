@@ -8,11 +8,18 @@ All notable changes to this project will be documented in this file.
 
 - Export sales order item availability to CSV file.
 
+### Changed
+
+- Stock Item type code
+  - Add comp class to type codes
+  - Available type codes on an item depend on the chosen comp class
+
 ### Fixed
 
 - Use 'statement' email address, defined on the system company, when emailing customer account statements.
-- Action not saved and loaded correctly when editing permission.
-- Extra parameters not saved for permission.
+- Permission editing
+  - Action not saved and loaded correctly when editing permission.
+  - Extra parameters not saved for permission.
 
 ## [1.24] 2020-03-19
 
