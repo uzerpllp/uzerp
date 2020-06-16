@@ -51,6 +51,22 @@ $(document).ready(function(){
 		}
 	});
 
+	$("#manufacturing-stitems-new").on('change', "#STItem_comp_class", function(){
+		
+		var $self = $(this);
+		
+		$('#STItem_type_code_id').uz_ajax({
+			data:{
+				module		: 'manufacturing',
+				controller	: 'Stitems',
+				action		: 'getTypesByCompClass',
+				id			: $self.val(),
+				ajax		: ''
+			}
+		});
+		
+	});
+
 	/* manufacturing -> mfwostructures -> new */
 	
 	$("#MFWOStructure_ststructure_id","#manufacturing-mfwostructures-new").live('change',function(){

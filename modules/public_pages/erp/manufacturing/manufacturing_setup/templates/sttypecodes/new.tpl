@@ -10,9 +10,15 @@
 			{include file='elements/auditfields.tpl' }
 			{input type='text'  attribute='type_code' class="compulsory" }
 			{input type='text'  attribute='description' }
+			{if ($model->comp_class == '' || $in_use == false) }
+			{select attribute='comp_class' options=$comp_class label='Comp Class'}
+			{else}
+			{view_data attribute='comp_class'}
+			{/if}
 			{select attribute='backflush_action_id' options=$backflush_actions label='Backflush Action'}
 			{select attribute='complete_action_id' options=$complete_actions label='Complete Action'}
 			{select attribute='issue_action_id' options=$issue_actions label='Issue Action'}
+			{input type='checkbox' attribute='active'}
 		{/with}
 		{submit}
 	{/form}

@@ -11,11 +11,11 @@
 				{view_section heading="General"}
 					{view_data attribute='item_code'}
 					{view_data attribute='description'}
-					{view_data attribute='abc_class'}
 					{view_data attribute='comp_class'}
+					{view_data attribute='type_code'}
+					{view_data attribute='abc_class'}
 					{view_data attribute='alpha_code'}
 					{view_data attribute='product_group'}
-					{view_data attribute='type_code'}
 					{view_data label='Unit of Measure' attribute='uom_name'}
 					{view_data attribute='balance' label='Total Balance'}
 					{view_data attribute='currentBalance()' label='Available Balance'}

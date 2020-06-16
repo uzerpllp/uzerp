@@ -12,7 +12,9 @@ class STTypecode extends DataObject
 	protected $version='$Revision: 1.6 $';
 	
 	protected $defaultDisplayFields = array('type_code'
-											,'description'
+											,'description',
+											'active',
+											'comp_class'
 											,'backflush_action'
 											,'complete_action'
 											,'issue_action'
@@ -29,12 +31,14 @@ class STTypecode extends DataObject
 		
 		$this->identifierField=array('type_code', 'description');
 		
-		$this->validateUniquenessOf('type_code'); 
+		$this->validateUniquenessOf('type_code');
 		
 		$this->belongsTo('WHAction', 'backflush_action_id', 'backflush_action');
 		$this->belongsTo('WHAction', 'complete_action_id', 'complete_action');
 		$this->belongsTo('WHAction', 'issue_action_id', 'issue_action');
 		
+		$stitem = new STItem();
+		$this->setEnum('comp_class', $stitem->getEnumOptions('comp_class',1));
 	}
 
 }
