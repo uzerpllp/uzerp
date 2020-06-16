@@ -18,6 +18,7 @@
 			{select attribute='backflush_action_id' options=$backflush_actions label='Backflush Action'}
 			{select attribute='complete_action_id' options=$complete_actions label='Complete Action'}
 			{select attribute='issue_action_id' options=$issue_actions label='Issue Action'}
+			{select attribute='return_action_id' options=$return_actions label='Return Action'}
 			{input type='checkbox' attribute='active'}
 		{/with}
 		{submit}

@@ -67,6 +67,7 @@ class SttypecodesController extends ManufacturingController {
 		$this->view->set('backflush_actions',$whaction->getActions('B'));
 		$this->view->set('complete_actions',$whaction->getActions('C'));
 		$this->view->set('issue_actions',$whaction->getActions('I'));
+		$this->view->set('return_actions', $whaction->getActions('X'));
 		$this->view->set('despatch_actions',$whaction->getActions('D'));
 		$this->view->set('comp_class',$stitem->getEnumOptions('comp_class'));
 	}
