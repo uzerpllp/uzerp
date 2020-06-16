@@ -4,6 +4,7 @@
  *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.17 $ *}
+{debug}
 {content_wrapper}
 	{form controller="stitems" action="save"}
 		{with model=$models.STItem legend="STItem Details"}
@@ -47,13 +48,13 @@
 						{input type='checkbox' attribute="cascade_description_change_po" label="Update PO Product & Product Line descriptions" value=false}
 					{/if}
 					{if $inuse}
-						{view_data  attribute='type_code_id' label='Type Code'}
 						{view_data  attribute='comp_class' }
+						{view_data  attribute='type_code_id' label='Type Code'}
 						{input type='hidden' attribute='type_code_id' }
 						{input type='hidden' attribute='comp_class' }
 					{else}
-						{select attribute='type_code_id' }
-						{select attribute='comp_class' }
+						{select attribute='comp_class' selected=$comp_class}
+						{select attribute='type_code_id' options=$type_code_options}
 					{/if}
 					{select attribute='abc_class' }
 

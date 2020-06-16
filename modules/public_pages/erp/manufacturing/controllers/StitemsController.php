@@ -67,6 +67,44 @@ class StitemsController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 
+    /**
+     * Display a Form to Create or Edit a Stock Item
+     *
+     * @return void
+     */
+    public function _new() {
+        parent::_new();
+
+        $stitem = $this->_uses[$this->modeltype];
+        
+        // Set values for comp_class and type_code_id when editing and existing item
+        if ($stitem->comp_class !== '' && $stitem->comp_class !== null) {
+            $comp_class = $stitem->comp_class;
+            $sttype = new STTypecode();
+            $sttype_options = $sttype->getOptions('id');
+            foreach ($sttype_options->_data as $id => $val) {
+                if ($id == $stitem->type_code_id) {
+                    $sttypes = [$id => $val];
+                }
+            }
+        } else {
+        // Set initial values for comp_class and type_code_id when creating a new item
+            $classes = $stitem->getEnumOptions('comp_class');
+            $comp_class = array_key_first($classes);
+            $sttypes = $this->getTypesByCompClass($comp_class);
+        }
+
+        // Revert to previous comp_class and type_code_id selections When reloading the form after a failed save
+        $_POST[$this->modeltype]['comp_class'] = $comp_class;
+        $_POST[$this->modeltype]['type_code_id'] = $stitem->type_code_id;
+
+        // Prevent adding of new type codes from the form
+        unset($stitem->belongsTo['type_code']);
+
+        $this->view->set('comp_class', $comp_class);
+        $this->view->set('type_code_options', $sttypes);
+    }
+
     public function clone_item()
     {
         if (! $this->loadData()) {
@@ -562,7 +600,7 @@ class StitemsController extends printController
         $sidebar->addList('This Item', $sidebarlist);
 
         // MF Structures, operations and costing
-        if ($transaction->comp_class == 'M' || $transaction->comp_class == 'S') {
+        if ($transaction->comp_class == 'M' || $transaction->comp_class == 'S' || $transaction->comp_class == 'K') {
             $sidebarlist = [];
             $sidebarlist['Structure'] = array(
                 'tag' => 'View Structures',
@@ -573,7 +611,7 @@ class StitemsController extends printController
                     'stitem_id' => $id
                 )
             );
-            if ($transaction->comp_class !== 'S') {
+            if ($transaction->comp_class !== 'S' && $transaction->comp_class !== 'K') {
                 $sidebarlist['Operations'] = array(
                     'tag' => 'View Operations',
                     'link' => array(
@@ -584,33 +622,35 @@ class StitemsController extends printController
                     )
                 );
             }
-            $sidebarlist['OutsideOperations'] = array(
-                'tag' => 'View Outside Operations',
-                'link' => array(
-                    'modules' => $this->_modules,
-                    'controller' => 'mfoutsideoperations',
-                    'action' => 'index',
-                    'stitem_id' => $id
-                )
-            );
-            $sidebarlist['cost_sheet'] = array(
-                'tag' => 'View Cost Sheet',
-                'link' => array(
-                    'module' => 'costing',
-                    'controller' => 'STCosts',
-                    'action' => 'costSheet',
-                    'stitem_id' => $id
-                )
-            );
-            $sidebarlist['cost_history'] = array(
-                'tag' => 'View Cost History',
-                'link' => array(
-                    'module' => 'costing',
-                    'controller' => 'STCosts',
-                    'action' => 'index',
-                    'stitem_id' => $id
-                )
-            );
+            if ($transaction->comp_class !== 'K') {
+                $sidebarlist['OutsideOperations'] = array(
+                    'tag' => 'View Outside Operations',
+                    'link' => array(
+                        'modules' => $this->_modules,
+                        'controller' => 'mfoutsideoperations',
+                        'action' => 'index',
+                        'stitem_id' => $id
+                    )
+                );
+                $sidebarlist['cost_sheet'] = array(
+                    'tag' => 'View Cost Sheet',
+                    'link' => array(
+                        'module' => 'costing',
+                        'controller' => 'STCosts',
+                        'action' => 'costSheet',
+                        'stitem_id' => $id
+                    )
+                );
+                $sidebarlist['cost_history'] = array(
+                    'tag' => 'View Cost History',
+                    'link' => array(
+                        'module' => 'costing',
+                        'controller' => 'STCosts',
+                        'action' => 'index',
+                        'stitem_id' => $id
+                    )
+                );
+            }
             $sidebar->addList('Stucture and Operations', $sidebarlist);
         }
 
@@ -1909,6 +1949,50 @@ class StitemsController extends printController
         }
         return true;
     }
+
+    /**
+	 * Return an array of Item Types as options
+	 * 
+	 * An ajax/xhr call produces html containing <option> elements,
+	 * otherwise an array of Item Types is returned.
+	 *
+	 * @param string $_comp_class
+	 * @return mixed  Array of options or void (sets template)
+	 */
+	public function getTypesByCompClass($_comp_class='')
+	{
+		if (isset($this->_data['ajax'])) {
+			if (!empty($this->_data['id'])) {
+				$_comp_class = $this->_data['id'];
+			}
+		}
+
+		$types = new STTypecodeCollection();
+		$sh = new SearchHandler($types, false);
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('comp_class', '=', $_comp_class));
+		$cc->add(new Constraint('active', 'is', true));
+		$sh->addConstraintChain($cc);
+		$types->load($sh);
+	
+		$options = [];
+		foreach ($types as $type){
+			$options[$type->id] = $type->getIdentifierValue();
+        }
+
+        // There might be no options, so add a none option.
+        // This prevents the STItem model from being saved, for example.
+        if (count($options) == 0) {
+            $options = ['' => 'None'];
+        }
+		
+		if (isset($this->_data['ajax'])) {
+			$this->view->set('options', $options);
+			$this->setTemplateName('select_options');
+		} else {
+			return $options;
+		}
+	}
 
     /**
      * Item search
