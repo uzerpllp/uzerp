@@ -16,6 +16,7 @@ class StTypeCodesAddCompClass extends UzerpMigration
         $table = $this->table('st_typecodes');
         $table->addColumn('comp_class', 'text', ['null' => true])
               ->addColumn('active', 'boolean', ['default' => true])
+              ->addColumn('return_action_id', 'integer', ['null' => true])
               ->save();
     }
 }
