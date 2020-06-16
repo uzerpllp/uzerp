@@ -4,7 +4,6 @@
  *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.17 $ *}
-{debug}
 {content_wrapper}
 	{form controller="stitems" action="save"}
 		{with model=$models.STItem legend="STItem Details"}
