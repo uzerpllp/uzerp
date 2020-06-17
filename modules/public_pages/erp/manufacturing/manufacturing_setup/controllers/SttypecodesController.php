@@ -22,7 +22,7 @@ class SttypecodesController extends ManufacturingController {
 		$s_data = ['active' => 'T'];
 		$this->setSearch('STTypecodeSearch', 'useDefault', $s_data);
 
-		$this->view->set('clickaction', 'edit');
+		$this->view->set('clickaction', 'view');
 		parent::index(new STTypecodeCollection($this->_templateobject));
 		
 		$sidebar = new SidebarController($this->view);
