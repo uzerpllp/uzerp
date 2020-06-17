@@ -242,7 +242,7 @@ class Report extends DataObject {
 
             $array = [];
             foreach ($tables as $key=>$table) {
-                  $array[$table['viewname']]=$table['viewname'];
+                  $array['reports.' . $table['viewname']]=$table['viewname'];
             }
 
             asort($array);
