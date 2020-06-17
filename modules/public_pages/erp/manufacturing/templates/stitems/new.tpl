@@ -48,7 +48,7 @@
 					{/if}
 					{if $inuse}
 						{view_data  attribute='comp_class' }
-						{view_data  attribute='type_code_id' label='Type Code'}
+						{view_data  attribute='type_code_id' label='Type Code' value=$type_code_options[$model->type_code_id]}
 						{input type='hidden' attribute='type_code_id' }
 						{input type='hidden' attribute='comp_class' }
 					{else}
