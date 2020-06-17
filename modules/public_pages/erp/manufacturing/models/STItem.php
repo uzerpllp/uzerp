@@ -94,12 +94,13 @@ class STItem extends DataObject
 		// set formatters, more set in load() function
 
 		// Define enumerated types
-		$this->setEnum('comp_class',array( 'B'=>'Bought In'
-										  ,'M'=>'Manufactured'
-										  ,'S'=>'Sub-Contracted'));
-		$this->setEnum('abc_class',array( 'A'=>'A'
-                                         ,'B'=>'B'
-                                         ,'C'=>'C'));
+		$this->setEnum('comp_class', array('B' => 'Bought In',
+										   'K' => 'Sales Kit',
+										   'M' => 'Manufactured',
+										   'S' => 'Sub-Contracted'));
+		$this->setEnum('abc_class', array( 'A' => 'A',
+                                           'B'=>'B',
+                                           'C'=>'C'));
 		$this->setEnum('cost_basis', [
 		    'VOLUME' => 'Volume',
 		    'TIME' => 'Time'

@@ -93,7 +93,7 @@ class MfstructuresController extends PrintController
 														  )
 										);
 
-		if (($transaction->comp_class=='M' || $transaction->comp_class=='S')
+		if (($transaction->comp_class=='M' || $transaction->comp_class=='S' || $transaction->comp_class=='K')
 			&& (!$obsolete))
 		{
 			$sidebarlist['newStructure'] = array('tag' => 'Add to Structure'
