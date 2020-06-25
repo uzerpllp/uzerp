@@ -63,18 +63,12 @@
 									{$line->revised_qty}
 								{/grid_cell}
 								<td class='numeric'>
-									{if $action_list.$key == 'KIT'}
-										{$line->revised_qty}
-									{else}
-										{input model=$line attribute="del_qty" number=$key value=$line->revised_qty class='numeric del_qty' tags=none label=' '}
-									{/if}
+									{input model=$line attribute="del_qty" number=$key value=$line->revised_qty class='numeric del_qty' tags=none label=' '}
 								</td>
 								{grid_cell model=$line cell_num=2 field="uom_name"}
 									{$line->uom_name}
 								{/grid_cell}
-								{if $action_list.$key == 'KIT'}
-									<td>Sales Kits cannot be un-picked</td>
-								{elseif empty($action_list.$key)}
+								{if empty($action_list.$key)}
 									<td>Non Stock Item</td>
 								{else}
 									<td>
@@ -82,9 +76,7 @@
 									</td>
 								{/if}
 								<td align=left>
-								{if $action_list.$key !== 'KIT'}
 									{input type="checkbox" class="checkbox" model=$line attribute="id" number=$key tags=none label=' '}
-								{/if}
 								</td>
 							{/grid_row}
 						{/if}

@@ -2326,7 +2326,12 @@ class SordersController extends printController
                 $stitem = new STItem();
                 $stitem->load($orderline->stitem_id);
                 if ($stitem->comp_class == 'K') {
-                    $pick_from[$orderline->id] = 'KIT';
+                    // Use the kit's return action to un-pick.
+                    // NOTE: backflushed materials are not transacted!
+                    $whaction_id = $stitem->getAction('return');
+                    $rule = new WHTransferrule();
+                    $kitlocations = $rule->getFromLocations($whaction_id);
+                    $pick_from[$orderline->id] = $rule->getToLocations($whaction_id, array_keys($kitlocations));
                 } else {
                     $balances = new STBalanceCollection(DataObjectFactory::Factory('STBalance'));
                     $cc = new ConstraintChain();
@@ -2337,6 +2342,7 @@ class SordersController extends printController
                 $pick_from[$orderline->id] = array();
             }
         }
+        
         $this->view->set('action_list', $pick_from);
         $this->view->set('from_locations', $sorder->despatch_from->rules_list('from_location'));
     }
