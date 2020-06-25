@@ -721,6 +721,14 @@ class soproductlineheadersController extends printController
                 } else {
                     $itemplan[$item->stitem_id]['indicator'] = 'red';
                 }
+
+                // Sales kits are 'made' during picking.
+                // Shortfall an On Order make no sense here, so they are always green.
+                if ($stitem->comp_class == 'K') {
+                    $itemplan[$item->stitem_id]['on_order']['so_value'] =  $itemplan[$item->stitem_id]['required'];
+                    $itemplan[$item->stitem_id]['shortfall'] = 0;
+                    $itemplan[$item->stitem_id]['indicator'] = 'green';
+                }
             }
         }
 

@@ -47,6 +47,8 @@
 							{link_to module='manufacturing' controller='stitems' action='viewworkorders' id=$model.stitem_id value=$model.on_order.wo_value}
 						{elseif $model.on_order.po_value>0}
 							{link_to module='manufacturing' controller='stitems' action='viewpurchase_orders' id=$model.stitem_id value=$model.on_order.po_value}
+						{elseif $model.on_order.so_value>0}
+							{link_to module='manufacturing' controller='stitems' action='viewsales_orders' id=$model.stitem_id value=$model.on_order.so_value}
 						{else}
 							0
 						{/if}
