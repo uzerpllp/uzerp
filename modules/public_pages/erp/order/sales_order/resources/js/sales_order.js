@@ -815,6 +815,7 @@ $(document).ready(function() {
 	$('input',"#sales_order-sorders-confirm_pick_list").live('change', function() {
 		
 		var line_id=$(this).parents('tr').data('line');
+		var line_compclass=$(this).parents('tr').data('compclass');
 
 		switch($(this).attr('id')) {
 			case 'SOrderLine_balance'+line_id:
@@ -833,7 +834,7 @@ $(document).ready(function() {
 				var os_qty=parseFloat($('#SOrderLine_os_qty'+line_id).val());
 				var del_qty=parseFloat($('#SOrderLine_del_qty'+line_id).val());
 			
-				if (balance<del_qty) {
+				if (balance<del_qty && line_compclass != 'K' ) {
 					alert('Trying to pick '+del_qty+' but only '+balance+' available at this location');
 					$('#SOrderLine_del_qty'+line_id).val($('#SOrderLine_balance'+line_id).val());
 				} else if (os_qty<del_qty) {
