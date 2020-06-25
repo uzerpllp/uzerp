@@ -335,7 +335,7 @@ class soproductlineheadersController extends printController
                 }
 
                 // Sales kits are 'made' during picking.
-                // Shortfall an On Order make no sense here, so they are always green.
+                // A shortfall makes no sense here.
                 if ($stitem->comp_class == 'K') {
                     $orders[$key]['on_order'] = $orders[$key]['in_stock'] = $orders[$key]['required'];
                     $orders[$key]['shortfall'] = 0;
@@ -730,7 +730,7 @@ class soproductlineheadersController extends printController
                 }
 
                 // Sales kits are 'made' during picking.
-                // Shortfall an On Order make no sense here, so they are always green.
+                // A shortfall makes no sense here.
                 if ($stitem->comp_class == 'K') {
                     $itemplan[$item->stitem_id]['on_order']['so_value'] =  $itemplan[$item->stitem_id]['required'];
                     $itemplan[$item->stitem_id]['shortfall'] = 0;

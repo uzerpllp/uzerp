@@ -1411,7 +1411,7 @@ class SordersController extends printController
             }
 
             // Sales kits are 'made' during picking.
-            // Shortfall an On Order make no sense here, so they are always green.
+            // Shortfall on an order makes no sense here, so they are always green.
             if ($stitem->comp_class == 'K') {
                 $items[$id]['on_order']['so_value'] = $items[$id]['required'];
                 $items[$id]['shortfall'] = 0;
