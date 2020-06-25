@@ -333,6 +333,13 @@ class soproductlineheadersController extends printController
                 if ($available < 0) {
                     $available = 0;
                 }
+
+                // Sales kits are 'made' during picking.
+                // Shortfall an On Order make no sense here, so they are always green.
+                if ($stitem->comp_class == 'K') {
+                    $orders[$key]['on_order'] = $orders[$key]['in_stock'] = $orders[$key]['required'];
+                    $orders[$key]['shortfall'] = 0;
+                }
                 // $in_stock=$balance-$available;
                 // if ($in_stock<0) {
                 // $in_stock=0;
