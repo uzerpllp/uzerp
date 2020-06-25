@@ -2323,10 +2323,16 @@ class SordersController extends printController
         $pick_from = array();
         foreach ($sorder->lines as $orderline) {
             if (! is_null($orderline->stitem_id)) {
-                $balances = new STBalanceCollection(DataObjectFactory::Factory('STBalance'));
-                $cc = new ConstraintChain();
-                $cc->add(new Constraint('pickable', 'is', true));
-                $pick_from[$orderline->id] = $balances->getLocationList($orderline->stitem_id, $cc);
+                $stitem = new STItem();
+                $stitem->load($orderline->stitem_id);
+                if ($stitem->comp_class == 'K') {
+                    $pick_from[$orderline->id] = 'KIT';
+                } else {
+                    $balances = new STBalanceCollection(DataObjectFactory::Factory('STBalance'));
+                    $cc = new ConstraintChain();
+                    $cc->add(new Constraint('pickable', 'is', true));
+                    $pick_from[$orderline->id] = $balances->getLocationList($orderline->stitem_id, $cc);
+                }
             } else {
                 $pick_from[$orderline->id] = array();
             }

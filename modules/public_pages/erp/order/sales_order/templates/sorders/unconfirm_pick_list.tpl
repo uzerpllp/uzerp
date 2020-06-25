@@ -4,6 +4,7 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {* $Revision: 1.7 $ *}
+{debug}
 {content_wrapper}
 	<div id="view_page" class="clearfix">
 		{form controller=$controller action="save_unpick_list"}
@@ -62,20 +63,28 @@
 									{$line->revised_qty}
 								{/grid_cell}
 								<td class='numeric'>
-									{input model=$line attribute="del_qty" number=$key value=$line->revised_qty class='numeric del_qty' tags=none label=' '}
+									{if $action_list.$key == 'KIT'}
+										{$line->revised_qty}
+									{else}
+										{input model=$line attribute="del_qty" number=$key value=$line->revised_qty class='numeric del_qty' tags=none label=' '}
+									{/if}
 								</td>
 								{grid_cell model=$line cell_num=2 field="uom_name"}
 									{$line->uom_name}
 								{/grid_cell}
-								{if empty($action_list.$key)}
+								{if $action_list.$key == 'KIT'}
+									<td>Sales Kits cannot be un-picked</td>
+								{elseif empty($action_list.$key)}
 									<td>Non Stock Item</td>
 								{else}
 									<td>
 										{select model=$line attribute="whlocation_id" number=$key options=$action_list.$key nonone=true tags=none label=' '}
 									</td>
 								{/if}
-								<td align=center>
+								<td align=left>
+								{if $action_list.$key !== 'KIT'}
 									{input type="checkbox" class="checkbox" model=$line attribute="id" number=$key tags=none label=' '}
+								{/if}
 								</td>
 							{/grid_row}
 						{/if}
