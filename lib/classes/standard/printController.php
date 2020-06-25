@@ -266,7 +266,7 @@ class printController extends Controller
                 } else {
 
                     if (isset($output_details['identifier'])) {
-                        $new_selection[$detail->id]['description'] = prettify($output_details['identifier']) . ' : ' . $detail->$output_details['identifier'];
+                        $new_selection[$detail->id]['description'] = prettify($output_details['identifier']) . ' : ' . $detail->getIdentifierValue();
                     } else {
                         $new_selection[$detail->id]['description'] = $detail->getIdentifierValue();
                     }
