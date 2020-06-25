@@ -1347,11 +1347,6 @@ class SordersController extends printController
             $stitem = DataObjectFactory::Factory('STItem');
             $stitem->load($item->id);
 
-            // Don't show sales kits as these are 'assembled' at the point of despatch
-            if ($stitem->isLoaded() && $stitem->comp_class == 'K') {
-                continue;
-            }
-            
             $id = $item->id;
 
             $items[$id]['min_qty'] = 0;
@@ -1400,6 +1395,7 @@ class SordersController extends printController
             $items[$id]['in_stock'] -= $items[$id]['for_sale'];
             $items[$id]['actual_shortfall'] = $items[$id]['required'] - ($items[$id]['for_sale'] + $items[$id]['in_stock']) + $items[$id]['min_qty'];
             $items[$id]['shortfall'] = $items[$id]['actual_shortfall'] - $items[$id]['on_order']['po_value'] - $items[$id]['on_order']['wo_value'];
+
             $items[$id]['indicator'] = 'green';
 
             if ($items[$id]['actual_shortfall'] <= 0) {
@@ -1412,6 +1408,14 @@ class SordersController extends printController
                 $items[$id]['shortfall'] = 0;
             } else {
                 $items[$id]['indicator'] = 'red';
+            }
+
+            // Sales kits are 'made' during picking.
+            // Shortfall an On Order make no sense here, so they are always green.
+            if ($stitem->comp_class == 'K') {
+                $items[$id]['on_order']['so_value'] = $items[$id]['required'];
+                $items[$id]['shortfall'] = 0;
+                $items[$id]['indicator'] = 'green';
             }
         }
 
