@@ -333,6 +333,13 @@ class soproductlineheadersController extends printController
                 if ($available < 0) {
                     $available = 0;
                 }
+
+                // Sales kits are 'made' during picking.
+                // A shortfall makes no sense here.
+                if ($stitem->comp_class == 'K') {
+                    $orders[$key]['on_order'] = $orders[$key]['in_stock'] = $orders[$key]['required'];
+                    $orders[$key]['shortfall'] = 0;
+                }
                 // $in_stock=$balance-$available;
                 // if ($in_stock<0) {
                 // $in_stock=0;
@@ -720,6 +727,14 @@ class soproductlineheadersController extends printController
                     $itemplan[$item->stitem_id]['shortfall'] = 0;
                 } else {
                     $itemplan[$item->stitem_id]['indicator'] = 'red';
+                }
+
+                // Sales kits are 'made' during picking.
+                // A shortfall makes no sense here.
+                if ($stitem->comp_class == 'K') {
+                    $itemplan[$item->stitem_id]['on_order']['so_value'] =  $itemplan[$item->stitem_id]['required'];
+                    $itemplan[$item->stitem_id]['shortfall'] = 0;
+                    $itemplan[$item->stitem_id]['indicator'] = 'green';
                 }
             }
         }

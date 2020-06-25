@@ -1,4 +1,6 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 /**
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
@@ -29,7 +31,7 @@ define ('DB_DATE_FORMAT', "Y-m-d");
 define ('DB_DATE_TIME_FORMAT', "Y-m-d H:i");
 
 // TODO: Remove these constatnts as they don't seem to be used [SB]
-//define('PUBLISH_HOST', 'tech2.severndelta.co.uk');
+//define('PUBLISH_HOST', '');
 //define('PUBLISH_PORT', 8091);
 //define('PUBLISH_URL', '_rpc/RPC2.php');
 
@@ -123,20 +125,27 @@ function debug($msg)
 	
 }
 
-function system_email($subject, $body)
+function system_email($subject, $body, &$errors)
 {
-	
 	$email = get_config('ADMIN_EMAIL');
 	$from = get_config('ADMIN_FROM_EMAIL');
 	
-	if (!empty($email))
+	if (!empty($email) && !get_config('DEV_PREVENT_EMAIL'))
 	{
-		mail(
-			$email,
-			$subject,
-			$body,
-			"From: " . $from . "\r\n"
-		);
+
+		$mail = new PHPMailer(true);
+        try {
+            $mail->setFrom($from);
+            $mail->addReplyTo($from);
+        	$mail->addAddress($email);
+            $mail->Subject = $subject;
+            $mail->Body = $body;
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            $errors[] = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            return false;
+        }
 	}
 
 }

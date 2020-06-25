@@ -1344,6 +1344,9 @@ class SordersController extends printController
         $items = array();
 
         foreach ($orders as $item) {
+            $stitem = DataObjectFactory::Factory('STItem');
+            $stitem->load($item->id);
+
             $id = $item->id;
 
             $items[$id]['min_qty'] = 0;
@@ -1367,9 +1370,7 @@ class SordersController extends printController
                 $items[$id]['on_order']['wo_value'] = $worders[0]['sumbalance'];
             }
 
-            $stitem = DataObjectFactory::Factory('STItem');
-
-            if ($stitem->load($item->id) && $stitem->isLoaded()) {
+            if ($stitem->isLoaded()) {
                 $items[$id]['min_qty'] = $stitem->min_qty;
                 $porders = $stitem->getPOrderLines();
 
@@ -1394,6 +1395,7 @@ class SordersController extends printController
             $items[$id]['in_stock'] -= $items[$id]['for_sale'];
             $items[$id]['actual_shortfall'] = $items[$id]['required'] - ($items[$id]['for_sale'] + $items[$id]['in_stock']) + $items[$id]['min_qty'];
             $items[$id]['shortfall'] = $items[$id]['actual_shortfall'] - $items[$id]['on_order']['po_value'] - $items[$id]['on_order']['wo_value'];
+
             $items[$id]['indicator'] = 'green';
 
             if ($items[$id]['actual_shortfall'] <= 0) {
@@ -1406,6 +1408,14 @@ class SordersController extends printController
                 $items[$id]['shortfall'] = 0;
             } else {
                 $items[$id]['indicator'] = 'red';
+            }
+
+            // Sales kits are 'made' during picking.
+            // Shortfall on an order makes no sense here, so they are always green.
+            if ($stitem->comp_class == 'K') {
+                $items[$id]['on_order']['so_value'] = $items[$id]['required'];
+                $items[$id]['shortfall'] = 0;
+                $items[$id]['indicator'] = 'green';
             }
         }
 
@@ -2275,7 +2285,19 @@ class SordersController extends printController
                 $cc = new ConstraintChain();
                 $cc->add(new Constraint('balance', '>', '0'));
                 $cc->add(new Constraint('pickable', 'is', true));
-                $pick_from[$orderline->id]['locations'] = $balances->getLocationList($orderline->stitem_id, $cc);
+
+                $stitem = new STItem();
+                $stitem->load($orderline->stitem_id);
+                $pick_from[$orderline->id]['comp_class'] = $stitem->comp_class;
+
+                if ($stitem->comp_class == 'K') {
+                    $whaction_id = $stitem->getAction('complete');
+                    $rule = new WHTransferrule();
+                    $kitlocations = $rule->getFromLocations($whaction_id);
+                    $pick_from[$orderline->id]['locations'] = $kitlocations;
+                } else {
+                    $pick_from[$orderline->id]['locations'] = $balances->getLocationList($orderline->stitem_id, $cc);
+                }
                 if (empty($pick_from[$orderline->id]['locations'])) {
                     $pick_from[$orderline->id]['balance'] = 0;
                 } else {
@@ -2301,10 +2323,16 @@ class SordersController extends printController
         $pick_from = array();
         foreach ($sorder->lines as $orderline) {
             if (! is_null($orderline->stitem_id)) {
-                $balances = new STBalanceCollection(DataObjectFactory::Factory('STBalance'));
-                $cc = new ConstraintChain();
-                $cc->add(new Constraint('pickable', 'is', true));
-                $pick_from[$orderline->id] = $balances->getLocationList($orderline->stitem_id, $cc);
+                $stitem = new STItem();
+                $stitem->load($orderline->stitem_id);
+                if ($stitem->comp_class == 'K') {
+                    $pick_from[$orderline->id] = 'KIT';
+                } else {
+                    $balances = new STBalanceCollection(DataObjectFactory::Factory('STBalance'));
+                    $cc = new ConstraintChain();
+                    $cc->add(new Constraint('pickable', 'is', true));
+                    $pick_from[$orderline->id] = $balances->getLocationList($orderline->stitem_id, $cc);
+                }
             } else {
                 $pick_from[$orderline->id] = array();
             }
@@ -2325,6 +2353,7 @@ class SordersController extends printController
         $sorderline_data = $this->_data['SOrderLine'];
         $flash = Flash::Instance();
         $errors = array();
+        $kit_lines = [];
         $db = DB::Instance();
         $db->startTrans();
         // The value of the $sorder_data[to_location_id] is the whtransfer_rule_id
@@ -2418,6 +2447,24 @@ class SordersController extends printController
                                 }
                             }
                         }
+                        
+                        // Store kit information for backflushing after picking to avoid
+                        // a nested db transaction failure aborting the pick.
+                        // The kit item is always picked into the target location, even if
+                        // there are errors in backflusing.
+                        $stitem = new STItem();
+                        $stitem->load($sorderline->stitem_id);
+                        if ($stitem->comp_class == 'K') {
+                            // Get BOM
+                            $structure = new MFStructureCollection();
+                            $bom = $structure->getCurrent($sorderline->stitem_id);
+                            if ($bom->isEmpty()) {
+                                $errors[] = 'line ' . $value['line_number'] . ' : No structures found for kit';
+                            }
+                            $data['book_qty'] = $data['qty'];
+                            $kit_lines[$key]['data'] = $data;
+                            $kit_lines[$key]['bom'] = $bom;
+                        }
                     } else {
                         $errors[] = 'line ' . $value['line_number'] . ' : Cannot move stock - missing location';
                     }
@@ -2439,6 +2486,32 @@ class SordersController extends printController
         } else {
             $flash->addMessage('Picking action successfully completed');
             $db->CompleteTrans();
+
+            // Backflush kits
+            if (count($kit_lines) > 0) {
+                foreach($kit_lines as $kit) {
+                    if (MFStructure::backflush($kit['data'], $kit['bom'], $errors) !== true) {
+                        $flash->addError('Critical Error backflusing kit');
+
+                        // Email admin about the error(s)
+                        $body = "SordersController::save_pick_list\n"
+                        ."at ".date(DATE_TIME_FORMAT)."\n\n"
+                        ."User                    ".EGS_USERNAME."\n"
+                        ."Sales Order Id          ".$sorder->id."\n"
+                        ."Sales Order Number      ".$sorder->order_number."\n"
+                        ."Sales Order Line Number ".$sorderline->line_number."\n"
+                        ."Pick Qty                ".$data['book_qty']."\n\n";
+
+                        foreach ($errors as $error)
+                        {
+                            $body.=$error."\n";
+                        }
+                
+                        system_email('uzERP, Critical Error backflusing kit', $body, $errors);
+                    }
+                }
+            }
+
             sendTo($this->name, 'view', $this->_modules, array(
                 'id' => $sorder->id
             ));
@@ -4081,6 +4154,30 @@ class SordersController extends printController
         }
 
         $extra['delivery_details']['full_address'] = implode($this->formatAddress($order->del_address), ", ");
+
+        foreach($order->lines as $oline) {
+            
+            if ($oline->stitem_id !== null) {
+                $stitem = new STItem();
+                $stitem->load($oline->stitem_id);
+                if ($stitem->comp_class == 'K') {
+                    // Get BOM
+                    $structure = new MFStructureCollection();
+                    $bom = $structure->getCurrent($oline->stitem_id);
+                    if (!$bom->isEmpty()) {
+                        $kit = [];
+                        foreach ($bom as $item) {
+                            $kit[]['ststructure'] = [ 'item' => $item->ststructure,
+                                    'qty' => $item->qty * $oline->os_qty,
+                                    'uom' => $item->uom];
+                            //$kit[] = $kit;
+                        }
+                        $kits[] = ['kit' => ['line_id' => $oline->id, 'line_number' => $oline->line_number, 'item' => $stitem->item_code, $kit]];
+                    }
+                    $extra['kits'] = $kits;
+                }
+            }
+        }
 
         // generate the xml and add it to the options array
         $options['xmlSource'] = $this->generateXML(array(

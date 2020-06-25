@@ -632,6 +632,7 @@ class StitemsController extends printController
                         'stitem_id' => $id
                     )
                 );
+            }
                 $sidebarlist['cost_sheet'] = array(
                     'tag' => 'View Cost Sheet',
                     'link' => array(
@@ -650,7 +651,7 @@ class StitemsController extends printController
                         'stitem_id' => $id
                     )
                 );
-            }
+            
             $sidebar->addList('Stucture and Operations', $sidebarlist);
         }
 

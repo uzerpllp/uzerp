@@ -51,7 +51,7 @@
 					{foreach name=lines item=line from=$SOrder->lines}
 						{assign var=key value=$line->id}
 						{if $line->status==$line->newStatus() || $line->status==$line->partDespatchStatus()}
-							{grid_row data_line=$line->id}
+							{grid_row data_line=$line->id data_compclass = $action_list.$key.comp_class}
 								{input type='hidden' model=$line rowid=$line->id number=$line->id attribute=stitem_id}
 								{input type='hidden' model=$line rowid=$line->id number=$line->id attribute=line_number}
 								{assign var=pick_qty value=$line->os_qty}
@@ -59,6 +59,8 @@
 								{assign var=no_stock value=false}
 								{if is_null($line->stitem_id)}
 									{assign var=non_stock value=true}
+								{elseif $action_list.$key.comp_class == 'K'}
+									{assign var=pick_qty value=$line->os_qty}
 								{elseif empty($action_list.$key.locations)}
 									{assign var=no_stock value=true}
 								{elseif $action_list.$key.balance<$line->os_qty}

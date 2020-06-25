@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Work Order Return Actions
   - The stock action for Work Order returns can be set by stock item type code
   - Materials can be returned from work orders by using 'Returns' from the sidebar
+- Sales kitting. Produce sales items and backflush materials at picking time.
 
 ### Changed
 
