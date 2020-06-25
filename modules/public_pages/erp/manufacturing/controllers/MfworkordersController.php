@@ -990,7 +990,7 @@ class MfworkordersController extends ManufacturingController
 		$subject = get_config('SYSTEM_STATUS');
 		$subject = (!empty($subject) ? $subject : 'system');
 
-		system_email($subject.' Error', $body);
+		system_email($subject.' Error', $body, $errors);
 
 		$flash->addErrors($errors);
 
