@@ -14,8 +14,8 @@
 			</dl>
 			<dl id="view_data_right">
 				{view_data attribute="comp_class"}
-				{view_data attribute="sttypecode" label='type code'}
-				{view_data attribute="stproductgroup" label='product group'}
+				{view_data attribute="type_code" label='type code'}
+				{view_data attribute="product_group" label='product group'}
 				{view_data attribute="currentBalance()" label='Current Balance' link_to='"module":"manufacturing","controller":"stitems","action":"viewBalances","id":"'|cat:$stitem->id|cat:'"'}
 			</dl>
 		{/with}
