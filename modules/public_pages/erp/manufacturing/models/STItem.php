@@ -141,6 +141,7 @@ class STItem extends DataObject
 											 ,'modules'=>array('new'=>array('module'=>'purchase_order'))
 											 ,'actions'=>array('link','new')
 											 ,'rules'=>array(array('field'=>'comp_class', 'criteria'=>"!='M'")
+											 				,array('field'=>'comp_class', 'criteria'=>"!='K'")
 											 				,array('field'=>'relatedCount("po_products")', 'criteria'=>'>0'))
 											 )
    						,'so_product_prices'=>array('newtab'=>array('new'=>true)
@@ -152,6 +153,7 @@ class STItem extends DataObject
 											 ,'modules'=>array('new'=>array('module'=>'purchase_order'))
 											 ,'actions'=>array('new')
 											 ,'rules'=>array(array('field'=>'comp_class', 'criteria'=>"!='M'")
+											 				,array('field'=>'comp_class', 'criteria'=>"!='K'")
 											 				,array('field'=>'relatedCount("po_products")', 'criteria'=>'==0'))
 											 )
    						,'so_products'=>array('newtab'=>array('new'=>true)
@@ -335,6 +337,9 @@ class STItem extends DataObject
 	public function calcLatestCost()
 	{
 		switch ($this->comp_class) {
+			case 'K':
+				$var[] = $this->calcLatestMat();
+				break;
 			case 'M':
 			case 'S':
 				$var[] = $this->calcLatestMat();
