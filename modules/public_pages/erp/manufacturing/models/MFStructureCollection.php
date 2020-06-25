@@ -14,5 +14,27 @@ class MFStructureCollection extends DataObjectCollection {
 		$this->title='Item Structure';
 	}
 
+	/**
+	 * Return the the structures (BOM) of on item
+	 *
+	 * @param boolean $stitem_id
+	 * @return MFStructureCollection
+	 */
+	public function getCurrent($stitem_id=false) {
+		$cc1 = new ConstraintChain();
+		$cc1->add(new Constraint('stitem_id', '=', $stitem_id));
+		$cc1->add(new Constraint('start_date', '<=', fix_date(date(DATE_FORMAT))));
+
+		$cc2=new ConstraintChain();
+		$cc2->add(new Constraint('end_date', '>=', fix_date(date(DATE_FORMAT))));
+		$cc2->add(new Constraint('end_date', 'is', 'NULL'),'OR');
+
+		$sh = new SearchHandler($this, false);
+		$sh->addConstraintChain($cc1);
+		$sh->addConstraintChain($cc2);
+		$this->load($sh);
+		return $this;
+	}
+
 }
 ?>
