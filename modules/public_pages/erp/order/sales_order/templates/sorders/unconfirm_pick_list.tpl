@@ -4,7 +4,6 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {* $Revision: 1.7 $ *}
-{debug}
 {content_wrapper}
 	<div id="view_page" class="clearfix">
 		{form controller=$controller action="save_unpick_list"}
