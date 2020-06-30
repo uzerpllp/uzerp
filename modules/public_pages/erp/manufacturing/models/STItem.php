@@ -1562,6 +1562,75 @@ class STItem extends DataObject
 		return $uom_list;
 	}
 
+	public function produceKit($qty = 0, &$errors) {
+		$db = DB::Instance();
+
+		$whaction_id = $this->getAction('complete');
+		$rule = new WHTransferrule();
+		$from_locations = $rule->getFromLocations($whaction_id);
+		$kitlocation_from = array_key_first($from_locations);
+		$to_locations = $rule->getToLocations($whaction_id, $kitlocation_from);
+		$kitlocation_to = array_key_first($to_locations);
+
+		$data = [];
+		$data['stitem_id'] = $this->id;
+		$data['qty'] = $qty;
+		$data['process_name'] = 'KP';
+		$data['process_id'] = $this->id;
+		$data['whaction_id'] = $whaction_id;
+		$data['from_whlocation_id'] = $kitlocation_from;
+		$data['to_whlocation_id'] = $kitlocation_to;
+
+		$db->startTrans();
+
+		// Produce kit item at target location
+		$models = STTransaction::prepareMove($data, $errors);
+		if (count($errors) == 0) {
+			foreach ($models as $model) {
+				if (! $model || ! $model->save($errors)) {
+					$errors[] = $this->getIdentifierValue() . ' : Error updating stock';
+					break;
+				}
+			}
+		}
+
+		if (count($errors) > 0) {
+			$db->FailTrans();
+			$db->CompleteTrans();
+			return false;
+		} else {
+			$db->CompleteTrans();
+			// Backflush materials
+			$structure = new MFStructureCollection();
+			$bom = $structure->getCurrent($this->id);
+		
+			$data = [];
+			$data['book_qty'] = $qty;
+			$data['stitem_id'] = $this->id;
+			$data['process_name'] = 'KP';
+			$data['process_id'] = $this->id;
+			
+			if (MFStructure::backflush($data, $bom, $errors) !== true) {
+				// Email admin about the error(s)
+				$body = "STItem::produceKit\n"
+				."at ".date(DATE_TIME_FORMAT)."\n\n"
+				."User                    ".EGS_USERNAME."\n"
+				."Stock Item Id           ".$this->id."\n"
+				."Stock Item              ".$this->getIdentifierValue()."\n"
+				."Produce Qty             ".$data['book_qty']."\n\n";
+
+				foreach ($errors as $error)
+				{
+					$body.=$error."\n";
+				}
+		
+				system_email('uzERP, Critical Error backflusing kit', $body, $errors);
+				$errors[] = 'Critical Error backflusing kit';
+			}
+			return true;
+		}
+	}
+
 	public static function getAvailableBalance($id)
 	{
 		$stitem = DataObjectFactory::Factory('STItem');
