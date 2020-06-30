@@ -1562,7 +1562,19 @@ class STItem extends DataObject
 		return $uom_list;
 	}
 
+	/**
+	 * Produce a kit for this item
+	 *
+	 * @param integer $qty  quantity to produce
+	 * @param array $errors
+	 * @return boolean
+	 */
 	public function produceKit($qty = 0, &$errors) {
+		if ($this->comp_class !== 'K') {
+			$errors[] = 'Item is not a kit';
+			return false;
+		}
+
 		$db = DB::Instance();
 
 		$whaction_id = $this->getAction('complete');
