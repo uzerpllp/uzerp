@@ -60,7 +60,7 @@ class WHTransferrule extends DataObject {
 		
 		if (count($from_whlocation_id)>0)
 		{
-			$cc->add(new Constraint('from_whlocation_id', '=', '('.implode(',', $from_whlocation_id).')'));
+			$cc->add(new Constraint('from_whlocation_id', 'in', '('.implode(',', $from_whlocation_id).')'));
 		}
 		
 		$this->idField = 'to_whlocation_id';
