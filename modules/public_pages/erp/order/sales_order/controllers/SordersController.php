@@ -2294,7 +2294,8 @@ class SordersController extends printController
                     $whaction_id = $stitem->getAction('complete');
                     $rule = new WHTransferrule();
                     $kitlocations = $rule->getFromLocations($whaction_id);
-                    $pick_from[$orderline->id]['locations'] = $kitlocations;
+                    $bal_locations = $balances->getLocationList($orderline->stitem_id, $cc);
+                    $pick_from[$orderline->id]['locations'] = array_replace($kitlocations, $bal_locations);
                 } else {
                     $pick_from[$orderline->id]['locations'] = $balances->getLocationList($orderline->stitem_id, $cc);
                 }
@@ -2443,6 +2444,12 @@ class SordersController extends printController
                         }
                         $data['from_whlocation_id'] = $value['whlocation_id'];
                         $data['to_whlocation_id'] = $location_ids[$sorder_data['to_location_id']];
+                        
+                        $stitem = new STItem();
+                        $stitem->load($sorderline->stitem_id);
+                        if ($stitem->comp_class == 'K') {
+                            $data['whaction_id'] = $stitem->getAction('complete');
+                        }
 
                         $models = STTransaction::prepareMove($data, $errors);
                         if (count($errors) == 0) {
@@ -2458,9 +2465,13 @@ class SordersController extends printController
                         // a nested db transaction failure aborting the pick.
                         // The kit item is always picked into the target location, even if
                         // there are errors in backflusing.
-                        $stitem = new STItem();
-                        $stitem->load($sorderline->stitem_id);
-                        if ($stitem->comp_class == 'K') {
+                        // Note: backflushing does not happen if the kit is picked from a
+                        // balance enabled location. For example, where a kit has been un-picked
+                        // or pre-produced.
+                        
+                        $check_location = new WHLocation();
+                        $check_location->load($data['from_whlocation_id']);
+                        if ($stitem->comp_class == 'K' && $check_location->isBalanceEnabled() == false) {
                             // Get BOM
                             $structure = new MFStructureCollection();
                             $bom = $structure->getCurrent($sorderline->stitem_id);
