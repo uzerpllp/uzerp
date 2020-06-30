@@ -1,9 +1,10 @@
 @CHARSET "UTF-8";
 
 .help-text {
-	font-size:13px;
-	line-height:1.24em;
-	margin:1em;
+	font-size: 13px;
+	line-height: 1.24em;
+	margin: 1em 0;
+	font-weight: normal;
 }
 
 #char-count {
