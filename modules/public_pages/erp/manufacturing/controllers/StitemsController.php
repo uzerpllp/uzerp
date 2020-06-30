@@ -571,6 +571,18 @@ class StitemsController extends printController
             );
         }
 
+        if ($transaction->comp_class == 'K') {
+            $sidebarlist['makekit'] = array(
+                'tag' => 'Produce Kit',
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => $this->name,
+                    'action' => 'makekit',
+                    'id' => $id
+                )
+            );
+        }
+        
         $sidebarlist[] = 'spacer';
 
         $sidebarlist['cloneitem'] = array(
@@ -1993,7 +2005,45 @@ class StitemsController extends printController
 		} else {
 			return $options;
 		}
-	}
+    }
+    
+    public function makeKit() {
+        $flash = Flash::Instance();
+        $stitem = DataObjectFactory::Factory($this->modeltype);
+        if (!$stitem->load($this->_data['id'])) {
+            $flash->addError('Stock Item not found');
+            $this->refresh();
+        }
+
+        $this->view->set('stitem_id', $this->_data['id']);
+        $this->view->set('page_title', "Produce Kit: {$stitem->getIdentifierValue()}");
+    }
+
+    public function produceItemKit() {
+        $errors = [];
+        $flash = Flash::Instance();
+        $stitem = DataObjectFactory::Factory($this->modeltype);
+
+        if (!$stitem->load($this->_data['id'])) {
+            $flash->addError('Stock Item not found');
+            sendBack();
+        }
+
+        if ($stitem->comp_class !== 'K') {
+            $flash->addError('Item is not a kit');
+            sendBack();
+        }
+
+        $stitem->produceKit($this->_data['quantity'], $errors);
+        if (count($errors) > 0) {
+            $flash->addErrors($errors);
+            sendBack();
+        } else {
+            $flash->addMessage('Kit produced successfully');
+        }
+
+        sendTo('stitems', 'view', 'manufacturing', ['id' => $this->_data['id']]);
+    }
 
     /**
      * Item search
