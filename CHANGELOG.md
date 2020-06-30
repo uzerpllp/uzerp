@@ -10,7 +10,12 @@ All notable changes to this project will be documented in this file.
 - Work Order Return Actions
   - The stock action for Work Order returns can be set by stock item type code
   - Materials can be returned from work orders by using 'Returns' from the sidebar
-- Sales kitting. Produce sales items and backflush materials at picking time.
+- Sales kitting
+  - New component class 'Sales Kit'
+  - 'Sales Kit' stock items have source materials defined as structures (BOM)
+  - Kits can be pre-produced to a location for later picking.
+  - Picking a sales order line that is a kit item can produce the kit item and backflush materials, or items can be picked from a defined location if pre-produced.
+  - Kit items can be unpicked to locations defined on the item's 'return' action.
 
 ### Changed
 
