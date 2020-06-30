@@ -61,6 +61,7 @@ class STTransaction extends DataObject
 		$this->setEnum('process_name', array('D'=>'Despatch'
 											,'EN'=>'Engineering Job'
 											,'GR'=>'Goods Received'
+											,'KP'=>'Kit Production'
 											,'SC'=>'Sales Credit'
 											,'SI'=>'Sales Invoice'
 											,'SO'=>'Sales Order'
@@ -116,6 +117,15 @@ class STTransaction extends DataObject
 				$value = ($model->isLoaded())?$model->getIdentifierValue():'';
 				$link = array('module'		=> 'manufacturing'
 							, 'controller'	=> 'mfworkorders'
+							, 'action'		=> 'view'
+							, 'id'			=> $this->process_id);
+				break;
+			case 'KP':
+				$model = DataObjectFactory::Factory('STItem');
+				$model->load($this->process_id);
+				$value = ($model->isLoaded())?$model->getIdentifierValue():'';
+				$link = array('module'		=> 'manufacturing'
+							, 'controller'	=> 'stitems'
 							, 'action'		=> 'view'
 							, 'id'			=> $this->process_id);
 				break;

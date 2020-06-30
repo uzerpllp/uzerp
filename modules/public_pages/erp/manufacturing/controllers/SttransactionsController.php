@@ -175,6 +175,12 @@ class SttransactionsController extends ManufacturingController {
 					  ,"action":"view"
 					  ,"id":"'.$transaction->process_id.'"';
 				break;
+			case 'KP':
+				$link='"module":"manufacturing"
+						,"controller":"stitems"
+						,"action":"view"
+						,"id":"'.$transaction->process_id.'"';
+				break;
 		}
 		$this->view->set('linkto',$link);
 		
