@@ -582,7 +582,7 @@ class StitemsController extends printController
                 )
             );
         }
-        
+
         $sidebarlist[] = 'spacer';
 
         $sidebarlist['cloneitem'] = array(
@@ -2007,6 +2007,13 @@ class StitemsController extends printController
 		}
     }
     
+    /**
+     * Sidebar action 'Produce Kit'
+     * 
+     * Displays form
+     *
+     * @return void
+     */
     public function makeKit() {
         $flash = Flash::Instance();
         $stitem = DataObjectFactory::Factory($this->modeltype);
@@ -2019,6 +2026,11 @@ class StitemsController extends printController
         $this->view->set('page_title', "Produce Kit: {$stitem->getIdentifierValue()}");
     }
 
+    /**
+     * Produce a Sales Kit from form POST
+     *
+     * @return void
+     */
     public function produceItemKit() {
         $errors = [];
         $flash = Flash::Instance();
@@ -2026,11 +2038,6 @@ class StitemsController extends printController
 
         if (!$stitem->load($this->_data['id'])) {
             $flash->addError('Stock Item not found');
-            sendBack();
-        }
-
-        if ($stitem->comp_class !== 'K') {
-            $flash->addError('Item is not a kit');
             sendBack();
         }
 
