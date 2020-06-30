@@ -266,14 +266,29 @@ $(document).ready(function () {
 			if (!$(this).hasClass('hidden')) {
 				
 				var $self = $(this);
-			
 				update_page($self.attr('href') + '&ajax=', $self.parents('form').serialize());
-
+				// Add a location hash when the related items are loaded.
+				document.location.hash = "show_related";
 			}
 			
 		}
 		
 	});
+
+	// Listen for location hash changes
+	window.addEventListener('hashchange', function (event) {
+		var hasRelatedSidebar = document.getElementById("sidebar_related_items");
+
+		// Support the back button when viewing related items that are displayed using ajax.
+		// I.e., remove the hash and reload the page to display the main view.
+		// If we don't do this then the back button will go back too far, from the users viewpoint.
+		// Obviously, using the forward button won't return to the ajaxed related items. To achieve
+		// that, we would need to adjust uzERP to respond to a url containing a 'something_related'
+		// hash location, generating the page to be viewed.
+		if (location.hash == '' && hasRelatedSidebar) {
+			window.location.replace(window.location.href.split('#')[0]);
+		}
+	}, false);
 	
 	$('#data_grid_search .uz_breadcrumbs a').live('click', function (event) {
 		
