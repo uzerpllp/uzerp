@@ -30,6 +30,8 @@ All notable changes to this project will be documented in this file.
   - Action not saved and loaded correctly when editing permission.
   - Extra parameters not saved for permission.
 
+- Corrected encoding of Making Tax Digital fraud protection headers, where required, and added 'Gov-Client-Local-IPs' and 'Gov-Client-MAC-Addresses'. See: https://developer.service.hmrc.gov.uk/api-documentation/docs/fraud-prevention
+
 ## [1.24] 2020-03-19
 
 ### Fixed
