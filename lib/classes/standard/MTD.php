@@ -50,24 +50,65 @@ class MTD {
             'urlResourceOwnerDetails' => "{$this->base_url}/organisations/vat" //required by the provider, but not impelemented by the API
         ]);
 
-        $device_uuid = $oauth_config['deviceuuid'];
+        $config = Config::Instance();
+        $device_uuid = $oauth_config['clientuuid'];
         $current   = timezone_open('Europe/London');
         $utcTime  = new \DateTime('now', new \DateTimeZone('UTC'));
         $offsetInSecs =  $current->getOffset($utcTime);
         $hoursAndSec = gmdate('H:i', abs($offsetInSecs));
         $utc_offset = stripos($offsetInSecs, '-') === false ? "+{$hoursAndSec}" : "-{$hoursAndSec}";
-        $os_info = php_uname('s') . ' ' . php_uname('r') . ' ' . php_uname('v') . ' '. php_uname('m');
+        $os_info = rawurlencode(php_uname('s')) . '/' . rawurlencode(php_uname('r')) . ' (/)';
         $uz_user = constant('EGS_USERNAME');
-        $config = Config::Instance();
+        $uz_version = rawurlencode($config->get('SYSTEM_VERSION'));
+        $local_ips = rawurlencode(getHostByName(getHostName()));
+        // Generated mac address in case we don't get a list from the host, below.
+        $local_macs = rawurlencode("9e:50:4f:9c:26:e1");
         
+        // HMRC require:
+        // 1. A list of all local IP addresses (IPv4 and IPv6) available to the originating device
+        // 2. A list of MAC addresses available on the originating device
+        //
+        // These headers appear to mandatory and cannot have empty values,
+        // see https://developer.service.hmrc.gov.uk/api-documentation/docs/fraud-prevention
+        //
+        // Next, we use run an 'ip' command to get the interfaces on the host in JSON format.
+        // On Linux hosts, install the iproute2 package.
+        //
+        // If we fail to get information from 'ip' the above values in $local_ips and $local_macs
+        // are used instead.
+
+        $addr = [];
+        $macs = [];
+
+        $ifaces = json_decode(exec("ip -json addr"));
+        if ($ifaces) {
+            foreach($ifaces as $iface) {
+                if (!in_array('LOOPBACK', $iface->flags)) {
+                    $macs[] = rawurlencode($iface->address);
+                    foreach($iface->addr_info as $ad) {
+                        $addr[] = rawurlencode($ad->local);
+                    }
+                }
+            }
+        }
+
+        if (!empty($addr)) {
+            $local_ips = implode(',', $addr);
+            $local_macs = implode(',', $macs);
+        };
+
         $this->fraud_protection_headers = [
             'Gov-Client-Connection-Method' => 'OTHER_DIRECT',
             'Gov-Client-Device-ID' => $device_uuid,
             'Gov-Client-User-IDs' => "os={$uz_user}",
             'Gov-Client-Timezone' => "UTC{$utc_offset}",
+            'Gov-Client-Local-IPs' => $local_ips,
+            'Gov-Client-MAC-Addresses' => $local_macs,
             'Gov-Client-User-Agent' => $os_info,
-            'Gov-Vendor-Version' => "uzerp={$config->get('SYSTEM_VERSION')}"
+            'Gov-Vendor-Version' => "uzerp={$uz_version}"
         ];
+
+        $this->logger->info('Fraud prevention headers set', [$this->fraud_protection_headers]);
     }
 
     /**
