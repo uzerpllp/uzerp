@@ -2473,8 +2473,7 @@ class SordersController extends printController
                         $check_location->load($data['from_whlocation_id']);
                         if ($stitem->comp_class == 'K' && $check_location->isBalanceEnabled() == false) {
                             // Get BOM
-                            $structure = new MFStructureCollection();
-                            $bom = $structure->getCurrent($sorderline->stitem_id);
+                            $bom = MFStructureCollection::getCurrent($sorderline->stitem_id);
                             if ($bom->isEmpty()) {
                                 $errors[] = 'line ' . $value['line_number'] . ' : No structures found for kit';
                             }
@@ -4179,8 +4178,7 @@ class SordersController extends printController
                 $stitem->load($oline->stitem_id);
                 if ($stitem->comp_class == 'K') {
                     // Get BOM
-                    $structure = new MFStructureCollection();
-                    $bom = $structure->getCurrent($oline->stitem_id);
+                    $bom = MFStructureCollection::getCurrent($oline->stitem_id);
                     if (!$bom->isEmpty()) {
                         $kit = [];
                         foreach ($bom as $item) {

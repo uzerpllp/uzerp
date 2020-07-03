@@ -1613,8 +1613,7 @@ class STItem extends DataObject
 		} else {
 			$db->CompleteTrans();
 			// Backflush materials
-			$structure = new MFStructureCollection();
-			$bom = $structure->getCurrent($this->id);
+			$bom = MFStructureCollection::getCurrent($this->id);
 		
 			$data = [];
 			$data['book_qty'] = $qty;
