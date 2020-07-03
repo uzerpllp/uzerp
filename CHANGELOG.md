@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
   - Kits can be pre-produced to a location for later picking.
   - Picking a sales order line that is a kit item can produce the kit item and backflush materials, or items can be picked from a defined location if pre-produced.
   - Kit items can be unpicked to locations defined on the item's 'return' action.
+- Print pre-order requirements for stock items.
 
 ### Changed
 
