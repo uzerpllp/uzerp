@@ -1341,6 +1341,21 @@ class SlcustomersController extends LedgerController
             $sc = new Systemcompany();
             $sc->load(COMPANY_ID);
             $options['replyto'] = $sc->getStatementReplyToEmailAddress();
+
+            // If the customer's statement email is not set,
+            // then use the users employee work email
+            // or the user email as a last resort.
+            if (empty($options['replyto'])) {
+                $user = DataObjectFactory::Factory('user');
+                $user->load($_SESSION['username']);
+                $person = DataObjectFactory::Factory('Person');
+                $person->load($user->person_id);
+                $options['replyto'] = $person->email->contactmethod;
+            }
+    
+            if (empty($contact)) {
+                $options['replyto'] = $user->email;
+            }
         }
 
         // if we're dealing with the dialog, just return the options...
