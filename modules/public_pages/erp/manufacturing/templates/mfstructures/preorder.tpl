@@ -5,7 +5,7 @@
  **}
 {* $Revision: 1.9 $ *}
 {content_wrapper}
-	{form controller="mfstructures" action="preorder"}
+	{form controller="mfstructures" action="preorder" id={$transaction->id}}
 		{with model=$models.STItem legend="STItem Details"}
 			<input type='hidden' name='stitem_id' value='{$transaction->id}'>
 			<div id="view_page" class="clearfix">
@@ -24,6 +24,7 @@
 			</div>
 		{/with}
 		{submit value='Calculate'}
+		{submit id="print-preorder" value="Output"}
 	{/form}
 	{if $mfstructures->count()>0}
 		<p><strong>Volumes Required to make {$qty} of above item</strong></p>

@@ -17,6 +17,13 @@ $(document).ready(function(){
     };
 
 
+	$('#view_page').on('click', '#print-preorder', function(event) {
+		event.preventDefault();
+		var id = $('[name=stitem_id]').val();
+		var qty= $('[name=qty]').val();
+		uz_print_dialog({url: "/?pid=730&module=manufacturing&controller=mfstructures&printaction=printpreorder&action=printdialog&id=" + id + "&qty=" + qty});
+	});
+
     /* manufacturing -> stitems -> clone_item */
     
     // Ensure copy product is selected with copy product lines

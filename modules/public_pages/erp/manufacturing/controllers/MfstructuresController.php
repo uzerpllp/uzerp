@@ -549,12 +549,12 @@ class MfstructuresController extends PrintController
 
 	public function preorder ()
 	{
-//		foreach ($this->_data as $key=>$value) {
-//			echo $key.'='.$value.'<br>';
-//		}
-		if (isset($this->_data['stitem_id']))
+		if (isset($this->_data['stitem_id']) || isset($this->_data['id']))
 		{
 			$id = $this->_data['stitem_id'];
+			if (isset($this->_data['id'])) {
+				$id = $this->_data['id'];
+			};
 
 			$stitem = DataObjectFactory::Factory('STItem');
 			$stitem->load($id);
@@ -582,7 +582,57 @@ class MfstructuresController extends PrintController
 			$this->view->set('linkvaluefield', 'ststructure_id');
 			$this->view->set('no_ordering',true);
 			$this->view->set('page_title','Pre-Order Requirements');
+		} else {
+			$flash = Flash::Instance();
+			$flash->addError('Missing stock item');
+			sendTo('stitems', 'index', 'manufacturing');
 		}
+
+	}
+
+	public function printPreorder ($status = 'generate')
+	{
+        // build options array
+        $options = array(
+            'type' => array(
+                'pdf' => '',
+                'xml' => ''
+            ),
+            'actions' => array(
+                'view' => '',
+                'print' => '',
+                'email' => ''
+            ),
+            'filename' => 'preorder' . fix_date(date(DATE_FORMAT)),
+            'report' => 'ItemPreorderList'
+        );
+
+        if (strtolower($status) == "dialog") {
+            return $options;
+		}
+
+		$extra = [];
+		$id = $this->_data['id'];
+
+		$stitem = new STItem();
+		$stitem->load($id);
+		$extra['item'] = $stitem->getIdentifierValue();
+		$extra['qty'] = $this->_data['qty'];
+		$extra['uom'] = $stitem->uom_name;
+
+		$bom = MFStructureCollection::getCurrent($id);
+		foreach ($bom as $item) {
+			$item->qty = $item->qty * $this->_data['qty'];
+		}
+
+		$options['xmlSource'] = $this->generateXML(array(
+			'model' => $bom,
+			'extra' => $extra
+		));
+
+		echo $this->generate_output($this->_data['print'], $options);
+		
+		exit();
 	}
 
 	public function showParts()
