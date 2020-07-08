@@ -31,7 +31,7 @@
 				{if $action=='new' || $transaction_count == 0}
 					{select attribute='currency_id' }
 				{/if}
-				{select attribute='cb_account_id' label='Bank Account'}
+				{select attribute='cb_account_id' label='Bank Account' options=$bank_accounts value=$bank_account}
 				{input attribute='credit_limit' }
 				{select attribute='payment_term_id' }
 				{select attribute='payment_type_id' }	
