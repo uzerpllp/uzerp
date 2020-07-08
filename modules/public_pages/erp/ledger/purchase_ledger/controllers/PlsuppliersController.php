@@ -106,6 +106,15 @@ class PlsuppliersController extends LedgerController
 			}
 		}
 
+		if (is_null($supplier->cb_account_id))
+		{
+			$cbaccount = CBAccount::getPrimaryAccount();
+			$supplier->cb_account_id = $cbaccount->{$cbaccount->idField};
+		}
+
+		$this->view->set('bank_account', $supplier->cb_account_id);
+		$this->view->set('bank_accounts', $this->getbankAccounts($supplier->id));
+
 		$this->view->set('payment_addresses', $supplier->getRemittanceAddresses());
 		$this->view->set('receive_actions',WHAction::getReceiveActions());
 
@@ -1307,17 +1316,21 @@ class PlsuppliersController extends LedgerController
 		// Used by Ajax to return list of allowed bank accounts after selecting the Customer
 
 		$cbaccounts = array();
-		$cbaccount_id = '';
 
 		$supplier = $this->getSupplier($_supplier_id);
 
 		if ($supplier->isLoaded())
 		{
 			$currency_id	= $supplier->currency_id;
-			$cbaccount_id	= $supplier->cb_account_id;
+
+			// If the user has selected a new currency
+			// the id will be in the request,
+			// so set the selected currency id.
+			if(isset($this->_data['ajax'])) {
+				$currency_id = $this->_data['id'];
+			}
 
 			$cc = new ConstraintChain();
-
 			$glparams = DataObjectFactory::Factory('GLParams');
 			$base_currency_id = $glparams->base_currency();
 
@@ -1325,25 +1338,18 @@ class PlsuppliersController extends LedgerController
 			{
 				$cc->add(new Constraint('currency_id', 'in', '('.$currency_id.','.$base_currency_id.')'));
 			}
-
 			$cbaccount = DataObjectFactory::Factory('CBAccount');
-
 			$cbaccounts = $cbaccount->getAll($cc);
-
 		}
 
-		if(isset($this->_data['ajax']))
-		{
-			$this->view->set('value',$cbaccount_id);
-//			$this->view->set('options',$cbaccounts);
-//			return $this->view->fetch('select_options');
-			return $cbaccounts;
+		if(isset($this->_data['ajax'])) {
+			$this->view->set('options',$cbaccounts);
+			$this->setTemplateName('select_options');
 		}
 		else
 		{
 			return $cbaccounts;
 		}
-
 	}
 
 	public function getCurrencyId($_id = '')
