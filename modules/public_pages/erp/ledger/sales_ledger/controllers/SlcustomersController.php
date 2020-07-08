@@ -1225,6 +1225,16 @@ class SlcustomersController extends LedgerController
             }
             $this->view->set('invoice_layouts', $options);
         }
+
+        if (is_null($customer->cb_account_id))
+		{
+			$cbaccount = CBAccount::getPrimaryAccount();
+			$customer->cb_account_id = $cbaccount->{$cbaccount->idField};
+		}
+
+		$this->view->set('bank_account', $customer->cb_account_id);
+        $this->view->set('bank_accounts', $this->getbankAccounts($customer->id));
+        
         $this->view->set('billing_addresses', $customer->getInvoiceAddresses());
         $this->view->set('despatch_actions', WHAction::getDespatchActions());
     }
@@ -1532,7 +1542,13 @@ class SlcustomersController extends LedgerController
 
         if ($customer->isLoaded()) {
             $currency_id = $customer->currency_id;
-            $cbaccount_id = $customer->cb_account_id;
+
+            // If the user has selected a new currency
+			// the id will be in the request,
+			// so set the selected currency id.
+			if(isset($this->_data['ajax'])) {
+				$currency_id = $this->_data['id'];
+			}
 
             $cc = new ConstraintChain();
 
@@ -1549,10 +1565,10 @@ class SlcustomersController extends LedgerController
         }
 
         if (isset($this->_data['ajax'])) {
-            $this->view->set('value', $cbaccount_id);
-            // $this->view->set('options',$cbaccounts);
-            // return $this->view->fetch('select_options');
-            return $cbaccounts;
+            if(isset($this->_data['ajax'])) {
+                $this->view->set('options',$cbaccounts);
+                $this->setTemplateName('select_options');
+            }
         } else {
             return $cbaccounts;
         }

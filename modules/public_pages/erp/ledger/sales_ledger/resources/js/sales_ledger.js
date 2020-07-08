@@ -41,6 +41,23 @@ $(document).ready(function(){
 		
 	});
 
+	// Set bank account drop-down options that are valid for the selected currency
+	$("#sales_ledger-slcustomers-new").on('change', "#SLCustomer_currency_id", function(){
+
+		var $self = $(this);
+
+		$('#SLCustomer_cb_account_id').uz_ajax({
+			data:{
+				module		: 'sales_ledger',
+				controller	: 'slcustomers',
+				action		: 'getBankAccounts',
+				id			: $self.val(),
+				ajax		: ''
+			}
+		});
+
+	});
+
 	/* sales_ledger -> slcustomers -> allocate */
 	
 	$("tr input.allocate", "#sales_ledger-slcustomers-allocate").live("click", function() {
