@@ -152,6 +152,11 @@ class CompanysController extends printController
 		$sidebar->addList(
 			'related_items',
 			array(
+				'relatedcompanies'=>array(
+					'tag'=>'related_companies',
+					'link'=>array('module'=>'contacts','controller'=>'companys','action'=>'viewrelatedcompanies','parent_id'=>$companyid),
+					'new'=>array('module'=>'contacts','controller'=>'companys','action'=>'new','parent_id'=>$companyid)
+				),
 				'people'=>array(
 					'tag'=>'People',
 					'link'=>array('module'=>'contacts','controller'=>'persons','action'=>'viewcompany','company_id'=>$companyid),
