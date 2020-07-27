@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Stock Item type code
   - Add comp class to type codes
   - Available type codes on an item depend on the chosen comp class
+- Reinstate company relationships in contacts/CRM
 
 ### Fixed
 
