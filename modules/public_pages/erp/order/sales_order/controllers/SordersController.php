@@ -735,9 +735,12 @@ class SordersController extends printController
                     'modules' => $this->_modules,
                     'controller' => $this->name,
                     'action' => 'cancel_order',
+                    'type' => 'confirm',
                     'id' => $id
                 ),
-                'tag' => 'Cancel ' . $type
+                'tag' => 'Cancel ' . $type,
+                'class' => 'confirm',
+                'data_attr' => ['data_uz-confirm-message' => "Cancel {$type}?|This cannot be undone."],
             );
         }
 
@@ -893,15 +896,21 @@ class SordersController extends printController
         }
 
         // edit
-        if (count($order->lines) == 0 and ! $order->cancelled()) {
+        if ((count($order->lines) == 0 and ! $order->cancelled()) || $order->someLinesNew($linestatus)) {
             $actions['cancel_order'] = array(
                 'link' => array(
                     'modules' => $this->_modules,
                     'controller' => $this->name,
                     'action' => 'cancel_order',
-                    'id' => $id
+                    'type' => 'confirm',
+                    'id' => $id,
                 ),
-                'tag' => 'Cancel ' . $type
+                'tag' => 'Cancel ' . $type,
+                'class' => 'confirm',
+                'data_attr' => [
+                    'data_uz-confirm-message' => "Cancel {$type}?|All order lines of status NEW will be cancelled. This cannot be undone.",
+                    'data_uz-action-id' => $id
+                ]
             );
         }
 
@@ -2085,6 +2094,8 @@ class SordersController extends printController
 
     public function cancel_order()
     {
+        $this->checkRequest(['post'], true);
+        
         if (! $this->loadData()) {
             $this->dataError();
             sendBack();
@@ -2093,29 +2104,41 @@ class SordersController extends printController
 
         $flash = Flash::Instance();
         $errors = array();
+        $linestatuses = $order->getLineStatuses();
+        $linestatus = $linestatuses['count'];
 
-        if ($order->type != 'Q' and count($order->lines) > 0) {
-            $flash->addError('Only Quotes or empty orders can be cancelled');
-            sendTo($this->name, 'view', $this->_modules, array(
-                'id' => $this->_data['id']
-            ));
+        $final_order_status = $order->cancelStatus();
+        if ($order->someLinesInvoiced($linestatus)) {
+            $final_order_status = $order->invoiceStatus();
         }
+        if ($order->someLinesDespatched($linestatus)) {
+            $final_order_status = $order->partDespatchStatus();
+        }
+        if ($order->someLinesPicked($linestatus)) {
+            $final_order_status = $order->newStatus();
+        }
+ 
         $db = DB::Instance();
         $db->startTrans();
-        if (! $order->update($order->id, 'status', $order->cancelStatus())) {
+        $cancelled_lines = [];
+        if (! $order->update($order->id, 'status', $final_order_status)) {
             $errors[] = $db->ErrorMsg();
             $errors[] = 'Failed to cancel ' . $order->getFormatted('type');
         } else {
             foreach ($order->lines as $line) {
-                if ($line->status != $line->cancelStatus()) {
-                    if (! $line->update($line->id, 'status', $line->cancelStatus())) {
+                if ($line->status != $line->cancelStatus() && $line->status == $line->newStatus()) {
+                    $cancelled_lines[] = $line->line_number;
+                    if (!$line->update($line->id, 'status', $line->cancelStatus())) {
                         $errors[] = $db->ErrorMsg();
                         $errors[] = 'Failed to cancel ' . $order->getFormatted('type') . ' line';
                         break;
                     }
                 }
             }
-            $order->update($order->id, 'description', $order->description . "\r\n[Cancelled by " . EGS_USERNAME . ", " . date("Y-m-d H:i:s") . "]");
+            $cancelled_lines = implode(', ', $cancelled_lines);
+            $user = EGS_USERNAME;
+            $date = date('d/m/Y H:i:s');
+            $order->update($order->id, 'description', "{$order->description} \r\n[Line {$cancelled_lines} cancelled by {$user}, {$date}]");
         }
 
         if (count($errors) > 0) {

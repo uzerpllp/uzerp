@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file.
 - Print pre-order requirements for stock items.
 
 ### Changed
-
+- Choosing 'Cancel Sales Order' from the sidebar will cancel all lines with status 'NEW', after confirmation.
 - Stock Item type code
   - Add comp class to type codes
   - Available type codes on an item depend on the chosen comp class
@@ -97,7 +97,7 @@ All notable changes to this project will be documented in this file.
 
 - Category list view for companies to generate lists of customers or suppliers
 - Allow setting of end/inactive date for companies and people (ending company also sets end date on associated people)
-- Company and associted people are set inactive when an Sales/Purchase ledger entry is made inactive
+- Company and associated people are set inactive when an Sales/Purchase ledger entry is made inactive
 - Filter company and person list views by active/inactive status
 - Inactive people not available when entering sales orders, invoices or credit notes
 - User confirmation when deleting companies, people and leads
@@ -118,7 +118,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Output correct required qauntities on the Work Order structure document
+- Output correct required quantities on the Work Order structure document
 
 ### Added
 
@@ -144,7 +144,7 @@ All notable changes to this project will be documented in this file.
 - Get initial currency from the source transaction when refunding in the cash book
 - Ensure that output containing '<' character can print
 - Ensure that GL journal transactions are tagged with the correct type
-- Constrain employee dropdown by pay period frequency in emplyee payments
+- Constrain employee dropdown by pay period frequency in employee payments
 - Re-introduce manufactured item structure substitution
 - Error when sorting Purchase Order Received Lines view by item description
 
@@ -191,7 +191,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Prevent adding of holiday requests/entitlement expenses and training plans for empoyee leavers
+- Prevent adding of holiday requests/entitlement expenses and training plans for employee leavers
 - Filter out employee leavers when creating cashbook transaction
 - Hide inactive suppliers when creating invoice from GRN
 - Do not allow obsolete items to be chosen for stock transactions
@@ -205,7 +205,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Sales Summary uzLET is now responsive
-- Corrected column header alignmet on Aged Debtors Summary uzLET
+- Corrected column header alignment on Aged Debtors Summary uzLET
 - Chart widgets can be scrolled horizontally on small screens
 - Exclude sales quotations from supply/demand views
 - Sort company and person addresses on drop-downs
@@ -273,7 +273,7 @@ All notable changes to this project will be documented in this file.
     - New sidebar group for ops, structures and costing when viewing a stock item
     - One click to view the current ops, structure, etc.
     - Clicking on the op or structure line number will show the edit form
-    - All forms have 'Save and Add...' buttons to speed up datat entry
+    - All forms have 'Save and Add...' buttons to speed up data entry
     - Form 'cancel' links allow easy return to the ops/structure list for the item
 
 ### Fixed
@@ -392,7 +392,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 
 - When editing uzLETs on a dashboard the listed order is the same as the display order
 - The Home dashboard will not display any uzLETs until the user sets their preferred list
-- 'Top 10' Sales uzLETsnot restricted to products linked to stock items
+- 'Top 10' Sales uzLETs not restricted to products linked to stock items
 
 ## [1.10.4] 2018-07-19
 
@@ -507,7 +507,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Error when cancelling Sales Order product selector actions.
 - Prevent users from seeing and acting on expenses of other employees that they are not authorisers for.
 - Ensure that a GL transaction cannot be saved to a closed period.
-- Prepopulate correct GL Account and Centre combination when displaying the Cashbook transaction refund form.
+- Pre-populate correct GL Account and Centre combination when displaying the Cashbook transaction refund form.
 - Prevent posting of Sales and Purchase Ledger journals to control accounts.
 - Prevent posting of invoice templates.
 - Replace functions removed in PHP7.
