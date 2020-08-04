@@ -23,7 +23,7 @@ class IntegerSearchField extends NumericSearchField
 		if (!empty($value)
 			&& strcmp((int) $value, $value))
 		{
-			$errors[] = $this->fieldname . ' needs to be numeric';
+			$errors[] = prettify($this->label) . ' needs to be an integer';
 			return FALSE;
 		}
 		

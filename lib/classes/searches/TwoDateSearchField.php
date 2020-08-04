@@ -135,7 +135,7 @@ class TwoDateSearchField extends SearchField {
 		
 		if (!is_array($value))
 		{
-			$errors[] = 'Search on ' . $this->fieldname . ' needs to be a date pair';
+			$errors[] = 'Search on ' . prettify($this->label) . ' needs to be a date pair';
 			return false;
 		}
 		else
@@ -151,17 +151,17 @@ class TwoDateSearchField extends SearchField {
 					
 					if (!empty($prevdate) && $prevdate > fix_date($date))
 					{
-						$errors[] = 'Search on ' . $this->fieldname . ' date range invalid';
+						$errors[] = 'Search on ' . prettify($this->label) . ' date range invalid';
 						return false;
 					}
 					elseif (!strtotime(fix_date($date)))
 					{
-						$errors[] = 'Search on ' . $this->fieldname . ' needs to be a date';
+						$errors[] = 'Search on ' . prettify($this->label) . ' needs to be a date';
 						return false;
 					}
 					elseif (date(DATE_FORMAT, strtotime(fix_date($date))) != $date)
 					{
-						$errors[] = 'Invalid date ' . $date . ' for search on ' . $this->fieldname;
+						$errors[] = 'Invalid date ' . $date . ' for search on ' . prettify($this->label);
 						return false;
 					}
 					

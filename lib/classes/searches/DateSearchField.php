@@ -127,12 +127,12 @@ class DateSearchField extends SearchField {
 			
 			if (!strtotime(fix_date($value)))
 			{
-				$errors[] = 'Search on ' . $this->fieldname . ' needs to be a date';
+				$errors[] = 'Search on ' . prettify($this->label) . ' needs to be a date';
 				return FALSE;
 			}
 			elseif (date(DATE_FORMAT, strtotime(fix_date($value))) != $value)
 			{
-				$errors[] = 'Invalid date ' . $value . ' for search on ' . $this->fieldname;
+				$errors[] = 'Invalid date ' . $value . ' for search on ' . prettify($this->label);
 				return FALSE;
 			}
 			

@@ -105,7 +105,7 @@ class SelectSearchField extends SearchField {
 		
 		if (!isset($this->options[$val]))
 		{
-			$errors[] = 'Invalid value chosen for ' . $this->fieldname;
+			$errors[] = 'Invalid value chosen for ' . prettify($this->label);
 			return FALSE;
 		}
 		
