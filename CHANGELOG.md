@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Print pre-order requirements for stock items.
 
 ### Changed
+
 - Choosing 'Cancel Sales Order' from the sidebar will cancel all lines with status 'NEW', after confirmation.
 - Stock Item type code
   - Add comp class to type codes
@@ -27,6 +28,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Invoice search returns proper error if invalid information is entered
+- Sales order delivery terms now sorted by code
 - Use 'statement' email address, defined on the system company, when emailing customer account statements.
 - Permission editing
   - Action not saved and loaded correctly when editing permission.
