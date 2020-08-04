@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file.
 - Print pre-order requirements for stock items.
 
 ### Changed
-
+- Choosing 'Cancel Sales Order' from the sidebar will cancel all lines with status 'NEW', after confirmation.
 - Stock Item type code
   - Add comp class to type codes
   - Available type codes on an item depend on the chosen comp class
