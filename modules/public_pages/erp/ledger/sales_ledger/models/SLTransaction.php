@@ -59,8 +59,8 @@ class SLTransaction extends LedgerTransaction
 						  ,array('I'	=> 'Invoice'
 								,'C'	=> 'Credit Note'
 								,'J'	=> 'Journal'
-								,'R'	=> 'Reciept'
-								,'RR'	=> 'Refund Reciept'
+								,'R'	=> 'Receipt'
+								,'RR'	=> 'Refund Receipt'
 								,'SD'	=> 'Settlement Discount'
 								)
 					  );

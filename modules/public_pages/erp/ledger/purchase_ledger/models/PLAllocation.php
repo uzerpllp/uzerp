@@ -44,7 +44,7 @@ class PLAllocation extends DataObject
 								  ,'C'	=> 'Credit Note'
 								  ,'J'	=> 'Journal'
 								  ,'P'	=> 'Payment'
-								  ,'R'	=> 'Reciept'
+								  ,'R'	=> 'Receipt'
 								  ,'SD'	=> 'Settlement Discount'
 								  )
 						);
