@@ -13,7 +13,7 @@ class DeliveryTerm extends DataObject {
 		parent::__construct($tablename);
 		$this->idField='id';
 		$this->identifierField = "code ||' - '|| description";
-		 
+		$this->orderby = ['code'];
 	}
 
 }
