@@ -1319,29 +1319,33 @@ class PlsuppliersController extends LedgerController
 
 		$supplier = $this->getSupplier($_supplier_id);
 
+		$glparams = DataObjectFactory::Factory('GLParams');
+		$currency_id = $glparams->base_currency();
+
+		// Override the currency if we have an existing supplier record,
+		// otherwise the base currency from above will be used.
 		if ($supplier->isLoaded())
 		{
 			$currency_id	= $supplier->currency_id;
-
-			// If the user has selected a new currency
-			// the id will be in the request,
-			// so set the selected currency id.
-			if(isset($this->_data['ajax'])) {
-				$currency_id = $this->_data['id'];
-			}
-
-			$cc = new ConstraintChain();
-			$glparams = DataObjectFactory::Factory('GLParams');
-			$base_currency_id = $glparams->base_currency();
-
-			if ($currency_id != $base_currency_id)
-			{
-				$cc->add(new Constraint('currency_id', 'in', '('.$currency_id.','.$base_currency_id.')'));
-			}
-			$cbaccount = DataObjectFactory::Factory('CBAccount');
-			$cbaccounts = $cbaccount->getAll($cc);
 		}
 
+		// If the user has selected a new currency
+		// the id will be in the request,
+		// so set the selected currency id.
+		if(isset($this->_data['ajax'])) {
+			$currency_id = $this->_data['id'];
+		}
+
+		$cc = new ConstraintChain();
+		$base_currency_id = $glparams->base_currency();
+
+		if ($currency_id != $base_currency_id)
+		{
+			$cc->add(new Constraint('currency_id', 'in', '('.$currency_id.','.$base_currency_id.')'));
+		}
+		$cbaccount = DataObjectFactory::Factory('CBAccount');
+		$cbaccounts = $cbaccount->getAll($cc);
+		
 		if(isset($this->_data['ajax'])) {
 			$this->view->set('options',$cbaccounts);
 			$this->setTemplateName('select_options');
