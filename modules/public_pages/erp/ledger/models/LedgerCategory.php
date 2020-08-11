@@ -195,6 +195,7 @@ class LedgerCategory extends DataObject
 		
 		$cc=new ConstraintChain();
 		$cc->add(new Constraint('is_lead', 'is', FALSE));
+		$cc->add(new Constraint('date_inactive', 'is', 'NULL'));
 		
 		// return the list of companies in the Contact Categories list
 		return $this->getUnassignedList($do, 'company', $cc);
