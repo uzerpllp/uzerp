@@ -35,7 +35,7 @@ VIEW;
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
         $this->query("ALTER TABLE {$view_name} OWNER TO \"{$view_owner}\"");
-        $this->query("select deps_restore_dependencies('public', '{$view_owner}')");
+        $this->query("select deps_restore_dependencies('public', '{$view_name}')");
     }
 
     /*
@@ -67,6 +67,6 @@ VIEW;
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
         $this->query("ALTER TABLE {$view_name} OWNER TO \"{$view_owner}\"");
-        $this->query("select deps_restore_dependencies('public', '{$view_owner}')");
+        $this->query("select deps_restore_dependencies('public', '{$view_name}')");
     }
 }
