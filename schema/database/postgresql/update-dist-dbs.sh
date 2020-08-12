@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Update the DB dumps distributed with uzERP using the devlelopment containers
+
 podman exec -i uzerp-postgres dropdb -U postgres demo
 podman exec -i uzerp-postgres createdb -U postgres --locale=en_GB.UTF-8 'demo'
 podman exec -i uzerp-postgres pg_restore -U postgres --dbname=demo < $1/schema/database/postgresql/uzerp-demo-dist.sql
