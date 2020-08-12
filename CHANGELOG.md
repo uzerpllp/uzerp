@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Set initial bank account selections when adding a new purchase ledger supplier
+- Inactive contacts were available to choose when creating a new purchase ledger supplier
+- Pull in email address, etc. when sending a sales invoice for a customer via email
+
 ## [1.25] 2020-03-04
 
 ### Added
