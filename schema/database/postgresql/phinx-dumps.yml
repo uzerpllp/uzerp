@@ -1,0 +1,32 @@
+paths:
+    migrations: schema/phinx/migrations
+
+environments:
+    default_migration_table: phinxlog
+    default_database: demo
+    demo:
+        adapter: pgsql
+        host: 127.0.0.1
+        name: demo
+        user: sysadmin
+        pass: ''
+        port: 5432
+        charset: utf8
+
+    base:
+        adapter: pgsql
+        host: 127.0.0.1
+        name: base
+        user: sysadmin
+        pass: ''
+        port: 5432
+        charset: utf8
+
+    starter:
+        adapter: pgsql
+        host: 127.0.0.1
+        name: starter
+        user: sysadmin
+        pass: ''
+        port: 5432
+        charset: utf8
