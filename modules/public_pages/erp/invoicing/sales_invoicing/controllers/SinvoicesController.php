@@ -1201,6 +1201,19 @@ class SinvoicesController extends printController
 
         // should this extend a common function, and we just pass through the data?
 
+        $options = array(
+            'type' => array(
+                'pdf' => '',
+                'xml' => ''
+            ),
+            'output' => array(
+                'print' => '',
+                'save' => '',
+                'email' => '',
+                'view' => ''
+            )
+        );
+        
         // Don't go and get the model from the construct, we need to fresh model to prevent the first object from repeating n times
         $invoice = DataObjectFactory::Factory('SInvoice');
         $invoice->load($this->_data['id']);
@@ -1231,23 +1244,9 @@ class SinvoicesController extends printController
             $invoice_layout = $def->name;
         }
 
-        $options = array(
-            'type' => array(
-                'pdf' => '',
-                'xml' => ''
-            ),
-            'output' => array(
-                'print' => '',
-                'save' => '',
-                'email' => '',
-                'view' => ''
-            ),
-            'emailsubject' => 'Sales Invoice: No: ' . $invoice_number . (is_null($invoice->ext_reference) ? '' : ' Your Ref: ' . $invoice->ext_reference),
-            'report' => $invoice_layout,
-            'filename' => 'SInv' . $invoice_number
-        );
-
-        
+        $options['emailsubject'] = 'Sales Invoice: No: ' . $invoice_number . (is_null($invoice->ext_reference) ? '' : ' Your Ref: ' . $invoice->ext_reference);
+        $options['report'] = $invoice_layout;
+        $options['filename'] = 'SInv' . $invoice_number;
 
         // if we're dealing with the dialog, just return the options...
         if (strtolower($status) == 'dialog') {
