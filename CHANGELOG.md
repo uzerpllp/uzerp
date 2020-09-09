@@ -6,11 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Cashbook payments not saved when entering invalid combination of values with tax rate 'None'
+
+## [1.25.1] 2020-08-12
+
+### Fixed
+
 - Set initial bank account selections when adding a new purchase ledger supplier
 - Inactive contacts were available to choose when creating a new purchase ledger supplier
 - Pull in email address, etc. when sending a sales invoice for a customer via email
 
-## [1.25] 2020-03-04
+## [1.25] 2020-08-04
 
 ### Added
 
@@ -831,6 +837,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.25.1]: https://github.com/uzerpllp/uzerp/compare/1.25...1.25.1
 [1.25]: https://github.com/uzerpllp/uzerp/compare/1.24...1.25
 [1.24]: https://github.com/uzerpllp/uzerp/compare/1.23...1.24
 [1.23]: https://github.com/uzerpllp/uzerp/compare/1.22...1.23
