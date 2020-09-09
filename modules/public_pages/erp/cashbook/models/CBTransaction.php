@@ -137,7 +137,7 @@ class CBTransaction extends DataObject
         }
 
         $success = self::saveGLtransaction($cb_trans, $data, $errors);
-        if (! $success) {
+        if (! $success || count($errors) > 0) {
             $db->FailTrans();
             $db->CompleteTrans();
             return false;
