@@ -1002,8 +1002,8 @@ class VatController extends printController
 		$year = $vat_return->year;
 		$tax_period = $vat_return->tax_period;
 
-		$mtd = new MTD();
-		$sucess = $mtd->postVat($year, $tax_period);
+		$mtd = new MTD($this->_data['fp']);
+		$success = $mtd->postVat($year, $tax_period);
 		
 		sendBack();
 	}

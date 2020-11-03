@@ -24,13 +24,21 @@ class MTD {
     private $fraud_protection_headers;
     private $vrn;
     private $config_key;
+    private $client_fp_info;
     private $logger;
     
-    function __construct($config_key='mtd-vat') {
+    /**
+     * MTD Class Constructor
+     *
+     * @param boolean $client_fp_info  String encoded JSON sent from the client browser
+     * @param string $config_key  Key to lookup settings in Oauth config
+     */
+    function __construct($client_fp_info='', $config_key='mtd-vat') {
         $logger = uzLogger::Instance();
         // set log 'channel' for MTD log messages
         $this->logger = $logger->withName('uzerp_mtd');
         $this->config_key = $config_key;
+        $this->client_fp_info = json_decode($client_fp_info);
         $company = DataObjectFactory::Factory('Systemcompany');
         $company->load(EGS_COMPANY_ID);
         $this->vrn = $company->getVRN();
@@ -47,7 +55,7 @@ class MTD {
             'redirectUri'             => $oauth_config['redirecturl'],
             'urlAuthorize'            => "{$this->base_url}/oauth/authorize",
             'urlAccessToken'          => "{$this->base_url}/oauth/token",
-            'urlResourceOwnerDetails' => "{$this->base_url}/organisations/vat" //required by the provider, but not impelemented by the API
+            'urlResourceOwnerDetails' => "{$this->base_url}/organisations/vat" //required by the provider, but not implemented by the API
         ]);
 
         $config = Config::Instance();
@@ -57,58 +65,83 @@ class MTD {
         $offsetInSecs =  $current->getOffset($utcTime);
         $hoursAndSec = gmdate('H:i', abs($offsetInSecs));
         $utc_offset = stripos($offsetInSecs, '-') === false ? "+{$hoursAndSec}" : "-{$hoursAndSec}";
-        $os_info = rawurlencode(php_uname('s')) . '/' . rawurlencode(php_uname('r')) . ' (/)';
-        $uz_user = constant('EGS_USERNAME');
+        $uz_user = rawurlencode(constant('EGS_USERNAME'));
         $uz_version = rawurlencode($config->get('SYSTEM_VERSION'));
-        $local_ips = rawurlencode(getHostByName(getHostName()));
-        // Generated mac address in case we don't get a list from the host, below.
-        $local_macs = rawurlencode("9e:50:4f:9c:26:e1");
-        
-        // HMRC require:
-        // 1. A list of all local IP addresses (IPv4 and IPv6) available to the originating device
-        // 2. A list of MAC addresses available on the originating device
-        //
-        // These headers appear to mandatory and cannot have empty values,
-        // see https://developer.service.hmrc.gov.uk/api-documentation/docs/fraud-prevention
-        //
-        // Next, we use run an 'ip' command to get the interfaces on the host in JSON format.
-        // On Linux hosts, install the iproute2 package.
-        //
-        // If we fail to get information from 'ip' the above values in $local_ips and $local_macs
-        // are used instead.
-
-        $addr = [];
-        $macs = [];
-
-        $ifaces = json_decode(exec("ip -json addr"));
-        if ($ifaces) {
-            foreach($ifaces as $iface) {
-                if (!in_array('LOOPBACK', $iface->flags)) {
-                    $macs[] = rawurlencode($iface->address);
-                    foreach($iface->addr_info as $ad) {
-                        $addr[] = rawurlencode($ad->local);
-                    }
-                }
-            }
-        }
-
-        if (!empty($addr)) {
-            $local_ips = implode(',', $addr);
-            $local_macs = implode(',', $macs);
-        };
 
         $this->fraud_protection_headers = [
-            'Gov-Client-Connection-Method' => 'OTHER_DIRECT',
-            'Gov-Client-Device-ID' => $device_uuid,
-            'Gov-Client-User-IDs' => "os={$uz_user}",
+            'Gov-Client-Connection-Method' => 'WEB_APP_VIA_SERVER',
+            'Gov-Client-User-IDs' => "uzerp={$uz_user}",
             'Gov-Client-Timezone' => "UTC{$utc_offset}",
-            'Gov-Client-Local-IPs' => $local_ips,
-            'Gov-Client-MAC-Addresses' => $local_macs,
-            'Gov-Client-User-Agent' => $os_info,
             'Gov-Vendor-Version' => "uzerp={$uz_version}"
         ];
 
+        // Gov-Client-Public-IP
+        // Gov-Client-Public-Port
+        // Only if uzERP host is on the internet
+        // Not for clients connecting on private networks
+        $client_public_ip = $_SERVER['REMOTE_ADDR'];
+        if (!self::ip_is_private($client_public_ip)) {
+            $this->fraud_protection_headers['Gov-Client-Public-IP'] = $client_public_ip;
+            $this->fraud_protection_headers['Gov-Client-Public-Port'] = $_SERVER['REMOTE_PORT'];
+        }
+
+        // Gov-Client-Device-ID
+        // Generate a uuid based on the username
+        if (isset($_COOKIE["uzerpdevice"])) {
+            $this->fraud_protection_headers['Gov-Client-Device-ID'] = $_COOKIE["uzerpdevice"];
+        }
+
+        // Add Gov-Client-Local-IPs
+        $ip = $this->client_fp_info->ip;
+        if (! empty($ip)) {
+            //percent encode IPv6 addresses
+            if (strpos($this->client_fp_info->ip, ':') > 0) {
+                $ip = rawurlencode($ip);
+            }
+            $this->fraud_protection_headers['Gov-Client-Local-IPs'] = $ip;
+        }
+
+        // Gov-Client-Screens
+        // Gov-Client-Window-Size
+        $this->fraud_protection_headers['Gov-Client-Screens'] = "width={$this->client_fp_info->screenWidth}&height={$this->client_fp_info->screenHeight}&scaling-factor={$this->client_fp_info->pixelRatio}&colour-depth={$this->client_fp_info->colorDepth}";
+        $this->fraud_protection_headers['Gov-Client-Window-Size'] = "width={$this->client_fp_info->windowWidth}&height={$this->client_fp_info->windowHeight}";
+
+        // Gov-Client-Browser-Plugins
+        // Modern browsers return an empty list
+        //$browser_plugins = get_object_vars($this->client_fp_info->plugins);
+
+        // Gov-Client-Browser-JS-User-Agent
+        $this->fraud_protection_headers['Gov-Client-Browser-JS-User-Agent'] = $this->client_fp_info->userAgent;
+
+        // Gov-Client-Browser-Do-Not-Track
+        $this->fraud_protection_headers['Gov-Client-Browser-Do-Not-Track'] = $this->client_fp_info->dnt;
+
+
+        // Gov-Client-Multi-Factor
+        //N/a
+
+        // Gov-Vendor-Public-IP
+        // The public IP address of the servers the originating device sent their requests to.
+        // Public networks only
+        $server_ip = $_SERVER['SERVER_ADDR'];
+        if (!self::ip_is_private($server_ip)) {
+            $this->fraud_protection_headers['Gov-Vendor-Public-IP'] = rawurlencode($server_ip);
+        }
+
+        // Gov-Vendor-Forwarded
+        // A list that details hops over the internet between services that terminate Transport Layer Security (TLS).
+        // Each key and value must be percent encoded (opens in a new tab). Do not percent encode separators (equal signs, ampersands and commas).
+        // Public networks only
+        if (!self::ip_is_private($client_public_ip)) {
+            $by_ip = rawurlencode($_SERVER['SERVER_ADDR']);
+            $for_ip = rawurlencode($client_public_ip);
+            $this->fraud_protection_headers['Gov-Vendor-Forwarded'] = "by={$by_ip}&for={$for_ip}";
+        }
+
         $this->logger->info('Fraud prevention headers set', [$this->fraud_protection_headers]);
+        foreach ($this->fraud_protection_headers as $name => $val) {
+            $this->logger->info("$name: $val");
+        }
     }
 
     /**
@@ -393,6 +426,31 @@ class MTD {
         }
 
         $flash->addWarning("No obligation found for the {$year}/{$tax_period} VAT period");
+        return false;
+    }
+
+    static function ip_is_private ($ip) {
+        $pri_addrs = array (
+                          '10.0.0.0|10.255.255.255', // single class A network
+                          '172.16.0.0|172.31.255.255', // 16 contiguous class B network
+                          '192.168.0.0|192.168.255.255', // 256 contiguous class C network
+                          '169.254.0.0|169.254.255.255', // Link-local address also refered to as Automatic Private IP Addressing
+                          '127.0.0.0|127.255.255.255' // localhost
+                         );
+    
+        $long_ip = ip2long ($ip);
+        if ($long_ip != -1) {
+    
+            foreach ($pri_addrs AS $pri_addr) {
+                list ($start, $end) = explode('|', $pri_addr);
+    
+                 // IF IS PRIVATE
+                 if ($long_ip >= ip2long ($start) && $long_ip <= ip2long ($end)) {
+                     return true;
+                 }
+            }
+        }
+    
         return false;
     }
 }
