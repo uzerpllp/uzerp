@@ -2,6 +2,7 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use Ramsey\Uuid\Uuid;
 
 /**
  * IndexController Allows users to login to uzERP
@@ -83,6 +84,11 @@ class IndexController extends Controller
             $params = session_get_cookie_params();
             setcookie("username", $this->username, time() + 3600, $params['path'], $params['domain'], $params['secure'], isset($params['httponly']));
         }
+
+        // Set a device ID cookie for use with VAT MTD
+        // Fraud protection
+        $uuid = Uuid::uuid5(Uuid::NAMESPACE_X500, $this->username . '@' . $_SERVER['REMOTE_ADDR']);
+        setcookie("uzerpdevice", $uuid->toString(), time() + 31556952, $params['path'], $params['domain'], $params['secure'], isset($params['httponly']));
 
         $available = SystemCompanySettings::Get('access_enabled');
 
