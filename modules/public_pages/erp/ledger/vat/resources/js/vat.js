@@ -13,10 +13,59 @@
  */
 
 $(document).ready(function(){
+
+	// Fetch various information for MTD VAT fraud headers
+	var fp = {
+		ip: '',
+		pixelRatio: '',
+		screenWidth: '',
+		screenHeight: '',
+		colorDepth: '',
+		windowWidth: '',
+		windowHeight: '',
+		plugins: '',
+		userAgent: '',
+		dnt: ''
+	}
+
+	const ip = new Promise((resolve, reject) => {
+		const conn = new RTCPeerConnection()
+		conn.createDataChannel('')
+		conn.createOffer(offer => conn.setLocalDescription(offer), reject)
+		conn.onicecandidate = ice => {
+		  if (ice && ice.candidate && ice.candidate.candidate) {
+			resolve(ice.candidate.candidate.split(' ')[4])
+			conn.close()
+		  }
+		}
+	  })
+	
+	ip.then(result => {
+		fp.ip = result
+	})
+		
+	fp.pixelRatio = window.devicePixelRatio;
+	fp.screenWidth = window.screen.width;
+	fp.screenHeight = window.screen.height;
+	fp.colorDepth = window.screen.colorDepth;
+	fp.windowWidth = window.outerWidth;
+	fp.windowHeight = window.outerHeight;
+	
+	fp.plugins = navigator.plugins;
+
+	fp.userAgent = navigator.userAgent;
+
+	var dnt = "false";
+	if (navigator.doNotTrack == 1) {
+		dnt = "true";
+	}
+	fp.dnt = dnt;
+	
 	
 	// custom confirmation message
 	$(document).on('click', 'a.vat-confirm', {}, function(event){
 		event.preventDefault();
+
 		var message = 'Are you sure?';
 		if ($( this ).data('uz-confirm-message') !== undefined) {
 			message = $( this ).data('uz-confirm-message').split('|');
@@ -39,6 +88,7 @@ $(document).ready(function(){
 								url         : targetUrl,
 								data: {
 									id      : actionID,
+									fp      :JSON.stringify(fp),
 									dialog  : true,
 									ajax    : true
 								},

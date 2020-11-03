@@ -10,7 +10,8 @@
         "phpmailer/phpmailer": "~6.1",
         "league/oauth2-client": "^2.4",
         "adodb/adodb-php": "^5.20",
-        "monolog/monolog": "^2.0"
+        "monolog/monolog": "^2.0",
+        "ramsey/uuid": "^4.1"
     },
 
     "autoload": {
