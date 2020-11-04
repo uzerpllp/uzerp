@@ -81,12 +81,12 @@ class Person extends Party
 	/*
 	 * getByCompany - gets people by company
 	 *
-	 * @param $_current boolean true (default) only gets current people
 	 * @param $_company_id company id to get people for, default is system company
+	 * @param $_current boolean true (default) only gets current (active) people
 	 * @return array list of person_id, name pairs
 	 * 
 	 */
-	function getByCompany($_current = TRUE, $_company_id = COMPANY_ID)
+	function getByCompany($_company_id=COMPANY_ID, $_current=true)
 	{
 		$cc = new ConstraintChain();
 		
