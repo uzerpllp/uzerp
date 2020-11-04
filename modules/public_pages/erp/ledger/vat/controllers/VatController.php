@@ -858,6 +858,7 @@ class VatController extends printController
 	
 	public function printTransactions($status = 'generate')
 	{
+		$errors = [];
 		// build options array
 		$options = array(
 			'type' => array(
@@ -912,7 +913,7 @@ class VatController extends printController
 			}
 		}
 
-		$sh = new SearchHandler($gltransactions);
+		$sh = new SearchHandler($gltransactions, false);
 		$sh->addConstraint($cc);
 		$gltransactions->load($sh);
 		
