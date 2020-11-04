@@ -471,6 +471,14 @@ class CbtransactionsController extends printController
             }
             $gl_centres = $this->getCentres($default_glaccount_id);
             $currencies = $this->getAllowedCurrencies($default_account);
+
+            $companies = new Company();
+            $cc = new ConstraintChain();
+            $cc->add(new Constraint('date_inactive', 'is', 'NULL'));
+            $cc->add(new Constraint('is_lead', 'is', 'false'));
+            
+            $co_options = $companies->getAll($cc);
+            $this->view->set('co_options', $co_options);
         }
         
         $this->view->set('gl_accounts', $gl_accounts);
@@ -505,6 +513,26 @@ class CbtransactionsController extends printController
             $this->setTemplateName('select_options');
         } else {
             return $accounts;
+        }
+    }
+
+    public function getCompanyPeople($_id = '')
+    {
+        // Used by Ajax to return a list of other accounts after selecting the Bank Account
+        if (isset($this->_data['ajax'])) {
+            if (! empty($this->_data['company_id'])) {
+                $_id = $this->_data['company_id'];
+            }
+        }
+
+        $people = new Person();
+        $co_people = $people->getbyCompany($_id);
+
+        if (isset($this->_data['ajax'])) {
+            $this->view->set('options', $co_people);
+            $this->setTemplateName('select_options');
+        } else {
+            return $co_people;
         }
     }
 

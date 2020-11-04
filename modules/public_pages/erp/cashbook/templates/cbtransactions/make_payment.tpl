@@ -18,8 +18,8 @@
 				{input type="text" attribute="rate" label="Conversion Rate" value=$rate}
 			</div>
 			{input type="date" attribute="transaction_date"}
-			{select attribute="company_id" label='Company' constrains='person_id'}
-			{select attribute="person_id" label='Person' depends='company_id'}
+			{select attribute="company_id" label='Company'  options=$co_options}
+			{select attribute="person_id" label='Person' }
 			{input type="text" attribute="ext_reference"}
 			{input type="text" attribute="description"}
 			{select attribute="payment_type_id"}

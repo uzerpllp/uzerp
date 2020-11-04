@@ -157,6 +157,22 @@ $(document).ready(function(){
 		$('#CBTransaction_gross_value').val(roundNumber(parseFloat($('#CBTransaction_net_value').val())+parseFloat($('#CBTransaction_tax_value').val()), 2));
 	});
 
+	$("#CBTransaction_company_id").on("change", "#cashbook-cbtransactions-receive_payment", function(){
+		
+		var $self = $(this);
+		
+		$('#CBTransaction_person_id').uz_ajax({
+			data:{
+				module			: 'cashbook',
+				controller		: 'cbtransactions',
+				action			: 'getCompanyPeople',
+				company_id		: $('#CBTransaction_company_id').val(),
+				ajax			: ''
+			},
+		});
+		
+	});
+
 	/* cashbook -> cbtransactions -> make_payment */
 
 	$("#CBTransaction_cb_account_id", "#cashbook-cbtransactions-make_payment").live("change", function(){
@@ -169,6 +185,22 @@ $(document).ready(function(){
 				controller		: 'cbtransactions',
 				action			: 'getAllowedCurrencies',
 				cb_account_id	: $('#CBTransaction_cb_account_id').val(),
+				ajax			: ''
+			},
+		});
+	
+	});
+
+	$("#CBTransaction_company_id").on("change", "#cashbook-cbtransactions-make_payment", function(){
+		
+		var $self = $(this);
+		
+		$('#CBTransaction_person_id').uz_ajax({
+			data:{
+				module			: 'cashbook',
+				controller		: 'cbtransactions',
+				action			: 'getCompanyPeople',
+				company_id		: $('#CBTransaction_company_id').val(),
 				ajax			: ''
 			},
 		});
