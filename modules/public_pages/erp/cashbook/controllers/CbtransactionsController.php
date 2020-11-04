@@ -474,8 +474,12 @@ class CbtransactionsController extends printController
 
             $companies = new Company();
             $cc = new ConstraintChain();
-            $cc->add(new Constraint('date_inactive', 'is', 'NULL'));
             $cc->add(new Constraint('is_lead', 'is', 'false'));
+            $cc1 = new ConstraintChain();
+            $cc1->add(new Constraint('date_inactive', 'is', 'NULL'));
+            $cc1->add(new Constraint('date_inactive', '>', fix_date(date(DATE_FORMAT))), 'OR');
+        
+            $cc->add($cc1);
             
             $co_options = $companies->getAll($cc);
             $this->view->set('co_options', $co_options);
