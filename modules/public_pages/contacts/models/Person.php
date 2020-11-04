@@ -88,6 +88,9 @@ class Person extends Party
 	 */
 	function getByCompany($_company_id=COMPANY_ID, $_current=true)
 	{
+		$this->identifierField		= ['surname', 'firstname'];
+		$this->identifierFieldJoin	= ', ';
+		
 		$cc = new ConstraintChain();
 		
 		$cc->add(new Constraint('company_id', '=', $_company_id));
