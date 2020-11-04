@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Cashbook payments not saved when entering invalid combination of values with tax rate 'None'
+- Cashbook payments no longer allow payments to inactive companies or people
 - Output VAT transactions for the selected period
 
 ## [1.25.1] 2020-08-12
