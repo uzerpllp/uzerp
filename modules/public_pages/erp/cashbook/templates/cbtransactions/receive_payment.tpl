@@ -19,7 +19,7 @@
 			</div>
 			{input type="date" attribute="transaction_date"}
 			{select attribute="company_id" label='Company' options=$co_options}
-			{select attribute="person_id" label='Person'}
+			{select attribute="person_id" label='Person' options=$p_options}
 			{input type="text" attribute="ext_reference"}
 			{input type="text" attribute="description"}
 			{select attribute="payment_type_id"}

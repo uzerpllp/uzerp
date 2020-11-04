@@ -478,11 +478,13 @@ class CbtransactionsController extends printController
             $cc1 = new ConstraintChain();
             $cc1->add(new Constraint('date_inactive', 'is', 'NULL'));
             $cc1->add(new Constraint('date_inactive', '>', fix_date(date(DATE_FORMAT))), 'OR');
-        
             $cc->add($cc1);
             
             $co_options = $companies->getAll($cc);
             $this->view->set('co_options', $co_options);
+
+            $p_options = $this->getCompanyPeople($this->_data['CBTransaction']['company_id']);
+            $this->view->set('p_options', $p_options);
         }
         
         $this->view->set('gl_accounts', $gl_accounts);
@@ -520,6 +522,12 @@ class CbtransactionsController extends printController
         }
     }
 
+    /**
+     * Return an options array containing people
+     *
+     * @param string $_id  Company (contact) id
+     * @return array  or json response
+     */
     public function getCompanyPeople($_id = '')
     {
         // Used by Ajax to return a list of other accounts after selecting the Bank Account
@@ -530,13 +538,29 @@ class CbtransactionsController extends printController
         }
 
         $people = new Person();
-        $co_people = $people->getbyCompany($_id);
+        $cc = new ConstraintChain();
+        $cc->add(new Constraint('end_date', 'is', 'NULL'));
+        $cc->add(new Constraint('end_date', '>', fix_date(date(DATE_FORMAT))), 'OR');
+        
+        // Not associated with a Company
+        if (empty($_id)) {
+            $cc1 = new ConstraintChain();
+            $cc1->add(new Constraint('company_id', 'is', 'NULL'));
+            $cc->add($cc1);
+        // Associated with a Company
+        } else {
+            $cc1 = new ConstraintChain();
+            $cc1->add(new Constraint('company_id', '=', $_id));
+            $cc->add($cc1);
+        }
+        
+        $p_options = $people->getAll($cc1);
 
         if (isset($this->_data['ajax'])) {
-            $this->view->set('options', $co_people);
+            $this->view->set('options', $p_options);
             $this->setTemplateName('select_options');
         } else {
-            return $co_people;
+            return $p_options;
         }
     }
 

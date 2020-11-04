@@ -12,14 +12,14 @@
 			{input type="hidden" attribute="type" value="P"}
 			{input type="text" attribute="net_value" }
 			{select attribute="tax_rate_id"}
-			{input attribute="tax_value" }
+			{input attribute="tax_value"}
 			{input attribute="gross_value" readonly=true}
 			<div id='conversion_rate'>
 				{input type="text" attribute="rate" label="Conversion Rate" value=$rate}
 			</div>
 			{input type="date" attribute="transaction_date"}
-			{select attribute="company_id" label='Company'  options=$co_options}
-			{select attribute="person_id" label='Person' }
+			{select attribute="company_id" label='Company' options=$co_options}
+			{select attribute="person_id" label='Person' options=$p_options}
 			{input type="text" attribute="ext_reference"}
 			{input type="text" attribute="description"}
 			{select attribute="payment_type_id"}

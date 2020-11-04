@@ -157,7 +157,7 @@ $(document).ready(function(){
 		$('#CBTransaction_gross_value').val(roundNumber(parseFloat($('#CBTransaction_net_value').val())+parseFloat($('#CBTransaction_tax_value').val()), 2));
 	});
 
-	$("#CBTransaction_company_id").on("change", "#cashbook-cbtransactions-receive_payment", function(){
+	$( "#cashbook-cbtransactions-receive_payment").on("change", "#CBTransaction_company_id", function(){
 		
 		var $self = $(this);
 		
@@ -191,7 +191,7 @@ $(document).ready(function(){
 	
 	});
 
-	$("#CBTransaction_company_id").on("change", "#cashbook-cbtransactions-make_payment", function(){
+	$("#cashbook-cbtransactions-make_payment").on("change", "#CBTransaction_company_id", function(){
 		
 		var $self = $(this);
 		
