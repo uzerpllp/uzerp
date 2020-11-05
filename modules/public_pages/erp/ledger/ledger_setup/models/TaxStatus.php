@@ -9,7 +9,10 @@
 class TaxStatus extends DataObject
 {
 
-	protected $version='$Revision: 1.6 $';
+	protected $defaultDisplayFields = ['description',
+									   'apply_tax',
+									   'eu_tax',
+									   'postponed_vat_accounting' => 'PVA'];
 	
 	function __construct($tablename='tax_statuses')
 	{
