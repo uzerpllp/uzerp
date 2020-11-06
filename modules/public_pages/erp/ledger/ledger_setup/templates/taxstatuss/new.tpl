@@ -13,6 +13,7 @@
 			{input type='checkbox'  attribute='apply_tax' class="compulsory" }
 			{input type='checkbox' label='EU Tax' attribute='eu_tax' class="compulsory" }
 			{input type='checkbox' label='PVA' attribute='postponed_vat_accounting' class="compulsory" }
+			{input type='checkbox' attribute='reverse_charge' class="compulsory" }
 		{/with}
 		{submit}
 	{/form}

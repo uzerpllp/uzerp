@@ -12,7 +12,8 @@ class TaxStatus extends DataObject
 	protected $defaultDisplayFields = ['description',
 									   'apply_tax',
 									   'eu_tax',
-									   'postponed_vat_accounting' => 'PVA'];
+									   'postponed_vat_accounting' => 'PVA',
+									   'reverse_charge'];
 	
 	function __construct($tablename='tax_statuses')
 	{
