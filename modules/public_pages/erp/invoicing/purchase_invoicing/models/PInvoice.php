@@ -376,6 +376,8 @@ class PInvoice extends Invoice
 		if ($tax_status->load($this->tax_status_id))
 		{
 			$eu_acquisition = ($tax_status->eu_tax == 't');
+			$vat_postponed = ($tax_status->postponed_vat_accounting == 't');
+			$reverse_charge = ($tax_status->reverse_charge == 't');
 		}
 		else
 		{
@@ -383,7 +385,7 @@ class PInvoice extends Invoice
 			return FALSE;
 		}
 		
-		if ($eu_acquisition)
+		if ($eu_acquisition || $vat_postponed || $reverse_charge)
 		{
 			$eu_gl_data				 = $gl_data;
 			$eu_gl_data['value']	 = 0;
@@ -469,7 +471,7 @@ class PInvoice extends Invoice
 			}
 			
 			// Calculate tax value if EU acquisition
-			if (($eu_acquisition) && ($line->tax_rate_id))
+			if (($eu_acquisition || $vat_postponed || $reverse_charge) && ($line->tax_rate_id))
 			{
 				if (isset($tax_rates[$line->tax_rate_id]) && ($tax_rates[$line->tax_rate_id] > 0))
 				{
@@ -497,6 +499,38 @@ class PInvoice extends Invoice
 		{
 			
 			$eu_tax_elements = GLTransaction::makeEuTax($eu_gl_data, $newerrors);
+			
+			foreach ($eu_tax_elements as $eu_tax_element)
+			{
+				if ($eu_tax_element === false)
+				{
+					$errors+=$newerrors;
+					return false;
+				}
+				$gl_transactions[] = $eu_tax_element;
+			}
+		}
+
+		if ($vat_postponed)
+		{
+			
+			$eu_tax_elements = GLTransaction::makeTax($eu_gl_data, 'PVA', $newerrors);
+			
+			foreach ($eu_tax_elements as $eu_tax_element)
+			{
+				if ($eu_tax_element === false)
+				{
+					$errors+=$newerrors;
+					return false;
+				}
+				$gl_transactions[] = $eu_tax_element;
+			}
+		}
+
+		if ($reverse_charge)
+		{
+			
+			$eu_tax_elements = GLTransaction::makeTax($eu_gl_data, 'RC', $newerrors);
 			
 			foreach ($eu_tax_elements as $eu_tax_element)
 			{
