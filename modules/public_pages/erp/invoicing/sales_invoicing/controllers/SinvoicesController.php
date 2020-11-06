@@ -1317,6 +1317,9 @@ class SinvoicesController extends printController
             $extra['tax_description'] = $invoice->customerdetail->companydetail->tax_description;
             $extra['vatnumber'] = $invoice->customerdetail->companydetail->vatnumber;
 
+            $extra['additional_text1'] = $invoice->customerdetail->companydetail->text1;
+            $extra['additional_text2'] = $invoice->customerdetail->companydetail->text2;
+
             // get Sales Invoice Notes for default customer or first in customer
             $note = DataObjectFactory::Factory('PartyNote');
             $party_id = $invoice->customerdetail->companydetail->party_id;

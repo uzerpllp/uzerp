@@ -2579,6 +2579,8 @@ class printController extends Controller
         $details['website'] = 'Web Site: ' . $company->website;
         $details['vat_number'] = 'VAT Number: ' . $company->vatnumber;
         $details['company_number'] = 'Company Number: ' . $company->companynumber;
+        $details['co_additonal_text1'] = $company->text1;
+        $details['co_additonal_text2'] = $company->text2;
 
         return $details;
     }
