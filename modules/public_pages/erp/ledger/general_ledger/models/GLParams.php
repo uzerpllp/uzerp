@@ -41,6 +41,8 @@ class GLParams extends DataObject {
 	public $vat_control_account = "VAT Control Account";
 	public $vat_payee_company = "VAT Payee";
 	public $vat_eu_acquisitions = "VAT EU Acquisitions";
+	public $vat_postponed = "VAT Postponed Account";
+	public $vat_reverse_charge = "VAT Reverse Charge Account";
 	public $intrastat_net_mass = "UoM for Intrastat Net Mass";
 	
 // Array containing 'soft' fk references
@@ -80,6 +82,8 @@ class GLParams extends DataObject {
 										,$this->vat_eu_acquisitions=>$this->vat_eu_acquisitions
 										,$this->vat_payee_company=>$this->vat_payee_company
 										,$this->intrastat_net_mass=>$this->intrastat_net_mass
+										,$this->vat_postponed => $this->vat_postponed
+										,$this->vat_reverse_charge => $this->vat_reverse_charge
 										)
 						);
 		
@@ -101,6 +105,8 @@ class GLParams extends DataObject {
 		$this->hasMany('GLAccount', $this->vat_output, 'account', $control_account);
 		$this->hasMany('GLAccount', $this->vat_control_account, 'account', $control_account);
 		$this->hasMany('GLAccount', $this->vat_eu_acquisitions, 'account', $control_account);
+		$this->hasMany('GLAccount', $this->vat_postponed, 'account', $control_account);
+		$this->hasMany('GLAccount', $this->vat_reverse_charge, 'account', $control_account);
 		$this->hasMany('Company', $this->vat_payee_company, 'name');
 		$this->hasMany('GLAccount', $this->product_account, 'account');
 		$this->hasMany('GLCentre', $this->product_centre, 'cost_centre');
@@ -341,6 +347,14 @@ class GLParams extends DataObject {
 	
 	public function eu_acquisitions () {
 		return $this->getParam($this->vat_eu_acquisitions);
+	}
+
+	public function vat_postponed_account () {
+		return $this->getParam($this->vat_postponed);
+	}
+	
+	public function vat_reverse_charge_account () {
+		return $this->getParam($this->vat_reverse_charge);
 	}
 
 	public function vat_payee_company () {
