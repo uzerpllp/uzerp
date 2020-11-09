@@ -22,10 +22,12 @@ class AddPvaToTaxStatus extends UzerpMigration
         // Prevent eu_tax and postponed_vat_accounting both being true
         $this->query("ALTER TABLE public.tax_statuses DROP CONSTRAINT IF EXISTS exclusive_eu_pva");
         $this->query("ALTER TABLE public.tax_statuses DROP CONSTRAINT IF EXISTS exclusive_eu_rc");
+        $this->query("ALTER TABLE public.tax_statuses DROP CONSTRAINT IF EXISTS exclusive_eu");
         $this->query("ALTER TABLE public.tax_statuses
-                        ADD CONSTRAINT exclusive_eu_pva CHECK (((eu_tax IS TRUE AND postponed_vat_accounting IS FALSE AND reverse_charge IS FALSE)
-                        OR (eu_tax is FALSE AND postponed_vat_accounting IS true AND reverse_charge IS false))
-                        OR (eu_tax is FALSE AND postponed_vat_accounting IS false AND reverse_charge IS true))
+                        ADD CONSTRAINT exclusive_eu CHECK ((eu_tax IS TRUE AND postponed_vat_accounting IS FALSE AND reverse_charge IS FALSE)
+                        OR (eu_tax is FALSE AND postponed_vat_accounting IS TRUE AND reverse_charge IS FALSE)
+                        OR (eu_tax is FALSE AND postponed_vat_accounting IS FALSE AND reverse_charge IS TRUE)
+                        OR (eu_tax IS FALSE AND postponed_vat_accounting IS FALSE AND reverse_charge IS FALSE))
                         NOT VALID;");
     }
 }
