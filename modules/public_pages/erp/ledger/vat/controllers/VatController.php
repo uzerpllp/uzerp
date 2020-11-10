@@ -24,7 +24,7 @@ class VatController extends printController
 		
 		$this->uses($this->_templateobject);
 		
-		$this->titles=array(4=>'Inputs', 6=>'Outputs', 8=>'EU Sales', 9=>'EU Purchases');
+		$this->titles=array(4=>'Inputs', 6=>'Outputs', 8=>'EU Sales', 9=>'EU Purchases', 98=>'Postponed VAT Purchases',99=>'Reverse Charge Purchases');
 
 	}
 	
@@ -348,6 +348,16 @@ class VatController extends printController
 					$this->uses($this->_templateobject);
 					parent::index(new VatEuPurchasesCollection($this->_templateobject));
 					break;
+				case '98': // postponed VAT
+					$this->_templateobject = DataObjectFactory::Factory('VatPVPurchases');
+					$this->uses($this->_templateobject);
+					parent::index(new VatPVPurchasesCollection($this->_templateobject));
+					break;					
+				case '99': // reverse charge VAT
+					$this->_templateobject = DataObjectFactory::Factory('VatRCPurchases');
+					$this->uses($this->_templateobject);
+					parent::index(new VatRCPurchasesCollection($this->_templateobject));
+					break;
 			}
 			$this->view->set('box',$this->_data['box']);
 			$this->view->set('page_title',"VAT Transactions {$year}/{$tax_period} - ".$this->titles[$this->_data['box']]);
@@ -644,6 +654,26 @@ class VatController extends printController
 								,'tax_period'=>$tax_period
 								),
 				'tag'=>$titles[9]
+			),
+			'box98'=>array(
+				'link'=>array('modules'=>$this->_modules
+								,'controller'=>$this->name
+								,'action'=>'viewTransactions'
+								,'box'=>98
+								,'year'=>$year
+								,'tax_period'=>$tax_period
+								),
+				'tag'=>$titles[98]
+			),
+			'box99'=>array(
+				'link'=>array('modules'=>$this->_modules
+								,'controller'=>$this->name
+								,'action'=>'viewTransactions'
+								,'box'=>99
+								,'year'=>$year
+								,'tax_period'=>$tax_period
+								),
+				'tag'=>$titles[99]
 			)
 		);
 		return $list;
@@ -910,6 +940,14 @@ class VatController extends printController
 					$gltransaction = DataObjectFactory::Factory('VatEuPurchases');
 					$gltransactions = new VatEuPurchasesCollection($gltransaction);
 					break;
+				case '98': // postponed VAT
+					$gltransaction = DataObjectFactory::Factory('VatPVPurchases');
+					$gltransactions = new VatPVPurchasesCollection($gltransaction);
+					break;					
+				case '99': // reverse charge VAT
+					$gltransaction = DataObjectFactory::Factory('VatRCPurchases');
+					$gltransactions = new VatRCPurchasesCollection($gltransaction);
+					break;	
 			}
 		}
 
@@ -965,6 +1003,12 @@ class VatController extends printController
 			case 2:
 			case 9:
 				$title = "VAT EU Purchases {$title}";
+				break;
+			case 98:
+				$title = "Postponed VAT Purchases {$title}";
+				break;
+			case 99:
+				$title = "Reverse Charge Purchases {$title}";
 				break;
 		}
 		
@@ -1151,7 +1195,7 @@ class VatController extends printController
 						 ),
 			'tag'=>'View Transactions'
 		);
-		
+
 		$returns_sidebar['all'] = [
             'link' => [
                 'modules' => $this->_modules,
