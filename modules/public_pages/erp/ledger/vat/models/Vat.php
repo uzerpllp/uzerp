@@ -109,6 +109,8 @@ class Vat extends GLTransaction
 			'retained_profits'	=> $glparams->retained_profits_account(),
 			'vat_control'		=> $glparams->vat_control_account(),
 			'eu_acquisitions'	=> $glparams->eu_acquisitions(),
+			'vat_postponed'		=> $glparams->vat_postponed_account(),
+			'vat_reverse_charge'=> $glparams->vat_reverse_charge_account(),
 		);
 		
 		if (in_array(false, $this->control_accounts, true)) {
@@ -270,11 +272,10 @@ class Vat extends GLTransaction
 		$qparams = [$year, $tax_period];
 		$query = <<<'QUERY'
 select tax_period,
-coalesce(sum((select sum(vat) from gltransactions_vat_outputs where glperiods_id=glp.id)), 0.00) as "Box1", 
+coalesce(sum((select sum(vat) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id)) + coalesce(sum((select sum(vat) from gl_taxpvpurchases vo where vo.glperiods_id=glp.id)),0.00)+ coalesce(sum((select sum(vat) from gl_taxrcpurchases vo where vo.glperiods_id=glp.id)),0.00), 0.00) as "Box1",
 coalesce(sum((select sum(vat) from gl_taxeupurchases vo where vo.glperiods_id=glp.id)), 0.00) as "Box2",
-coalesce(sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) + coalesce(sum((select sum(vat) from gl_taxeupurchases vo where vo.glperiods_id=glp.id)),0.00), 0.00) as "Box4",
-coalesce(sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)), 0.00) as "inputs",
-coalesce(sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id)), 0.00) as "Box6",
+coalesce(sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)) + coalesce(sum((select sum(vat) from gl_taxeupurchases vo where vo.glperiods_id=glp.id)),0.00)+ coalesce(sum((select sum(vat) from gl_taxpvpurchases vo where vo.glperiods_id=glp.id)),0.00)+ coalesce(sum((select sum(vat) from gl_taxrcpurchases vo where vo.glperiods_id=glp.id)),0.00), 0.00) as "Box4",
+coalesce(sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id))+coalesce(sum((select sum(net) from gl_taxrcpurchases vo where vo.glperiods_id=glp.id)), 0.00), 0.00) as "Box6",
 coalesce(sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)), 0.00) as "Box7",
 coalesce(sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')), 0.00) as "Box8",
 coalesce(sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')), 0.00) as "Box9"
