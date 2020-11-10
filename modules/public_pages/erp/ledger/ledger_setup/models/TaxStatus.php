@@ -25,6 +25,20 @@ class TaxStatus extends DataObject
 		
 	}
 
+	/**
+	 * Return an array of tax status options valid for an SLCustomer
+	 *
+	 * @return array  Status options
+	 */
+	public function get_customer_tax_statuses()
+	{
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('postponed_vat_accounting', 'IS', false));
+		$cc->add(new Constraint('reverse_charge', 'IS', false));
+		$statuses = $this->getAll($cc);
+		return $statuses;
+	}
+
 }
 
 // End of TaxStatus
