@@ -307,6 +307,14 @@ class VatController extends printController
 		return $this->viewEUTransactions($collection, $sh);
 	}
 	
+	
+	/**
+	 * View the list of transactions of each type for this VAT return
+	 * 
+	 * Calls private function printTransactions() for printing
+	 * 
+	 * Exporting to csv is handled here not in the print section
+	 */
 	public function viewTransactions()
 	{
 		$errors = array();
@@ -334,45 +342,95 @@ class VatController extends printController
 		$year = $this->search->getValue('year');
 		
 		if (isset($this->_data['box']))
+		// switch the model/collection based on the 'box' (sic)
 		{
 			switch ($this->_data['box']) {
 				case '4': // inputs
 					$this->_templateobject = DataObjectFactory::Factory('VatInputs');
 					$this->uses($this->_templateobject);
-					parent::index(new VatInputsCollection($this->_templateobject));
+					$vatTransactions = new VatInputsCollection($this->_templateobject);
 					break;
 				case '6': // outputs
 					$this->_templateobject = DataObjectFactory::Factory('VatOutputs');
 					$this->uses($this->_templateobject);
-					parent::index(new VatOutputsCollection($this->_templateobject));
+					$vatTransactions = new  VatOutputsCollection($this->_templateobject);
 					break;
 				case '8': // eu sales
 					$this->_templateobject = DataObjectFactory::Factory('VatEuSales');
 					$this->uses($this->_templateobject);
-					parent::index(new VatEuSalesCollection($this->_templateobject));
+					$vatTransactions = new  VatEuSalesCollection($this->_templateobject);
 					break;
 				case '9': // eu purchases
 					$this->_templateobject = DataObjectFactory::Factory('VatEuPurchases');
 					$this->uses($this->_templateobject);
-					parent::index(new VatEuPurchasesCollection($this->_templateobject));
+					$vatTransactions = new VatEuPurchasesCollection($this->_templateobject);
 					break;
 				case '98': // postponed VAT
 					$this->_templateobject = DataObjectFactory::Factory('VatPVPurchases');
 					$this->uses($this->_templateobject);
-					parent::index(new VatPVPurchasesCollection($this->_templateobject));
+					$vatTransactions = new  VatPVPurchasesCollection($this->_templateobject);			
 					break;					
 				case '99': // reverse charge VAT
 					$this->_templateobject = DataObjectFactory::Factory('VatRCPurchases');
 					$this->uses($this->_templateobject);
-					parent::index(new VatRCPurchasesCollection($this->_templateobject));
+					$vatTransactions = new VatRCPurchasesCollection($this->_templateobject);
 					break;
 			}
+			// Show the data in the index
+			parent::index($vatTransactions);
 			$this->view->set('box',$this->_data['box']);
 			$this->view->set('page_title',"VAT Transactions {$year}/{$tax_period} - ".$this->titles[$this->_data['box']]);
 		}		
 
+		// Not sure we need to load the vat return here... Steve?
 		$return = new VatReturn();
 		$return->loadVatReturn($year, $tax_period);
+
+		// Here be dragons! Output the transactions csv
+		if ($this->_data['format'] == 'csv') {
+
+			$sh = new SearchHandler($vatTransactions, FALSE);
+			$sh->addConstraintChain(new Constraint('year', '=',  $s_data['year']));
+			$sh->addConstraintChain(new Constraint('tax_period', '=', $s_data['tax_period']));
+			$csvExports = $vatTransactions->load($sh,'',3);
+		  			
+			// these are the columns we want
+			$column_order = ['transaction_date',
+                            'docref',
+                            'ext_reference',
+                            'company',
+                            'comment',
+                            'vat',
+                            'net',
+                            'source',
+                            'type'];
+							
+            // output headers so that the file is downloaded rather than displayed
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename=vat_transactions.csv');
+
+            // create a file pointer connected to the output stream
+            $handle = fopen('php://output', 'w');
+
+            // output the column headings to match the index view
+            fputcsv($handle, ['Date',
+			'Doc Ref',
+			'Ext Ref',
+			'Company',
+			'Comment',
+			'VAT',
+			'Net',
+			'Source',
+			'Type']);
+
+            // loop over the rows, outputting only the columns we want
+            foreach($csvExports as $csvrow) {
+				$csvrow = array_slice(array_merge(array_flip($column_order), $csvrow),0,9);
+                fputcsv($handle, $csvrow);
+            }
+            fclose($handle);
+            exit();
+        }
 
 		$sidebar = new SidebarController($this->view);
 
@@ -405,7 +463,7 @@ class VatController extends printController
 		}
 
 		$sidebar->addList(
-			'Actions',
+			'Output',
 			array(
 				'printtransactions'=>array(
 					'link'=>array_merge(array('modules'=>$this->_modules
@@ -415,8 +473,17 @@ class VatController extends printController
 											 ,'filename'=>'Transactions_'.$year.'-'.$tax_period
 											 )
 									   ,$print_params),
-					'tag'=>'Output Transactions'
+					'tag'=>'Print Transactions'
 				),
+				'exporttransactions'=>array(
+					'link'=>array_merge(array('modules'=>$this->_modules
+											 ,'controller'=>$this->name
+											 ,'action'=>'viewTransactions'
+											 ,'format'=>'csv'
+											 )
+									   ,$print_params),
+					'tag'=>'Export Transactions to CSV'
+				)
 			)
 		);
 		
@@ -901,8 +968,7 @@ class VatController extends printController
 		$options = array(
 			'type' => array(
 				'pdf' => '',
-				'xml' => '',
-				'csv' => ''
+				'xml' => ''
 			),
 			'output' => array(
 				'print'	=> '',
@@ -962,7 +1028,11 @@ class VatController extends printController
 		$sh = new SearchHandler($gltransactions, false);
 		$sh->addConstraint($cc);
 		$gltransactions->load($sh);
-		
+		// Need the underling view here so we can get the sum
+		$viewname=$gltransactions->_tablename;
+		$totalvat = $this->_templateobject->getSum('vat', $cc, $viewname);
+		$totalnet = $this->_templateobject->getSum('net', $cc, $viewname);
+
 		if (count($errors) > 0)
 		{
 			echo $this->build_print_dialog_response(
@@ -1022,6 +1092,9 @@ class VatController extends printController
 		
 		$extra = array(
 			'title'		=> $title
+			,'totalvat' => $totalvat
+			,'totalnet' => $totalnet
+
 		);
 					
 		// generate the xml and add it to the options array
