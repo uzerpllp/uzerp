@@ -31,6 +31,10 @@ class VatPVPurchases extends DataObject {
         $glt = new GLTransaction;
         $this->setEnum('type', $glt->enums['type']);
         $this->setEnum('source', $glt->enums['source']);
+
+        // Define field formats		
+		$this->getField('vat')->setFormatter(new NumericFormatter());
+		$this->getField('net')->setFormatter(new NumericFormatter());
     }
 }
 ?>

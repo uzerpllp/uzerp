@@ -86,9 +86,9 @@ class VatController extends printController
 
 	public function enter_journal()
 	{
-		$flash=Flash::Instance();
+		//$flash=Flash::Instance();
 		
-		$errors=array();
+		//$errors=array();
 		
 		if (!$this->checkParams('vat_type'))
 		{
@@ -111,6 +111,11 @@ class VatController extends printController
 		
 		$gl_account->load($account_id);
 		$this->view->set('gl_centres',$gl_account->getCentres());
+
+		$period = DataObjectFactory::Factory('GLPeriod');
+		$current = $period->getPeriod(un_fix_date(fix_date(date(DATE_FORMAT))));
+		$this->view->set('periods', $period->getOpenPeriods(false));
+		$this->view->set('current_period', $current['id']);
 		
 		$this->view->set('vat_type', $this->_data['vat_type']);
 		$this->view->set('vat', DataObjectFactory::Factory('Vat'));
@@ -131,9 +136,12 @@ class VatController extends printController
 		
 		$data = $this->_data['Vat'];
 		
-		if ($data['value']['net']<=0 || $data['value']['vat']<=0)
+		if ($data['value']['vat']<=0)
 		{
-			$errors[]='Net and Vat values must be greater than zero';
+			$errors[]='Vat Value must be greater than zero';
+		}
+		elseif ($data['value']['net']<=0) {
+			$flash->addWarning('Transaction saved with Net Value of zero');
 		}
 		else
 		{

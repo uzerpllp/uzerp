@@ -268,6 +268,22 @@ class GLPeriod extends DataObject
 		
 		return $glperiod->getAll($cc);
 	}
+
+	/**
+	 * Return a list of open GL Periods
+	 *
+	 * @param boolean $ledger  true = all open periods, false = periods open for VAT
+	 * @return array  options array
+	 */
+	public function getOpenPeriods($ledger=true) {
+		$cc = new ConstraintChain();
+		if ($ledger === true) {
+			$cc->add(new Constraint('closed', 'IS', false));
+		} else {
+			$cc->add(new Constraint('tax_period_closed', 'IS', false));
+		}
+		return $this->getAll($cc);
+	}
 	
 	public static function getIdsForTaxPeriod($tax_period, $year)
 	{
