@@ -349,31 +349,37 @@ class VatController extends printController
 					$this->_templateobject = DataObjectFactory::Factory('VatInputs');
 					$this->uses($this->_templateobject);
 					$vatTransactions = new VatInputsCollection($this->_templateobject);
+					$company_type='supplier';
 					break;
 				case '6': // outputs
 					$this->_templateobject = DataObjectFactory::Factory('VatOutputs');
 					$this->uses($this->_templateobject);
 					$vatTransactions = new  VatOutputsCollection($this->_templateobject);
+					$company_type='customer';
 					break;
 				case '8': // eu sales
 					$this->_templateobject = DataObjectFactory::Factory('VatEuSales');
 					$this->uses($this->_templateobject);
 					$vatTransactions = new  VatEuSalesCollection($this->_templateobject);
+					$company_type='customer';
 					break;
 				case '9': // eu purchases
 					$this->_templateobject = DataObjectFactory::Factory('VatEuPurchases');
 					$this->uses($this->_templateobject);
 					$vatTransactions = new VatEuPurchasesCollection($this->_templateobject);
+					$company_type='supplier';
 					break;
 				case '98': // postponed VAT
 					$this->_templateobject = DataObjectFactory::Factory('VatPVPurchases');
 					$this->uses($this->_templateobject);
-					$vatTransactions = new  VatPVPurchasesCollection($this->_templateobject);			
+					$vatTransactions = new  VatPVPurchasesCollection($this->_templateobject);
+					$company_type='supplier';			
 					break;					
 				case '99': // reverse charge VAT
 					$this->_templateobject = DataObjectFactory::Factory('VatRCPurchases');
 					$this->uses($this->_templateobject);
 					$vatTransactions = new VatRCPurchasesCollection($this->_templateobject);
+					$company_type='supplier';
 					break;
 			}
 			// Show the data in the index
@@ -398,7 +404,7 @@ class VatController extends printController
 			$column_order = ['transaction_date',
                             'docref',
                             'ext_reference',
-                            'company',
+                            $company_type,
                             'comment',
                             'vat',
                             'net',
