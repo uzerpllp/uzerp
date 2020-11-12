@@ -1092,8 +1092,8 @@ class VatController extends printController
 		
 		$extra = array(
 			'title'		=> $title
-			,'totalvat' => $totalvat
-			,'totalnet' => $totalnet
+			,'totalvat' => number_format($totalvat,2)
+			,'totalnet' => number_format($totalnet,2)
 
 		);
 					
