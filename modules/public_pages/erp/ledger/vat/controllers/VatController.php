@@ -388,19 +388,16 @@ class VatController extends printController
 			$this->view->set('page_title',"VAT Transactions {$year}/{$tax_period} - ".$this->titles[$this->_data['box']]);
 		}		
 
-		// Not sure we need to load the vat return here... Steve?
 		$return = new VatReturn();
 		$return->loadVatReturn($year, $tax_period);
 
-		// Here be dragons! Output the transactions csv
 		if ($this->_data['format'] == 'csv') {
 
 			$sh = new SearchHandler($vatTransactions, FALSE);
 			$sh->addConstraintChain(new Constraint('year', '=',  $s_data['year']));
 			$sh->addConstraintChain(new Constraint('tax_period', '=', $s_data['tax_period']));
 			$csvExports = $vatTransactions->load($sh,'',3);
-		  			
-			// these are the columns we want
+
 			$column_order = ['transaction_date',
                             'docref',
                             'ext_reference',
@@ -410,7 +407,7 @@ class VatController extends printController
                             'net',
                             'source',
                             'type'];
-							
+
             // output headers so that the file is downloaded rather than displayed
             header('Content-Type: text/csv; charset=utf-8');
             header('Content-Disposition: attachment; filename=vat_transactions.csv');
@@ -429,9 +426,8 @@ class VatController extends printController
 			'Source',
 			'Type']);
 
-            // loop over the rows, outputting only the columns we want
             foreach($csvExports as $csvrow) {
-				$csvrow = array_slice(array_merge(array_flip($column_order), $csvrow),0,9);
+                $csvrow = array_slice(array_merge(array_flip($column_order), $csvrow),0,9);
                 fputcsv($handle, $csvrow);
             }
             fclose($handle);
