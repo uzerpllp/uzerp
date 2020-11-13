@@ -10,6 +10,7 @@ class TaxStatus extends DataObject
 {
 
 	protected $defaultDisplayFields = ['description',
+									   'active',
 									   'apply_tax',
 									   'eu_tax',
 									   'postponed_vat_accounting' => 'PVA',
@@ -35,6 +36,20 @@ class TaxStatus extends DataObject
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('postponed_vat_accounting', 'IS', false));
 		$cc->add(new Constraint('reverse_charge', 'IS', false));
+		$cc->add(new Constraint('active', 'IS', true));
+		$statuses = $this->getAll($cc);
+		return $statuses;
+	}
+
+	/**
+	 * Return an array of tax status options
+	 *
+	 * @return array  Status options
+	 */
+	public function get_active_tax_statuses()
+	{
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('active', 'IS', true));
 		$statuses = $this->getAll($cc);
 		return $statuses;
 	}
