@@ -36,10 +36,12 @@
 				{select attribute='payment_term_id' }
 				{select attribute='payment_type_id' }	
 				{if $action=='new' }
-					{select attribute='tax_status_id' }
+					{select attribute='tax_status_id' options=$f_taxstatuses}
 				{else}
 					{if $transaction_count == 0}
-						{select attribute='tax_status_id' }
+						{select attribute='tax_status_id' options=$f_taxstatuses}
+					{else}
+						{view_data attribute='tax_status_id'}
 					{/if}
 				{/if}
 				{select attribute='delivery_term_id' }	

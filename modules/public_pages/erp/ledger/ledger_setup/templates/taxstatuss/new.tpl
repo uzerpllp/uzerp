@@ -10,6 +10,7 @@
 			{input type='hidden'  attribute='id' }
 			{include file='elements/auditfields.tpl' }
 			{input type='text'  attribute='description' class="compulsory" }
+			{input type='checkbox' attribute='active' class="compulsory" }
 			{input type='checkbox'  attribute='apply_tax' class="compulsory" }
 			{input type='checkbox' label='EU Tax' attribute='eu_tax' class="compulsory" }
 			{input type='checkbox' label='PVA' attribute='postponed_vat_accounting' class="compulsory" }
