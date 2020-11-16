@@ -50,7 +50,7 @@ class AddViewGlTaxPvPurchases extends UzerpMigration
         JOIN gl_periods glp ON glp.id = tr1.glperiods_id
         WHERE tr1.source::text = 'P'::text AND (tr1.type::text = 'I'::text AND tr1.value > 0::numeric OR tr1.type::text = 'C'::text AND tr1.value < 0::numeric)
         ORDER BY (row_number() OVER ());
-    VIEW;
+VIEW;
         $this->query($view);
         $this->query("ALTER TABLE {$view_name} OWNER TO \"{$view_owner}\"");
     }
