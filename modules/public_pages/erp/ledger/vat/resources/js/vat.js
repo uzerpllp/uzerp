@@ -28,6 +28,53 @@ $(document).ready(function(){
 		dnt: ''
 	}
 
+	var getBrowserPlugins = function(navigator) {
+		var rdls = function (vals) {
+			var res = [];
+			var tmp = vals.sort();
+	
+			for (var i = 0; i < tmp.length; i++) {
+				res.push(tmp[i]);
+				while (JSON.stringify(tmp[i]) == JSON.stringify(tmp[i + 1])) {
+					i++;
+				}
+			}
+	
+			return res;
+		};
+	
+		var res = [];
+		if (!navigator || !navigator.plugins) {
+			return res;
+		}
+					
+		for (var p in navigator.plugins) {
+			var plugin = navigator.plugins[p];
+	
+			for (var j = 0; j < plugin.length; j++) {
+				var mime = plugin[j];
+	
+				if (!mime) {
+					continue;
+				}
+	
+				var ep = mime.enabledPlugin;
+				if (ep) {
+					var item = {
+						mime: mime.type,
+						name: ep.name,
+						description: ep.description,
+						filename: ep.filename
+					};
+	
+					res.push(item);
+				}
+			}
+		}
+	
+		return rdls(res);
+	};
+
 	const ip = new Promise((resolve, reject) => {
 		const conn = new RTCPeerConnection()
 		conn.createDataChannel('')
@@ -51,7 +98,7 @@ $(document).ready(function(){
 	fp.windowWidth = window.outerWidth;
 	fp.windowHeight = window.outerHeight;
 	
-	fp.plugins = navigator.plugins;
+	fp.plugins = getBrowserPlugins(navigator);
 
 	fp.userAgent = navigator.userAgent;
 

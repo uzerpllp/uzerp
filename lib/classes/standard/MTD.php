@@ -59,7 +59,6 @@ class MTD {
         ]);
 
         $config = Config::Instance();
-        $device_uuid = $oauth_config['clientuuid'];
         $current   = timezone_open('Europe/London');
         $utcTime  = new \DateTime('now', new \DateTimeZone('UTC'));
         $offsetInSecs =  $current->getOffset($utcTime);
@@ -108,17 +107,20 @@ class MTD {
 
         // Gov-Client-Browser-Plugins
         // Modern browsers return an empty list
-        //$browser_plugins = get_object_vars($this->client_fp_info->plugins);
+        $browser_plugins = get_object_vars($this->client_fp_info->plugins);
+        if (count($browser_plugins) > 0) {
+            $plugin_names = [];
+            foreach ($browser_plugins as $plugin) {
+                $plugin_names[] = rawurlencode($plugin->name);
+            }
+            $this->fraud_protection_headers['Gov-Client-Browser-Plugins'] = implode(',', $plugin_names);
+        }
 
         // Gov-Client-Browser-JS-User-Agent
         $this->fraud_protection_headers['Gov-Client-Browser-JS-User-Agent'] = $this->client_fp_info->userAgent;
 
         // Gov-Client-Browser-Do-Not-Track
         $this->fraud_protection_headers['Gov-Client-Browser-Do-Not-Track'] = $this->client_fp_info->dnt;
-
-
-        // Gov-Client-Multi-Factor
-        //N/a
 
         // Gov-Vendor-Public-IP
         // The public IP address of the servers the originating device sent their requests to.
