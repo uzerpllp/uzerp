@@ -24,7 +24,7 @@ class VatController extends printController
 		
 		$this->uses($this->_templateobject);
 		
-		$this->titles=array(4=>'Inputs', 6=>'Outputs', 8=>'EU Sales', 9=>'EU Purchases');
+		$this->titles=array(4=>'Inputs', 6=>'Outputs', 8=>'EU Sales', 9=>'EU Purchases', 98=>'Postponed VAT Purchases',99=>'Reverse Charge Purchases');
 
 	}
 	
@@ -86,9 +86,9 @@ class VatController extends printController
 
 	public function enter_journal()
 	{
-		$flash=Flash::Instance();
+		//$flash=Flash::Instance();
 		
-		$errors=array();
+		//$errors=array();
 		
 		if (!$this->checkParams('vat_type'))
 		{
@@ -111,6 +111,11 @@ class VatController extends printController
 		
 		$gl_account->load($account_id);
 		$this->view->set('gl_centres',$gl_account->getCentres());
+
+		$period = DataObjectFactory::Factory('GLPeriod');
+		$current = $period->getPeriod(un_fix_date(fix_date(date(DATE_FORMAT))));
+		$this->view->set('periods', $period->getOpenPeriods(false));
+		$this->view->set('current_period', $current['id']);
 		
 		$this->view->set('vat_type', $this->_data['vat_type']);
 		$this->view->set('vat', DataObjectFactory::Factory('Vat'));
@@ -131,9 +136,12 @@ class VatController extends printController
 		
 		$data = $this->_data['Vat'];
 		
-		if ($data['value']['net']<=0 || $data['value']['vat']<=0)
+		if ($data['value']['vat']<=0)
 		{
-			$errors[]='Net and Vat values must be greater than zero';
+			$errors[]='Vat Value must be greater than zero';
+		}
+		elseif ($data['value']['net']<=0) {
+			$flash->addWarning('Transaction saved with Net Value of zero');
 		}
 		else
 		{
@@ -299,6 +307,14 @@ class VatController extends printController
 		return $this->viewEUTransactions($collection, $sh);
 	}
 	
+	
+	/**
+	 * View the list of transactions of each type for this VAT return
+	 * 
+	 * Calls private function printTransactions() for printing
+	 * 
+	 * Exporting to csv is handled here not in the print section
+	 */
 	public function viewTransactions()
 	{
 		$errors = array();
@@ -326,35 +342,97 @@ class VatController extends printController
 		$year = $this->search->getValue('year');
 		
 		if (isset($this->_data['box']))
+		// switch the model/collection based on the 'box' (sic)
 		{
 			switch ($this->_data['box']) {
 				case '4': // inputs
 					$this->_templateobject = DataObjectFactory::Factory('VatInputs');
 					$this->uses($this->_templateobject);
-					parent::index(new VatInputsCollection($this->_templateobject));
+					$vatTransactions = new VatInputsCollection($this->_templateobject);
+					$company_type='supplier';
 					break;
 				case '6': // outputs
 					$this->_templateobject = DataObjectFactory::Factory('VatOutputs');
 					$this->uses($this->_templateobject);
-					parent::index(new VatOutputsCollection($this->_templateobject));
+					$vatTransactions = new  VatOutputsCollection($this->_templateobject);
+					$company_type='customer';
 					break;
 				case '8': // eu sales
 					$this->_templateobject = DataObjectFactory::Factory('VatEuSales');
 					$this->uses($this->_templateobject);
-					parent::index(new VatEuSalesCollection($this->_templateobject));
+					$vatTransactions = new  VatEuSalesCollection($this->_templateobject);
+					$company_type='customer';
 					break;
 				case '9': // eu purchases
 					$this->_templateobject = DataObjectFactory::Factory('VatEuPurchases');
 					$this->uses($this->_templateobject);
-					parent::index(new VatEuPurchasesCollection($this->_templateobject));
+					$vatTransactions = new VatEuPurchasesCollection($this->_templateobject);
+					$company_type='supplier';
+					break;
+				case '98': // postponed VAT
+					$this->_templateobject = DataObjectFactory::Factory('VatPVPurchases');
+					$this->uses($this->_templateobject);
+					$vatTransactions = new  VatPVPurchasesCollection($this->_templateobject);
+					$company_type='supplier';			
+					break;					
+				case '99': // reverse charge VAT
+					$this->_templateobject = DataObjectFactory::Factory('VatRCPurchases');
+					$this->uses($this->_templateobject);
+					$vatTransactions = new VatRCPurchasesCollection($this->_templateobject);
+					$company_type='supplier';
 					break;
 			}
+			// Show the data in the index
+			parent::index($vatTransactions);
 			$this->view->set('box',$this->_data['box']);
 			$this->view->set('page_title',"VAT Transactions {$year}/{$tax_period} - ".$this->titles[$this->_data['box']]);
 		}		
 
 		$return = new VatReturn();
 		$return->loadVatReturn($year, $tax_period);
+
+		if ($this->_data['format'] == 'csv') {
+
+			$sh = new SearchHandler($vatTransactions, FALSE);
+			$sh->addConstraintChain(new Constraint('year', '=',  $s_data['year']));
+			$sh->addConstraintChain(new Constraint('tax_period', '=', $s_data['tax_period']));
+			$csvExports = $vatTransactions->load($sh,'',3);
+
+			$column_order = ['transaction_date',
+                            'docref',
+                            'ext_reference',
+                            $company_type,
+                            'comment',
+                            'vat',
+                            'net',
+                            'source',
+                            'type'];
+
+            // output headers so that the file is downloaded rather than displayed
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename=vat_transactions.csv');
+
+            // create a file pointer connected to the output stream
+            $handle = fopen('php://output', 'w');
+
+            // output the column headings to match the index view
+            fputcsv($handle, ['Date',
+			'Doc Ref',
+			'Ext Ref',
+			'Company',
+			'Comment',
+			'VAT',
+			'Net',
+			'Source',
+			'Type']);
+
+            foreach($csvExports as $csvrow) {
+                $csvrow = array_slice(array_merge(array_flip($column_order), $csvrow),0,9);
+                fputcsv($handle, $csvrow);
+            }
+            fclose($handle);
+            exit();
+        }
 
 		$sidebar = new SidebarController($this->view);
 
@@ -387,7 +465,7 @@ class VatController extends printController
 		}
 
 		$sidebar->addList(
-			'Actions',
+			'Output',
 			array(
 				'printtransactions'=>array(
 					'link'=>array_merge(array('modules'=>$this->_modules
@@ -397,8 +475,17 @@ class VatController extends printController
 											 ,'filename'=>'Transactions_'.$year.'-'.$tax_period
 											 )
 									   ,$print_params),
-					'tag'=>'Output Transactions'
+					'tag'=>'Print Transactions'
 				),
+				'exporttransactions'=>array(
+					'link'=>array_merge(array('modules'=>$this->_modules
+											 ,'controller'=>$this->name
+											 ,'action'=>'viewTransactions'
+											 ,'format'=>'csv'
+											 )
+									   ,$print_params),
+					'tag'=>'Export Transactions to CSV'
+				)
 			)
 		);
 		
@@ -644,6 +731,26 @@ class VatController extends printController
 								,'tax_period'=>$tax_period
 								),
 				'tag'=>$titles[9]
+			),
+			'box98'=>array(
+				'link'=>array('modules'=>$this->_modules
+								,'controller'=>$this->name
+								,'action'=>'viewTransactions'
+								,'box'=>98
+								,'year'=>$year
+								,'tax_period'=>$tax_period
+								),
+				'tag'=>$titles[98]
+			),
+			'box99'=>array(
+				'link'=>array('modules'=>$this->_modules
+								,'controller'=>$this->name
+								,'action'=>'viewTransactions'
+								,'box'=>99
+								,'year'=>$year
+								,'tax_period'=>$tax_period
+								),
+				'tag'=>$titles[99]
 			)
 		);
 		return $list;
@@ -863,8 +970,7 @@ class VatController extends printController
 		$options = array(
 			'type' => array(
 				'pdf' => '',
-				'xml' => '',
-				'csv' => ''
+				'xml' => ''
 			),
 			'output' => array(
 				'print'	=> '',
@@ -910,13 +1016,25 @@ class VatController extends printController
 					$gltransaction = DataObjectFactory::Factory('VatEuPurchases');
 					$gltransactions = new VatEuPurchasesCollection($gltransaction);
 					break;
+				case '98': // postponed VAT
+					$gltransaction = DataObjectFactory::Factory('VatPVPurchases');
+					$gltransactions = new VatPVPurchasesCollection($gltransaction);
+					break;					
+				case '99': // reverse charge VAT
+					$gltransaction = DataObjectFactory::Factory('VatRCPurchases');
+					$gltransactions = new VatRCPurchasesCollection($gltransaction);
+					break;	
 			}
 		}
 
 		$sh = new SearchHandler($gltransactions, false);
 		$sh->addConstraint($cc);
 		$gltransactions->load($sh);
-		
+		// Need the underling view here so we can get the sum
+		$viewname=$gltransactions->_tablename;
+		$totalvat = $this->_templateobject->getSum('vat', $cc, $viewname);
+		$totalnet = $this->_templateobject->getSum('net', $cc, $viewname);
+
 		if (count($errors) > 0)
 		{
 			echo $this->build_print_dialog_response(
@@ -966,10 +1084,19 @@ class VatController extends printController
 			case 9:
 				$title = "VAT EU Purchases {$title}";
 				break;
+			case 98:
+				$title = "Postponed VAT Purchases {$title}";
+				break;
+			case 99:
+				$title = "Reverse Charge Purchases {$title}";
+				break;
 		}
 		
 		$extra = array(
 			'title'		=> $title
+			,'totalvat' => number_format($totalvat,2)
+			,'totalnet' => number_format($totalnet,2)
+
 		);
 					
 		// generate the xml and add it to the options array
@@ -1151,7 +1278,7 @@ class VatController extends printController
 						 ),
 			'tag'=>'View Transactions'
 		);
-		
+
 		$returns_sidebar['all'] = [
             'link' => [
                 'modules' => $this->_modules,

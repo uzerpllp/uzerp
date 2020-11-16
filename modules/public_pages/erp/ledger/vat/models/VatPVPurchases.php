@@ -1,6 +1,6 @@
 <?php
 /**
- *	@author uzERP LLP and Steve Blamey <sblamey@uzerp.com>
+ *	@author uzERP LLP and Martyn Shiner <mshiner@uzerp.com>
  *	@license GPLv3 or later
  *	@copyright (c) 2019 uzERP LLP (support#uzerp.com). All rights reserved.
  *
@@ -9,7 +9,7 @@
  *	the Free Software Foundation, either version 3 of the License, or
  *	any later version.
  */
-class VatInputs extends DataObject {
+class VatPVPurchases extends DataObject {
     protected $defaultDisplayFields = [
         'transaction_date',
         'gl_id',
@@ -23,7 +23,7 @@ class VatInputs extends DataObject {
         'type'
     ];
 
-    function __construct($tablename='gltransactions_vat_inputs') {
+    function __construct($tablename='gl_taxpvpurchases') {
         parent::__construct($tablename);
         $this->orderby = ['transaction_date'];
 

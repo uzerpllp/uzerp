@@ -11,6 +11,10 @@
 	{assign var=data value=$vateusaless}
 {else if $box == '9'}
 	{assign var=data value=$vateupurchasess}
+{else if $box == '98'}
+	{assign var=data value=$vatpvpurchasess}
+{else if $box == '99'}
+	{assign var=data value=$vatrcpurchasess}
 {/if}
 {content_wrapper}
 	{paging}
@@ -20,7 +24,7 @@
 				Date
 			</th>
 			{heading_cell field="docref"}
-				Doc Ref:
+				Doc Ref.
 			{/heading_cell}
 			<th>
 				Ext Ref.
@@ -68,10 +72,10 @@
 						{/if}
 					{/if}
 				{/grid_cell}
-				{grid_cell model=$model cell_num=7 field="type"}
+				{grid_cell model=$model cell_num=7 field="ext_reference"}
 					{$model->ext_reference}
 				{/grid_cell}
-				{grid_cell model=$model cell_num=7 field="type"}
+				{grid_cell model=$model cell_num=7 field="company"}
 					{if $model->supplier}
 						{$model->supplier}
 					{else if $model->customer}

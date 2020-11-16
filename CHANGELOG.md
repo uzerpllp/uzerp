@@ -4,10 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Support for Postponed VAT Accounting for goods
+- Suppport for VAT Reverse Charge on services
+- Allow a VAT status to be inactive (not available when adding new customer or supplier ledger accounts)
+
 ### Fixed
 
 - Cashbook payments not saved when entering invalid combination of values with tax rate 'None'
-- Cashbook payments no longer allow payments to inactive companies or people
+- Cashbook no longer allows payments to inactive companies or people
 - Output VAT transactions for the selected period
 
 ## [1.25.1] 2020-08-12

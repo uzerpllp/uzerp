@@ -13,7 +13,7 @@
 				{input type="hidden" attribute="vat_type" value=$vat_type}
 				{input type="text" attribute='net' number='value' value='0.00' label='Net Value '}
 				{input type="text" attribute='vat' number='value' value='0.00' label='Vat Value '}
-				{select attribute="glperiods_id" label="Post to Period"}
+				{select attribute="glperiods_id" label="Post to Period" options=$periods value=$current_period}
 				{input type="text" attribute="reference"}
 				{input type="text" attribute="comment"}
 				{select attribute='glaccount_id' label='Account' force=true options=$gl_accounts}

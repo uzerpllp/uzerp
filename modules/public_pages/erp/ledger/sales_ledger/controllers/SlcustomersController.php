@@ -60,7 +60,7 @@ class SlcustomersController extends LedgerController
         $system_prefs = SystemPreferences::instance();
         $module_prefs = $system_prefs->getModulePreferences('ledger_setup');
         if (! isset($module_prefs['sales-invoice-report-type'])) {
-	        $module_prefs['sales-invoice-report-type'] = '';
+            $module_prefs['sales-invoice-report-type'] = '';
         }
         $this->module_prefs = $module_prefs;
         $this->view->set('module_prefs', $module_prefs);
@@ -589,8 +589,8 @@ class SlcustomersController extends LedgerController
             {
                 $flash->addWarning($e->getMessage());
                 if ($e->getCode == 1) {
-					$db->FailTrans();
-				}
+                    $db->FailTrans();
+                }
                 
             }
 
@@ -1227,12 +1227,17 @@ class SlcustomersController extends LedgerController
         }
 
         if (is_null($customer->cb_account_id))
-		{
-			$cbaccount = CBAccount::getPrimaryAccount();
-			$customer->cb_account_id = $cbaccount->{$cbaccount->idField};
-		}
+        {
+            $cbaccount = CBAccount::getPrimaryAccount();
+            $customer->cb_account_id = $cbaccount->{$cbaccount->idField};
+        }
+        
+        $taxstatus = new TaxStatus();
+        $taxstatuses = $taxstatus->get_customer_tax_statuses();
 
-		$this->view->set('bank_account', $customer->cb_account_id);
+        $this->view->set('f_taxstatuses', $taxstatuses);
+
+        $this->view->set('bank_account', $customer->cb_account_id);
         $this->view->set('bank_accounts', $this->getbankAccounts($customer->id));
         
         $this->view->set('billing_addresses', $customer->getInvoiceAddresses());
@@ -1544,11 +1549,11 @@ class SlcustomersController extends LedgerController
             $currency_id = $customer->currency_id;
 
             // If the user has selected a new currency
-			// the id will be in the request,
-			// so set the selected currency id.
-			if(isset($this->_data['ajax'])) {
-				$currency_id = $this->_data['id'];
-			}
+            // the id will be in the request,
+            // so set the selected currency id.
+            if(isset($this->_data['ajax'])) {
+                $currency_id = $this->_data['id'];
+            }
 
             $cc = new ConstraintChain();
 

@@ -9,7 +9,12 @@
 class TaxStatus extends DataObject
 {
 
-	protected $version='$Revision: 1.6 $';
+	protected $defaultDisplayFields = ['description',
+									   'active',
+									   'apply_tax',
+									   'eu_tax',
+									   'postponed_vat_accounting' => 'PVA',
+									   'reverse_charge'];
 	
 	function __construct($tablename='tax_statuses')
 	{
@@ -19,6 +24,34 @@ class TaxStatus extends DataObject
 		 
 		$this->validateUniquenessOf('description');
 		
+	}
+
+	/**
+	 * Return an array of tax status options valid for an SLCustomer
+	 *
+	 * @return array  Status options
+	 */
+	public function get_customer_tax_statuses()
+	{
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('postponed_vat_accounting', 'IS', false));
+		$cc->add(new Constraint('reverse_charge', 'IS', false));
+		$cc->add(new Constraint('active', 'IS', true));
+		$statuses = $this->getAll($cc);
+		return $statuses;
+	}
+
+	/**
+	 * Return an array of tax status options
+	 *
+	 * @return array  Status options
+	 */
+	public function get_active_tax_statuses()
+	{
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('active', 'IS', true));
+		$statuses = $this->getAll($cc);
+		return $statuses;
 	}
 
 }

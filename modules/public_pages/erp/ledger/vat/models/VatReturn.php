@@ -61,6 +61,17 @@ class VatReturn extends DataObject
         // Output to smarty from the formatter will be html,
         // flag as html to prevent escaping
         $this->getField('tax_period_closed')->type = 'html';
+
+        // Define field formats		
+		$this->getField('vat_due_sales')->setFormatter(new NumericFormatter());
+        $this->getField('vat_due_acquisitions')->setFormatter(new NumericFormatter());
+        $this->getField('total_vat_due')->setFormatter(new NumericFormatter());
+        $this->getField('vat_reclaimed_curr_period')->setFormatter(new NumericFormatter());
+        $this->getField('net_vat_due')->setFormatter(new NumericFormatter());
+        $this->getField('total_value_sales_ex_vat')->setFormatter(new NumericFormatter());
+        $this->getField('total_value_purchase_ex_vat')->setFormatter(new NumericFormatter());
+        $this->getField('total_value_goods_supplied_ex_vat')->setFormatter(new NumericFormatter());
+        $this->getField('total_acquisitions_ex_vat')->setFormatter(new NumericFormatter());
     }
 
 

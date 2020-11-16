@@ -112,6 +112,11 @@ class PlsuppliersController extends LedgerController
 			$supplier->cb_account_id = $cbaccount->{$cbaccount->idField};
 		}
 
+		$taxstatus = new TaxStatus();
+        $taxstatuses = $taxstatus->get_active_tax_statuses();
+
+        $this->view->set('f_taxstatuses', $taxstatuses);
+
 		$this->view->set('bank_account', $supplier->cb_account_id);
 		$this->view->set('bank_accounts', $this->getbankAccounts($supplier->id));
 
