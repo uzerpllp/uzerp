@@ -954,7 +954,7 @@ class SodespatchlinesController extends printController
         $extra['company_details']['fax'] = 'Fax  : ' . $this->getContactDetails('F');
         $extra['company_details']['email'] = 'email: ' . $this->getContactDetails('E');
         $extra['company_details']['co_additonal_text1'] = $this->getCompanyDetails()['co_additonal_text1'];
-        $extra['company_details']['co_additonal_text1'] = $this->getCompanyDetails()['co_additonal_text2'];
+        $extra['company_details']['co_additonal_text2'] = $this->getCompanyDetails()['co_additonal_text2'];
 
         // get the despatch location
         $extra['despatch_location'] = implode(',', $order->despatch_from->rules_list('from_location'));
@@ -983,8 +983,8 @@ class SodespatchlinesController extends printController
         $delivery_address += $this->formatAddress($customer->getDeliveryAddress($order->del_address_id));
         $extra['delivery_address'] = $delivery_address;
 
-        $extra['additional_text1'] = $customer->customerdetail->companydetail->text1;
-        $extra['additional_text2'] = $customer->customerdetail->companydetail->text2;
+        $extra['additional_text1'] = $customer->companydetail->text1;
+        $extra['additional_text2'] = $customer->companydetail->text2;
 
         // generate the xml and add it to the options array
         $options['xmlSource'] = $this->generate_xml(array(
