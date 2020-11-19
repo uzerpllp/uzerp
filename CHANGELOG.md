@@ -2,13 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.26.2] 2020-11-19
+
+### Fixed
+
+- Output of additional contact fields not working on despatch note output
+
 ## [1.26.1] 2020-11-17
 
 ### Fixed
 
 - Failed migrations
 
-## [1.26] 2020-11-16, pre-release
+## [1.26] 2020-11-16
 
 ### Added
 
