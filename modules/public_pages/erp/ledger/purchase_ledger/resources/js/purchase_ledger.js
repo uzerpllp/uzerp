@@ -67,6 +67,21 @@ $(document).ready(function(){
 		});
 
 	});
+
+	/* purchase__ledger -> plsuppliers -> make/receive_payment*/
+
+	// Set bank account drop-down options that are valid for the customer currency currency
+	$("#purchase_ledger-plsuppliers-enter_payment").on('change', "#PLTransaction_plmaster_id", function(){
+		$('#CBTransaction_cb_account_id').uz_ajax({
+			data:{
+				module		: 'purchase_ledger',
+				controller	: 'plsuppliers',
+				action		: 'getBankAccounts',
+				id			: $('#CBTransaction_currency_id').val(),
+				ajax		: ''
+			}
+		});
+	});
 	
 	/* purchase_ledger -> plpayments -> select_for_payment */
 	

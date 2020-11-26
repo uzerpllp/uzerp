@@ -12,7 +12,6 @@
  */
 
 $(document).ready(function(){
-
 	/* sales_ledger -> slcustomers -> new */
 	
 	$("#SLCustomer_company_id","#sales_ledger-slcustomers-new").live("change", function(){
@@ -56,6 +55,21 @@ $(document).ready(function(){
 			}
 		});
 
+	});
+
+	/* sales_ledger -> slcustomers -> make/receive_payment*/
+
+	// Set bank account drop-down options that are valid for the customer currency currency
+	$("#sales_ledger-slcustomers-enter_payment").on('change', "#SLTransaction_slmaster_id", function(){
+		$('#CBTransaction_cb_account_id').uz_ajax({
+			data:{
+				module		: 'sales_ledger',
+				controller	: 'slcustomers',
+				action		: 'getBankAccounts',
+				id			: $('#CBTransaction_currency_id').val(),
+				ajax		: ''
+			}
+		});
 	});
 
 	/* sales_ledger -> slcustomers -> allocate */
