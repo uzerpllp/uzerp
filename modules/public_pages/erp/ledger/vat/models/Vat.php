@@ -181,7 +181,7 @@ class Vat extends GLTransaction
 
 			$values = $this->getVATvalues($year, $tax_period);
 			
-			$output_tax = $values['Box1']; //$this->getVATSum(1)
+			$output_tax = $values['outputs']; //$this->getVATSum(1)
 			
 			$input_tax = $values['inputs']; //$this->getVATSum(4)
 			
@@ -261,6 +261,7 @@ class Vat extends GLTransaction
 	 * Note:
 	 *   Box3 = Box1 + Box2
 	 *   Box5 = Box3 + Box4
+	 *   'outputs' and 'inputs' are used for posting when closing the vat period: @see Vat::closePeriod()
 	 * 
 	 * @param int $year
 	 * @param int $tax_period
@@ -278,7 +279,9 @@ coalesce(sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperio
 coalesce(sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id))+coalesce(sum((select sum(net) from gl_taxrcpurchases vo where vo.glperiods_id=glp.id)), 0.00), 0.00) as "Box6",
 coalesce(sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)), 0.00) as "Box7",
 coalesce(sum((select sum(net) from gltransactions_vat_outputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')), 0.00) as "Box8",
-coalesce(sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')), 0.00) as "Box9"
+coalesce(sum((select sum(net) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id and eutaxstatus='T')), 0.00) as "Box9",
+coalesce(sum((select sum(vat) from gltransactions_vat_outputs where glperiods_id=glp.id)), 0.00) as "outputs",
+coalesce(sum((select sum(vat) from gltransactions_vat_inputs vo where vo.glperiods_id=glp.id)), 0.00) as "inputs"
 from gl_periods glp
 where year=? and tax_period=?
 group by tax_period
