@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.26.4] 2021-01-07
+
+### Fixed
+
+- CRITICAL: VAT Period close posts 0.00 for 'input' tax
+
 ## [1.26.3] 2020-11-26
 
 ### Fixed
