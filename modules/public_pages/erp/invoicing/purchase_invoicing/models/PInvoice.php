@@ -511,26 +511,10 @@ class PInvoice extends Invoice
 			}
 		}
 
-		if ($vat_postponed)
-		{
-			
-			$eu_tax_elements = GLTransaction::makeTax($eu_gl_data, 'PVA', $newerrors);
-			
-			foreach ($eu_tax_elements as $eu_tax_element)
-			{
-				if ($eu_tax_element === false)
-				{
-					$errors+=$newerrors;
-					return false;
-				}
-				$gl_transactions[] = $eu_tax_element;
-			}
-		}
-
 		if ($reverse_charge)
 		{
 			
-			$eu_tax_elements = GLTransaction::makeTax($eu_gl_data, 'RC', $newerrors);
+			$eu_tax_elements = GLTransaction::makeTaxRC($eu_gl_data, $newerrors);
 			
 			foreach ($eu_tax_elements as $eu_tax_element)
 			{

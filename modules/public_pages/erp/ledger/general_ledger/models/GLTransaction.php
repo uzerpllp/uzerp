@@ -1013,52 +1013,43 @@ class GLTransaction extends DataObject
     }
 
     /**
-     * Handle tax for PVA and Reverse Charge
+     * Handle tax for Reverse Charge
      *
      * @param $transaction
      * @param $type  'RC' = Reverse Charge, 'PVA' = Postponed VAT Accounting
      * @param array $errors
      * @return void
      */
-    public static function makeTax($transaction, $tax_type='none',  &$errors = array())
+    public static function makeTaxRC($transaction,  &$errors = array())
     {
         $mult = self::$multipliers[$transaction['source']][$transaction['type']];
-        $eu_tax_element = $transaction;
+        $rc_tax_element = $transaction;
 
         $glparams = DataObjectFactory::Factory('GLParams');
 
-        switch ($tax_type) {
-            case 'PVA':
-                $eu_tax_element['glaccount_id'] = $glparams->vat_postponed_account();
-                break;
-            case 'RC':
-                $eu_tax_element['glaccount_id'] = $glparams->vat_reverse_charge_account();
-                break;
-            default:
-                $errors[] = "Tax type not specified";
+        $rc_tax_element['glaccount_id'] = $glparams->vat_reverse_charge_account();
+
+        if ($rc_tax_element['glaccount_id'] === false) {
+            $errors[] = "Account Code for tax 'Reverse Charge' not found";
         }
 
-        if ($eu_tax_element['glaccount_id'] === false) {
-            $errors[] = "Account Code for tax '{$tax_type}' not found";
-        }
+        $rc_tax_element['glcentre_id'] = $glparams->balance_sheet_cost_centre();
 
-        $eu_tax_element['glcentre_id'] = $glparams->balance_sheet_cost_centre();
-
-        if ($eu_tax_element['glcentre_id'] === false) {
+        if ($rc_tax_element['glcentre_id'] === false) {
             $errors[] = 'Balance Sheet Cost Centre Code not found';
         }
 
-        $eu_tax_element['value'] = bcmul($mult, $eu_tax_element['value']);
-        $eu_tax_element['twinvalue'] = bcmul($mult, $eu_tax_element['twinvalue']);
+        $rc_tax_element['value'] = bcmul($mult, $rc_tax_element['value']);
+        $rc_tax_element['twinvalue'] = bcmul($mult, $rc_tax_element['twinvalue']);
 
-        $eu_tax_elements = array();
-        $eu_tax_elements[] = GLTransaction::Factory($eu_tax_element, $errors);
+        $rc_tax_elements = array();
+        $rc_tax_elements[] = GLTransaction::Factory($rc_tax_element, $errors);
 
-        $eu_tax_element['value'] *= - 1;
-        $eu_tax_element['twinvalue'] *= - 1;
-        $eu_tax_elements[] = GLTransaction::Factory($eu_tax_element, $errors);
+        $rc_tax_element['value'] *= - 1;
+        $rc_tax_element['twinvalue'] *= - 1;
+        $rc_tax_elements[] = GLTransaction::Factory($rc_tax_element, $errors);
 
-        return $eu_tax_elements;
+        return $rc_tax_elements;
     }
 
     public static function makeCBLine($transaction, &$errors = array())

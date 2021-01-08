@@ -2,11 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.26.4] 2021-01-07
+## [Unreleased]
 
 ### Fixed
 
 - CRITICAL: VAT Period close posts 0.00 for 'input' tax
+- Remove calculation and GL posting of VAT PVA when posting purchase invoice. PVA payments will be collected in the VAT module as the amount specified bu UK customs.
 
 ## [1.26.3] 2020-11-26
 
