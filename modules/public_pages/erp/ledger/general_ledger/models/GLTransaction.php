@@ -980,6 +980,31 @@ class GLTransaction extends DataObject
         return $gl_transactions;
     }
 
+    public static function makePVAEntry($gl_data, &$errors = array())
+    {
+        $vat = $gl_data['value']['vat'];
+        $gl_transactions = array();
+
+        $gl_data['source'] = 'P';
+        $gl_data['type'] = 'I';
+
+        $glparams = DataObjectFactory::Factory('GLParams');
+        $gl_data['glaccount_id'] = $glparams->vat_postponed_account();
+        $gl_data['glcentre_id'] = $glparams->balance_sheet_cost_centre();
+
+        // Write VAT Value
+        $gl_data['value'] = $vat;
+        GLTransaction::setTwinCurrency($gl_data);
+        $gl_transactions[] = GLTransaction::Factory($gl_data, $errors);
+
+        // Write VAT control entry
+        $gl_data['value'] = bcmul($vat, - 1);
+        GLTransaction::setTwinCurrency($gl_data);
+        $gl_transactions[] = GLTransaction::Factory($gl_data, $errors);
+
+        return $gl_transactions;
+    }
+    
     public static function makeEuTax($transaction, &$errors = array())
     {
         $mult = self::$multipliers[$transaction['source']][$transaction['type']];

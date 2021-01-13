@@ -54,6 +54,20 @@ class TaxStatus extends DataObject
 		return $statuses;
 	}
 
+	/**
+	 * Return and array of PVA taxt status options
+	 *
+	 * @return array  Status options
+	 */
+	public function get_pva_statuses()
+	{
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('postponed_vat_accounting', 'IS', true));
+		$cc->add(new Constraint('active', 'IS', true));
+		$statuses = $this->getAll($cc);
+		return $statuses;
+	}
+
 }
 
 // End of TaxStatus

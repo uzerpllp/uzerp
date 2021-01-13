@@ -76,6 +76,14 @@ class VatController extends printController
 			'tag'=>'VAT Output Journal'
 		);
 
+		$returns_sidebar['pvaEntry'] = array(
+			'link'=>array('modules'=>$this->_modules
+						 ,'controller'=>$this->name
+						 ,'action'=>'enterPVAEntry'
+						 ),
+			'tag'=>'import_pva'
+		);
+
 		$sidebar->addList('Actions', $returns_sidebar);
 
 		$this->view->register('sidebar', $sidebar);
@@ -123,6 +131,91 @@ class VatController extends printController
 		$this->view->set('page_title', $this->getPageName('', 'Enter '.$this->_data['vat_type'].' Journal'));
 	}
 
+	/**
+	 * Display a form for a Postponed VAT Accounting Entry
+	 *
+	 * @return void
+	 */
+	public function enterPVAEntry() {
+		$period = DataObjectFactory::Factory('GLPeriod');
+
+		if(isset($this->_data['Vat']['glperiods_id'])) {
+			$period_id = $this->_data['Vat']['glperiods_id'];
+		} else {
+			$current = $period->getPeriod(fix_date(date(DATE_FORMAT)));
+			$period_id = $current['id'];
+		}
+
+		$invoice_options = $this->getPVAInvoices($period_id);
+
+		$glparams = DataObjectFactory::Factory('GLParams');
+		$this->view->set('gl_account', $glparams->vat_postponed_account());
+		$this->view->set('invoices', $invoice_options);
+		$this->view->set('periods', $period->getOpenPeriods(false));
+		$this->view->set('current_period', $current['id']);
+		//$this->view->set('vat_type', 'vat_postponed_account');
+		$this->view->set('vat', DataObjectFactory::Factory('Vat'));
+		$this->view->set('page_title','Import PVA Entry');
+	}
+
+	/**
+	 * Return Purchase Invoices with a PVA tax status
+	 * with an invoice date in the specified period
+	 *
+	 * @param string $period_id  GL Period ID
+	 * @return mixed  Array/AJAX response
+	 */
+	public function getPVAInvoices($period_id='')
+	{
+		if(isset($this->_data['ajax']))
+		{
+			if(!empty($this->_data['period_id'])) {
+				$period_id = $this->_data['period_id'];
+			}
+		}
+
+		$tax_statuses = new TaxStatus();
+		$pva_statuses = $tax_statuses->get_pva_statuses();
+
+		$gl_period = DataObjectFactory::Factory('GLPeriod');
+		$gl_period->load($period_id);
+		
+		$pva_invoices = new PInvoiceCollection();
+		$sh = new SearchHandler($pva_invoices, false);
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('tax_status_id', 'IN', '(' . implode(',', array_keys($pva_statuses)) . ')'));
+		$cc->add(new Constraint('transaction_type', '=', 'I'));
+		$cc->add(new Constraint('status', '=', 'O'));
+
+		$period_cc = new ConstraintChain();
+		$period_cc->add(new Constraint('invoice_date', '>=', fix_date($gl_period->getPeriodStartDate($period_id))));
+		$period_cc->add(new Constraint('invoice_date', '<=', $gl_period->enddate));
+		
+		$cc->add($period_cc);
+
+		$sh->addConstraintChain($cc);
+		$pva_invoices->load($sh);
+		$invoice_options = [];
+		foreach ($pva_invoices as $invoice) {
+			$invoice_options[$invoice->id] = "{$invoice->invoice_number} - {$invoice->supplier}";
+		}
+
+		if(isset($this->_data['ajax']))
+		{
+			$this->view->set('options', $invoice_options);
+			$this->setTemplateName('select_options');
+		}
+		else
+		{
+			return $invoice_options;
+		}
+	}
+
+	/**
+	 * Save VAT Journal or PVA Entry
+	 *
+	 * @return void
+	 */
 	public function savejournal ()
 	{
 		$flash = Flash::Instance();
@@ -140,16 +233,18 @@ class VatController extends printController
 		{
 			$errors[]='Vat Value must be greater than zero';
 		}
-		elseif ($data['value']['net']<=0) {
-			$flash->addWarning('Transaction saved with Net Value of zero');
-		}
 		else
 		{
 			$glparams = DataObjectFactory::Factory('GLParams');
 			$vat_type = 'vat_'.$data['vat_type'];
 			$data['vat_account'] = call_user_func(array($glparams, $vat_type));
 			
-			if ($data['vat_type']=='input')
+			if ($data['vat_type'] == 'PVA') {
+				$invoice = new PInvoice();
+				$data['docref'] = $invoice->invoice_number;
+			}
+
+			if ($data['vat_type']=='input' || $data['vat_type']=='PVA')
 			{
 				$data['value']['net'] = bcmul($data['value']['net'], -1);
 				$data['value']['vat'] = bcmul($data['value']['vat'], -1);
@@ -157,11 +252,18 @@ class VatController extends printController
 			
 			$data['transaction_date'] = date(DATE_FORMAT);
 
-			$gltransactions = GLTransaction::makeFromVATJournalEntry($data, $errors);
+			if ($data['vat_type'] == 'PVA') {
+				$gltransactions = GLTransaction::makePVAEntry($data, $errors);
+			} else {
+				$gltransactions = GLTransaction::makeFromVATJournalEntry($data, $errors);
+			}
 			
 			if (count($errors)==0 && GLTransaction::saveTransactions($gltransactions, $errors))
 			{
 				$flash->addMessage('VAT Journal created OK');
+				if ($data['value']['net']<=0 && $data['vat_type'] != 'PVA') {
+					$flash->addWarning('Transaction saved with Net Value of zero');
+				}
 				sendTo($this->name, '', $this->_modules);
 			}
 		}
