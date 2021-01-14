@@ -153,7 +153,6 @@ class VatController extends printController
 		$this->view->set('invoices', $invoice_options);
 		$this->view->set('periods', $period->getOpenPeriods(false));
 		$this->view->set('current_period', $current['id']);
-		//$this->view->set('vat_type', 'vat_postponed_account');
 		$this->view->set('vat', DataObjectFactory::Factory('Vat'));
 		$this->view->set('page_title','Import PVA Entry');
 	}
@@ -180,26 +179,43 @@ class VatController extends printController
 		$gl_period = DataObjectFactory::Factory('GLPeriod');
 		$gl_period->load($period_id);
 		
+		//Get a list of invoice numbers that have PVA VAT entries
+		$pva_entries = new VatPVPurchasesCollection();
+		$pva_entries_search = new SearchHandler($pva_entries, false);
+		$entries_cc = new ConstraintChain();
+		$entries_cc->add(new Constraint('year', '=', $gl_period->year));
+		$entries_cc->add(new Constraint('year', '=', $gl_period->year -1), 'OR');
+		$pva_entries_search->addConstraintChain($entries_cc);
+		$pva_entries->load($pva_entries_search);
+
+		$pva_invoice_numbers = [];
+		foreach ($pva_entries as $entry) {
+			if (!in_array($entry->docref, $pva_invoice_numbers)) {
+				$pva_invoice_numbers[] = $entry->docref;
+			}
+		}
+
+		//Select invoices that require a VAT entry for PVA
 		$pva_invoices = new PInvoiceCollection();
 		$sh = new SearchHandler($pva_invoices, false);
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('tax_status_id', 'IN', '(' . implode(',', array_keys($pva_statuses)) . ')'));
+		//Exclude invoices that have PVA entries
+		if (count($pva_invoice_numbers) > 0 ) {
+			$cc->add(new Constraint('invoice_number', 'NOT IN', '(' . implode(',', $pva_invoice_numbers) . ')'));
+		}
 		$cc->add(new Constraint('transaction_type', '=', 'I'));
-		$cc->add(new Constraint('status', '=', 'O'));
-
-		$period_cc = new ConstraintChain();
-		$period_cc->add(new Constraint('invoice_date', '>=', fix_date($gl_period->getPeriodStartDate($period_id))));
-		$period_cc->add(new Constraint('invoice_date', '<=', $gl_period->enddate));
-		
-		$cc->add($period_cc);
-
+		$cc->add(new Constraint('status', '!=', 'N'));
 		$sh->addConstraintChain($cc);
 		$pva_invoices->load($sh);
+
+		//Generate invoice options
 		$invoice_options = [];
 		foreach ($pva_invoices as $invoice) {
 			$invoice_options[$invoice->id] = "{$invoice->invoice_number} - {$invoice->supplier}";
 		}
 
+		//Return options in the appropriate format
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('options', $invoice_options);
