@@ -1,0 +1,174 @@
+##!/bin/bash
+
+# Create a uzERP release tar archive from a local git repository
+# and optionally create a github release.
+#
+# Requirements:
+#
+#	npm - Node.js package manager
+#	php - PHP CLI
+#
+# Author:     Steve Blamey <blameys@blueloop.net>
+#
+# Copyright 2018 uzERP LLP, unless otherwise noted.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+USE_DEV_REQ=NO
+GH_RELEASE="NO"
+
+install_composer()
+{
+   if [ ! -f "${RELEASE_ROOT}/composer.phar" ]
+      then
+         echo "Installing composer"
+         curl https://getcomposer.org/composer.phar --silent --output $RELEASE_ROOT/composer.phar
+         if [ ! -f "${RELEASE_ROOT}/composer.phar" ]; then
+            echo >&2 "Error: failed to download composer"; exit 1
+         fi
+      else
+         echo "Composer installed"
+         echo "Checking that composer is up to date"
+         php $RELEASE_ROOT/composer.phar self-update
+   fi
+}
+
+# Make a uzERP release archive
+make_release()
+{
+   # Make sure the working directory does not exist
+   rm -rf $RELEASE_WORKDIR
+
+   # Create the working directory, if it does not exist, and download composer
+   mkdir -p $RELEASE_WORKDIR
+
+   # Only proceed if the RELEASE_WORKDIR exists
+   if [ -d $RELEASE_WORKDIR ]
+      then
+	 echo "Making uzERP release ${RELEASE}..."
+         # Pipe git-archive to and use tar to extract to the working directory
+         git archive --format=tar.gz ${RELEASE}|tar -xz -C $RELEASE_WORKDIR
+
+         REPO=$(pwd)
+
+         # Change to to the working directory
+         cd $RELEASE_WORKDIR
+         # Make sure that cd was successful
+         if [ "${PWD}" != "${RELEASE_WORKDIR}" ]; then
+            echo >&2 "Error: failed to switch to ${RELEASE_WORKDIR}"; exit 1
+         fi
+
+         if [ "${USE_DEV_REQ}" == "NO" ]; then
+            # Install uzERP dependencies using composer
+            install_composer
+            php $RELEASE_ROOT/composer.phar install
+         else
+            echo "Copying PHP depndencies from local git repository directory"
+            cp -r $REPO/vendor $RELEASE_WORKDIR
+            # Remove composer file
+            rm -f composer.json
+         fi
+
+         # Build js/css
+         echo "Building css/js"
+         npm install
+         npm run gulp
+
+         # Remove uneeded files/directories
+         rm -rf node_modules
+         rm gulpfile.js
+         rm package.json
+         rm composer.json
+         rm -rf .github
+
+         # Create the release archive
+         tar --exclude-vcs-ignores --exclude-vcs -zcf $RELEASE_ROOT/${RELEASE_FILE} \
+            --directory=$RELEASE_ROOT $RELEASE
+         echo "Release package made: ${RELEASE_ROOT}/${RELEASE_FILE}"
+         MD5=($(md5sum  $RELEASE_ROOT/${RELEASE_FILE}))
+         echo $MD5
+
+         # Clean-up
+         rm -rf $RELEASE_WORKDIR
+
+         # Create github release
+         if [ "$GH_RELEASE" == "YES" ]; then
+             GH_RELEASE_MSG="uzERP ${RELEASE}\n\nSee https://github.com/uzerpllp/uzerp/blob/${RELEASE}/CHANGELOG.md for notable changes since the last uzERP release.\n\nmd5: ${MD5}"
+             echo -e $GH_RELEASE_MSG > $RELEASE_ROOT/release.txt
+	     cd $REPO
+             /usr/bin/hub release create -d -a $RELEASE_ROOT/${RELEASE_FILE} -F $RELEASE_ROOT/release.txt ${RELEASE}
+         fi
+      else
+         echo "Failed to create work directory: ${RELEASE_WORKDIR}"
+   fi
+}
+
+# Display usage information
+PROGNAME=$0
+usage()
+{
+   # http://stackoverflow.com/questions/2924697/how-does-one-output-bold-text-in-bash/#answer-2924755
+   bold=$(tput bold)
+   normal=$(tput sgr0)
+
+   echo "Usage: ${PROGNAME} -r TAG -w PATH [-d] [-p] [release name]"
+   echo "   -r TAG         A git tag or commit ref"
+   echo "   -w PATH        Working directory"
+   echo "   -d             Copy dependencies from git repository directory, default is to use composer"
+   echo "   -p             Create github release"
+   echo "   release name   An alternative name for the release (default: release-uzerp-TAG)"
+   echo -e "\nThis script uses git and ${bold}must be run from${normal} a repository directory.\nPHP CLI and npm are required for composer to install uzERP dependencies\nand to provide gulp to build front-end assets.\n"
+}
+
+# Exit if PHP, npm or hub are not installed
+hash php 2>/dev/null || { echo -e >&2 "Error: PHP CLI is required for composer to install uzERP dependencies\nbut does not seem to be installed."; exit 1; }
+hash npm 2>/dev/null || { echo -e >&2 "Error: npm is required to install gulp to build js/css\nbut does not seem to be installed."; exit 1; }
+hash hub 2>/dev/null || { echo -e >&2 "Warning: hub is required to create releases on github\nbut does not seem to be installed."; }
+
+# Process comand line options
+while getopts ":w:r:hdp" opt
+do
+   case $opt in
+      w)
+         RELEASE_ROOT=${OPTARG};;
+      r)
+         RELEASE=${OPTARG};;
+      d)
+         USE_DEV_REQ="YES";;
+      p)
+	GH_RELEASE=YES;;
+      h)
+         usage;;
+   esac
+done
+# remove options from positional parameters
+shift $((OPTIND-1))
+RELEASE_NAME=${1}
+
+# Check that the parameters passed in are not empty
+# Both -r and -w parameters are required
+if [ ! -z $RELEASE  ] && [ ! -z $RELEASE_ROOT ]
+   then
+      RELEASE_WORKDIR="${RELEASE_ROOT}/${RELEASE}"
+      if [ ! -z $RELEASE_NAME ]; then
+         RELEASE_FILE="$RELEASE_NAME.tar.gz"
+      else
+         RELEASE_FILE="release-uzerp-${RELEASE}.tar.gz"
+      fi
+      make_release
+   else
+      echo >&2 "Error: Invalid options"; usage; exit 1
+fi
+
