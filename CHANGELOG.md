@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Added
+
+- Allow entry of VAT for PVA invoices in the VAT module
+
 ## [1.26.4] 2021-01-08
 
 ### Fixed
