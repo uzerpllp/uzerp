@@ -212,7 +212,7 @@ class VatController extends printController
 		//Generate invoice options
 		$invoice_options = [];
 		foreach ($pva_invoices as $invoice) {
-			$invoice_options[$invoice->id] = "{$invoice->invoice_number} - {$invoice->supplier}";
+			$invoice_options[$invoice->invoice_number] = "{$invoice->invoice_number} - {$invoice->supplier}";
 		}
 
 		//Return options in the appropriate format
@@ -256,8 +256,7 @@ class VatController extends printController
 			$data['vat_account'] = call_user_func(array($glparams, $vat_type));
 			
 			if ($data['vat_type'] == 'PVA') {
-				$invoice = new PInvoice();
-				$data['docref'] = $invoice->invoice_number;
+				$data['docref'] = $data['invoice'];
 			}
 
 			if ($data['vat_type']=='input' || $data['vat_type']=='PVA')
