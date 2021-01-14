@@ -10,6 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
       - run: npm install
       - run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - run: sudo chmod a+x ./utils/uzerp-make-release
