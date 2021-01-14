@@ -1,5 +1,6 @@
 name: build-release
-on:  
+on:
+  workflow_dispatch:
   push:
     tags:
       - '*'
