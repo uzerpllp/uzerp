@@ -199,6 +199,22 @@ $(document).ready(function(){
 			}
 		});
 		
-	});	
+	});
+
+	$("#vat-vat-enterpvaentry").on("change", "#Vat_invoice",  function(){
+
+		var $self = $(this);
+		
+		$('#Vat_post_date').uz_ajax({
+			data:{
+				module			: 'vat',
+				controller		: 'vat',
+				action			: 'getPVAEntryDateDefault',
+				invoice_number	: $self.val(),
+				ajax			: ''
+			}
+		});
+		
+	});
 		
 });

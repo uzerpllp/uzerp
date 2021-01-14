@@ -136,7 +136,10 @@ class VatController extends printController
 	 *
 	 * @return void
 	 */
-	public function enterPVAEntry() {
+	public function enterPVAEntry()
+	{
+		$flash = Flash::Instance();
+
 		$period = DataObjectFactory::Factory('GLPeriod');
 
 		if(isset($this->_data['Vat']['glperiods_id'])) {
@@ -145,16 +148,52 @@ class VatController extends printController
 			$current = $period->getPeriod(fix_date(date(DATE_FORMAT)));
 			$period_id = $current['id'];
 		}
-
+		
 		$invoice_options = $this->getPVAInvoices($period_id);
+		if (count($invoice_options) == 0) {
+			$flash->addError('No PVA invoices found.');
+			sendBack();
+		}
+
+		$default_date = $this->getPVAEntryDateDefault(array_key_first($invoice_options));
 
 		$glparams = DataObjectFactory::Factory('GLParams');
 		$this->view->set('gl_account', $glparams->vat_postponed_account());
 		$this->view->set('invoices', $invoice_options);
 		$this->view->set('periods', $period->getOpenPeriods(false));
+		$this->view->set('post_date', $default_date);
 		$this->view->set('current_period', $current['id']);
 		$this->view->set('vat', DataObjectFactory::Factory('Vat'));
 		$this->view->set('page_title','Import PVA Entry');
+	}
+
+	/**
+	 * Set a default date for PVA VAT entry
+	 *
+	 * @param string $invoice_number
+	 * @return string  The invoice date in ISO format or local format in the ajax response
+	 */
+	public function getPVAEntryDateDefault($invoice_number='')
+	{
+		if(isset($this->_data['ajax']))
+		{
+			if(!empty($this->_data['invoice_number'])) {
+				$invoice_number = $this->_data['invoice_number'];
+			}
+		}
+
+		$invoice = new PInvoice();
+		$invoice->loadBy('invoice_number', $invoice_number);
+
+		if(isset($this->_data['ajax']))
+		{
+			$this->view->set('value', un_fix_date($invoice->invoice_date));
+			$this->setTemplateName('text_inner');
+		}
+		else
+		{
+			return $invoice->invoice_date;
+		}
 	}
 
 	/**
