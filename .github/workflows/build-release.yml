@@ -34,6 +34,12 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_VERSION }}
           release_name: "uzERP ${{ env.RELEASE_VERSION}}"
+          body: |
+            uzERP ${{ env.RELEASE_VERSION}}
+            
+            See https://github.com/uzerpllp/uzerp/blob/${{ env.RELEASE_VERSION}}/CHANGELOG.md for notable changes since the last uzERP release.
+            
+            md5: ${{ env.RELEASE_HASH}}
           draft: true
           prerelease: true
       - name: Upload Release Asset
