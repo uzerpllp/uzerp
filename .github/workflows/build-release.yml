@@ -25,8 +25,7 @@ jobs:
       - name: Build release
         run: ./utils/uzerp-make-release -r $RELEASE_VERSION -w /tmp
       - name: Generate md5 hash
-        run: |
-          echo ::set-env name=RELEASE_HASH::$(md5sum "/tmp/release-uzerp-${{ env.RELEASE_VERSION }}.tar.gz")
+        run: echo 'RELEASE_HASH=$(md5sum "/tmp/release-uzerp-${{ env.RELEASE_VERSION }}.tar.gz")' >> $GITHUB_ENV
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
