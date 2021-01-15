@@ -121,7 +121,7 @@ class VatController extends printController
 		$this->view->set('gl_centres',$gl_account->getCentres());
 
 		$period = DataObjectFactory::Factory('GLPeriod');
-		$current = $period->getPeriod(un_fix_date(fix_date(date(DATE_FORMAT))));
+		$current = $period->getPeriod(fix_date(date(DATE_FORMAT)));
 		$this->view->set('periods', $period->getOpenPeriods(false));
 		$this->view->set('current_period', $current['id']);
 		
