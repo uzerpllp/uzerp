@@ -25,7 +25,7 @@ jobs:
       - name: Build release
         run: ./utils/uzerp-make-release -r $RELEASE_VERSION -w /tmp
       - name: Generate md5 hash
-        run: echo "RELEASE_HASH=$(md5sum /tmp/release-uzerp-${{ env.RELEASE_VERSION }}.tar.gz)" >> $GITHUB_ENV
+        run: echo "RELEASE_HASH=($(md5sum /tmp/release-uzerp-${{ env.RELEASE_VERSION }}.tar.gz))" >> $GITHUB_ENV
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -35,8 +35,6 @@ jobs:
           tag_name: ${{ env.RELEASE_VERSION }}
           release_name: "uzERP ${{ env.RELEASE_VERSION}}"
           body: |
-            uzERP ${{ env.RELEASE_VERSION}}
-            
             See https://github.com/uzerpllp/uzerp/blob/${{ env.RELEASE_VERSION}}/CHANGELOG.md for notable changes since the last uzERP release.
             
             md5: ${{ env.RELEASE_HASH}}
