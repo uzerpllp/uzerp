@@ -296,6 +296,8 @@ class VatController extends printController
 			
 			if ($data['vat_type'] == 'PVA') {
 				$data['docref'] = $data['invoice'];
+			} else {
+				$data['transaction_date'] = date(DATE_FORMAT);
 			}
 
 			if ($data['vat_type']=='input' || $data['vat_type']=='PVA')
@@ -304,7 +306,7 @@ class VatController extends printController
 				$data['value']['vat'] = bcmul($data['value']['vat'], -1);
 			}
 			
-			$data['transaction_date'] = date(DATE_FORMAT);
+			
 
 			if ($data['vat_type'] == 'PVA') {
 				$gltransactions = GLTransaction::makePVAEntry($data, $errors);
