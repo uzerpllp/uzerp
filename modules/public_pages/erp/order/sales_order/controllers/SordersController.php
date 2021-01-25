@@ -719,6 +719,17 @@ class SordersController extends printController
                 'tag' => 'print Quote'
             );
 
+            $actions['printProFormaInvoice'] = array(
+                'link' => array(
+                    'modules' => $this->_modules,
+                    'controller' => $this->name,
+                    'action' => 'pro_forma',
+                    'id' => $id
+                ),
+                'tag' => 'print Pro Forma Invoice',
+                'class' => 'related_link'
+            );
+
             $actions['convert_to_order'] = array(
                 'link' => array(
                     'modules' => $this->_modules,
