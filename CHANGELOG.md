@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Added
+
+- Allow pro-forma output from Sales Quote.
+
 ## [1.26.5] 2021-01-15
 
 ### Added
