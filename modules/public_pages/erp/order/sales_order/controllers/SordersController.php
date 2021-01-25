@@ -39,6 +39,12 @@ class SordersController extends printController
 
         if (isset($this->_data['status'])) {
             $s_data['status'] = $this->_data['status'];
+        } else {
+            $s_data['status'] = [
+                $this->_templateobject->newStatus(),
+                $this->_templateobject->openStatus(),
+                $this->_templateobject->partDespatchStatus()
+            ];
         }
 
         if (isset($this->_data['due_date'])) {

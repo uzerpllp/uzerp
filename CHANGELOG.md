@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - Allow pro-forma output from Sales Quote.
 
+### Changed
+
+- Show in-progress sales orders (status: new, open an part despatched) by default in the sales order list view.
+
 ## [1.26.5] 2021-01-15
 
 ### Added

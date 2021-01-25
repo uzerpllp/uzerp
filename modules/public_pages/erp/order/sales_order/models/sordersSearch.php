@@ -95,7 +95,7 @@ class sordersSearch extends BaseSearch
 		$search->addSearchField(
 			'status',
 			'status',
-			'select',
+			'multi_select',
 			'',
 			'advanced'
 			);
