@@ -1344,6 +1344,9 @@ class SordersController extends printController
         $orders = new SOrderCollection($this->_templateobject);
 
         $sh = $this->setSearchHandler($orders);
+        if ($this->_data['format'] == 'csv') {
+            $sh->setLimit(0);
+        }
         $sh->addConstraintChain(new Constraint('type', '=', 'O'));
 
         $orders->getItems($sh);
@@ -1545,9 +1548,12 @@ class SordersController extends printController
                 'modules' => $this->_modules,
                 'controller' => $this->name,
                 'action' => 'viewbyitems',
-                'format' => 'csv'
+                'format' => 'csv',
+                'type' => 'confirm'
             ),
-            'tag' => 'Export CSV'
+            'tag' => 'Export CSV',
+            'class' => 'confirm',
+            'data_attr' => ['data_uz-confirm-message' => "Export to CSV?|This may take a long time."],
         );
 
         $sidebar->addList('Actions', $actions);
