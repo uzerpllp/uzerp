@@ -348,12 +348,15 @@ class DataObjectCollection implements Iterator, Countable {
 		
 		$db = DB::Instance();
 		
-		$num_records	= $db->GetOne($query_array['c_query']);
+		// Cache the record count, but only for paged displays
+		if ($query_array['perpage'] !== null) {
+			$num_records = $db->cacheGetOne(300, $query_array['c_query']);
+		} else {
+			$num_records = $db->GetOne($query_array['c_query']);
+		}
 		
 		debug('DataObjectCollection(' . $this->_doname . ')::_load : ' . $query_array['c_query']);	
 		debug('DataObjectCollection(' . $this->_doname . ')::_load : No of Records=' . $num_records);
-//		echo 'DataObjectCollection(' . $this->_doname . ')::_load : ' . $query_array['c_query'].'<br>';	
-//		echo 'DataObjectCollection(' . $this->_doname . ')::_load : No of Records=' . $num_records.'<br>';
 		
 		if ($num_records === false)
 		{

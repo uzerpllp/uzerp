@@ -114,7 +114,7 @@ function uzerp_exception_handler($exception)
 switch (strtolower(get_config('ENVIRONMENT'))) {
 
     case 'development':
-        # All errors except notices will be sent to the log
+        // All errors except notices will be sent to the log
         error_reporting(E_ALL ^ E_NOTICE);
         ini_set("display_errors", false);
         break;
