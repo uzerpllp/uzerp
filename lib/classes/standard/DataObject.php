@@ -662,7 +662,7 @@ class DataObject implements Iterator
 
     public function addPolicyConstraint($cc = '')
     {
-        if (! SYSTEM_POLICIES_ENABLED) {
+        if (defined('SYSTEM_POLICIES_ENABLED') && !SYSTEM_POLICIES_ENABLED) {
             return;
         }
 
@@ -2771,7 +2771,7 @@ class DataObject implements Iterator
     function setPolicyConstraint($module_component = '', $field = '')
     {
         // echo 'DataObject('.get_class($this).')::setPolicyConstraint module component '.$module_component.'<br>';
-        if (! SYSTEM_POLICIES_ENABLED || empty($module_component)) {
+        if ((defined('SYSTEM_POLICIES_ENABLED') && !SYSTEM_POLICIES_ENABLED) || empty($module_component)) {
             return;
         }
 
@@ -3400,7 +3400,7 @@ class DataObject implements Iterator
                 $this->setTitle($modulecomponent->title);
             }
 
-            if (count($modulecomponent->module_defaults) > 0) {
+            if ($modulecomponent->module_defaults !== null && count($modulecomponent->module_defaults) > 0) {
                 foreach ($modulecomponent->module_defaults as $default) {
 
                     if ($this->isField($default->field_name) && $this->_fields[$default->field_name]->user_defaults_allowed) {

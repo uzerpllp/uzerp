@@ -186,7 +186,7 @@ class DataObjectCollection implements Iterator, Countable {
 	public function addSystemRules($sh = '')
 	{
 		
-		if (SYSTEM_POLICIES_ENABLED)
+		if (defined('SYSTEM_POLICIES_ENABLED') && SYSTEM_POLICIES_ENABLED)
 		{
 			if ($this->_templateobject instanceof DataObject)
 			{
@@ -795,7 +795,7 @@ class DataObjectCollection implements Iterator, Countable {
 		if (isset($_GET['search'])) $this->search = $_GET['search'];
 		if (isset($_GET['field'])) $this->searchField = $_GET['field'];
 
-		if (count($this->search) !== 0 && count($this->searchField) !== 0)
+		if ($this->search != null && count($this->search) !== 0 && count($this->searchField) !== 0)
 		{
 			
 			$pointer = 0;
