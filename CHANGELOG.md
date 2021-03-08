@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Changed
+
+- Disable Smarty template compile check when ENVIRONMENT is production
+- When ENVIRONMENT is development, redirect errors and warnings to the log file. The log is written to data/logs/<php_session_id> and the directory.
+
+### Fixed
+
+- Security issues in Smarty
+
 ## [1.26.6] 2021-01-27
 
 ### Added
