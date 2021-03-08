@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Security issues in Smarty
+- Use config settings in Memcached connection for database query result cache. From ADOdb 5.22 a prefix will be added to cached queries, allowing them to be cleared from within uzERP.
 
 ## [1.26.6] 2021-01-27
 
