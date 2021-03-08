@@ -114,8 +114,9 @@ function uzerp_exception_handler($exception)
 switch (strtolower(get_config('ENVIRONMENT'))) {
 
     case 'development':
-        error_reporting(E_ALL ^ E_USER_DEPRECATED ^ E_DEPRECATED ^ E_NOTICE);
-        // error_reporting(E_ALL);
+        # All errors except notices will be sent to the log
+        error_reporting(E_ALL ^ E_NOTICE);
+        ini_set("display_errors", false);
         break;
 
     case 'production':
@@ -125,7 +126,7 @@ switch (strtolower(get_config('ENVIRONMENT'))) {
 }
 
 // define where the log should go, syslog or a file of your liking with
-$log = $_SERVER["DOCUMENT_ROOT"] . 'data/logs/' . session_id() . '.log';
+$log = $_SERVER["DOCUMENT_ROOT"] . '/data/logs/' . session_id() . '.log';
 
 // set the php_ini error log value with the log path
 ini_set("error_log", $log);
