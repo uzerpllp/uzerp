@@ -1,7 +1,7 @@
 <?php
  
 /** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2021 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
@@ -12,7 +12,6 @@ class DB {
 	
 	public $connected;
 	private $db;
-	private $metaColStore = array();
 
 	private function __construct()
 	{
@@ -22,18 +21,21 @@ class DB {
 		{
 			die('Missing extension: pgsql');
 		}
-				
+
 		// get a few settings
 		$db_type = get_config('DB_TYPE');
 		$db_name = get_config('DB_NAME');
-				
+	
 		$this->db = NewADOConnection($db_type);
 		$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
-		
-		if (class_exists('Memcache'))
-		{
-			$this->db->memCache		= TRUE;
-			$this->db->memCacheHost	= '127.0.0.1';
+
+		if (class_exists('Memcached')) {
+			$this->db->memCache = true;
+			$this->db->memCacheHost	= [get_config('MEMCACHED_HOST')];
+			$this->db->memCachePort = get_config('MEMCACHED_PORT');
+			// From ADOdb 5.22, this should set our prefix on cached query results in memcached,
+			// https://adodb.org/dokuwiki/doku.php?id=v5:userguide:memcached#adding_options_to_the_memcached_server
+			$this->db->memCacheOptions = [Memcached::OPT_PREFIX_KEY => get_config('MEMCACHED_PREFIX')];
 		}
 		
 		if (defined('TESTING') && TESTING == TRUE)
