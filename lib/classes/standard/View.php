@@ -41,7 +41,10 @@ class View implements Iterator, Countable {
 			)
 		);
 		
-		$this->smarty->compile_check = !(defined('PRODUCTION') && PRODUCTION);
+		$config = Config::Instance();
+		if (strtolower($config->get('ENVIRONMENT')) == 'production') {
+			$this->smarty->compile_check = false;
+		}
 		
 		if (isset($_GET['ajax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'))
 		{
