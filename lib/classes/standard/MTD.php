@@ -231,7 +231,7 @@ class MTD {
                     $response = $e->getResponseBody();
                     
                     // If authorization grant has expired, re-authorise application
-                    if ($response['error'] == 'invalid_request') {
+                    if ($response['error'] == 'invalid_request' || $response['error'] == 'invalid_grant') {
                         $storage->deleteToken($this->config_key);
                         $this->authorizationGrant();
                     }
