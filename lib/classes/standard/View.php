@@ -24,15 +24,18 @@ class View implements Iterator, Countable {
 	
 	function __construct()
 	{
-		
+		$config = Config::Instance();
 		$this->smarty = new Smarty;
 		
-//		$this->smarty->debugging		= TRUE;
-		$this->smarty->caching			= 0;
-		$this->smarty->cache_dir		= DATA_ROOT . 'cache';
-		$this->smarty->cache_lifetime	= 45;
-		$this->smarty->compile_dir		= DATA_ROOT . 'templates_c';
-		$this->smarty->template_dir		= STANDARD_TPL_ROOT;
+		if (strtolower($config->get('ENVIRONMENT')) == 'development') {
+			$this->smarty->setDebugging(true);
+		}
+		$this->smarty->setCaching(false);
+		$this->smarty->setCacheDir(DATA_ROOT . 'cache');
+		$this->smarty->setCacheLifetime(45);
+		$this->smarty->setCompileDir(DATA_ROOT . 'templates_c');
+		$this->smarty->setTemplateDir(STANDARD_TPL_ROOT);
+		$this->smarty->setMergeCompiledIncludes(true);
 
 		$this->smarty->addPluginsDir(
 			array(
@@ -41,9 +44,8 @@ class View implements Iterator, Countable {
 			)
 		);
 		
-		$config = Config::Instance();
 		if (strtolower($config->get('ENVIRONMENT')) == 'production') {
-			$this->smarty->compile_check = false;
+			$this->smarty->setCompileCheck(false);
 		}
 		
 		if (isset($_GET['ajax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'))
@@ -190,8 +192,8 @@ class View implements Iterator, Countable {
 		{
 			$template_exists = FALSE;
 			
-			// fetch the smarty tempalte directory list
-			$smarty_dirs = $this->smarty->template_dir;
+			// fetch the smarty template directory list
+			$smarty_dirs = $this->smarty->getTemplateDir();
 			
 			// we need to make sure we're dealing with an array
 			if (!is_array($smarty_dirs))
