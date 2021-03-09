@@ -29,7 +29,7 @@ class DB {
 		$this->db = NewADOConnection($db_type);
 		$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 
-		if (class_exists('Memcached')) {
+		if (class_exists('Memcached') && get_config('USE_ADODB_CACHE')) {
 			$this->db->memCache = true;
 			$this->db->memCacheHost	= [get_config('MEMCACHED_HOST')];
 			$this->db->memCachePort = get_config('MEMCACHED_PORT');

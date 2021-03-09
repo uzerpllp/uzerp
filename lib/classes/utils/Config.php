@@ -49,6 +49,7 @@ class Config {
 				'DB_HOST'					=> '',
 				'DB_USER'					=> '',
 				'DB_PASSWORD'				=> '',
+				'USE_ADODB_CACHE'			=> false,
 				
 				// SYSTEM
 				'SETUP'						=> TRUE,
@@ -66,10 +67,6 @@ class Config {
 				'MEMCACHED_HOST'			=> 'localhost',
 				'MEMCACHED_PORT'			=> '11211',
 				'MEMCACHED_PREFIX'			=> '',
-				
-				// FILE CACHING
-				'CACHE_RESOURCES'			=> TRUE,
-				'MINIFY_RESOURCES'			=> TRUE,
 		
 				// IPP LOGGING
 				'IPP_LOG_LEVEL'				=> 0,
