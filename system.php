@@ -169,41 +169,8 @@ class system
             return $checked;
         }
 
-        $extensions = array(
-            'json'
-        );
-
-        foreach ($extensions as $ext) {
-
-            if (! extension_loaded($ext)) {
-                die('Missing extension: ' . $ext);
-            }
-        }
-
-        // **************************
-        // check for PHP extensions
-
-        $check_extensions = array(
-            'apc',
-            'memcache',
-            'memcached'
-        );
-
-        foreach ($check_extensions as $extension) {
-
-            if (extension_loaded($extension)) {
-                define('HAS_' . strtoupper($extension), TRUE);
-            } else {
-                define('HAS_' . strtoupper($extension), FALSE);
-            }
-        }
-
-        // **************************
-        // check for packages
-
+        // OS installed packages required for PDF previews on output dialog
         $check_packages = array(
-            'fop',
-            'pdftk',
             'convert',
             'pdfinfo'
         );
@@ -240,9 +207,6 @@ class system
             }
         }
 
-        // *********************
-        // REQUIRED DIRECTORIES
-
         // an array of directories that must exist
         $required_directories = array(
             CACHE_ROOT
@@ -260,7 +224,9 @@ class system
             }
         }
 
-        return TRUE;
+        // set to true to avoid running more than once per request
+        $checked = true;
+        return $checked;
     }
 
     /**
@@ -310,27 +276,6 @@ class system
      */
     public function display()
     {
-        $start = gettimeofday(TRUE);
-
-        // ATTN: check system always returns true?
-        if (! $this->check_system()) {
-
-            $this->login_required = FALSE;
-
-            // if (!defined('SETUP'))
-            // {
-            // define('SETUP', TRUE);
-            // }
-
-            if (! defined('MODULE')) {
-                define('MODULE', 'system_admin');
-            }
-
-            if (! defined('CONTROLLER')) {
-                define('CONTROLLER', 'SystemsController');
-            }
-        }
-
         $this->load_essential();
 
         debug('system::display session data:' . print_r($_SESSION, TRUE));
@@ -501,34 +446,6 @@ class system
         $messages = uzJobMessages::Factory(EGS_USERNAME, EGS_COMPANY_ID);
         $messages->displayJobMessages();
 
-/*         $flash = Flash::Instance();
-        $cache = Cache::Instance();
-        $key_part = EGS_USERNAME . "_" . EGS_COMPANY_ID;
-        $tokens = json_decode($cache->get("{$key_part}_job_messages"), true);
-        $new_tokens = [];
-        if ($tokens) {
-            foreach ($tokens as $token) {
-                $job_message = json_decode($cache->get("{$key_part}_{$token}"), true);
-                if ($job_message) {
-                    switch ($job_message['type']) {
-                        case 'warning':
-                            $flash->addWarning($job_message['message']);
-                            break;
-                        case 'error':
-                            $flash->addError($job_message['message']);
-                            break;
-                        case 'success':
-                            $flash->addMessage($job_message['message']);
-                            break;
-                    }
-                    $cache->delete("{$key_part}_{$token}");
-                } else {
-                    $new_tokens[] = $token;
-                    $cache->add("{$key_part}_job_messages", json_encode($new_tokens));
-                }
-            }
-        } */
-
         /**
          * *BEGIN CACHE CHECK*****
          */
@@ -658,11 +575,7 @@ class system
         }
 
         showtime('pre-display');
-        // echo 'System::display end '.(gettimeofday(TRUE)-$start).'<br>';
-        // echo 'system::display (3),'.microtime(TRUE).'<br>';
         $this->view->display('index_page.tpl', $cache_key);
-        // echo 'system::display (4),'.microtime(TRUE).'<br>';
-
         showtime('post-display');
     }
 

@@ -50,7 +50,7 @@ class Cache {
 		$memcached_prefix = get_config('MEMCACHED_PREFIX');
 		
 		// first check we're okay to use memcached
-		if ((defined('HAS_MEMCACHED') && !HAS_MEMCACHED) || empty($memcached_prefix))
+		if (!class_exists('Memcached') || empty($memcached_prefix))
 		{
 			define('MEMCACHED_ENABLED', FALSE);
 			$this->memcached = FALSE;
