@@ -7,12 +7,15 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Disable Smarty template compile check when ENVIRONMENT is production
-- When ENVIRONMENT is development, redirect errors and warnings to the log file. The log is written to data/logs/<php_session_id> and the directory.
+- When ENVIRONMENT is development:
+  - redirect errors and warnings to the log file. The log is written to data/logs/<php_session_id> and the directory
+  - show Smarty debug console
 
 ### Fixed
 
 - Security issues in Smarty
 - Use config settings in Memcached connection for database query result cache. From ADOdb 5.22 a prefix will be added to cached queries, allowing them to be cleared from within uzERP.
+- Small changes to speed up the system
 
 ## [1.26.6] 2021-01-27
 
