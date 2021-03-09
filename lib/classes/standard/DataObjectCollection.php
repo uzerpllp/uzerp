@@ -351,6 +351,11 @@ class DataObjectCollection implements Iterator, Countable {
 		// Cache the record count, but only for paged displays
 		if ($query_array['perpage'] !== null) {
 			$num_records = $db->cacheGetOne(300, $query_array['c_query']);
+			// Remove the cached result if the last page is within one or zero rows of full length.
+			// Ensures that a new page is displayed if a record is added.
+			if (($num_records !== 0) && ($query_array['perpage'] - ($num_records % $query_array['perpage']) <= 1)) {
+				$db->cacheFlush($query_array['c_query']);
+			}
 		} else {
 			$num_records = $db->GetOne($query_array['c_query']);
 		}
