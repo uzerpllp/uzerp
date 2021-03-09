@@ -98,7 +98,7 @@ class SystemPolicyControlListCollection extends DataObjectCollection
 		
 		$roles = $system->access->roles;
 		
-		if (count($roles) > 0)
+		if ($roles != null && count($roles) > 0)
 		{
 			$cc1->add(new Constraint('access_object_id', 'IN', '('.implode(',', $roles).')'), 'AND');
 		}
@@ -111,7 +111,7 @@ class SystemPolicyControlListCollection extends DataObjectCollection
 		
 		$cc2->add(new Constraint('access_type', '=', 'Permission'));
 		
-		if (count($context) > 0)
+		if ($context != null && count($context) > 0)
 		{
 			foreach ($context as $permission_context)
 			{
