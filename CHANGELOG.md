@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- Output latest due delivery date in Desptch Note XML
+
 ### Changed
 
 - Disable Smarty template compile check when ENVIRONMENT is production

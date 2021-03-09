@@ -942,6 +942,14 @@ class SodespatchlinesController extends printController
         $order = DataObjectFactory::Factory('SOrder');
         $order->load($order_id);
 
+        // Get the latest due delivery date from the lines
+        $line_dates = [];
+        foreach ($order->lines as $line) {
+            $line_dates[] = $line->due_delivery_date;
+        }
+
+        $extra['line_due_delivery_date'] = un_fix_date(max($line_dates));
+
         // get the company address
         $company_address = array(
             'name' => $this->getCompanyName()
