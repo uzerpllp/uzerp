@@ -1,7 +1,7 @@
 <?php
  
 /** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2021 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
@@ -44,7 +44,7 @@ class Config {
 			$this->defaults = array(
 	
 				// DATABASE
-				'DB_TYPE'					=> '',
+				'DB_TYPE'					=> 'pgsql',
 				'DB_NAME'					=> '',
 				'DB_HOST'					=> '',
 				'DB_USER'					=> '',
