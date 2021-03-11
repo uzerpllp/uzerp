@@ -1,14 +1,12 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
 /**
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
  *
  *	Released under GPLv3 license; see LICENSE.
  **/
 
-/* $Revision: 1.92 $ */
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 //set some defaults
 date_default_timezone_set('Europe/London');	//probably needs to be configurable
@@ -150,19 +148,17 @@ function system_email($subject, $body, &$errors)
 
 }
 
-function adodb_outp($msg, $newline = TRUE)
+/**
+ * ADOdb logging
+ * see: https://adodb.org/dokuwiki/doku.php?id=v5:reference:logging
+ * 
+ * @param string $msg
+ * @return void
+ */
+function logMessageText($msg)
 {
-	
-	$db			= DB::Instance();
-	$db->debug	= FALSE;
-	$fetchmode	= $db->fetchMode;
-	
-	$db->SetFetchMode(2);
-	$debug = Debug::Instance();
-	$debug->write(strip_tags($msg), $newline);
-	$db->SetFetchMode($fetchmode);
-	$db->debug(DEBUG);
-	
+    $loggingObject = uzLogger::Instance();
+	$loggingObject->log($loggingObject::WARNING,$msg);
 }
 
 function isLoggedIn()
