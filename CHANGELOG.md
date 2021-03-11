@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file.
 
 - Disable Smarty template compile check when ENVIRONMENT is production
 - When ENVIRONMENT is development:
-  - redirect errors and warnings to the log file. The log is written to data/logs/<php_session_id> and the directory
+  - redirect errors and warnings a log file
+  - turn on ADOdb debug and log messages to a log file
+  - Turn on compile_check for Smarty templates
   - show Smarty debug console
 
 ### Fixed
