@@ -25,9 +25,14 @@ class DB {
 		// get a few settings
 		$db_type = get_config('DB_TYPE');
 		$db_name = get_config('DB_NAME');
-	
+
 		$this->db = NewADOConnection($db_type);
 		$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
+
+		if (get_config('ENVIRONMENT') == 'development') {
+			$this->db->debug = -1;
+			define('ADODB_OUTP','logMessageText');
+		}
 
 		if (class_exists('Memcached') && get_config('USE_ADODB_CACHE')) {
 			$this->db->memCache = true;
@@ -88,13 +93,8 @@ class DB {
 		}
 		
 		$this->connected = $connection;
-
-		if (!defined('ADODB_OUTP'))
-		{
-			define('ADODB_OUTP', 'adodb_outp');
-		}
-		
 	}
+
 
 	public static function &Instance()
 	{
