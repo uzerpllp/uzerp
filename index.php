@@ -117,6 +117,9 @@ switch (strtolower(get_config('ENVIRONMENT'))) {
         // All errors except notices will be sent to the log
         error_reporting(E_ALL ^ E_NOTICE);
         ini_set("display_errors", false);
+        $config = Config::Instance();
+        $logfile = $config->get('UZERP_LOG_PATH');
+        ini_set("error_log", $logfile);
         break;
 
     case 'production':
@@ -124,12 +127,6 @@ switch (strtolower(get_config('ENVIRONMENT'))) {
         error_reporting(E_ERROR);
         break;
 }
-
-// define where the log should go, syslog or a file of your liking with
-$log = $_SERVER["DOCUMENT_ROOT"] . '/data/logs/' . session_id() . '.log';
-
-// set the php_ini error log value with the log path
-ini_set("error_log", $log);
 
 // *******************
 // LOAD THE FRAMEWORK
