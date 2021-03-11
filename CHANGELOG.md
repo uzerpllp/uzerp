@@ -2,18 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.26.7] 2021-03-11
 
 ### Added
 
-- Output latest due delivery date in Desptch Note XML
+- Output latest due delivery date in Despatch Note XML
 
 ### Changed
 
 - Disable Smarty template compile check when ENVIRONMENT is production
 - When ENVIRONMENT is development:
   - redirect errors and warnings a log file
-  - turn on ADOdb debug and log messages to a log file
+  - turn on ADOdb debug and log messages to a file
   - Turn on compile_check for Smarty templates
   - show Smarty debug console
 
