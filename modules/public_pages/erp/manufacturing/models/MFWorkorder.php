@@ -98,7 +98,7 @@ class MFWorkorder extends DataObject
 		return $model->hasAttachmentOutputs;
 	}
 
-	public function getBalances($field, $type="All")
+	public static function getBalances($field, $type="All")
 	{
 		$db=&DB::Instance();
 		if($field instanceof ConstraintChain)

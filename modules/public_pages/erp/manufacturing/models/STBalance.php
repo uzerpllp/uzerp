@@ -37,7 +37,7 @@ class STBalance extends DataObject
 		return $this->balance;
 	}
 
-	public function getBalances($field)
+	public static function getBalances($field)
 	{
 		$balance = DataObjectFactory::Factory('STBalance');
 		
