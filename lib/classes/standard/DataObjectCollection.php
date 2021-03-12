@@ -349,7 +349,7 @@ class DataObjectCollection implements Iterator, Countable {
 		$db = DB::Instance();
 		
 		// Cache the record count, but only for paged displays
-		if ($query_array['perpage'] !== null && get_config('USE_ADODB_CACHE')) {
+		if (($query_array['perpage'] !== null && $query_array['perpage'] !== 0) && get_config('USE_ADODB_CACHE')) {
 			$num_records = $db->cacheGetOne(300, $query_array['c_query']);
 			// Remove the cached result if the last page is within one or zero rows of full length.
 			// Ensures that a new page is displayed if a record is added.
