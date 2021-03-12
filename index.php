@@ -64,6 +64,7 @@ if (defined('SENTRY_DSN')) {
 
 function sentry_exception_handler($exception)
 {
+    error_log($exception);
     try {
         $client = new Raven_Client(SENTRY_DSN, unserialize(SENTRY_CONFIG));
         $client->tags_context(array(
@@ -75,6 +76,7 @@ function sentry_exception_handler($exception)
                 'uzerp_version' => $config->get('SYSTEM_VERSION')
             )
         )));
+
         $smarty = new Smarty();
         $smarty->assign('config', $config->get_all());
         $smarty->compile_dir = DATA_ROOT . 'templates_c';
@@ -94,8 +96,26 @@ function sentry_exception_handler($exception)
 
 function uzerp_exception_handler($exception)
 {
-    $smarty = new Smarty();
     $config = Config::Instance();
+
+    // send the error to print dialogs via a json response
+    if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' && isset($_REQUEST['ajax_print'])) {
+        // log the error
+        error_log($exception);
+        header('Content-type: application/json');
+        $options = [];
+        $options['status'] = false;
+        if ($config->get('ENVIRONMENT') == 'development') {
+            $options['message'] = "Error: {$exception->getMessage()}. {$exception->getFile()}, {$exception->getLine()}";
+        } else {
+            $options['message'] = 'Failed to print document, further information may be found in the logs';
+        }
+        // return the html response
+        echo json_encode($options);
+        exit();
+    }
+
+    $smarty = new Smarty();
     $smarty->assign('config', $config->get_all());
     $smarty->compile_dir = DATA_ROOT . 'templates_c';
     $smarty->assign('exception_message', $exception->getMessage());
