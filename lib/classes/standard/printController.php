@@ -1037,8 +1037,6 @@ class printController extends Controller
         $printers = array();
         $ipp = new CupsPrintIPP();
 
-        self::setPrinterLog($ipp);
-
         if ($ipp->getPrinters()) {
 
             foreach ($ipp->available_printers as $key => $printer) {
@@ -1670,7 +1668,7 @@ class printController extends Controller
         // fop doesn't like https connections
         $host = "http://" . $_SERVER["SERVER_NAME"];
 
-        if ($_SERVER['HTTPS'] == on) {
+        if (isset($_SERVER['HTTPS'])) {
             $port = '';
         } else {
             $port = $_SERVER["SERVER_PORT"];
