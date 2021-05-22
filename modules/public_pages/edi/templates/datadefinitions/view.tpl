@@ -73,7 +73,7 @@
 						{input model=$list type="hidden" attribute="data" number=$id value=$data}
 					</td>
 					<td>
-						{$list->message}
+						{$list->message|uzh}
 					</td>
 					<td>
 						{$list->getFormatted('status')}
