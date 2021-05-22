@@ -91,6 +91,12 @@ class EdiInterface {
 				
 				case 'LOCAL':
 					$filepath = $this->get_file_path();
+					
+					if (!is_dir($filepath)) {
+						$errors[]  = "Local directory {$filepath} not found.";
+						return;
+					}
+
 					$handle = opendir($filepath);
 					while (false !== ($file = readdir($handle))) {
 						if ($file != "." && $file != ".." && !is_dir($filepath.DIRECTORY_SEPARATOR.$file)
