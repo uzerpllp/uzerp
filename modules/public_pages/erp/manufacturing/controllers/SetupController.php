@@ -94,6 +94,7 @@ class SetupController extends MasterSetupController
         $product_groups = new STProductgroup;
         $list = $product_groups->getAll();
         $data = [];
+        $data [] = ['label' => 'None', 'value' => null];
         foreach ($list as $key => $item) {
             $data[] = ['label' => $item, 'value' => $key];
         }
@@ -111,6 +112,7 @@ class SetupController extends MasterSetupController
         $centres = new MFCentre;
         $list = $centres->getAll();
         $data = [];
+        $data [] = ['label' => 'None', 'value' => null];
         foreach ($list as $key => $item) {
             $data[] = ['label' => $item, 'value' => $key];
         }
@@ -127,6 +129,7 @@ class SetupController extends MasterSetupController
         $centres = new MFResource;
         $list = $centres->getAll();
         $data = [];
+        $data [] = ['label' => 'None', 'value' => null];
         foreach ($list as $key => $item) {
             $data[] = ['label' => $item, 'value' => $key];
         }
