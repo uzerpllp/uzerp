@@ -23,7 +23,8 @@ class SetupController extends MasterSetupController
         'outside-op-prod-group' => 'Product Group for routing outside operation purchases',
         'outside-op-mfcentre' => 'Work Centre for routing outside operations',
         'outside-op-mfresource' => 'Resource for routing outside operations',
-        'allow-wo-print' => 'Allow work order printing from list view'
+        'allow-wo-print' => 'Allow Work Order document printing from list view',
+        'default-wo-docs' => 'Default document selection for new Work Orders'
     ];
 
     protected function registerPreference()
@@ -33,6 +34,7 @@ class SetupController extends MasterSetupController
         $defaultOpUnits = $this->module_preferences['default-operation-units']['preference'];
         $defaultCostBasis = $this->module_preferences['default-cost-basis']['preference'];
         $useOnlyCostBasis = $this->module_preferences['use-only-default-cost-basis']['preference'];
+        $defaultWoDocs = $this->module_preferences['default-wo-docs']['preference'];
         $outsideOpProductGroup = $this->module_preferences['outside-op-prod-group']['preference'];
         $outsideOpMFCentre = $this->module_preferences['outside-op-mfcentre']['preference'];
         $outsideOpMFResource = $this->module_preferences['outside-op-mfresource']['preference'];
@@ -179,6 +181,23 @@ class SetupController extends MasterSetupController
             'value' => (empty($woPrintFromList) || $woPrintFromList == 'D') ? 'D' : $woPrintFromList,
             'default' => 'D',
             'position' => 7
+        ]);
+
+        $wodocs = new InjectorClassCollection(DataObjectFactory::Factory('InjectorClass'));
+		$wodocs->getClassesList('WO');
+        $data = [];
+
+        foreach ($wodocs->getAssoc('name') as $key => $item) {
+            $data[] = ['label' => $item, 'value' => $key];
+        }
+        
+        $this->preferences->registerPreference([
+            'name' => 'default-wo-docs',
+            'display_name' => $this->module_preferences['default-wo-docs']['title'],
+            'type' => 'select_multiple',
+            'data' => $data,
+            'value' => $defaultWoDocs,
+            'position' => 8
         ]);
     }
 }
