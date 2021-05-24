@@ -126,6 +126,11 @@ class ModulePreferences {
 							$option_attrs['selected'] = 'selected';
 						}
 
+						if ((is_array($selected) && in_array($key, $selected)) || ($selected==$key))
+						{
+							$option_attrs['selected'] = 'selected';
+						}
+
 						$data['select']['options'][$index]['attrs'] = build_attribute_string($option_attrs);
 						$data['select']['options'][$index]['value'] = uzh($option['label']);
 					}
