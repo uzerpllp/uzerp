@@ -254,6 +254,7 @@ class MfworkordersController extends ManufacturingController
 		$wodocs->getClassesList('WO');
 
 		$this->view->set('documents', $wodocs->getAssoc('name'));
+		$this->view->set('selected_docs', $this->module_prefs['default-wo-docs']);
 
 		// We only want non-archived projects
 		$projects = Project::getLiveProjects();
@@ -401,10 +402,10 @@ class MfworkordersController extends ManufacturingController
 			}
 			else
 			{
-				 sendTo('STItems',
-				 		'viewWorkorders',
+				 sendTo('MFWorkorders',
+				 		'view',
 				 		$this->_modules,
-				 		array('id'=>$data->stitem_id));
+				 		array('id'=>$data->id));
 			}
 		}
 
