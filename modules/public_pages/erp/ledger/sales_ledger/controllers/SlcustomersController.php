@@ -1545,6 +1545,11 @@ class SlcustomersController extends LedgerController
 
         $customer = $this->getCustomer($_customer_id);
 
+        $glparams = DataObjectFactory::Factory('GLParams');
+        $base_currency_id = $glparams->base_currency();
+
+        $cc = new ConstraintChain();
+
         if ($customer->isLoaded()) {
             $currency_id = $customer->currency_id;
 
@@ -1554,20 +1559,16 @@ class SlcustomersController extends LedgerController
             if(isset($this->_data['ajax'])) {
                 $currency_id = $this->_data['id'];
             }
-
-            $cc = new ConstraintChain();
-
-            $glparams = DataObjectFactory::Factory('GLParams');
-            $base_currency_id = $glparams->base_currency();
-
-            if ($currency_id != $base_currency_id) {
-                $cc->add(new Constraint('currency_id', 'in', '(' . $currency_id . ',' . $base_currency_id . ')'));
-            }
-
-            $cbaccount = DataObjectFactory::Factory('CBAccount');
-
-            $cbaccounts = $cbaccount->getAll($cc);
         }
+
+        if (!empty($currency_id) && ($currency_id != $base_currency_id)) {
+            $cc->add(new Constraint('currency_id', 'in', '(' . $currency_id . ',' . $base_currency_id . ')'));
+        } else {
+            $cc->add(new Constraint('currency_id', '=', $base_currency_id));
+        }
+
+        $cbaccount = DataObjectFactory::Factory('CBAccount');
+        $cbaccounts = $cbaccount->getAll($cc);
 
         if (isset($this->_data['ajax'])) {
             if(isset($this->_data['ajax'])) {
