@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Review work order outside operation purchases from sidebar
 - Improve default PO line descriptions for work order purchases
 - Indication of material issue status on work order list
+- New manaufacturing module preference to complete work orders on booking the order quantity or more
 
 ### Fixed
 
