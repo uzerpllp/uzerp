@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Added
+
+- Review work order outside operation purchases from sidebar
+- Improve default PO line descriptions for work order purchases
+- Indication of material issue status on work order list
+
+### Fixed
+
+- Error ehen reviewing resources on a work order
+
 ## [1.26.7] 2021-03-11
 
 ### Added
