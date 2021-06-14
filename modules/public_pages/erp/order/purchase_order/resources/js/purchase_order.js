@@ -180,6 +180,10 @@ $(document).ready(function() {
 						{
 							element	: '#POrderLine_revised_qty',
 							field	: 'revised_qty'
+						},
+						{
+							element	: '#POrderLine_description',
+							field	: 'description'
 						}
 					],
 					data: {

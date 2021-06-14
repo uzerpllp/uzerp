@@ -32,6 +32,9 @@
 				{heading_cell field="resource_qty" class='right'}
 					Resource Qty
 				{/heading_cell}
+				{heading_cell field="type"}
+					Type
+				{/heading_cell}
 				<th class='right'>
 					Time Required
 				</th>
@@ -57,7 +60,10 @@
 					{grid_cell model=$model cell_num=5 field="resource_qty" class='numeric'}
 						{$model->resource_qty}
 					{/grid_cell}
-					{grid_cell model=$model cell_num=6 field="resource_qty" class='numeric'}
+					{grid_cell model=$model cell_num=6 field="type"}
+						{$model->getEnum('type', $model->type)}
+					{/grid_cell}
+					{grid_cell model=$model cell_num=7 field="resource_qty" class='numeric'}
 						{if $model->volume_target>0 && $stockitem->cost_basis == 'VOLUME'}
 							{($stockitem->convertToUoM($stockitem->uom_id,$model->volume_uom_id,$transaction->order_qty)/$model->volume_target)|round:2} {$model->getFormatted('volume_period')}
 						{else}
@@ -68,7 +74,7 @@
 							{/if}
 						{/if}
 					{/grid_cell}
-					{grid_cell model=$model cell_num=7 field="resource_qty" class='numeric'}
+					{grid_cell model=$model cell_num=8 field="resource_qty" class='numeric'}
 						{if $model->volume_target>0 && $stockitem->cost_basis == 'VOLUME'}
 							{($stockitem->convertToUoM($stockitem->uom_id,$model->volume_uom_id,$transaction->made_qty)/$model->volume_target)|round:2} {$model->getFormatted('volume_period')}
 						{else}

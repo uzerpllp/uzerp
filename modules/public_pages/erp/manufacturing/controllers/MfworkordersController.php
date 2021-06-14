@@ -821,7 +821,7 @@ class MfworkordersController extends ManufacturingController
 		$cc->add($cd);
 		$sh->addConstraintChain($cc);
 
-		$sh->setFields(array('id', 'op_no', 'remarks', 'centre', 'resource', 'resource_qty', 'volume_period', 'volume_target', 'batch_op', 'volume_uom_id'));
+		$sh->setFields(array('id', 'op_no', 'remarks', 'centre', 'resource', 'resource_qty', 'volume_period', 'volume_target', 'type', 'volume_uom_id'));
 
 		parent::index($elements, $sh);
 
@@ -932,6 +932,11 @@ class MfworkordersController extends ManufacturingController
 			$worksorder->status		= 'O';
 			$worksorder->made_qty	= bcadd($worksorder->made_qty, trim($data['book_qty']), 0);
 
+			// Mark complete when total booking is equal or greater than the order quantity.
+			if ($worksorder->made_qty >= $worksorder->order_qty && $this->module_prefs['complete-wo-full'] === 'on') {
+				$worksorder->status = 'C';
+			}
+
 			if (!$worksorder->save())
 			{
 				$errors[] = 'Error updating Works Order';
@@ -999,6 +1004,46 @@ class MfworkordersController extends ManufacturingController
 				,'bookproduction'
 				,$this->_modules
 				,array('id' => $id,'stitem_id' => $stitem_id));
+	}
+
+
+	public function view_purchases()
+	{
+		if (!$this->loadData()) {
+			$this->dataError();
+			sendBack();
+		}
+		$works_order = $this->_uses[$this->modeltype];
+
+		$polines = DataObjectFactory::Factory('POrderLine');
+
+		$polines->setDefaultDisplayFields(array(		'order_id',
+		'order_number',
+		'description',
+		'operation',
+		'due_delivery_date' => 'expected_return_date',
+		'status',
+		'order_qty',
+		'os_qty',
+		'revised_qty',
+		'del_qty',
+		'price',
+		'uom_name'));
+
+		$related_collection = new POrderLineCollection($polines);
+
+		$sh = $this->setSearchHandler($related_collection);
+
+		$sh->addConstraint(new Constraint('mf_workorders_id', '=', $works_order->id));
+		$sh->addConstraint(new Constraint('status', '!=', $polines->cancelStatus()));
+
+		parent::index($related_collection, $sh);
+
+		$this->_templateName = $this->getTemplateName('view_related');
+		$this->view->set('clickaction', 'view');;
+		$this->view->set('related_collection', $related_collection);
+		$this->view->set('collection', $related_collection);
+		$this->view->set('no_ordering', true);
 	}
 
 
