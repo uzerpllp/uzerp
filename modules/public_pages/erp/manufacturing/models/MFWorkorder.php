@@ -49,6 +49,7 @@ class MFWorkorder extends DataObject
 		
 		$this->hasMany('MFWOStructure', 'structureitems', 'work_order_id'); 
 		$this->hasMany('STTransaction', 'transactions', 'process_id'); 
+		$this->hasMany('POrderLine', 'purchases', 'mf_workorders_id');
 		
 		$this->hasOne('STItem', 'stitem_id', 'stock_item'); 
 
@@ -75,6 +76,11 @@ class MFWorkorder extends DataObject
 													,'actions'=>array('link')
 													,'rules'=>array()
 											 )
+							  ,'purchases'=>array('newtab'=>array('new'=>true)
+											 ,'actions'=>array('link')
+											 ,'rules'=>array()
+											 , 'label' => 'Outside OP Purchases'
+									  )
 							);
 									 
 	}
@@ -178,6 +184,30 @@ class MFWorkorder extends DataObject
 			$stitem->load($stitem_id);
 			return $stitem->getUomList();
 		}
+	}
+
+	/**
+	 * Return a **count** of structure lines fully issued
+	 * to this work order and a count of all structure lines
+	 * 
+	 * @return array  ['issued' => x, 'required' => n]
+	 */
+	function materialStatus()
+	{
+		$elements = new MFWOStructureCollection();
+		$sh = new SearchHandler($elements, false);
+		$sh->addConstraint(new Constraint('work_order_id', '=', $this->id));
+		$elements->load($sh);
+
+		$issued = 0;
+		foreach ($elements as $mtl) {
+			$used = $mtl->getTransactionBalance(TRUE);
+			if ($used >= $mtl->qty) {
+				$issued += 1;
+			}
+		}
+
+		return ['issued' => $issued, 'required' => count($mtl)];
 	}
 
 }

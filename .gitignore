@@ -12,6 +12,7 @@
 /data/tmp/**
 /data/users/**
 /data/print_debug/**
+/data/logs/**
 
 # User/site modules and template overrides
 /user/**

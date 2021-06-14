@@ -199,7 +199,7 @@ class PorderlinesController extends Controller {
 						'op_id' => $opt['op_id'],
 						'description' => $p->description
 					];
-					$this->view->set('default_description', $p->description);
+					$this->view->set('default_description', "{$p->description}: {$opt['item_code']}, Work Order {$opt['wo_number']}");
 					$this->view->set('default_price', $p->price);
 					$this->view->set('net_value', number_format($options[key($options)]['order_qty'] * $p->price, 2));
 					$this->view->set('default_due_date', date('d/m/Y', strtotime("+{$opt['lead_time']} weekdays")));
@@ -219,7 +219,6 @@ class PorderlinesController extends Controller {
 		$this->view->set('productline_options', $productline_options);
 		
 		$data = $this->getProductLineData($_productline_id);
-		
 		$this->view->set('stuom_options', $data['stuom_id']);
 		$this->view->set('glaccount_options', $data['glaccount_id']);
 		
@@ -769,6 +768,7 @@ class PorderlinesController extends Controller {
 			$op = new MFOperation();
 			$op->load($this->_data['op_id']);
 			$data['due_delivery_date'] = date('d/m/Y', strtotime("+{$op->lead_time} weekdays"));
+			unset($data['description']);
 		}
 
 		foreach ($data as $field=>$values)
@@ -833,7 +833,7 @@ class PorderlinesController extends Controller {
 			}
 		}
 
-		$data['description']	= $productline->description;
+		$data['description']	= "{$productline->description}: {$work_order_ops[0]['item_code']}, Work Order {$work_order_ops[0]['wo_number']}";
 		$data['price']			= $productline->getPrice();
 		$data['stuom_id']		= array($productline->product_detail->stuom_id=>$productline->product_detail->uom_name);
 		

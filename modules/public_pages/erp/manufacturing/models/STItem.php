@@ -512,6 +512,11 @@ class STItem extends DataObject
 			$this->latest_lab = add($this->latest_lab,$child_structure->latest_lab);
 		}
 
+		// Save the operation costs
+		foreach ($operations as $op) {
+			$op->save();
+		}
+
 		return $this->latest_lab;
 	}
 
@@ -605,6 +610,7 @@ class STItem extends DataObject
 			    $cost = $uom;
 
 			    $operation->latest_ohd = round($cost, $this->cost_decimals);
+
 			    $this->latest_ohd += $operation->latest_ohd;
 			}
 		}
@@ -618,6 +624,11 @@ class STItem extends DataObject
 
 			$child_structure->latest_ohd = round($cost, $this->cost_decimals);
 			$this->latest_ohd += $child_structure->latest_ohd;
+		}
+
+		// Save the operation costs
+		foreach ($operations as $op) {
+			$op->save();
 		}
 
 		return $this->latest_ohd;
@@ -663,6 +674,14 @@ class STItem extends DataObject
 
 			$child_structure->latest_osc = round($cost, $this->cost_decimals);
 			$this->latest_osc += $child_structure->latest_osc;
+		}
+
+		// Save the operation costs
+		foreach ($outside_ops as $op) {
+			$op->save();
+		}
+		foreach ($routing_outside_ops as $op) {
+			$op->save();
 		}
 
 		return $this->latest_osc;

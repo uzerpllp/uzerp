@@ -18,6 +18,9 @@
 						{/heading_cell}
 					{/foreach}
 					{heading_cell}
+						Mtl Issued?
+					{/heading_cell}
+					{heading_cell}
 						Action
 					{/heading_cell}
 					{if $module_prefs['allow-wo-print'] !== 'D'}
@@ -38,6 +41,14 @@
 							{/if}
 						{/grid_cell}
 					{/foreach}
+					<td>
+						{assign var=mtl_status value=$model->materialStatus()}
+						{if $mtl_status['issued'] >= $mtl_status['required']}
+							Yes
+						{elseif ($mtl_status['issued'] < $mtl_status['required']) and $mtl_status['issued'] > 0}
+						    In Part
+						{/if}
+					</td>
 					<td>
 						{if $model->status!='C'}
 							<input type="checkbox" name="update[{$model->id}]" id="update{$model->id}" class="checkbox" />

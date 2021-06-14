@@ -307,7 +307,8 @@
 						{$model->latest_osc|string_format:$string_format}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=11 field="latest_cost"}
-						{$model->latest_lab+$model->latest_ohd+$model->latest_osc|string_format:$string_format}
+						{assign var=tot value=$model->latest_lab+$model->latest_ohd+$model->latest_osc}
+						{$tot|string_format:$string_format}
 					{/grid_cell}
 				{/if}
 			{/grid_row}

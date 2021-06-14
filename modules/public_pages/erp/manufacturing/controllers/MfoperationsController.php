@@ -21,8 +21,8 @@ class MfoperationsController extends ManufacturingController {
 		$this->view->set('module_prefs', $this->module_prefs);
 	}
 
-	public function index(){
-		$errors=array();
+	public function index(DataObjectCollection $collection = null, $sh = '', &$c_query = null)
+	{
 		$s_data=array();
 		if (isset($this->_data['stitem_id'])) {
 			$stitem_id = $this->_data['stitem_id'];
@@ -46,12 +46,8 @@ class MfoperationsController extends ManufacturingController {
 		$transaction = new STItem();
 		$transaction->load($stitem_id);
 		$this->view->set('transaction',$transaction);
-		$obsolete = $transaction->isObsolete();
-
 		$this->setSearch('operationsSearch', 'useDefault', $s_data);
-
-		self::showParts();
-
+		$this->showParts();
 		$this->view->set('clickaction','edit');
 
 		$sidebar = new SidebarController($this->view);
@@ -84,7 +80,14 @@ class MfoperationsController extends ManufacturingController {
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete(){
+	/**
+	 * Delete an operation
+	 *
+	 * @return void
+	 */
+	public function delete()
+	{
+		$db = DB::Instance();
 		$flash = Flash::Instance();
 		//parent::delete('MFOperation');
 		$errors = array();
@@ -92,10 +95,12 @@ class MfoperationsController extends ManufacturingController {
 			'id' => $this->_data['id'],
 			'end_date' => date(DATE_FORMAT)
 		);
+
 		$operation = MFOperation::Factory($data, $errors, 'MFOperation');
 		if ((count($errors) > 0) || (!$operation->save())) {
 			$errors[] = 'Could not delete operation';
 		}
+
 		if (count($errors) == 0) {
 			$stitem = new STItem;
 			if ($stitem->load($operation->stitem_id)) {
@@ -109,12 +114,15 @@ class MfoperationsController extends ManufacturingController {
 				$db->FailTrans();
 			}
 		}
+
 		if (count($errors) == 0) {
 			$flash->addMessage('Operation deleted');
-			sendTo($this->name
-					,'index'
-					,$this->_modules
-					,array('stitem_id' => $this->_data['stitem_id']));
+			sendTo(
+				$this->name,
+				'index',
+				$this->_modules,
+				array('stitem_id' => $this->_data['stitem_id'])
+			);
 		} else {
 			$flash->addErrors($errors);
 			sendBack();
@@ -430,4 +438,3 @@ class MfoperationsController extends ManufacturingController {
 		return parent::getPageName((empty($base)?'operations':$base), $action);
 	}
 }
-?>
