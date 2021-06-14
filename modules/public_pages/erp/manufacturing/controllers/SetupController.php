@@ -24,7 +24,8 @@ class SetupController extends MasterSetupController
         'outside-op-mfcentre' => 'Work Centre for routing outside operations',
         'outside-op-mfresource' => 'Resource for routing outside operations',
         'allow-wo-print' => 'Allow Work Order document printing from list view',
-        'default-wo-docs' => 'Default document selection for new Work Orders'
+        'default-wo-docs' => 'Default document selection for new Work Orders',
+        'complete-wo-full' => 'Complete work orders on booking when order quantity fulfilled or exceeded'
     ];
 
     protected function registerPreference()
@@ -39,6 +40,7 @@ class SetupController extends MasterSetupController
         $outsideOpMFCentre = $this->module_preferences['outside-op-mfcentre']['preference'];
         $outsideOpMFResource = $this->module_preferences['outside-op-mfresource']['preference'];
         $woPrintFromList = $this->module_preferences['allow-wo-print']['preference'];
+        $woCompleteOnFull = $this->module_preferences['complete-wo-full']['preference'];
 
         $this->preferences->registerPreference([
             'name' => 'default-operation-units',
@@ -198,6 +200,16 @@ class SetupController extends MasterSetupController
             'data' => $data,
             'value' => $defaultWoDocs,
             'position' => 8
+        ]);
+
+        $this->preferences->registerPreference([
+            'name' => 'complete-wo-full',
+            'display_name' => $this->module_preferences['complete-wo-full']['title'],
+            'group_title' => 'Work Order Automation',
+            'type' => 'checkbox',
+            'status' => (empty($woCompleteOnFull) || $woCompleteOnFull == 'off') ? 'off' : 'on',
+            'default' => 'off',
+            'position' => 9
         ]);
     }
 }
