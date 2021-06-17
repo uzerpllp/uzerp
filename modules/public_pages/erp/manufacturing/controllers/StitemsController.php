@@ -77,23 +77,17 @@ class StitemsController extends printController
 
         $stitem = $this->_uses[$this->modeltype];
         
-        // Set values for comp_class and type_code_id when editing and existing item
+        // Set values for comp_class when editing and existing item
         if ($stitem->comp_class !== '' && $stitem->comp_class !== null) {
             $comp_class = $stitem->comp_class;
-            $sttype = new STTypecode();
-            $sttype_options = $sttype->getOptions('id');
-            foreach ($sttype_options->_data as $id => $val) {
-                if ($id == $stitem->type_code_id) {
-                    $sttypes = [$id => $val];
-                }
-            }
         } else {
-        // Set initial values for comp_class and type_code_id when creating a new item
+        // Set initial values for comp_class when creating a new item
             $classes = $stitem->getEnumOptions('comp_class');
             $comp_class = array_key_first($classes);
-            $sttypes = $this->getTypesByCompClass($comp_class);
         }
 
+        $sttypes = $this->getTypesByCompClass($comp_class);
+        
         // Revert to previous comp_class and type_code_id selections When reloading the form after a failed save
         $_POST[$this->modeltype]['comp_class'] = $comp_class;
         $_POST[$this->modeltype]['type_code_id'] = $stitem->type_code_id;
