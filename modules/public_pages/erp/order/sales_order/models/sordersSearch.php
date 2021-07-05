@@ -39,7 +39,7 @@ class sordersSearch extends BaseSearch
 			'person',
 			'contains',
 			'',
-			'basic'
+			'advanced'
 		);
 
 // Search by Order Number
@@ -48,7 +48,7 @@ class sordersSearch extends BaseSearch
 			'order_number',
 			'equal-integer',
 			'',
-			'advanced'
+			'basic'
 		);
 
 		// Search by Customer Reference Number
