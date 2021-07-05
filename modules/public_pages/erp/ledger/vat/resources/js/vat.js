@@ -17,6 +17,7 @@ $(document).ready(function(){
 	// Fetch various information for MTD VAT fraud headers
 	var fp = {
 		ip: '',
+		iptime: new Date().toISOString(),
 		pixelRatio: '',
 		screenWidth: '',
 		screenHeight: '',
@@ -108,6 +109,7 @@ $(document).ready(function(){
 	}
 	fp.dnt = dnt;
 	
+	console.log(fp);
 	
 	// custom confirmation message
 	$(document).on('click', 'a.vat-confirm', {}, function(event){

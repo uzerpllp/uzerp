@@ -74,6 +74,12 @@ class MTD {
             'Gov-Vendor-Version' => "uzerp={$uz_version}"
         ];
 
+        if (isset($oauth_config['productname']) && $oauth_config['productname'] !== '') {
+            $this->fraud_protection_headers['Gov-Vendor-Product-Name'] = rawurlencode($oauth_config['productname']);
+        } else {
+            $this->fraud_protection_headers['Gov-Vendor-Product-Name'] = 'uzERP';
+        }
+
         // Gov-Client-Public-IP
         // Gov-Client-Public-Port
         // Only if uzERP host is on the internet
@@ -99,6 +105,9 @@ class MTD {
             }
             $this->fraud_protection_headers['Gov-Client-Local-IPs'] = $ip;
         }
+
+        // Gov-Client-Local-IPs-Timestamp
+        $this->fraud_protection_headers['Gov-Client-Local-IPs-Timestamp'] = $this->client_fp_info->iptime;
 
         // Gov-Client-Screens
         // Gov-Client-Window-Size
@@ -130,11 +139,14 @@ class MTD {
             $this->fraud_protection_headers['Gov-Vendor-Public-IP'] = rawurlencode($server_ip);
         }
 
+        // Gov-Client-Public-IP-Timestamp
+        $this->fraud_protection_headers['Gov-Client-Public-IP-Timestamp'] = $utcTime->format('Y-m-d\TH:i:s\Z');
+       
         // Gov-Vendor-Forwarded
         // A list that details hops over the internet between services that terminate Transport Layer Security (TLS).
         // Each key and value must be percent encoded (opens in a new tab). Do not percent encode separators (equal signs, ampersands and commas).
         // Public networks only
-        if (!self::ip_is_private($client_public_ip)) {
+        if (!self::ip_is_private($_SERVER['SERVER_ADDR'])) {
             $by_ip = rawurlencode($_SERVER['SERVER_ADDR']);
             $for_ip = rawurlencode($client_public_ip);
             $this->fraud_protection_headers['Gov-Vendor-Forwarded'] = "by={$by_ip}&for={$for_ip}";
