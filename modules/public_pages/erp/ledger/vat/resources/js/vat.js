@@ -207,7 +207,7 @@ $(document).ready(function(){
 
 		var $self = $(this);
 		
-		$('#Vat_post_date').uz_ajax({
+		$('#Vat_transaction_date').uz_ajax({
 			data:{
 				module			: 'vat',
 				controller		: 'vat',

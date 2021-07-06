@@ -995,12 +995,12 @@ class GLTransaction extends DataObject
         // Write VAT Value
         $gl_data['value'] = $vat;
         GLTransaction::setTwinCurrency($gl_data);
-        $gl_transactions[] = GLTransaction::Factory($gl_data, $errors);
+        $gl_transactions[] = GLTransaction::Factory($gl_data, $errors, true);
 
         // Write VAT control entry
         $gl_data['value'] = bcmul($vat, - 1);
         GLTransaction::setTwinCurrency($gl_data);
-        $gl_transactions[] = GLTransaction::Factory($gl_data, $errors);
+        $gl_transactions[] = GLTransaction::Factory($gl_data, $errors, true);
 
         return $gl_transactions;
     }
