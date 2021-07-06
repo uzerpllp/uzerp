@@ -3,9 +3,9 @@
  * Database connection settings
  */
 
-$conf['DB_NAME'] = 'uzerp-base';
+$conf['DB_NAME'] = 'uzerp';
 $conf['DB_USER'] = 'www-data';
-$conf['DB_HOST'] = '';
+$conf['DB_HOST'] = 'localhost';
 $conf['DB_PASSWORD'] = '';
 
 
@@ -27,7 +27,7 @@ $conf['MEMCACHED_PREFIX'] = 'uzerp';
 
 // Turn on database query result caching (memcached required).
 // Default: false
-$conf['USE_ADODB_CACHE'] = true;
+// $conf['USE_ADODB_CACHE'] = true;
 
 
 /**
@@ -44,7 +44,7 @@ $conf['SYSTEM_STATUS'] = 'uzERP Base Install';
 
 // Appears in the footer on every page
 // Default: ''
-$conf['SYSTEM_VERSION'] = '1.6.2';
+$conf['SYSTEM_VERSION'] = '1.26.8';
 
 // Appears in the footer on every page
 // Default: ''
