@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.26.8] 2021-06-06
 
 ### Added
 
@@ -10,10 +10,19 @@ All notable changes to this project will be documented in this file.
 - Improve default PO line descriptions for work order purchases
 - Indication of material issue status on work order list
 - New manaufacturing module preference to complete work orders on booking the order quantity or more
+- New manaufacturing module preference for Default document selection on new Work Orders
+
+### Changed
+
+- VAT PVA posting allowed to closed GL periods
+- MTD fraud prevention headers updated to latest requirements
+- Move sales order number to basic search
 
 ### Fixed
 
 - Error ehen reviewing resources on a work order
+- Ensure all type codes are available when adding/editing stock items
+- Ensure that MF operation costs are saved during cost reclac
 
 ## [1.26.7] 2021-03-11
 
@@ -925,6 +934,8 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.26.8]: https://github.com/uzerpllp/uzerp/compare/1.26.7...1.26.8
+[1.26.7]: https://github.com/uzerpllp/uzerp/compare/1.26.6...1.26.7
 [1.26.6]: https://github.com/uzerpllp/uzerp/compare/1.26.5...1.26.6
 [1.26.5]: https://github.com/uzerpllp/uzerp/compare/1.26.4...1.26.5
 [1.26.4]: https://github.com/uzerpllp/uzerp/compare/1.26.3...1.26.4
