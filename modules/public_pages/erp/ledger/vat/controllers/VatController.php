@@ -156,13 +156,14 @@ class VatController extends printController
 		}
 
 		$default_date = $this->getPVAEntryDateDefault(array_key_first($invoice_options));
+		$periods = $period->getOpenPeriods(false);
 
 		$glparams = DataObjectFactory::Factory('GLParams');
 		$this->view->set('gl_account', $glparams->vat_postponed_account());
 		$this->view->set('invoices', $invoice_options);
-		$this->view->set('periods', $period->getOpenPeriods(false));
+		$this->view->set('periods', $periods);
 		$this->view->set('post_date', $default_date);
-		$this->view->set('current_period', $current['id']);
+		$this->view->set('current_period', array_key_last ($periods));
 		$this->view->set('vat', DataObjectFactory::Factory('Vat'));
 		$this->view->set('page_title','Import PVA Entry');
 	}

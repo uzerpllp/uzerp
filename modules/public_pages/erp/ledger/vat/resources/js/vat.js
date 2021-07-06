@@ -187,22 +187,6 @@ $(document).ready(function(){
 
 	/* vat -> vat -> import_pva */
 
-	$("#vat-vat-enterpvaentry").on("change", "#Vat_glperiods_id",  function(){
-
-		var $self = $(this);
-		
-		$('#Vat_invoice').uz_ajax({
-			data:{
-				module		: 'vat',
-				controller	: 'vat',
-				action		: 'getPVAInvoices',
-				period_id	: $self.val(),
-				ajax		: ''
-			}
-		});
-		
-	});
-
 	$("#vat-vat-enterpvaentry").on("change", "#Vat_invoice",  function(){
 
 		var $self = $(this);
