@@ -12,8 +12,13 @@
  * 
  */
 
+
 $(document).ready(function() {
-		
+
+	$('div#main_without_sidebar').on('submit', 'div#sales_order-soproductlines-sales_price_check form',function(){
+		return false;
+	});
+
 	/* sales_order -> soproductlines -> sales_price_check */
 	
 	$('#SOProductline_product_search', "#sales_order-soproductlines-sales_price_check").live('change',function() {
@@ -71,7 +76,12 @@ $(document).ready(function() {
 		        {
 					element	: '#SOProductline_gross',
 					field	: "gross"
-				}
+				},
+                        {
+                                        element : '#SOProductline_sales_stock',
+                                        field   : "sales_stock"
+                                }
+
 			],
 			data:{
 				module			: 'sales_order',
