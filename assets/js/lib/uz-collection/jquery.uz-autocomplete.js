@@ -17,6 +17,11 @@
 		// Access to jQuery and DOM versions of element
 		base.$el = $(el);
 		base.el = el;
+
+		// Track the item selection status
+		// false - no currently selected item
+		// true - the user has made a selection
+		base.selected = false;
 		
 		// Add a reverse reference to the DOM object
 		base.$el.data("uz_autocomplete", base);
@@ -34,7 +39,7 @@
 			
 			
 			// set input watermark
-			base.$el.watermark('Too many entries - please start typing');
+			base.$el.watermark('Start typing to search');
 			$.watermark.options.useNative = false;
 			
 			var static_data = {
@@ -130,8 +135,21 @@
 				}
 				
 			});
+
+			// Clear the selected item if the users returns
+			// to the search box and makes a change after making a selection
+			base.$el.on('input', function(e) {
+				if (base.selected) {
+					base.$hidden.val('');
+					base.$el.val(e.originalEvent.data);
+					base.selected = false;
+				}
+            });
 			
 			base.$el.autocomplete({
+				// Wait 500ms before querying.
+				// Reduces the number of ajax queries sent to the server.
+				delay: 500,
 				source: function( request, response ) {
 			
 					if (base.$el.data("action") == "array") {
@@ -166,7 +184,7 @@
 						}
 						
 						// fetch the ajax request from the element data
-						// it's stored as .data() to stop contaimation with other fields
+						// it's stored as .data() to stop contamination with other fields
 						
 						var xhr = base.$el.data('ajax_request');
 
@@ -185,7 +203,6 @@
 							
 								// set the current ajax request to null
 								base.$el.data('ajax_request', null)
-								
 								response( $.map( data, function( item ) {
 									return {
 										label: item.value,
@@ -198,7 +215,6 @@
 								
 								// if we've aborted this ajax, pass an empty array to response
 								// this prevents autocomplete not unsetting the loading class
-								
 								response([]);
 								
 							}
@@ -216,6 +232,7 @@
 				select: function( event, ui ) {
 					base.$el.val( ui.item.label );
 					base.$hidden.val(ui.item.value).trigger('change');
+					base.selected = true;
 					return false;
 				},
 				open: function( event, ui ) {
@@ -225,26 +242,17 @@
 					var autocomplete = $(this).data("autocomplete");
 					
 					menu = autocomplete.menu;
-
-	 				if (menu.element.children().length == 1) {
-	 					
-						var item = menu.element.children().data( "item.autocomplete" );
-						
-						autocomplete.selectedItem = item;
-						autocomplete._trigger( "select", event, { item: autocomplete.selectedItem } );
-						
-					}
-
 				},
-				close: function( event, ui ) {
-					
-					if (base.$hidden.val() == "") {
-						base.$el.val('');
+				response: function(event, ui) {
+					var autocomplete = $(this).data("autocomplete");
+					if (ui.content.length == 1) {
+						// Automatically select if there is only one result
+						ui.item = ui.content[0];
+						autocomplete._trigger('select', 'autocompleteselect', ui);
+						$(this).autocomplete('close');		
 					}
-					
-				}
+                }
 			});
-			
 		};
 		
 		// Run initializer
