@@ -5,7 +5,7 @@
  **}
 {* $Revision: 1.4 $ *}
 <div id="sales_order-soproductlines-sales_price_check">
-	<form action="/?module=sales_orders&controller=sorderlines&action=getPriceInformation" method="POST">
+	<form id="sales-price-check-form" action="/?module=sales_orders&controller=sorderlines&action=getPriceInformation" method="POST">
 		<dl id="view_data_left" style="width: 240px;">
 			<p>
 				{select model=$content.orderline attribute=so_price_type_id label='Price Type'}
@@ -14,7 +14,7 @@
 				{select model=$content.orderline attribute=slmaster_id label='Customer'}
 			</p>
 			<p>
-				{input model=$content.orderline attribute='product_search' label='product_search' value='None'}
+				{input model=$content.orderline attribute='product_search' label='product_search' value='' placeholder='Begins with...'}
 			</p>
 			<p>
 				{select model=$content.orderline attribute=productline_id label='Select Product' nonone=true}
@@ -51,6 +51,13 @@
 					<strong>VAT Inclusive Price</strong>
 					<strong>
 						<span id='SOProductline_gross'></span>
+					</strong>
+				</li>
+				<li>&nbsp;</li>
+				<li>
+					<strong>Sales Stock</strong>
+					<strong>
+						<span id='SOProductline_sales_stock'></span>
 					</strong>
 				</li>
 			</ul>
