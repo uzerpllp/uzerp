@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.26.8] 2021-06-06
+## [1.26.9] 2021-07-14
+
+### Changed
+
+- Improve usability of global autocomplete search
+- Add sales stock to price check uzlet
+
+## [1.26.8] 2021-07-06
 
 ### Added
 
@@ -934,6 +941,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.26.9]: https://github.com/uzerpllp/uzerp/compare/1.26.8...1.26.9
 [1.26.8]: https://github.com/uzerpllp/uzerp/compare/1.26.7...1.26.8
 [1.26.7]: https://github.com/uzerpllp/uzerp/compare/1.26.6...1.26.7
 [1.26.6]: https://github.com/uzerpllp/uzerp/compare/1.26.5...1.26.6
