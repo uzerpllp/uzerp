@@ -1278,6 +1278,7 @@ class soproductlinesController extends printController
 				$discount_percent=$productline->getPriceDiscount('', $_slmaster_id);
 				$net_price=$productline->getPrice('', '', $_slmaster_id);
 				$discount_value=bcsub($product_price, $net_price);
+				$sales_stock = $productline->product_detail->item_detail->pickableBalance();
 
 				if (empty($_slmaster_id))
 				{
@@ -1312,6 +1313,10 @@ class soproductlinesController extends printController
 		$output['net_price']=array('data'=>$net_price,'is_array'=>false);
 		$output['vat']=array('data'=>$vat,'is_array'=>false);
 		$output['gross']=array('data'=>$gross,'is_array'=>false);
+		$output['sales_stock'] = [
+			'data' => $sales_stock,
+			'is_array' => false
+		];
 
 		if(isset($this->_data['ajax']))
 		{
