@@ -15,7 +15,7 @@
 						{view_data label='Stock Item' value=$stitem}
 						{input type='hidden' attribute='stitem_id'}
 					{else}
-						{select attribute='stitem_id' label='Stock Item' options=$stitems }
+						{select attribute='stitem_id' label='Stock Item'}
 					{/if}
 					{select attribute='stuom_id' options=$uoms selected=$model->stuom_id label='UoM' nonone=true}
 					{input type='text'  attribute='order_qty' }

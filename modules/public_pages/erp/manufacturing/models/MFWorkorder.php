@@ -41,7 +41,10 @@ class MFWorkorder extends DataObject
 // Define validation
 		
 // Define relationships
-		$this->belongsTo('STItem', 'stitem_id', 'stitem'); 
+		$st_filter = new ConstraintChain();
+        $st_filter->add(new Constraint('obsolete_date', 'is', 'NULL'));
+
+		$this->belongsTo('STItem', 'stitem_id', 'stitem', $st_filter); 
 		$this->belongsTo('Project', 'project_id', 'project'); 
 		$this->belongsTo('MFDataSheet', 'data_sheet_id', 'data_sheet'); 
 		$this->belongsTo('SOrder', 'order_id', 'order_number', null, array('order_number', 'customer', 'person'));
