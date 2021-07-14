@@ -39,7 +39,10 @@ class STTransaction extends DataObject
 		$this->orderdir = array('DESC', 'DESC');
 		
 		// Define relationships
-		$this->belongsTo('STItem', 'stitem_id', 'stitem'); 
+		$st_filter = new ConstraintChain();
+        $st_filter->add(new Constraint('obsolete_date', 'is', 'NULL'));
+
+		$this->belongsTo('STItem', 'stitem_id', 'stitem', $st_filter); 
 		$this->belongsTo('WHLocation', 'whlocation_id', 'whlocation'); 
 		$this->belongsTo('WHBin', 'whbin_id', 'whbin'); 
 		$this->belongsTo('GLAccount', 'glaccount_id', 'account'); 

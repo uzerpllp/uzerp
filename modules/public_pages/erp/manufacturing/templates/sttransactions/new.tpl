@@ -19,7 +19,8 @@
 								{input type="hidden" attribute="stitem_id" value="$stitem_id"}
 								{$stock_item }
 							{else}
-								{select attribute='stitem_id' options=$stock_items label='Stock Item'}
+								{select attribute='stitem_id'  label='Stock Item'}
+								<div id="ui-message"</div>
 							{/if}
 						{/if}
 					</td>
