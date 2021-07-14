@@ -15,13 +15,14 @@
 
 $(document).ready(function() {
 
-	$('div#main_without_sidebar').on('submit', 'div#sales_order-soproductlines-sales_price_check form',function(){
+	/* Prevent submit on price check uzlet */
+	$('div#main_without_sidebar').on('submit', 'div#sales_order-soproductlines-sales_price_check form', function(){
 		return false;
 	});
 
 	/* sales_order -> soproductlines -> sales_price_check */
 	
-	$('#SOProductline_product_search', "#sales_order-soproductlines-sales_price_check").live('change',function() {
+	$("div#main_without_sidebar").on('change', "#sales_order-soproductlines-sales_price_check #SOProductline_product_search", function() {
 		
 		var $self = $(this);
 		
@@ -43,7 +44,7 @@ $(document).ready(function() {
 
 	});
 
-	$('#SOProductline_productline_id', "#sales_order-soproductlines-sales_price_check").live('change',function() {
+	$("div#main_without_sidebar").on('change', "#sales_order-soproductlines-sales_price_check #SOProductline_productline_id", function() {
 			
 		var $self = $(this);
 		
@@ -95,7 +96,7 @@ $(document).ready(function() {
 
 	});
 
-	$('#SOProductline_slmaster_id', "#sales_order-soproductlines-sales_price_check").live('change',function() {
+	$("div#main_without_sidebar").on('change', "#sales_order-soproductlines-sales_price_check #SOProductline_slmaster_id", function() {
 		
 		var $self = $(this);
 		
@@ -132,7 +133,7 @@ $(document).ready(function() {
 
 	});
 	
-	$('#SOProductline_so_price_type_id', "#sales_order-soproductlines-sales_price_check").live('change',function() {
+	$("div#main_without_sidebar").on('change', "#sales_order-soproductlines-sales_price_check #SOProductline_so_price_type_id", function() {
 		
 		var $self = $(this);
 		
