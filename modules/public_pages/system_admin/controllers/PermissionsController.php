@@ -523,7 +523,8 @@ class PermissionsController extends Controller {
 		$cc->add(new Constraint('module_id', '=', $module_id));
 		$cc->add(new Constraint('type', '=', 'C'));
 		
-		$controllers = $module_components->getAll($cc);
+		$controllers = ['' => ''];
+		$controllers += $module_components->getAll($cc);
 		
 		if (is_ajax() && is_direct_request())
 		{
