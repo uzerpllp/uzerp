@@ -27,7 +27,7 @@ class View implements Iterator, Countable {
 		$config = Config::Instance();
 		$this->smarty = new Smarty;
 		
-		if (strtolower($config->get('ENVIRONMENT')) == 'development') {
+		if ($config->get('SMARTY_DEBUG')) {
 			$this->smarty->setDebugging(true);
 		}
 		$this->smarty->setCaching(false);

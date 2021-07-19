@@ -52,8 +52,9 @@ class Config {
 				'USE_ADODB_CACHE'			=> false,
 				
 				// SYSTEM
-				'SETUP'						=> TRUE,
+				'SETUP'					=> TRUE,
 				'ENVIRONMENT'				=> 'production',
+				'SMARTY_DEBUG'				=> false,
 				'SYSTEM_MESSAGE'			=> '',
 				'SYSTEM_STATUS'				=> '',
 				'SYSTEM_VERSION'			=> '',

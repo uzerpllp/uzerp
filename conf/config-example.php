@@ -112,7 +112,11 @@ $conf['OUTPUT_DEBUG_PATH'] = 'var/www/uzerp-base/data/print_debug/';
 // When set to 'development':
 //   - PHP errors will be logged the file defined in UZERP_LOG_PATH
 //   - ADOdb debugging will be turned on and logged to a file in UZERP_LOG_PATH
-//   - The smarty debug console will be shown
 //   - Smarty templates will be re-compiled if changed
 // Default: production
 //$conf['ENVIRONMENT'] = 'development';
+
+// Debug smarty templates
+//   - The smarty debug console will be shown for all pages
+// Default: false
+//$conf['SMARTY_DEBUG'] = true;
