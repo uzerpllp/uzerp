@@ -268,7 +268,7 @@ class Vat extends GLTransaction
 	 * 
 	 * @return array ['Box[n]' => 0.00, ...]
 	 */
-	function getVATvalues($year=null, $tax_period=null)
+	function getVATvalues($year=null, $tax_period=null, $return_id=null)
 	{
 		$qparams = [$year, $tax_period];
 		$query = <<<'QUERY'
@@ -287,9 +287,34 @@ where year=? and tax_period=?
 group by tax_period
 QUERY;
 
+		
+
 		$db = DB::Instance();
 		$boxr = $db->getAll($query, $qparams);
 		$boxr = $boxr[0];
+
+		// Added by MJS July 2021 to take account of post GL close 'manual' adjustments to VAT return
+		$qparams2 = $return_id;
+		$query2 = <<<'QUERY'
+select coalesce(sum(vat_due_sales),0.00) as "Box1_adj", coalesce(sum(vat_reclaimed_curr_period), 0.00) as "Box4_adj", coalesce(sum(total_value_sales_ex_vat),0.00) as "Box6_adj",
+coalesce(sum(total_value_purchase_ex_vat),0.00) as "Box7 adj"
+from vat_adjustment
+where vat_return_id=?
+group by vat_return_id
+QUERY;
+		$db2 = DB::Instance();
+		$boxadj = $db2->getAll($query2, $qparams2);
+		$boxadj = $boxadj[0];
+
+		if (!is_null($boxadj))
+		{
+			$boxr['Box1'] = $boxr['Box1'] + $boxadj['Box1_adj'];
+			$boxr['Box4'] = $boxr['Box4'] + $boxadj['Box4_adj'];
+			$boxr['Box6'] = $boxr['Box6'] + $boxadj['Box6_adj'];
+			$boxr['Box7'] = $boxr['Box7'] + $boxadj['Box7_adj'];
+
+		}
+
 		$boxr['Box3'] = $boxr['Box1'] + $boxr['Box2'];
 		$boxr['Box5'] = $boxr['Box3'] - $boxr['Box4'];
 		return $boxr;

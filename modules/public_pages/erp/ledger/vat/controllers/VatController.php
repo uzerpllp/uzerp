@@ -81,7 +81,7 @@ class VatController extends printController
 						 ,'controller'=>$this->name
 						 ,'action'=>'enterPVAEntry'
 						 ),
-			'tag'=>'import_pva'
+			'tag'=>'Postponed VAT entry'
 		);
 
 		$sidebar->addList('Actions', $returns_sidebar);
@@ -127,8 +127,7 @@ class VatController extends printController
 		
 		$this->view->set('vat_type', $this->_data['vat_type']);
 		$this->view->set('vat', DataObjectFactory::Factory('Vat'));
-		
-		$this->view->set('page_title', $this->getPageName('', 'Enter '.$this->_data['vat_type'].' Journal'));
+		$this->view->set('page_title', 'Enter VAT '.$this->_data['vat_type'].' Journal');
 	}
 
 	/**
@@ -165,7 +164,7 @@ class VatController extends printController
 		$this->view->set('post_date', $default_date);
 		$this->view->set('current_period', array_key_last ($periods));
 		$this->view->set('vat', DataObjectFactory::Factory('Vat'));
-		$this->view->set('page_title','Import PVA Entry');
+		$this->view->set('page_title','Enter Postponed VAT for Imports');
 	}
 
 	/**
@@ -658,6 +657,138 @@ class VatController extends printController
 					,'view'
 					,'general_ledger'
 					,array('id'=>$this->_data['id']));
+	}
+
+	public function viewAdjustments()
+	{
+		$errors = array();
+		$s_data = array();
+		
+		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
+		{
+			$s_data['year']			= $this->_data['year'];
+			$s_data['tax_period']	= $this->_data['tax_period'];
+		}
+		else
+		{
+			$glperiod = DataObjectFactory::Factory('GLPeriod');
+			$glperiod->getCurrentTaxPeriod();
+			
+			if ($glperiod)
+			{
+				$s_data['year']			= $glperiod->year;
+				$s_data['tax_period']	= $glperiod->tax_period;
+			}
+		}
+
+		// need to this to know which VAT period we came from to get here and if its closed
+		$return = new VatReturn();
+		$return->loadVatReturn($s_data['year'], $s_data['tax_period']);
+		$return->getTaxPeriodStatus();
+		
+		// the collection of adjustments
+		$collection = new VatAdjustmentCollection();
+
+		$sh = $this->setSearchHandler($collection);
+
+		$cc = new ConstraintChain;
+		$cc->add(new Constraint('vat_return_id', '=', $return->id));
+		$sh->addConstraintChain($cc);
+
+		parent::index($collection, $sh);
+
+		$this->view->set('adjustments', $collection);
+		$this->view->set('page_title',"Adjustments to {$s_data[year]}/{$s_data[tax_period]} VAT Return");
+		
+		$sidebar = new SidebarController($this->view);
+
+		$returns_sidebar['all'] = [
+            'link' => [
+                'modules' => $this->_modules,
+                'controller' => $this->name,
+                'action' => 'index'
+			], 'tag' => "View All VAT Returns"
+		];
+
+		$returns_sidebar['viewvatreturn'] = [
+			'link'=>['modules'=>$this->_modules
+						 ,'controller'=>$this->name
+						 ,'action'=>'view'
+						 ,'id' => $return->id
+			], 'tag'=>"View {$s_data[year]}/{$s_data[tax_period]} VAT Return"
+		];
+
+		$sidebar->addList('VAT Returns', $returns_sidebar);
+
+		// If we are looking at an open VAT period with a closed GL period we can enter adjustments
+		if ($return->tax_period_closed !== 't' && $return->gl_period_closed === 't') {
+			$actionslist['entervatadjustment'] = array(
+				'link'=>array('modules'=>$this->_modules
+							,'controller'=>$this->name
+							,'action'=>'enterVATAdjustment'
+							),
+				'tag'=>'Make an Adjustment to Return'
+			);
+			$sidebar->addList('Actions', $actionslist);
+		}
+		
+		$this->view->register('sidebar',$sidebar);
+		$this->view->set('sidebar',$sidebar);
+
+	}
+
+	public function enterVATAdjustment()
+	{
+		$errors = array();
+		$s_data = array();
+		
+		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
+		{
+			$s_data['year']			= $this->_data['year'];
+			$s_data['tax_period']	= $this->_data['tax_period'];
+		}
+		else
+		{
+			$glperiod = DataObjectFactory::Factory('GLPeriod');
+			$glperiod->getCurrentTaxPeriod();
+			
+			if ($glperiod)
+			{
+				$s_data['year']			= $glperiod->year;
+				$s_data['tax_period']	= $glperiod->tax_period;
+			}
+		}
+
+		// need this to know which VAT period we came from to get here and if its closed
+		$return = new VatReturn();
+		$return->loadVatReturn($s_data['year'], $s_data['tax_period']);
+		$return->getTaxPeriodStatus();
+		
+		// If we got here somehow but the VAT period is closed or the GL period is not closed bail out (safety first)
+		if ($return->tax_period_closed === 't' || $return->gl_period_closed === 'f') {
+			sendBack();
+		}
+
+		$this->view->set('vat_return', $return->id);
+		$this->view->set('page_title',"Make adjustment to {$s_data[year]}/{$s_data[tax_period]} VAT Return");
+
+	}
+
+	public function saveVATAdjustment()
+	{
+		$flash = Flash::Instance();
+		
+		$errors = array();
+
+		if (parent::save('VatAdjustment'))
+        {
+            sendTo($_SESSION['refererPage']['controller']
+			  ,$_SESSION['refererPage']['action']
+			  ,$_SESSION['refererPage']['modules']
+			  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        }
+        $this->refresh();
+
 	}
 
 	public function edit_despatch_line ()
@@ -1327,7 +1458,8 @@ class VatController extends printController
 			sendBack();
 		}
 
-		$boxes = $vat->getVATvalues($year, $tax_period);
+		// MJS added the VAT return id in order to get any adjustments 
+		$boxes = $vat->getVATvalues($year, $tax_period,$this->_data['id']);
 		try
 		{
 			$return = new VatReturn();
@@ -1398,7 +1530,7 @@ class VatController extends printController
 					'data_uz-confirm-message' => "Close VAT Period?|This cannot be undone.",
 					'data_uz-action-id' => $model->id
 				]
-			);
+			);			
 		}
 
 		if ($model->tax_period_closed === 't' && $model->finalised === 'f' && $mtd_configured === true && $mtd_authorised === true) {
@@ -1436,6 +1568,16 @@ class VatController extends printController
 						 ,'tax_period'=>$model->tax_period
 						 ),
 			'tag'=>'View Transactions'
+		);
+
+		$sidebarlist['viewadjustments'] = array(
+			'link'=>array('modules'=>$this->_modules
+						 ,'controller'=>$this->name
+						 ,'action'=>'viewAdjustments'
+						 ,'year'=>$model->year
+						 ,'tax_period'=>$model->tax_period
+						 ),
+			'tag'=>'View Adjustments'
 		);
 
 		$returns_sidebar['all'] = [
