@@ -50,7 +50,10 @@ class POProductlineHeader extends DataObject
         $this->belongsTo('GLAccount', 'glaccount_id', 'gl_account');
         $this->belongsTo('GLCentre', 'glcentre_id', 'gl_centre');
         $this->belongsTo('TaxRate', 'tax_rate_id', 'tax_rate');
-        $this->belongsTo('STProductgroup', 'prod_group_id', 'product_group');
+
+        $pg_filter = new ConstraintChain();
+		$pg_filter->add(new Constraint('active', 'is', true));
+        $this->belongsTo('STProductgroup', 'prod_group_id', 'product_group', $pg_filter);
         $this->hasOne('STItem', 'stitem_id', 'item_detail');
 
         $this->hasMany('POProductLine', 'lines', 'productline_header_id');

@@ -10,6 +10,7 @@
 			{include file='elements/auditfields.tpl' }
 			{input type='text'  attribute='product_group' class="compulsory" }
 			{input type='text'  attribute='description' }
+			{input type='checkbox'  attribute='active' }
 		{/with}
 		{submit}
 	{/form}
