@@ -739,7 +739,8 @@ class VatController extends printController
 
 	public function enterVATAdjustment()
 	{
-		$errors = array();
+		$flash=Flash::Instance();
+
 		$s_data = array();
 		
 		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
@@ -766,6 +767,7 @@ class VatController extends printController
 		
 		// If we got here somehow but the VAT period is closed or the GL period is not closed bail out (safety first)
 		if ($return->tax_period_closed === 't' || $return->gl_period_closed === 'f') {
+			$flash->addError('Cannot enter VAT adjustment - either the GL period is open or the VAT period is closed');
 			sendBack();
 		}
 
