@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.27] 2021-07-28
 
 ### Added
 - Allow product groups to be made inactive
