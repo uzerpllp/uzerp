@@ -66,7 +66,9 @@ class STItem extends DataObject
 		$this->validateUniquenessOf('item_code');
 
 		// Define relationships
-		$this->belongsTo('STProductgroup', 'prod_group_id', 'product_group');
+		$pg_filter = new ConstraintChain();
+		$pg_filter->add(new Constraint('active', 'is', true));
+		$this->belongsTo('STProductgroup', 'prod_group_id', 'product_group', $pg_filter);
 		$this->belongsTo('STTypecode', 'type_code_id', 'type_code');
 		$this->belongsTo('STuom', 'uom_id', 'uom_name');
 		$this->belongsTo('TaxRate', 'tax_rate_id', 'tax_rate');

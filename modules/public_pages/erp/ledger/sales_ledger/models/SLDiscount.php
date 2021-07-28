@@ -27,7 +27,10 @@ class SLDiscount extends DataObject {
 		
 // Define relationships
 		$this->belongsTo('SLCustomer', 'slmaster_id', 'customer');
-		$this->belongsTo('STProductgroup', 'prod_group_id', 'product_group');
+
+		$pg_filter = new ConstraintChain();
+		$pg_filter->add(new Constraint('active', 'is', true));
+		$this->belongsTo('STProductgroup', 'prod_group_id', 'product_group', $pg_filter);
 
 // Define enumerated types
 				

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- Allow product groups to be made inactive
+- New functionality to allow adjustments to the VAT return before submission.
+
 ## [1.26.9] 2021-07-14
 
 ### Changed
