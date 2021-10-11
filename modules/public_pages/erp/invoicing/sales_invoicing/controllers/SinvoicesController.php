@@ -1227,9 +1227,13 @@ class SinvoicesController extends printController
             if (isset($invoice_methods[$customer->invoice_method])) {
                 $options['default_print_action'] = strtolower($invoice_methods[$customer->invoice_method]);
             }
-            $options['email_subject'] = '"Invoice ' . $invoice_number . '"';
+            $options['email_subject'] = '"Sales Invoice, No: ' . $invoice_number . '"';
             $options['email'] = $customer->email_invoice();
         }
+
+        $sc = new Systemcompany();
+        $sc->load(COMPANY_ID);
+        $options['replyto'] = $sc->getInvoiceReplyToEmailAddress();
         
         // Set the XSL:FO template to be used
         $invoice_layout = 'SalesInvoice';
@@ -1244,7 +1248,13 @@ class SinvoicesController extends printController
             $invoice_layout = $def->name;
         }
 
-        $options['emailsubject'] = 'Sales Invoice: No: ' . $invoice_number . (is_null($invoice->ext_reference) ? '' : ' Your Ref: ' . $invoice->ext_reference);
+        if (!isset($options['email_subject'])) {
+            // This sets the email subject for batch output.
+            // No dialog was shown to the user so the subject
+            // is not available in the controller's data.
+            $this->_data['print']['email_subject'] = 'Sales Invoice, No: ' . $invoice_number . (is_null($invoice->ext_reference) ? '' : ' Your Ref: ' . $invoice->ext_reference);
+        }
+        
         $options['report'] = $invoice_layout;
         $options['filename'] = 'SInv' . $invoice_number;
 

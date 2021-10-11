@@ -352,6 +352,24 @@ class Systemcompany extends DataObject {
 		return $companyContact->contact;
 	}
 
+	/**
+	 * Get the reply email address to be used when sending customer invoices
+	 *
+	 * @return string  Email address
+	 */
+	function getInvoiceReplyToEmailAddress() {
+		$companyContact = DataObjectFactory::Factory('PartyContactMethod');
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('party_id', '=', $this->systemcompany->party_id));
+		$cc->add(new Constraint('lower(name)', '=', 'invoice'));
+		$cc->add(new Constraint('type', '=', 'E'));
+
+		if (!$companyContact->loadBy($cc)) {
+			return false;
+		}
+		return $companyContact->contact;
+	}
+
 	function companyName ()
 	{
 		$company = DataObjectFactory::Factory('Company');
