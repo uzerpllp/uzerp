@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.27.1] 2021-10-11
+
+### Added
+- Reply-to email address for Sales Invoices can be set on the system company by adding an email address tagged 'INVOICE'.
+
+### Fixed
+- Add correct email subject to batch sales invoices.
+
 ## [1.27] 2021-07-28
 
 ### Added
@@ -947,6 +955,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.27]: https://github.com/uzerpllp/uzerp/compare/1.26.9...1.27
 [1.26.9]: https://github.com/uzerpllp/uzerp/compare/1.26.8...1.26.9
 [1.26.8]: https://github.com/uzerpllp/uzerp/compare/1.26.7...1.26.8
 [1.26.7]: https://github.com/uzerpllp/uzerp/compare/1.26.6...1.26.7
