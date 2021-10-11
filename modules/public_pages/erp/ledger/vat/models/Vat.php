@@ -179,7 +179,13 @@ class Vat extends GLTransaction
 		
 			$this->tax_period_closed = true;
 
-			$values = $this->getVATvalues($year, $tax_period);
+			// added by MJS - we need to know the VAT return we're dealing so adjustments are included in getVATvalues()
+			// but we also do this further down to store those values so it may be we can change the order
+			$return = new VatReturn();
+			$return->loadVatReturn($year, $tax_period);
+
+			// We should now get back the correct box values INCLUDING adjustments if there are any
+			$values = $this->getVATvalues($year, $tax_period, $return->id);
 			
 			$output_tax = $values['outputs']; //$this->getVATSum(1)
 			
@@ -297,7 +303,7 @@ QUERY;
 		$qparams2 = $return_id;
 		$query2 = <<<'QUERY'
 select coalesce(sum(vat_due_sales),0.00) as "Box1_adj", coalesce(sum(vat_reclaimed_curr_period), 0.00) as "Box4_adj", coalesce(sum(total_value_sales_ex_vat),0.00) as "Box6_adj",
-coalesce(sum(total_value_purchase_ex_vat),0.00) as "Box7 adj"
+coalesce(sum(total_value_purchase_ex_vat),0.00) as "Box7_adj"
 from vat_adjustment
 where vat_return_id=?
 group by vat_return_id
