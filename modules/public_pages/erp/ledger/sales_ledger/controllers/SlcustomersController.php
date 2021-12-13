@@ -1352,7 +1352,7 @@ class SlcustomersController extends LedgerController
         if ((strtolower($this->_data['printaction']) == 'printstatement' || $this->_data['print']['printaction'] == 'email') && ! is_null($customer->email_statement())) {
             $options['default_print_action'] = 'email';
             $options['email'] = $customer->email_statement();
-            $options['email_subject']='"Account Statement from ' . SYSTEM_COMPANY . '"';
+            $options['email_subject'] = 'Account Statement from ' . SYSTEM_COMPANY;
             $sc = new Systemcompany();
             $sc->load(COMPANY_ID);
             $options['replyto'] = $sc->getStatementReplyToEmailAddress();
@@ -1365,10 +1365,10 @@ class SlcustomersController extends LedgerController
                 $user->load($_SESSION['username']);
                 $person = DataObjectFactory::Factory('Person');
                 $person->load($user->person_id);
-                $options['replyto'] = $person->email->contactmethod;
+                $options['replyto'] = $person->email->contactmethod->contact;
             }
     
-            if (empty($contact)) {
+            if (empty($options['replyto']) || !is_string($options['replyto'])) {
                 $options['replyto'] = $user->email;
             }
         }

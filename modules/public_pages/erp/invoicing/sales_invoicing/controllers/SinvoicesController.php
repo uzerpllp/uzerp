@@ -1234,6 +1234,21 @@ class SinvoicesController extends printController
         $sc = new Systemcompany();
         $sc->load(COMPANY_ID);
         $options['replyto'] = $sc->getInvoiceReplyToEmailAddress();
+
+        // If the customer's statement email is not set,
+        // then use the users employee work email
+        // or the user email as a last resort.
+        if (empty($options['replyto'])) {
+            $user = DataObjectFactory::Factory('user');
+            $user->load($_SESSION['username']);
+            $person = DataObjectFactory::Factory('Person');
+            $person->load($user->person_id);
+            $options['replyto'] = $person->email->contactmethod->contact;
+        }
+
+        if (empty($options['replyto']) || !is_string($options['replyto'])) {
+            $options['replyto'] = $user->email;
+        }
         
         // Set the XSL:FO template to be used
         $invoice_layout = 'SalesInvoice';
