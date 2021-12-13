@@ -1,5 +1,6 @@
 <?php
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 /**
@@ -1560,6 +1561,10 @@ class printController extends Controller
                     'replyto' => $params['replyto']
                 );
 
+                if (empty($params['email_subject'])) {
+                    $email_params['email_subject'] = $options['email_subject'];
+                }
+
                 // Reply to address will not be in $params when coming from process_output.
                 // For example, when outputting customer statements. Set it from the options instead.
                 if (isset($options['replyto'])) {
@@ -2393,8 +2398,6 @@ class printController extends Controller
         }
 
         $file = $params['file_path'];
-        $fname = basename($params['file_name']) . '.' . $params['file_type'];
-        $data = file_get_contents($file);
         $user = DataObjectFactory::Factory('user');
 
         if (! $user->load($_SESSION['username'])) {
@@ -2406,7 +2409,7 @@ class printController extends Controller
         } elseif (! is_null($user->person_id)) {
             $person = DataObjectFactory::Factory('Person');
             $person->load($user->person_id);
-            $contact = $person->email->contactmethod;
+            $contact = $person->email->contactmethod->contact;
         }
 
         if (empty($contact)) {
@@ -2421,20 +2424,34 @@ class printController extends Controller
 
         $from = $replyto = $contact;
         $address_list = array_map('trim', explode(',', $params['email']));
+        
+        $mailer_conf = get_config('PHPMAILER_CONF');
         $mail = new PHPMailer(true);
+
+		if (is_array($mailer_conf)) {
+			foreach ($mailer_conf as $conf => $val) {
+				if ($conf == 'isSMTP') {
+					$mail->isSMTP();
+					continue;
+				}
+
+				$mail->$conf = $val;
+			}
+		}
+
         try {
             $mail->setFrom($from);
             $mail->addReplyTo($replyto);
             foreach ($address_list as $recipient) {
                 $mail->addAddress($recipient);
             }
-            $mail->Subject = $params['subject'];
+            $mail->Subject = $params['email_subject'];
             $mail->Body = $params['emailtext'];
             $mail->addAttachment($file);
             $mail->send();
             return true;
         } catch (Exception $e) {
-            $errors[] = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            $errors[] = "Message could not be sent. Mailer Error [printController]: {$mail->ErrorInfo}";
             return false;
         }
     }

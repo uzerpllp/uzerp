@@ -131,7 +131,20 @@ function system_email($subject, $body, &$errors)
 	if (!empty($email) && !get_config('DEV_PREVENT_EMAIL'))
 	{
 
-		$mail = new PHPMailer(true);
+		$mailer_conf = get_config('PHPMAILER_CONF');
+        $mail = new PHPMailer(true);
+
+		if (is_array($mailer_conf)) {
+			foreach ($mailer_conf as $conf => $val) {
+				if ($conf == 'isSMTP') {
+					$mail->isSMTP();
+					continue;
+				}
+
+				$mail->$conf = $val;
+			}
+		}
+
         try {
             $mail->setFrom($from);
             $mail->addReplyTo($from);
