@@ -78,6 +78,7 @@ class Config {
 				'OUTPUT_DEBUG_PATH'			=> '',
 				'DEV_PREVENT_EMAIL' 		=> FALSE,
 				'DEV_PREVENT_PRINT' 		=> FALSE,
+				'PHPMAILER_CONF'			=> FALSE,
 		
 				// AUTOCOMPLETE
 				'AUTOCOMPLETE_SELECT_LIMIT'	=> 500000

@@ -31,6 +31,22 @@ $conf['MEMCACHED_PREFIX'] = 'uzerp';
 
 
 /**
+ * PHPMailer Configuration
+ * 
+ * See, https://phpmailer.github.io/PHPMailer/
+ */
+// Default: false
+// $conf['PHPMAILER_CONF']	= [
+//     'SMTPDebug' => false,
+//     'isSMTP' => true,
+//     'Host' => 'localhost',
+//     'Port' => 25,
+//     'SMTPAuth' => false,
+//     'SMTPSecure' => false,
+//     'SMTPAutoTLS' => false
+// ];
+
+/**
  * uzERP settings
  */
 
