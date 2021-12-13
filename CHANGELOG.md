@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.27.2] 2021-12-13
+
+## Added
+- PHPMailer settings in config to enable sending email via SMTP servers.
+
+## Fixed
+- Use correct email address on from/reply-to when sending email.
+- Subject line added to customer statement emails.
+
 ## [1.27.1] 2021-10-11
 
 ### Added
@@ -955,6 +964,8 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.27.2]: https://github.com/uzerpllp/uzerp/compare/1.27.1...1.27.2
+[1.27.1]: https://github.com/uzerpllp/uzerp/compare/1.27...1.27.1
 [1.27]: https://github.com/uzerpllp/uzerp/compare/1.26.9...1.27
 [1.26.9]: https://github.com/uzerpllp/uzerp/compare/1.26.8...1.26.9
 [1.26.8]: https://github.com/uzerpllp/uzerp/compare/1.26.7...1.26.8
