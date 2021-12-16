@@ -1,6 +1,10 @@
 # Change Log
-
 All notable changes to this project will be documented in this file.
+
+## [1.27.3] 2021-12-16
+
+## Fixed
+- Batch invoice emails missing subject line.
 
 ## [1.27.2] 2021-12-13
 
@@ -964,6 +968,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.27.3]: https://github.com/uzerpllp/uzerp/compare/1.27.2...1.27.3
 [1.27.2]: https://github.com/uzerpllp/uzerp/compare/1.27.1...1.27.2
 [1.27.1]: https://github.com/uzerpllp/uzerp/compare/1.27...1.27.1
 [1.27]: https://github.com/uzerpllp/uzerp/compare/1.26.9...1.27
