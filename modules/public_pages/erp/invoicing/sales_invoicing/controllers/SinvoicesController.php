@@ -1267,7 +1267,7 @@ class SinvoicesController extends printController
             // This sets the email subject for batch output.
             // No dialog was shown to the user so the subject
             // is not available in the controller's data.
-            $this->_data['print']['email_subject'] = 'Sales Invoice, No: ' . $invoice_number . (is_null($invoice->ext_reference) ? '' : ' Your Ref: ' . $invoice->ext_reference);
+            $options['email_subject'] = 'Sales Invoice, No: ' . $invoice_number . (is_null($invoice->ext_reference) ? '' : ' Your Ref: ' . $invoice->ext_reference);
         }
         
         $options['report'] = $invoice_layout;
