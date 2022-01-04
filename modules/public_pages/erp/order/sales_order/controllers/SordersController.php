@@ -52,7 +52,12 @@ class SordersController extends printController
             $s_data['due_date']['to'] = un_fix_date($this->_data['due_date']);
         }
 
-        $this->setSearch('sordersSearch', 'useDefault', $s_data, null ,true);
+        
+        if (!empty($s_data)) {
+            $this->setSearch('sordersSearch', 'useDefault', $s_data, null );
+        } else {
+            $this->setSearch('sordersSearch', 'useDefault', $s_data, null, true);
+        }
 
         parent::index(new SOrderCollection($this->_templateobject));
 
@@ -672,7 +677,8 @@ class SordersController extends printController
                 'modules' => $this->_modules,
                 'controller' => $this->name,
                 'action' => 'index',
-                'slmaster_id' => $order->slmaster_id
+                'slmaster_id' => $order->slmaster_id,
+                'status' => ''
             ),
             'tag' => 'view quotes/orders'
         );
