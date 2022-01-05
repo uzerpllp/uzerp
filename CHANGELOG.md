@@ -1,17 +1,22 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.27.4] 2022-01-05
+
+### Fixed
+- Show orders with all statuses when viewing the order list for a specific customer.
+
 ## [1.27.3] 2021-12-16
 
-## Fixed
+### Fixed
 - Batch invoice emails missing subject line.
 
 ## [1.27.2] 2021-12-13
 
-## Added
+### Added
 - PHPMailer settings in config to enable sending email via SMTP servers.
 
-## Fixed
+### Fixed
 - Use correct email address on from/reply-to when sending email.
 - Subject line added to customer statement emails.
 
@@ -968,6 +973,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.27.4]: https://github.com/uzerpllp/uzerp/compare/1.27.3...1.27.4
 [1.27.3]: https://github.com/uzerpllp/uzerp/compare/1.27.2...1.27.3
 [1.27.2]: https://github.com/uzerpllp/uzerp/compare/1.27.1...1.27.2
 [1.27.1]: https://github.com/uzerpllp/uzerp/compare/1.27...1.27.1
