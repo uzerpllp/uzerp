@@ -37,8 +37,10 @@ class SordersController extends printController
             $s_data['slmaster_id'] = $this->_data['slmaster_id'];
         }
 
-        if (isset($this->_data['status'])) {
+        if (isset($this->_data['status']) && $this->_data['status'] !== 'all') {
             $s_data['status'] = $this->_data['status'];
+        } elseif (isset($this->_data['status']) && $this->_data['status'] == 'all') {
+            $s_data['status'] = array_keys($this->_templateobject->getEnumOptions('status'));
         } else {
             $s_data['status'] = [
                 $this->_templateobject->newStatus(),
@@ -53,7 +55,7 @@ class SordersController extends printController
         }
 
         
-        if (!empty($s_data)) {
+        if (isset($this->_data['slmaster_id']) && isset($this->_data['status']) && $this->_data['status'] == 'all') {
             $this->setSearch('sordersSearch', 'useDefault', $s_data, null );
         } else {
             $this->setSearch('sordersSearch', 'useDefault', $s_data, null, true);
@@ -678,7 +680,7 @@ class SordersController extends printController
                 'controller' => $this->name,
                 'action' => 'index',
                 'slmaster_id' => $order->slmaster_id,
-                'status' => ''
+                'status' => 'all'
             ),
             'tag' => 'view quotes/orders'
         );
