@@ -1,10 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.27.5] 2022-01-06
+
+### Fixed
+- Remove inconsistency in sales order lists when viewing from the sales ledger customer.
+
 ## [1.27.4] 2022-01-05
 
 ### Fixed
-- Show orders with all statuses when viewing the order list for a specific customer.
+- Show sales orders with all statuses when viewing the order list for a specific customer.
 
 ## [1.27.3] 2021-12-16
 
@@ -973,6 +978,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.27.5]: https://github.com/uzerpllp/uzerp/compare/1.27.4...1.27.5
 [1.27.4]: https://github.com/uzerpllp/uzerp/compare/1.27.3...1.27.4
 [1.27.3]: https://github.com/uzerpllp/uzerp/compare/1.27.2...1.27.3
 [1.27.2]: https://github.com/uzerpllp/uzerp/compare/1.27.1...1.27.2
