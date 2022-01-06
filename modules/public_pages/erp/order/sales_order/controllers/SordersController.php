@@ -26,22 +26,35 @@ class SordersController extends printController
         $this->uses($this->_templateobject);
     }
 
+    /**
+     * Sales Orders - index view
+     *
+     * @return void
+     */
     public function index()
     {
         $this->view->set('clickaction', 'view');
-
         $s_data = array();
 
-        // so set context from calling module
-        if (isset($this->_data['slmaster_id'])) {
-            $s_data['slmaster_id'] = $this->_data['slmaster_id'];
+        // This view is called from several places and we need to manage the applied search.
+        // If the user has opted to clear the search, the default search is applied.
+        if (!isset($this->_data['Search']['clear'])) {
+            // Get the params from the current, active search
+            $s_data = $_SESSION['searches']['sordersSearch']["default{$this->_data['search_id']}"];
+
+            // Set the customer ID if present in the request params
+            if (isset($this->_data['slmaster_id'])) {
+                $s_data['slmaster_id'] = $this->_data['slmaster_id'];
+            }
+
+            // Search on all order statuses if 'status' is in the request params
+            if (isset($this->_data['status']) && $this->_data['status'] == 'all') {
+                $s_data['status'] = array_keys($this->_templateobject->getEnumOptions('status'));
+            }
         }
 
-        if (isset($this->_data['status']) && $this->_data['status'] !== 'all') {
-            $s_data['status'] = $this->_data['status'];
-        } elseif (isset($this->_data['status']) && $this->_data['status'] == 'all') {
-            $s_data['status'] = array_keys($this->_templateobject->getEnumOptions('status'));
-        } else {
+        // If there is no status filter, set the default.
+        if (!isset($s_data['status'])) {
             $s_data['status'] = [
                 $this->_templateobject->newStatus(),
                 $this->_templateobject->openStatus(),
@@ -49,18 +62,10 @@ class SordersController extends printController
             ];
         }
 
-        if (isset($this->_data['due_date'])) {
-            $s_data['due_date']['from'] = un_fix_date($this->_data['due_date']);
-            $s_data['due_date']['to'] = un_fix_date($this->_data['due_date']);
-        }
+        // Apply the search
+        $this->setSearch('sordersSearch', 'useDefault', $s_data, null );
 
-        
-        if (isset($this->_data['slmaster_id']) && isset($this->_data['status']) && $this->_data['status'] == 'all') {
-            $this->setSearch('sordersSearch', 'useDefault', $s_data, null );
-        } else {
-            $this->setSearch('sordersSearch', 'useDefault', $s_data, null, true);
-        }
-
+        // Load the collection
         parent::index(new SOrderCollection($this->_templateobject));
 
         $today = fix_date(date(DATE_FORMAT));

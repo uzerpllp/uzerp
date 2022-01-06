@@ -458,7 +458,8 @@ class SlcustomersController extends LedgerController
                 'module' => 'sales_order',
                 'controller' => 'sorders',
                 'action' => 'index',
-                'slmaster_id' => $customer->id
+                'slmaster_id' => $customer->id,
+                'status' => 'all'
             ),
             'new' => array(
                 'module' => 'sales_order',
