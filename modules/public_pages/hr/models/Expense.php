@@ -48,7 +48,7 @@ class Expense extends DataObject
             $exp_auth_policy = $user_employee->authorisationPolicy($exp_auth);
 
             $emp_collection = new EmployeeCollection('Employee');
-            $emp_search = new SearchHandler($emp_collection);
+            $emp_search = new SearchHandler($emp_collection, false);
             $emp_search->addConstraintChain($exp_auth_policy);
             $emp_collection->load($emp_search);
 
@@ -57,14 +57,13 @@ class Expense extends DataObject
                 $allowed_employee_ids[] = $emp->id;
             }
 
-            $policy_constraint = new Constraint('employee_id', '=', $allowed_employee_ids[0]);
-            if (count($allowed_employee_ids) > 1) {
+            if (count($allowed_employee_ids) > 0) {
                 $policy_constraint = new Constraint('employee_id', 'in', '(' . implode(',', $allowed_employee_ids) . ')');
-            }
 
-            $policy_chain = new ConstraintChain();
-            $policy_chain->add($policy_constraint);
-            $this->addPolicyConstraint($policy_chain);
+                $policy_chain = new ConstraintChain();
+                $policy_chain->add($policy_constraint);
+                $this->addPolicyConstraint($policy_chain);
+            }
         }
 
         // Set specific characteristics
