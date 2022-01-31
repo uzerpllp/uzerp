@@ -251,7 +251,7 @@ ul.panel {
   padding: 20px;
     z-index: 999;
   box-shadow: 4px 2px 4px 2px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--test-default);
+  border: 1px solid var(--border-1);
   opacity: 0;
   }
 
@@ -273,7 +273,7 @@ ul.panel {
 }
 
 .panel > li > ul {
-  margin: 10px 0 20px 0;
+  margin: 0.5em 0 1em 0;
 }
 
 .panel > li > a:first-of-type,
@@ -298,4 +298,12 @@ ul.panel {
 
 ul[aria-hidden=false].panel li * {
   display: block;
+}
+
+
+.panel a.perm-type-m::after {
+  content: url('/assets/graphics/svg/dashboard-link.svg');
+  margin-left: 3px;
+  display: inline-block;
+  vertical-align: middle;
 }
