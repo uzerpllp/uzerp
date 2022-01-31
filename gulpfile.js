@@ -28,6 +28,7 @@ var jsFiles = [
         'assets/js/lib/print_dialog.js',
         'assets/js/lib/rules.js',
 	'assets/js/lib/click-info.js',
+	'assets/js/lib/clicky-menu.js',
         // jQuery plugins
         'assets/js/vendor/uiBlock/uiBlock.js',
         'assets/js/vendor/superfish-1.4.8/hoverIntent.js',
@@ -80,6 +81,7 @@ var jsFiles = [
         'assets/js/vendor/collapsibleCheckboxTree/jquery.collapsibleCheckboxTree.css',
         'assets/js/vendor/jqPagination/css/style.css',
         'assets/js/vendor/jQuery-contextMenu-2.9.0/dist/jquery.contextMenu.css',
+	'assets/css/uzerp/clicky-menu.css',
         'modules/public_pages/**/resources/css/**/*.css',
     ];
 
