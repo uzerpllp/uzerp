@@ -8,20 +8,23 @@
     "packages": [
         {
             "name": "adodb/adodb-php",
-            "version": "v5.21.0",
+            "version": "v5.21.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ADOdb/ADOdb.git",
-                "reference": "199391f639a0b3346a80d66c00c87230fa3e6a07"
+                "reference": "c3e6a3661c60beebb7b2cd819bcf76446d69e41a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ADOdb/ADOdb/zipball/199391f639a0b3346a80d66c00c87230fa3e6a07",
-                "reference": "199391f639a0b3346a80d66c00c87230fa3e6a07",
+                "url": "https://api.github.com/repos/ADOdb/ADOdb/zipball/c3e6a3661c60beebb7b2cd819bcf76446d69e41a",
+                "reference": "c3e6a3661c60beebb7b2cd819bcf76446d69e41a",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.5.9 || ^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.5"
             },
             "type": "library",
             "autoload": {
@@ -58,7 +61,7 @@
                 "library",
                 "php"
             ],
-            "time": "2021-02-27T11:38:53+00:00"
+            "time": "2022-01-22T22:56:43+00:00"
         },
         {
             "name": "brick/math",
