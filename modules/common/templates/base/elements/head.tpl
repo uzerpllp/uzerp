@@ -5,7 +5,8 @@
  **}
 {* $Revision: 1.20 $ *}
 <head>
-        <meta charset="utf-8" />
+    <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta content="{$csrf_token}" name="csrf-token" />
 	<title>{$config.BASE_TITLE} {$config.SYSTEM_VERSION}</title>
 	
