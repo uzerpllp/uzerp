@@ -7,7 +7,11 @@
 <html>
 	{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/head.tpl"}
 	<body class="module-{$module|replace:'_':'-'} controller-{$controller|replace:'_':'-'}{if $action} action-{$action|ltrim:'_'|replace:'_':'-'}{/if}">
-		{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/header.tpl"}
+		{if isset($_ENV['USE_NEW_MENU'])}
+			{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/header-new-menu.tpl"}
+		{else}
+			{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/header.tpl"}
+		{/if}
 		{if isset($sideBarTemplateName)}
 			<div id="content_with_sidebar">
 				<div id="sidebar">

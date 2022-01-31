@@ -19,5 +19,6 @@
 			{/view_section}
 		</div>
 	{/foreach}
-	{include file='dashboard_uzlets.tpl'}
+
 {/if}
+{include file='dashboard_uzlets.tpl'}

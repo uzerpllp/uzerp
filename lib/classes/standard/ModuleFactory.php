@@ -23,16 +23,6 @@ class ModuleFactory {
 			$default_page = 'module,'.$ao->getDefaultModule();
 		}
 		
-		if (get_config('SETUP'))
-		{
-			
-			if (defined('MODULE'))
-			{ 
-				$default_page = MODULE;
-			}
-			
-		}
-		
 		$router		= RouteParser::Instance();
 		$modules	= array();
 		
