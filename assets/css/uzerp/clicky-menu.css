@@ -1,0 +1,301 @@
+/**
+ * Adpated from Clicky Menus
+ * 
+ * MIT License
+ * Copyright (c) 2021 Mark Root-Wiley
+ * 
+ * https://github.com/mrwweb/clicky-menus
+ */
+
+/**
+ * Override some uzERP CSS
+ */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  padding: 0;
+}
+
+#header {
+margin-top: 5px;
+float: left;
+width: 100%;
+}
+
+#logo {
+  position: unset;
+  float: left;
+  margin-bottom: 5px;
+}
+
+#primary-nav {
+  float: left;
+  width: 100%;
+  background: var(--brand-color);
+}
+
+/**
+ * Initial state, hidden off screen
+ */
+ .clicky-menu ul {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: none;
+ }
+
+/**
+ * No JS fallback
+ *
+ * Triggers menus on hover rather than click. Supports keyboard navigation in modern browsers.
+ */
+.clicky-menu.no-js li:hover ul {
+  display: block;
+  z-index: 999;
+}
+.clicky-menu.no-js li ul li ul{
+  position: relative;
+}
+
+.clicky-menu.no-js li:focus-within ul li ul{
+  /*[2]*/
+  display: block;
+
+  z-index: 999;
+}
+
+/**
+ * Open/Close Menu Behavior with JS
+ */
+.clicky-menu ul[aria-hidden=false] {
+  display:block;
+}
+
+li.nav[aria-expanded=false] {
+  position: unset ;
+}
+
+/**
+ * Footnotes
+ *
+ * [2] Must be a separate ruleset so that hover works in non-modern browsers
+ */
+
+/* Hidden SVG used for down arrows */
+svg[hidden] {
+  display: none;
+  position: absolute;
+}
+
+.clicky-menu {
+  justify-content: stretch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 540px) {
+  .clicky-menu {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+/* General Link & Button Styles */
+.clicky-menu > li > a,
+.clicky-menu button {
+  margin: 0.25em;
+  padding: 1em;
+  background: transparent;
+  color: var(--text-color-1);
+  font-weight: bold;
+  text-decoration: none;
+  font-family: inherit;
+  border-radius: 3px;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.clicky-menu a:hover,
+.clicky-menu button:hover {
+  background: var(--background-2);
+}
+
+.clicky-menu a:focus,
+.clicky-menu button:focus {
+  outline: 0.125em dotted purple;
+  outline-offset: -0.125em;
+}
+
+/* Top Level Items */
+.clicky-menu > li {
+  position: relative;
+  display: flex;
+  justify-content: stretch;
+  flex-wrap: wrap;
+}
+
+.clicky-menu > li > a,
+.clicky-menu > li > button {
+  flex: 1 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  border: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+@media (min-width: 540px) {
+  .clicky-menu > li > a,
+.clicky-menu > li > button {
+    justify-content: center;
+  }
+}
+/* Icon */
+.clicky-menu svg {
+  width: 1em;
+  height: 1em;
+  margin-left: 0.5em;
+}
+
+.clicky-menu [aria-expanded=true] svg {
+  transform: scaleY(-1);
+}
+
+/* Submenu Styles */
+.clicky-menu ul {
+  min-width: 100%;
+  width: 12em;
+  padding: 0;
+  list-style: none;
+  background-color: var(--background-1);
+  border-radius: 3px;
+}
+
+/* Responsive Submenu Behavior */
+.clicky-menu ul[aria-hidden=false] {
+  position: static;
+  width: 100%;
+  flex: 0 0 auto;
+  opacity: 1;
+}
+
+
+.clicky-menu ul {
+  -webkit-animation: reveal-panel 0.25s ease-in-out;
+          animation: reveal-panel 0.25s ease-in-out;
+}
+
+@keyframes reveal-panel {
+  0% {
+    display: none;
+    opacity: 0;
+  }
+  1% {
+    display: block;
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+
+@media (max-width: 540px) {
+
+  html {
+    overflow: visible;
+  }
+
+  #main_without_sidebar {
+    height: auto !important;
+  }
+
+  ul.panel {
+    columns: 2 !important ;
+    transform: none !important;
+  }
+}
+
+
+@media (min-width: 540px) {
+
+  .clicky-menu ul[aria-hidden=false] {
+    position: absolute;
+    width: auto;
+  }
+}
+/* Submenu Links */
+.clicky-menu ul a {
+  display: block;
+  padding-top: 0.375em;
+  padding-bottom: 0.375em;
+}
+
+@media (min-width: 540px) {
+  .clicky-menu ul a,
+  .clicky-menu ul .nav-group-title,
+  .clicky-menu ul span.not-allowed
+   {
+    padding: 0.25em 0.5em;
+    white-space: nowrap;
+    font-size: 14px;
+  }
+}
+
+ul.panel {
+  /*columns: 4;*/
+  padding: 20px;
+    z-index: 999;
+  box-shadow: 4px 2px 4px 2px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--test-default);
+  opacity: 0;
+  }
+
+.panel.c-2 {
+  columns: 2;
+}
+
+.panel.c-3 {
+  columns: 3;
+}
+
+.panel.c-4 {
+  columns: 4;
+}
+
+.panel ul {
+  position: relative;
+  top: 0;
+}
+
+.panel > li > ul {
+  margin: 10px 0 20px 0;
+}
+
+.panel > li > a:first-of-type,
+.panel .nav-group-title {
+  color: var(--light-brand-color);
+  font-weight: bold;
+}
+
+.panel li a,
+.panel li span.not-allowed {
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.panel li span.not-allowed {
+  text-decoration: line-through;
+}
+
+.panel li, .panel ul {
+  break-inside: avoid;
+}
+
+ul[aria-hidden=false].panel li * {
+  display: block;
+}
