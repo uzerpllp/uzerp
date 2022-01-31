@@ -24,8 +24,9 @@
 /conf/selector-config.yml
 /conf/oauth.yml
 
-# Exclude logs
+# Exclude logs and .env
 *.log
+.env
 
 # Exclude composer installed stuff
 #composer.lock
