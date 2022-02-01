@@ -25,7 +25,7 @@
 								<use xlink:href="#arrow" />
 							</svg>
 					</a>
-				{elseif $menuitem.type == 'g' && $lvl!==1}
+				{elseif ($menuitem.type == 'g' && $lvl!==1) || ($menuitem.type == 'm' && $menuitem.has_uzlets === false)}
 					<span class='nav-group-title perm-type-{$menuitem.type}'>{$menuitem.title|escape|prettify}</span>
 				{else}
 					{$cls="perm-type-{$menuitem.type}"}
