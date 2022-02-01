@@ -122,6 +122,12 @@ svg[hidden] {
   background: var(--background-2);
 }
 
+.clicky-menu a:hover {
+  color: var(--brand-color) !important;
+  transition: background ease-in-out 0.25s;
+  border-radius: 3px;
+}
+
 .clicky-menu a:focus,
 .clicky-menu button:focus {
   outline: 0.125em dotted purple;
@@ -240,7 +246,7 @@ svg[hidden] {
   .clicky-menu ul .nav-group-title,
   .clicky-menu ul span.not-allowed
    {
-    padding: 0.25em 0.5em;
+    padding: .45em .5em .25em .5em;
     white-space: nowrap;
     font-size: 14px;
   }
@@ -302,10 +308,18 @@ ul[aria-hidden=false].panel li * {
   display: block;
 }
 
-
 .panel a.perm-type-m::after {
   content: url('/assets/graphics/svg/dashboard-link.svg');
   margin-left: 3px;
   display: inline-block;
   vertical-align: middle;
+}
+
+.clicky-menu button[aria-expanded=true] {
+  background: var(--background-2);
+}
+
+.clicky-menu button:hover {
+  background: var(--background-2);
+  transition: background ease-in-out 0.2s;
 }
