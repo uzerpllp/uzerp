@@ -33,9 +33,13 @@ class Config {
 		
 		if ($this->options === NULL)
 		{
-			
 			// get the file
 			include FILE_ROOT . 'conf/config.php';
+
+			// Load .env file and merge
+			$dotenv = Dotenv\Dotenv::createImmutable(FILE_ROOT . 'conf/');
+			$dotenv->safeLoad();
+			$conf = $conf + $_ENV;
 			
 			// we have to populate the defaults here as we have values
 			// that require evaluation, which must be done at run time

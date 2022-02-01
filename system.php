@@ -254,9 +254,6 @@ class system
 
         $this->set_autoloader($_disable_cache);
 
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-        $dotenv->safeLoad();
-
         // **************
         // PRELOAD CACHE
 
@@ -331,7 +328,7 @@ class system
         $csrf_token = $csrf->getToken();
         // make csrf token available to smarty templates
         $this->view->set('csrf_token', $csrf_token);
-        $this->view->set('_ENV', $_ENV);
+
 
         if (isLoggedIn()) {
             $this->checkPermission();
