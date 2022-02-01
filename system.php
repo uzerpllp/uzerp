@@ -329,6 +329,7 @@ class system
         // make csrf token available to smarty templates
         $this->view->set('csrf_token', $csrf_token);
 
+
         if (isLoggedIn()) {
             $this->checkPermission();
         }

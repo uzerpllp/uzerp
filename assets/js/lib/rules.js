@@ -1009,8 +1009,12 @@ function drag_drop_fields() {
 }
 function resize_window() {
 	
-	var mainNav = $("#mainNav");
-	
+	if (document.getElementById("mainNav") === null) {
+		var mainNav = $("#primary-nav");
+	} else {
+		var mainNav = $("#mainNav");
+	}
+
 	if (mainNav.length !== 0) {
 		var footer = $("#footer");
 		var content_height = $(this).height() - ((mainNav.position().top + mainNav.height()) + footer.height() + 30 + (2 * 15) + 2);

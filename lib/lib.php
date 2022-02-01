@@ -921,6 +921,13 @@ function link_to($params, $data = FALSE, $html = TRUE) {
 		else
 		{
 			$string = prettify($tag);
+			if ($html === true){
+				$attr_array['class'] = "{$attr_array['class']} not-allowed";
+				$attr_string = build_attribute_string($attr_array);
+				$string = "<span {$attr_string}>{$string}</span>";
+			} else {
+				$string = $string;
+			}
 		}
 
 	}

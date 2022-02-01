@@ -238,6 +238,7 @@ class AccessObject {
 						
 						case 'm':
 							$link_params['module']		= $module->load_identifier_value($permission['module_id']);
+							$moduleHasUzlets = $module->hasUzlets();
 							break;
 						
 					}
@@ -265,6 +266,10 @@ class AccessObject {
 					'type'	=> $permission['type'],
 					'link'	=> $link_params
 				);
+
+				if (isset($moduleHasUzlets)) {
+					$this->tree[$key][$permission['position']]['has_uzlets'] = $moduleHasUzlets;
+				}
 				
 				$this->tree[$key][$permission['position']]['new_type_permission'] = (!empty($permission['module_id']));
 				

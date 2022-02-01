@@ -203,6 +203,31 @@ class ModuleObject extends DataObject
 	{
 
 	}
+
+	/**
+	 * Return this module's uzLET status
+	 * 
+	 * Returns true if the module has enabled uzlets,
+	 * otherwise false.
+	 *
+	 * @return boolean
+	 */
+	public function hasUzlets()
+	{
+		$uzlets = new UzletCollection();
+		$sh = new SearchHandler($uzlets, false);
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('module_id', '=', $this->id));
+		$cc->add(new Constraint('enabled', 'is', true));
+		$sh->addConstraintChain($cc);
+		$uzlets->load($sh);
+		
+		if (count($uzlets) > 0) {
+			return true;
+		}
+		
+		return false;
+	}
 	
 }
 
