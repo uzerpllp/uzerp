@@ -7,7 +7,7 @@
 <html>
 	{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/head.tpl"}
 	<body class="module-{$module|replace:'_':'-'} controller-{$controller|replace:'_':'-'}{if $action} action-{$action|ltrim:'_'|replace:'_':'-'}{/if}">
-		{if isset($_ENV['USE_NEW_MENU'])}
+		{if isset($config['USE_NEW_MENU'])}
 			{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/header-new-menu.tpl"}
 		{else}
 			{include file="file:{$smarty.const.BASE_TPL_ROOT}elements/header.tpl"}
