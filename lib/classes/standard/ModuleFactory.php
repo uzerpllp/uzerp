@@ -18,9 +18,7 @@ class ModuleFactory {
 		
 		if ($default_page == null)
 		{
-			$ao = AccessObject::Instance();
-			
-			$default_page = 'module,'.$ao->getDefaultModule();
+			$default_page = 'module,dashboard';
 		}
 		
 		$router		= RouteParser::Instance();
