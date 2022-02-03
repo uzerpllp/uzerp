@@ -77,42 +77,6 @@ class UserPreferences extends DataObject {
 		
 	}
 
-	public function userCanSetPreferences()
-	{
-		
-		if ($this->loggedin)
-		{
-			
-			$accessObject	= &AccessObject::Instance($this->username);
-			$modules		= $accessObject->tree;
-			
-			if (is_array($modules))
-			{
-				
-				foreach ($modules as $module)
-				{
-
-					continue;
-			
-					// FIXME: Only show module if preferences file exists
-					if (!file_exists(FILE_ROOT . '/app/controllers/' . strtolower($module['permission']) . '/Preferences.php')) {
-						continue;
-					}
-		
-					if ($accessObject->hasPermission($module['permission'])) {
-						return TRUE;
-					}
-					
-				}
-				
-			}
-			
-		}
-		
-		return FALSE;
-		
-	}
-
 	public function getPreferenceValue($name, $module = 'home')
 	{
 		
