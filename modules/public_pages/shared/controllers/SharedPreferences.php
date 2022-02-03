@@ -156,7 +156,7 @@ class SharedPreferences extends ModulePreferences
 
 		$per = DataObjectFactory::Factory('Permission');
 
-		$permissions = $ao->getUserModules($username);
+		$permissions = $this->getUserModules($username);
 
 		if (!empty($permissions))
 		{
@@ -213,6 +213,32 @@ class SharedPreferences extends ModulePreferences
 			$flash->addError('Passwords must be at least 10 characters long');
 			return FALSE;
 		}
+	}
+
+	/**
+	 * Get modules available to user
+	 *
+	 * @param string $username
+	 * @return void
+	 */
+	private function getUserModules($username = EGS_USERNAME)
+	{
+		// Get the roles for the user
+		$hasrole = DataObjectFactory::Factory('HasRole');
+		$roles = $hasrole->getRoleID($username);
+		$hp	= new HasPermissionCollection;
+		$cc = new ConstraintChain;
+		$cc->add(new Constraint('type', '=', 'm'));
+		$cc->add(new Constraint('display', 'is', true));
+		if (!empty($roles))	{
+			$cc->add(new Constraint('roleid', 'in', '(' . implode(',', $roles) . ')'));
+		}
+		
+		$sh = new SearchHandler($hp, false);
+		$sh->addConstraintChain($cc);
+		$sh->setOrderby('title');
+		
+		return $hp->load($sh, null, RETURN_ROWS);
 	}
 }
 
