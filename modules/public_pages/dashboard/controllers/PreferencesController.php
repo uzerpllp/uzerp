@@ -172,7 +172,7 @@ class PreferencesController extends Controller
 
 		
 		// Do stuff.
-		
+		unset($_SESSION['user_home']);
 		$flash->addMessage( prettify($this->_data['__moduleName']) .' preferences saved successfully');
 		sendTo('', '', $this->_modules);
 	}

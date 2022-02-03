@@ -11,6 +11,7 @@
 	{else}
 	{assign var=lvl value=1}
 	<ul class="clicky-menu no-js">
+		<li><a href="{$user_home}">Home</a></li>
 	{/if}
 	
 		{assign var=menu value=$list}

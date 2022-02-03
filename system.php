@@ -575,6 +575,23 @@ class system
             }
         }
 
+        // Set the user's 'home' link
+        if (!isset($_SESSION['user_home']) 
+            && isLoggedIn())
+        {
+            
+            $prefs = UserPreferences::Instance(EGS_USERNAME);
+            $default_page = $prefs->getPreferenceValue('default_page', 'shared');
+            if ($default_page == "") {
+                $home = link_to(['module' => 'dashboard'], false, false);
+            } else {
+                $home = link_to(['module' => explode(',', $default_page)[1]], false, false);
+            }
+            $_SESSION['user_home'] = $home;
+        }
+        $home = $_SESSION['user_home'];
+        $this->view->set('user_home', $home);
+
         showtime('pre-display');
         $this->view->display('index_page.tpl', $cache_key);
         showtime('post-display');
