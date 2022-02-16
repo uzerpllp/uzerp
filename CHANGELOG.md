@@ -1,6 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.27.6] 2022-02-16
+
+### Added
+- Introduce future, touch friendly main navigation using 'mega-dropdowns'. The current nav is the default, new navigation must be enabled in configuration.
+
+### Fixed
+- SharedPreferences (user), restrict home page list to modules that user has access to, allowing them to pick one as a default home page.
+
+### Changed
+- Updated dependencies
+
 ## [1.27.5] 2022-01-06
 
 ### Fixed
@@ -978,6 +989,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.27.6]: https://github.com/uzerpllp/uzerp/compare/1.27.5...1.27.6
 [1.27.5]: https://github.com/uzerpllp/uzerp/compare/1.27.4...1.27.5
 [1.27.4]: https://github.com/uzerpllp/uzerp/compare/1.27.3...1.27.4
 [1.27.3]: https://github.com/uzerpllp/uzerp/compare/1.27.2...1.27.3
