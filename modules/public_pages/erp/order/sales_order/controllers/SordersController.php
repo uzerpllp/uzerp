@@ -905,7 +905,12 @@ class SordersController extends printController
                         'action' => 'confirm_sale',
                         'id' => $id
                     ),
-                    'tag' => 'Confirm Sale'
+                    'tag' => 'Confirm Sale',
+                    'class' => 'confirm',
+                    'data_attr' => [
+                        'data_uz-confirm-message' => "Confirm Sale?|This cannot be undone.",
+                        'data_uz-action-id' => $id
+                    ]
                 );
             }
 
@@ -920,7 +925,12 @@ class SordersController extends printController
                         'action' => 'createinvoice',
                         'id' => $id
                     ),
-                    'tag' => 'Create Invoice'
+                    'tag' => 'Create Invoice',
+                    'class' => 'confirm',
+                    'data_attr' => [
+                        'data_uz-confirm-message' => "Create Invoice?|This cannot be undone.",
+                        'data_uz-action-id' => $id
+                    ]
                 );
             }
         }
