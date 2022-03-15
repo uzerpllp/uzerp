@@ -88,6 +88,9 @@ class MTD {
         if (!self::ip_is_private($client_public_ip)) {
             $this->fraud_protection_headers['Gov-Client-Public-IP'] = $client_public_ip;
             $this->fraud_protection_headers['Gov-Client-Public-Port'] = $_SERVER['REMOTE_PORT'];
+
+            // Gov-Client-Public-IP-Timestamp
+            $this->fraud_protection_headers['Gov-Client-Public-IP-Timestamp'] = $utcTime->format('Y-m-d\TH:i:s.v\Z');
         }
 
         // Gov-Client-Device-ID
@@ -95,19 +98,6 @@ class MTD {
         if (isset($_COOKIE["uzerpdevice"])) {
             $this->fraud_protection_headers['Gov-Client-Device-ID'] = $_COOKIE["uzerpdevice"];
         }
-
-        // Add Gov-Client-Local-IPs
-        $ip = $this->client_fp_info->ip;
-        if (! empty($ip)) {
-            //percent encode IPv6 addresses
-            if (strpos($this->client_fp_info->ip, ':') > 0) {
-                $ip = rawurlencode($ip);
-            }
-            $this->fraud_protection_headers['Gov-Client-Local-IPs'] = $ip;
-        }
-
-        // Gov-Client-Local-IPs-Timestamp
-        $this->fraud_protection_headers['Gov-Client-Local-IPs-Timestamp'] = $this->client_fp_info->iptime;
 
         // Gov-Client-Screens
         // Gov-Client-Window-Size
@@ -138,13 +128,10 @@ class MTD {
         if (!self::ip_is_private($server_ip)) {
             $this->fraud_protection_headers['Gov-Vendor-Public-IP'] = rawurlencode($server_ip);
         }
-
-        // Gov-Client-Public-IP-Timestamp
-        $this->fraud_protection_headers['Gov-Client-Public-IP-Timestamp'] = $utcTime->format('Y-m-d\TH:i:s\Z');
        
         // Gov-Vendor-Forwarded
         // A list that details hops over the internet between services that terminate Transport Layer Security (TLS).
-        // Each key and value must be percent encoded (opens in a new tab). Do not percent encode separators (equal signs, ampersands and commas).
+        // Each key and value must be percent encoded. Do not percent encode separators (equal signs, ampersands and commas).
         // Public networks only
         if (!self::ip_is_private($_SERVER['SERVER_ADDR'])) {
             $by_ip = rawurlencode($_SERVER['SERVER_ADDR']);
@@ -153,9 +140,9 @@ class MTD {
         }
 
         $this->logger->info('Fraud prevention headers set', [$this->fraud_protection_headers]);
-        foreach ($this->fraud_protection_headers as $name => $val) {
-            $this->logger->info("$name: $val");
-        }
+        //foreach ($this->fraud_protection_headers as $name => $val) {
+        //    $this->logger->info("$name: $val");
+        //}
     }
 
     /**
