@@ -116,7 +116,7 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('dev-scripts', function() {
-    jsFiles.unshift('assets/js/vendor/jquery-migrate-1.4.1.js',);
+//    jsFiles.unshift('assets/js/vendor/jquery-migrate-1.4.1.js',);
     return gulp.src(jsFiles)
 	    .pipe(wrap('// <%= file.path %>\n<%= contents %>'))
         .pipe(concat('scripts.js'))
