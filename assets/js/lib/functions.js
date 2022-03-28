@@ -181,7 +181,7 @@ function dialogRefreshPage (options, action) {
 	
 	if ($('#'+options.calledby).parent().attr('id')=='included_file' && form_data=='' && action!='saveadd') {
 		// Top level view - refresh page to refresh any sidebar actions
-		window.location.href=window.location.href;
+		location.reload();
 	
 	} else {
 	
@@ -248,8 +248,8 @@ function dialogButton (options) {
 						if(jsondata.redirect!=undefined && jsondata.redirect!='') {
 //							window.location.href=jsondata.redirect;
 							// This is a pop-up dialog; ignore the redirect
-							// and resdisplay the calling page
-							window.location.href=window.location.href;
+							// and redisplay the calling page
+							location.reload();
 						}
 						else
 						{

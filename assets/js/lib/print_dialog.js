@@ -254,14 +254,14 @@ $(document).ready(function () {
 		event.preventDefault();
 		
 		// Refresh the whole page to ensure any sidebar options are rest correctly
-		window.location.href=window.location.href;
+		location.reload();
 		
 	});
 	
 	$('.print_success .tick, .print_success .cross').live('click', function() {
 		
 		// Refresh the whole page to ensure any sidebar options are rest correctly
-		window.location.href=window.location.href;
+		location.reload();
 		
 	});
 	
