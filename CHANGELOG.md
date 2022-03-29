@@ -1,6 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.28] 2022-03-29
+
+### Added
+- Include customer product code from sales order product lines in outputs:
+  - Sales Order documents
+  - Packing Slip
+- Select all for output of packing slips. Note that output of multiple pack slips only works when direct printing.
+
+### Fixed
+- Some print dialogs will not close when clicking the 'Close' button.
+
 ## [1.27.7] 2022-03-15
 
 ### Changed
