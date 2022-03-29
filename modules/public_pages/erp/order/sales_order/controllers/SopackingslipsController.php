@@ -184,7 +184,7 @@ class SopackingslipsController extends printController {
 		
 		// build options array
 		$options = array(
-			'type'		=> array('pdf'=>''),
+			'type'		=> array('pdf'=>'', 'xml'=>''),
 			'output'	=> array(
 				'print'	=> '',
    				'save'	=> '',
@@ -255,7 +255,7 @@ class SopackingslipsController extends printController {
 			exit;
 		}
 		
-			
+		 
 		foreach ($this->_data[$this->modeltype] as $id => $action)
 		{
 			
@@ -293,8 +293,11 @@ class SopackingslipsController extends printController {
 						
 						if ($qty > 0)
 						{
+							$productline = $this::lookupProductline($description, $order->id);
+
 							$packinglines[]['line'][] = array(
 								'description'	=> $description,
+								'customer_product_code' => $productline->customer_product_code,
 								'qty'			=> $qty
 							);
 						}
@@ -359,6 +362,36 @@ class SopackingslipsController extends printController {
 	protected function getPageName($base = null, $action = null)
 	{
 		return parent::getPageName((!empty($base))?$base:'sales_order_packing_slip',$action);
+	}
+
+	/**
+	 * Lookup an SOProductline
+	 * 
+	 * The packing slip stores the package qty of each item against
+	 * each order-line description. We need this function to get information
+	 * from an orderline's linked productline for output, e.g. customer_product_code.
+	 *
+	 * @param string $lineDescription  A sales order line description to match
+	 * @param integer $orderId  Sales order ID
+	 * @return object SOProductline
+	 */
+	private static function lookupProductline ($lineDescription, $orderId) {
+		$productline = new SOProductline();
+		$line = DataObjectFactory::Factory('SOrderLine');
+		$lines = new SOrderLineCollection($line);
+
+		// Search sales order lines for a matching description
+		$sh = new SearchHandler($lines, false);
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('description', '=', $lineDescription));
+		$cc->add(new Constraint('order_id', '=', $orderId));
+		$sh->addConstraintChain($cc);
+		$lines->load($sh);
+
+		// Use the first matching line on the order to return
+		// a productline. Best we can do without an order line id.
+		$productline->load($lines->current()->productline_id);
+		return $productline;
 	}
 
 }
