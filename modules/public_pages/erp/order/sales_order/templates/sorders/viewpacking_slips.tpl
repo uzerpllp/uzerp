@@ -72,10 +72,20 @@
 						{heading_cell field='contents'}
 							Contents
 						{/heading_cell}
-						{heading_cell field='print'}
-							Select
+						{heading_cell field='print' class='align-right'}
+							Select for Output
 						{/heading_cell}
 					{/heading_row}
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td class='align-right'>Select all</td>
+							<td>
+								{input type='checkbox' class='checkbox-select-all' label='' tags=none}
+							</td>
+						<tr>
 					{foreach name=lines item=line from=$sopackingslips}
 						{grid_row}
 							{grid_cell model=$line cell_num=1 field='name' _order_id=$SOrder->id}

@@ -932,6 +932,13 @@ $(document).ready(function() {
 	});
 	
 	/* sales_order -> sorders -> viewpacking_slips */
+
+	$(document).on('click', '.checkbox-select-all', function() {
+		var $self	= $(this),
+			form	= $self.parents('form');
+
+		checkAll($(this),$("input[type=checkbox]",$(this).parents('form')));
+	});
 	
 	$('form input[type=submit]', '#sales_order-sorders-viewpacking_slips').live('click', function(event) {
 	
