@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.28.1] 2022-03-29
+
+### Fixed
+- Fix migration
+
 ## [1.28] 2022-03-29
 
 ### Added
