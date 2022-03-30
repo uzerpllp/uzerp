@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.28.2] 2022-03-30
+
+### Fixed
+- Small font and low contrast between normal and bold text on Windows.
+
+### Changed
+- Remove unnecessary confirmation dialog on sales order 'confirm sale' action.
+
 ## [1.28.1] 2022-03-29
 
 ### Fixed
@@ -1010,6 +1018,9 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.28.2]: https://github.com/uzerpllp/uzerp/compare/1.28.1...1.28.2
+[1.28.1]: https://github.com/uzerpllp/uzerp/compare/1.28...1.28.1
+[1.28]: https://github.com/uzerpllp/uzerp/compare/1.27.7...1.28
 [1.27.7]: https://github.com/uzerpllp/uzerp/compare/1.27.6...1.27.7
 [1.27.6]: https://github.com/uzerpllp/uzerp/compare/1.27.5...1.27.6
 [1.27.5]: https://github.com/uzerpllp/uzerp/compare/1.27.4...1.27.5
