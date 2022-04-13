@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Email subject missing from outputs.
+
 ## [1.28.2] 2022-03-30
 
 ### Fixed
