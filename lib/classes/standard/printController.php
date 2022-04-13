@@ -1557,7 +1557,7 @@ class printController extends Controller
                     'file_type' => $params['printtype'],
                     'emailtext' => $params['emailtext'],
                     'email' => $params['email'],
-                    'subject' => $params['email_subject'],
+                    'email_subject' => $params['email_subject'],
                     'replyto' => $params['replyto']
                 );
 
