@@ -19,7 +19,7 @@
 								{input type="hidden" attribute="stitem_id" value="$stitem_id"}
 								{$stock_item }
 							{else}
-								{select attribute='stitem_id'  label='Stock Item'}
+								{select attribute='stitem_id'  label='Stock Item' value=$stitem_id}
 								<div id="ui-message"</div>
 							{/if}
 						{/if}
