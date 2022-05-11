@@ -1,10 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.29.0] 2022-05-11
 
 ### Fixed
 - Email subject missing from outputs.
+- Manual stock transactions, select default stock item on initial form load.
+- Remove OIDS from database tables
 
 ## [1.28.2] 2022-03-30
 
@@ -98,8 +100,8 @@ All notable changes to this project will be documented in this file.
 - Review work order outside operation purchases from sidebar
 - Improve default PO line descriptions for work order purchases
 - Indication of material issue status on work order list
-- New manaufacturing module preference to complete work orders on booking the order quantity or more
-- New manaufacturing module preference for Default document selection on new Work Orders
+- New manufacturing module preference to complete work orders on booking the order quantity or more
+- New manufacturing module preference for Default document selection on new Work Orders
 
 ### Changed
 
@@ -109,9 +111,9 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Error ehen reviewing resources on a work order
+- Error when reviewing resources on a work order
 - Ensure all type codes are available when adding/editing stock items
-- Ensure that MF operation costs are saved during cost reclac
+- Ensure that MF operation costs are saved during cost recalc
 
 ## [1.26.7] 2021-03-11
 
@@ -133,7 +135,7 @@ All notable changes to this project will be documented in this file.
 - Security issues in Smarty
 - Use config settings in Memcached connection for database query result cache. From ADOdb 5.22 a prefix will be added to cached queries, allowing them to be cleared from within uzERP.
 - Small changes to speed up the system
-- Force re-authoriztion of the application with HMRC when MTD VAT authorization grant expires
+- Force re-authorisation of the application with HMRC when MTD VAT authorisation grant expires
 
 ## [1.26.6] 2021-01-27
 
@@ -166,7 +168,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Bank account selection expty when making PL/SL payment ot receipt
+- Bank account selection empty when making PL/SL payment ot receipt
 
 ## [1.26.2] 2020-11-19
 
@@ -185,7 +187,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Support for Postponed VAT Accounting for goods
-- Suppport for VAT Reverse Charge on services
+- Support for VAT Reverse Charge on services
 - Allow a VAT status to be inactive (not available when adding new customer or supplier ledger accounts)
 
 ### Fixed
@@ -1023,6 +1025,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.29.0]: https://github.com/uzerpllp/uzerp/compare/1.28.2...1.29.0
 [1.28.2]: https://github.com/uzerpllp/uzerp/compare/1.28.1...1.28.2
 [1.28.1]: https://github.com/uzerpllp/uzerp/compare/1.28...1.28.1
 [1.28]: https://github.com/uzerpllp/uzerp/compare/1.27.7...1.28
