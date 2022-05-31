@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Fixed
+- Warehouse Store is not useable if created without a description.
+
 ## [1.29.0] 2022-05-11
 
 ### Fixed

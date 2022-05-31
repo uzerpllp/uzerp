@@ -27,8 +27,12 @@ class WHStore extends DataObject
 		$this->orderby			= 'store_code';
 		$this->identifierField	= "store_code ||'-'|| description";		
 		
- 		$this->validateUniquenessOf('store_code'); 
- 				
+ 		$this->validateUniquenessOf('store_code');
+		
+		// The description forms part of the identifier,
+		// make sure we get a value for it.
+		$this->getField('description')->not_null = true;
+
 // Define relationships
  		$this->hasOne('Companyaddress', 'address_id', 'address');
 		$this->hasMany('WHLocation', 'locations', 'whstore_id');
