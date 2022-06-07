@@ -1,10 +1,8 @@
 {** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2022 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* $Revision: 1.11 $ *}
-{debug}
 {content_wrapper}
 	{advanced_search}
 	{form controller="soproductlines" action="price_uplift"}
