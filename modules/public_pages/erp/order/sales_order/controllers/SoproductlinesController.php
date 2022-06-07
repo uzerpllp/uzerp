@@ -324,6 +324,7 @@ class soproductlinesController extends printController
 
 	public function price_uplift()
 	{
+		$flash=Flash::Instance();
 		$this->view->set('clickaction', 'edit');
 
 		$s_data=array();
@@ -373,9 +374,18 @@ class soproductlinesController extends printController
 			$_POST[$this->modeltype]['percent']=$percent;
 		}
 
-		if ($this->_data['saveform']=='Recalculate' && empty($percent) && $percent!==0) {
-			$flash=Flash::Instance();
-			$flash->addError('Enter a percentage value and click on recalculate');
+		if (isset($this->_data['update_type'])) {
+			$update_type = $this->_data['update_type'];
+		} else {
+			$update_type = 'percent';
+		}
+		$this->view->set('update_type', $update_type);
+
+		if ($this->_data['saveform'] && $update_type=='percent' && empty($percent) && $percent!==0) {
+			$flash->addError('Please enter a non-zero value and click on recalculate');
+		}
+		if ($this->_data['saveform'] && $update_type=='fixed' && empty($this->_data[$this->modeltype]['fixed_price']) && $this->_data[$this->modeltype]['fixed_price'] !==0) {
+			$flash->addError('Please enter a non-zero value and click on recalculate');
 		}
 		if (empty($this->_data[$this->modeltype]['effective_date'])) {
 			$effective_date='';
@@ -408,7 +418,11 @@ class soproductlinesController extends printController
 		foreach ($collection as $detail) {
 			if (!isset($selected[$detail->id])) {
 				$selected[$detail->id]['select']='true';
-				$selected[$detail->id]['new_price']=bcmul(round(($detail->getGrossPrice()*(100+$percent)/100),$decimals),1,$decimals);
+				if ($update_type !== 'fixed') {
+					$selected[$detail->id]['new_price']=bcmul(round(($detail->getGrossPrice()*(100+$percent)/100),$decimals),1,$decimals);
+				} else {
+					$selected[$detail->id]['new_price']=round($this->_data[$this->modeltype]['fixed_price'],$decimals);
+				}
 				if (isset($_POST[$this->modeltype][$detail->id]['new_price']))
 				{
 					$_POST[$this->modeltype][$detail->id]=$selected[$detail->id];

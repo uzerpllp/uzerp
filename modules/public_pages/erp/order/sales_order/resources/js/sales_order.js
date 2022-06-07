@@ -23,6 +23,25 @@ function end_price_uplift(form_data) {
 	
 }
 
+/**
+ * Show/hide percentage and new price inputs on price uplift form
+ * 
+ * @param {percent|fixed} type 
+ */
+function showUplift(type='percent') {
+	if (type == 'fixed') {
+		$('#SOProductline_percent_label').parent("dd, dt").hide();
+		$('input[name="SOProductline[percent]"]').parent("dd, dt").hide();
+		$('#SOProductline_fixed_price_label').parent("dd, dt").show();
+		$('input[name="SOProductline[fixed_price]"]').parent("dd, dt").show();	
+	} else {
+		$('#SOProductline_percent_label').parent("dd, dt").show();
+		$('input[name="SOProductline[percent]"]').parent("dd, dt").show();
+		$('#SOProductline_fixed_price_label').parent("dd, dt").hide();
+		$('input[name="SOProductline[fixed_price]"]').parent("dd, dt").hide();	
+	}
+}
+
 function update_prices(num_pages, form_data) {
 	
 	var count=0;
@@ -724,6 +743,19 @@ $(document).ready(function() {
 			end_price_uplift(form_data);
 
 		}
+	});
+
+	// Set initial state of price change inputs
+	showUplift($('input[type=radio][name=update_type]:checked').val());
+
+	// Set price change input state no ajax reload, e.g. recalculate
+	$('#included_file').on('DOMSubtreeModified', function(){
+		showUplift($('input[type=radio][name=update_type]:checked').val());
+	  });
+
+	// Set price change input state when option is selected
+	$('#included_file').on('click', 'input[type=radio][name=update_type]', function(event) {
+		showUplift(this.value);
 	});
 
 	/* sales_order -> soproductlines -> delete_selected */
