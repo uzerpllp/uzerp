@@ -3,22 +3,12 @@
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
+{* $Revision: 1.11 $ *}
 {content_wrapper}
 	{advanced_search}
 	{form controller="soproductlines" action="price_uplift"}
 		<input type='hidden' name=current_page id=current_page value={$soproductlines->cur_page}>
-		<dt>Uplift Type</dt>
-		<dd>
-		<input type="radio" id="update-type-percent" name="update_type" value="percent" {if $update_type == 'percent'}checked="1"{/if}>
-		<label for="update-type-percent">Percent Change</label>
-		<input type="radio" id="update-type-fixed" name="update_type" value="fixed" {if $update_type == 'fixed'}checked="1"{/if}>
-		<label for="update-type-fixed">Fixed Price</label>
-		</dd>
-
-		{input type='text' model=$soproductline attribute=fixed_price label='New Price' value=$fixed_price class="numeric"}
-
-		{input type='text' model=$soproductline attribute=percent label='Percentage Change' value=$percent class="numeric percent"}
-
+		{input type='text' model=$soproductline attribute=percent label='Percentage Price Uplift' value=$percent class="numeric percent"}
 		{input type='text' model=$soproductline attribute=decimals label='No. decimal places for Price' value=$decimals class="numeric percent"}
 		{assign var=100 value=100}
 		{assign var=p1 value=100+$percent}
