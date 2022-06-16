@@ -322,6 +322,11 @@ class soproductlinesController extends printController
 
 	}
 
+	/**
+	 * Price change index page
+	 *
+	 * @return void
+	 */
 	public function price_uplift()
 	{
 		$this->view->set('clickaction', 'edit');
@@ -373,9 +378,16 @@ class soproductlinesController extends printController
 			$_POST[$this->modeltype]['percent']=$percent;
 		}
 
-		if ($this->_data['saveform']=='Recalculate' && empty($percent) && $percent!==0) {
+		if (empty($this->_data[$this->modeltype]['fixed_price'])) {
+			$fixed_price = 0;
+		} else {
+			$fixed_price = $this->_data[$this->modeltype]['fixed_price'];
+		}
+		$this->view->set('fixed_price',$fixed_price);
+
+		if ($this->_data['saveform']=='Recalculate' && empty($percent) && $percent!==0 && (empty($fixed_price) && $fixed_price == 0)) {
 			$flash=Flash::Instance();
-			$flash->addError('Enter a percentage value and click on recalculate');
+			$flash->addError('Enter a percentage or fixed price value.');
 		}
 		if (empty($this->_data[$this->modeltype]['effective_date'])) {
 			$effective_date='';
@@ -395,8 +407,9 @@ class soproductlinesController extends printController
 
 		$_SESSION['price_uplift_params']['percent']=$percent;
 		$_SESSION['price_uplift_params']['decimals']=$decimals;
-		$this->view->set('soproductline',$this->_templateobject);
+		$_SESSION['price_uplift_params']['fixed_price']=$fixed_price;
 
+		$this->view->set('soproductline',$this->_templateobject);
 		$this->setSearch('productlinesSearch', 'customerPriceUplift', $s_data);
 
 		$collection=new SOProductlineCollection($this->_templateobject);
@@ -408,7 +421,12 @@ class soproductlinesController extends printController
 		foreach ($collection as $detail) {
 			if (!isset($selected[$detail->id])) {
 				$selected[$detail->id]['select']='true';
-				$selected[$detail->id]['new_price']=bcmul(round(($detail->getGrossPrice()*(100+$percent)/100),$decimals),1,$decimals);
+				if ($fixed_price == 0) {
+					$selected[$detail->id]['new_price']=bcmul(round(($detail->getGrossPrice()*(100+$percent)/100),$decimals),1,$decimals);
+				} else {
+					$selected[$detail->id]['new_price']=round($fixed_price, $decimals);
+				}
+
 				if (isset($_POST[$this->modeltype][$detail->id]['new_price']))
 				{
 					$_POST[$this->modeltype][$detail->id]=$selected[$detail->id];
@@ -444,6 +462,13 @@ class soproductlinesController extends printController
 
 	}
 
+	/**
+	 * Adjust price selections
+	 * 
+	 * Called by javascript.
+	 *
+	 * @return void
+	 */
 	public function adjust_price_uplift ()
 	{
 
@@ -467,6 +492,8 @@ class soproductlinesController extends printController
 		exit;
 	}
 
+	
+	
 	public function save_price_uplift ()
 	{
 		$flash=Flash::Instance();
@@ -497,6 +524,12 @@ class soproductlinesController extends printController
 			}
 		}
 
+		if (empty($this->_data[$this->modeltype]['fixed_price'])) {
+			$fixed_price = 0;
+		} else {
+			$fixed_price = $this->_data[$this->modeltype]['fixed_price'];
+		}
+
 		if (count($errors)==0) {
 			$count=0;
 
@@ -510,6 +543,7 @@ class soproductlinesController extends printController
 			$_SESSION['price_uplift_params']['search_id']=$this->search->getValue('search_id');
 			$_SESSION['price_uplift_params']['percent']=$percent;
 			$_SESSION['price_uplift_params']['decimals']=$decimals;
+			$_SESSION['price_uplift_params']['fixed_price']=$fixed_price;
 			$_SESSION['price_uplift_params']['price_uplift_total_records']=$collection->num_records;
 			$_SESSION['price_uplift_params']['price_uplift_progress_count']=0;
 			$_SESSION['price_uplift_params']['price_uplift_updated_count']=0;
@@ -521,7 +555,12 @@ class soproductlinesController extends printController
 			foreach ($collection as $productline) {
 				if (!isset($selected[$productline->id])) {
 					$selected[$productline->id]['select']='true';
-					$selected[$productline->id]['new_price']=bcmul(round(($productline->getGrossPrice()*(100+$percent)/100),$decimals),1,$decimals);
+					if ($fixed_price == 0) {
+						$selected[$productline->id]['new_price'] = bcmul(round(($productline->getGrossPrice()*(100+$percent)/100),$decimals),1,$decimals);
+					} else {
+						$selected[$productline->id]['new_price'] = round($fixed_price, $decimals);
+					}
+					
 				}
 			}
 			$_SESSION['price_uplift'][$collection->cur_page]=$selected;
@@ -536,6 +575,13 @@ class soproductlinesController extends printController
 		exit;
 	}
 
+	/**
+	 * Updates prices on each 'page'
+	 * 
+	 * Called by javascript
+	 *
+	 * @return void
+	 */
 	public function save_price_uplift_pages ()
 	{
 		$flash=Flash::Instance();
@@ -556,15 +602,19 @@ class soproductlinesController extends printController
 		$selected=empty($_SESSION['price_uplift'][$page])?array():$_SESSION['price_uplift'][$page];
 
 		$percent=$_SESSION['price_uplift_params']['percent'];
-
 		$decimals=$_SESSION['price_uplift_params']['decimals'];
+		$fixed_price=$_SESSION['price_uplift_params']['fixed_price'];
 
 		foreach ($collection as $productline)
 		{
 			if (!isset($selected[$productline->id]))
 			{
 				$selected[$productline->id]['select']='true';
-				$selected[$productline->id]['new_price']=bcmul(round(($productline->getGrossPrice()*(100+$percent)/100),$decimals),1,$decimals);
+				if (empty($fixed_price) || $fixed_price == 0) {
+					$selected[$productline->id]['new_price'] = bcmul(round(($productline->getGrossPrice()*(100+$percent)/100),$decimals),1,$decimals);
+				} else {
+					$selected[$productline->id]['new_price'] = round($fixed_price, $decimals);
+				}
 			}
 		}
 
@@ -608,6 +658,16 @@ class soproductlinesController extends printController
 
 	}
 
+
+	/**
+	 * End productline and add new
+	 * 
+	 * Called by javascript. Handles a price uplift by ending
+	 * the old productline and adding a new one with the
+	 * updated price.
+	 *
+	 * @return void
+	 */
 	public function update_prices ()
 	{
 		$flash=Flash::instance();
@@ -640,9 +700,13 @@ class soproductlinesController extends printController
 				{
 					$errors[$id]='Failed to find product details '.$id;
 				}
+				elseif ($detail['new_price'] <= 0)
+				{
+					$errors[$id] = "{$productline->description}, not updated. Negative or zero price.";
+				}
 				elseif ($productline->price==$detail['new_price'])
 				{
-					$warnings[$id] = 'Entry not updated because price has not changed ref:'.$id;
+					$warnings[$id] = "{$productline->description}, not updated. Price has not changed.";
 				}
 				else
 				{

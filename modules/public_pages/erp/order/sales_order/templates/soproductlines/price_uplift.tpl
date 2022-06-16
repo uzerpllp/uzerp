@@ -8,8 +8,9 @@
 	{advanced_search}
 	{form controller="soproductlines" action="price_uplift"}
 		<input type='hidden' name=current_page id=current_page value={$soproductlines->cur_page}>
-		{input type='text' model=$soproductline attribute=percent label='Percentage Price Uplift' value=$percent class="numeric percent"}
-		{input type='text' model=$soproductline attribute=decimals label='No. decimal places for Price' value=$decimals class="numeric percent"}
+		{input type='text' model=$soproductline attribute=percent label='Percentage Price Change' value=$percent class="numeric percent"}
+		{input type='text' model=$soproductline attribute=fixed_price label='Fixed Price Change <em>(Value set here overrides percent change)</em>' value=$fixed_price class="numeric"}
+		{input type='text' model=$soproductline attribute=decimals label='No. decimal places for Price' value=$decimals class="numeric"}
 		{assign var=100 value=100}
 		{assign var=p1 value=100+$percent}
 		{assign var=percentage value=$p1/100}
@@ -126,6 +127,7 @@
 		{submit value='Recalculate'}
 	{/form}
 	{form controller="soproductlines" action="save_price_uplift"}
+		{input type='hidden' model=$soproductline attribute=fixed_price label='Fixed Price' value=$fixed_price class="numeric"}
 		{input type='hidden' model=$soproductline attribute=percent label='Percentage Price Uplift' value=$percent class="numeric percent"}
 		{input type='hidden' model=$soproductline attribute=decimals label='No. decimal places for Price' value=$decimals class="numeric percent"}
 		{input type='date' model=$soproductline attribute='effective_date' value=$effective_date label='Effective Date'}

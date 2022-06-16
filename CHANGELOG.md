@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Warehouse Store is not useable if created without a description.
 
+### Added
+- Sales productline bulk price change can apply a fixed value to the selected prices, as an alternative to a percentage change.
+
 ## [1.29.0] 2022-05-11
 
 ### Fixed
