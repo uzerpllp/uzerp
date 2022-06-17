@@ -13,7 +13,7 @@
 	{else}
 		<input name="username" type="text" class="required" />
 	{/if}
-	<input name="password" type="password" class="required" />
+	<input name="password" type="password" class="required" autocomplete="off"/>
 	<input type="submit" class="submit {$submit_class}" value="Log In &raquo;">
 	{foreach name=request item=item key=key from=$smarty.get}
 		<input type="hidden" name="{$key}" value="{$item}" />
