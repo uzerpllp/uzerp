@@ -4,7 +4,6 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {* $Revision: 1.45 $ *}
-{debug}
 {content_wrapper class="clearfix uz-grid" }
 	{with model=$models.SInvoice legend="SInvoice Details"}
 		<div id="view_page" class="clearfix">
@@ -17,7 +16,6 @@
 						{view_data attribute="invoice_number" label=$SInvoice->getFormatted('transaction_type')|cat:' number'}
 						{view_data attribute="net_value"}
 					{/if}
-					{input type='text'  attribute='sales_order_number'}
 					{input type='date' label="$transaction_type_desc Date" attribute='invoice_date'}
 					{select attribute='transaction_type'}
 					{input type='hidden' attribute="company_id" value=$company_id}
