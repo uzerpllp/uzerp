@@ -4,6 +4,7 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {* $Revision: 1.45 $ *}
+{debug}
 {content_wrapper class="clearfix uz-grid" }
 	{with model=$models.SInvoice legend="SInvoice Details"}
 		<div id="view_page" class="clearfix">
@@ -36,6 +37,9 @@
 					{select label='For Attn: of' attribute='person_id' nonone=true depends="slmaster_id"}
 					{select attribute='del_address_id' label='Delivery Address' nonone=true options=$deliveryAddresses}
 					{select attribute='inv_address_id' label='Invoice Address' options=$invoiceAddresses value=$invoice_address}
+					{if $SInvoice->sales_order_number === ''}
+						{select attribute='delivery_term_id' label='Delivery Address'}
+					{/if}
 					{/view_section}
 					{submit}
 				</dl>

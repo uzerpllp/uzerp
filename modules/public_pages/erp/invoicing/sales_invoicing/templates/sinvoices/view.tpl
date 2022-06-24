@@ -14,6 +14,7 @@
 						{view_data attribute="sales_order_number"}
 						{view_data attribute="customer" label='customer'}
 						{view_data attribute="ext_reference" label='customer reference'}
+						{view_data attribute="delivery_term_id" label='delivery term'}
 						{view_data attribute="status"}
 						{view_data attribute="date_printed"}
 						{view_data attribute="print_count"}

@@ -79,6 +79,7 @@ class SInvoice extends Invoice
         $this->belongsTo('Person', 'person_id', 'person', null, "surname || ', ' || firstname");
         $this->belongsTo('Project', 'project_id', 'project');
         $this->belongsTo('Task', 'task_id', 'task');
+        $this->belongsTo('DeliveryTerm', 'delivery_term_id', 'delivery_term');
 
         $this->setComposite('Address', 'inv_address_id', 'invoice_address', array(
             'street1',
