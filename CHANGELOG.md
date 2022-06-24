@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Sales productline bulk price change can apply a fixed value to the selected prices, as an alternative to a percentage change.
+- Add delivery term to sales invoice
 
 ## [1.29.0] 2022-05-11
 
