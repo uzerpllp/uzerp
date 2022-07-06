@@ -553,7 +553,7 @@ class StitemsController extends printController
             );
         }
 
-        if ($transaction->comp_class != 'B') {
+        if (in_array($transaction->comp_class, ['M', 'S', 'K'])) {
             $sidebarlist['preorder'] = array(
                 'tag' => 'Pre-Order Requirements',
                 'link' => array(
@@ -606,7 +606,7 @@ class StitemsController extends printController
         $sidebar->addList('This Item', $sidebarlist);
 
         // MF Structures, operations and costing
-        if ($transaction->comp_class == 'M' || $transaction->comp_class == 'S' || $transaction->comp_class == 'K') {
+        if ( in_array($transaction->comp_class, ['M', 'S', 'K', 'P'])) {
             $sidebarlist = [];
             $sidebarlist['Structure'] = array(
                 'tag' => 'View Structures',
@@ -617,7 +617,7 @@ class StitemsController extends printController
                     'stitem_id' => $id
                 )
             );
-            if ($transaction->comp_class !== 'S' && $transaction->comp_class !== 'K') {
+            if ( in_array($transaction->comp_class, ['M'])) {
                 $sidebarlist['Operations'] = array(
                     'tag' => 'View Operations',
                     'link' => array(
@@ -628,7 +628,7 @@ class StitemsController extends printController
                     )
                 );
             }
-            if ($transaction->comp_class !== 'K') {
+            if ( !in_array($transaction->comp_class, [ 'K', 'P'])) {
                 $sidebarlist['OutsideOperations'] = array(
                     'tag' => 'View Outside Operations',
                     'link' => array(
@@ -661,22 +661,31 @@ class StitemsController extends printController
             $sidebar->addList('Stucture and Operations', $sidebarlist);
         }
 
+
         //Related Items
-        $this->sidebarRelatedItems($sidebar, $transaction, [
-            'balances',
-            'transactions',
-            'uom_conversions',
-            'where_used',
-            'workorders',
-            'purchase_orders',
-            'purchase_invoices',
-            'sales_orders',
-            'sales_invoices',
-            'so_product_prices',
-            'po_product_prices',
-            'so_products',
-            'po_products'
-        ]);
+        if ($transaction->comp_class == 'P') {
+                    //Related Items
+            $this->sidebarRelatedItems($sidebar, $transaction, [
+                'where_used',
+            ]);
+        } else {
+            $this->sidebarRelatedItems($sidebar, $transaction, [
+                'balances',
+                'transactions',
+                'uom_conversions',
+                'where_used',
+                'workorders',
+                'purchase_orders',
+                'purchase_invoices',
+                'sales_orders',
+                'sales_invoices',
+                'so_product_prices',
+                'po_product_prices',
+                'so_products',
+                'po_products'
+            ]);
+        }
+
         $sidebar->addList('related_items', array(
             'documents' => array(
                 'tag' => 'Show Documents',
