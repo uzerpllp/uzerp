@@ -99,7 +99,8 @@ class STItem extends DataObject
 		$this->setEnum('comp_class', array('B' => 'Bought In',
 										   'K' => 'Sales Kit',
 										   'M' => 'Manufactured',
-										   'S' => 'Sub-Contracted'));
+										   'S' => 'Sub-Contracted',
+										   'P' => 'Phantom'));
 		$this->setEnum('abc_class', array( 'A' => 'A',
                                            'B'=>'B',
                                            'C'=>'C'));
@@ -274,7 +275,15 @@ class STItem extends DataObject
 
 	}
 
-	public static function nonObsoleteItems($date = null, $comp_class = null, $stitem_id = null)
+	/**
+	 * Return non-obsolete stock items
+	 *
+	 * @param Date $date  obsolete date
+	 * @param string $comp_class  item component class
+	 * @param integer $stitem_id  item id
+	 * @return void
+	 */
+	public static function nonObsoleteItems($date = null, $comp_class = ['M', 'B', 'S', 'P'], $stitem_id = null)
 	{
 		if (!$date)
 		{
@@ -310,9 +319,16 @@ class STItem extends DataObject
 		$cc3 = new ConstraintChain;
 		$cc3->add(new Constraint('latest_cost', '>', 0));
 
-		if ($comp_class)
+		if (!is_null($comp_class))
 		{
-			$cc3->add(new Constraint('comp_class', '=', $comp_class));
+			if (is_array($comp_class))
+			{
+				$cc3->add(new Constraint('comp_class', 'in', "('" . implode("','", $comp_class) . "')"));
+			}
+			else
+			{
+				$cc3->add(new Constraint('id', '=', $comp_class));
+			}
 		}
 
 		$cc1->add($cc2);
@@ -343,6 +359,7 @@ class STItem extends DataObject
 				$var[] = $this->calcLatestMat();
 				break;
 			case 'M':
+			case 'P':
 			case 'S':
 				$var[] = $this->calcLatestMat();
 				$var[] = $this->calcLatestLab();
