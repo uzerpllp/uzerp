@@ -15,10 +15,12 @@
 			{else}
 			{view_data attribute='comp_class'}
 			{/if}
+			{if (!in_array($model->comp_class , ['P', 'B'])) }
 			{select attribute='backflush_action_id' options=$backflush_actions label='Backflush Action'}
 			{select attribute='complete_action_id' options=$complete_actions label='Complete Action'}
 			{select attribute='issue_action_id' options=$issue_actions label='Issue Action'}
 			{select attribute='return_action_id' options=$return_actions label='Return Action'}
+			{/if}
 			{input type='checkbox' attribute='active'}
 		{/with}
 		{submit}
