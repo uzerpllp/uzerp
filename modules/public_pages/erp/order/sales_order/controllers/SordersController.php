@@ -2537,8 +2537,9 @@ class SordersController extends printController
                         $check_location->load($data['from_whlocation_id']);
                         if ($stitem->comp_class == 'K' && $check_location->isBalanceEnabled() == false) {
                             // Get BOM
-                            $bom = MFStructureCollection::getCurrent($sorderline->stitem_id);
-                            if ($bom->isEmpty()) {
+                            //$bom = MFStructureCollection::getCurrent($sorderline->stitem_id);
+                            $bom = STItem::explodeStructure($sorderline->stitem_id);
+                            if (empty($bom)) {
                                 $errors[] = 'line ' . $value['line_number'] . ' : No structures found for kit';
                             }
                             $data['book_qty'] = $data['qty'];

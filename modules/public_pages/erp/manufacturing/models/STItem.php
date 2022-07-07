@@ -1601,6 +1601,33 @@ class STItem extends DataObject
 	}
 
 	/**
+	 * Explode stock item structure
+	 * 
+	 * Explodes any phantoms in the structure of the stock item
+	 *
+	 * @param integer  $stitem_id  Top level stock item
+	 * @return array  an array of MFStructure objects
+	 */
+	public static function explodeStructure($stitem_id) {
+		$mfstructures =  MFStructureCollection::getCurrent($stitem_id);;
+		$structures = [];
+
+		foreach($mfstructures as $input) {
+			if ($input->comp_class == 'P') {
+				$phantom_items = MFWOStructure::explodePhantom($input);
+				foreach ($phantom_items as $pitem) {
+					$structures[] = $pitem;
+				}
+			} else {
+				// Copy top level items
+				$structures[] = $input;
+			}
+		}
+		return $structures;
+	}
+
+
+	/**
 	 * Produce a kit for this item
 	 *
 	 * @param integer $qty  quantity to produce
@@ -1633,6 +1660,12 @@ class STItem extends DataObject
 
 		$db->startTrans();
 
+		// Make sure we have a structure
+		$bom = self::explodeStructure($this->id);
+		if (empty($bom)) {
+			$errors[] = 'No structures found for kit';
+		}
+
 		// Produce kit item at target location
 		$models = STTransaction::prepareMove($data, $errors);
 		if (count($errors) == 0) {
@@ -1650,9 +1683,8 @@ class STItem extends DataObject
 			return false;
 		} else {
 			$db->CompleteTrans();
+
 			// Backflush materials
-			$bom = MFStructureCollection::getCurrent($this->id);
-		
 			$data = [];
 			$data['book_qty'] = $qty;
 			$data['stitem_id'] = $this->id;
