@@ -4233,7 +4233,7 @@ class SordersController extends printController
             $extra['delivery_details']['customer'] = $order->customer;
         }
 
-        $extra['delivery_details']['full_address'] = implode($this->formatAddress($order->del_address), ", ");
+        $extra['delivery_details']['full_address'] = implode(', ', $this->formatAddress($order->del_address));
 
         foreach($order->lines as $oline) {
             
