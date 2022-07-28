@@ -134,21 +134,21 @@ class ConstraintChain implements Iterator{
 		return $this->_constraints[$this->_pointer];
 	}
 	
-	function next() {
+	function next(): void {
 		$this->_pointer++;
 	}
 	
-	function key() {
+	function key():mixed {
 		return $this->_pointer;
 	}
 	
-	function valid() {
+	function valid(): bool {
 		if(isset($this->_constraints[$this->_pointer]))
 			return true;
 		return false;
 	}
 	
-	function rewind() {
+	function rewind(): void {
 		$this->_pointer=0;
 	}
 }
