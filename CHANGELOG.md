@@ -6,10 +6,17 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Warehouse Store is not useable if created without a description.
 - Disable browser autocomplete on login password input.
+- Restrict work order creation to manufactured items
 
 ### Added
 - Sales productline bulk price change can apply a fixed value to the selected prices, as an alternative to a percentage change.
 - Add delivery term to sales invoice
+- Phantom assemblies in product structures
+  - exploded on transfer to work orders
+  - exploded for sales kit picking
+
+### Changed
+- Use multi-select to search status in purchase order list view
 
 ## [1.29.0] 2022-05-11
 
