@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.30.0] 2022-07-28
 
 ### Fixed
 - Warehouse Store is not useable if created without a description.
@@ -1042,6 +1042,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.30.0]: https://github.com/uzerpllp/uzerp/compare/1.29.0...1.30.0
 [1.29.0]: https://github.com/uzerpllp/uzerp/compare/1.28.2...1.29.0
 [1.28.2]: https://github.com/uzerpllp/uzerp/compare/1.28.1...1.28.2
 [1.28.1]: https://github.com/uzerpllp/uzerp/compare/1.28...1.28.1
