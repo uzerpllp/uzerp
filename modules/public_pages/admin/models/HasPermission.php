@@ -39,7 +39,7 @@ class HasPermission extends DataObject {
 
 		if (!empty($permissions)) {
 			if (is_array($permissions)) {
-				$cc->add(new Constraint('permissionsid','in','('.implode($permissions,',').')'));
+				$cc->add(new Constraint('permissionsid','in','('.implode(',', $permissions).')'));
 			} else {
 				$cc->add(new Constraint('permissionsid','=',$permissions));
 			}
@@ -47,7 +47,7 @@ class HasPermission extends DataObject {
 	
 		if (!empty($roles)) {
 			if (is_array($roles)) {
-				$cc->add(new Constraint('roleid','in','('.implode($roles,',').')'));
+				$cc->add(new Constraint('roleid','in','('.implode(',', $roles).')'));
 			} else {
 				$cc->add(new Constraint('roleid','=',$roles));
 			}
@@ -64,7 +64,7 @@ class HasPermission extends DataObject {
 		
 		if (!empty($permissions)) {
 			if (is_array($permissions)) {
-				$cc->add(new Constraint('permissionsid','in','('.implode($permissions,',').')'));
+				$cc->add(new Constraint('permissionsid','in','('.implode(',', $permissions).')'));
 			} else {
 				$cc->add(new Constraint('permissionsid','=',$permissions));
 			}
@@ -72,7 +72,7 @@ class HasPermission extends DataObject {
 	
 		if (!empty($roles)) {
 			if (is_array($roles)) {
-				$cc->add(new Constraint('roleid','in','('.implode($roles,',').')'));
+				$cc->add(new Constraint('roleid','in','('.implode(',', $roles).')'));
 			} else {
 				$cc->add(new Constraint('roleid','=',$roles));
 			}
@@ -89,7 +89,7 @@ class HasPermission extends DataObject {
 		
 		if (!empty($permissions)) {
 			if (is_array($permissions)) {
-				$cc->add(new Constraint('permissionsid','in','('.implode($permissions,',').')'));
+				$cc->add(new Constraint('permissionsid','in','('.implode(',', $permissions).')'));
 			} else {
 				$cc->add(new Constraint('permissionsid','=',$permissions));
 			}
@@ -97,7 +97,7 @@ class HasPermission extends DataObject {
 	
 		if (!empty($roles)) {
 			if (is_array($roles)) {
-				$cc->add(new Constraint('roleid','in','('.implode($roles,',').')'));
+				$cc->add(new Constraint('roleid','in','('.implode(',', $roles).')'));
 			} else {
 				$cc->add(new Constraint('roleid','=',$roles));
 			}

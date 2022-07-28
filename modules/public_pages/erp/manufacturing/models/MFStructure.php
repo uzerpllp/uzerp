@@ -53,7 +53,7 @@ class MFStructure extends DataObject
 		// Define link rules for related items
 	}
 
-	function cb_loaded($success)
+	function cb_loaded()
 	{
 	    $this->latest_cost = add(
 	        $this->latest_mat,

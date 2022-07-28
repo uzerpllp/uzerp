@@ -757,7 +757,7 @@ class DataObject implements Iterator
 
             // $this->setDisplayFields();
 
-            $this->cb_loaded(TRUE);
+            $this->cb_loaded();
 
             return $this;
         }
@@ -942,7 +942,7 @@ class DataObject implements Iterator
                 // Cascade delete not allowed
                 if ($expected_count > 0) {
                     // FK rows exist so exit with error
-                    $errors[] = 'Delete failed - linked to ' . $count . ' ' . $name;
+                    $errors[] = 'Delete failed - linked to ' . $expected_count . ' ' . $name;
                     return FALSE;
                 }
                 // No FK rows so check next constraint
@@ -3523,23 +3523,23 @@ class DataObject implements Iterator
         return $field->value;
     }
 
-    public function next()
+    public function next(): void
     {
         $this->_pointer ++;
     }
 
-    public function key()
+    public function key(): mixed
     {
         $temp = array_keys($this->_fields);
         return $temp[$this->_pointer];
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->_pointer = 0;
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return ($this->_pointer < count($this->_displayFields));
     }

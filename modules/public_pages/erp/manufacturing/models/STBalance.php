@@ -77,7 +77,7 @@ class STBalance extends DataObject
 		
 		if ( count($whlocation_id)>0 )
 		{
-			$cc->add(new Constraint('whlocation_id', 'in', '('.implode($whlocation_id, ',').')'));
+			$cc->add(new Constraint('whlocation_id', 'in', '('.implode(',', $whlocation_id).')'));
 		}
 
 		if (count($obsolete_ids) > 0) {

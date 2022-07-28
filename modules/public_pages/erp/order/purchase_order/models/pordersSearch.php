@@ -80,7 +80,7 @@ class pordersSearch extends BaseSearch
         $search->setOptions('type', $options);
 
         // Search by Status
-        $search->addSearchField('status', 'status', 'select', '', 'advanced');
+        $search->addSearchField('status', 'status', 'multi_select', ['N', 'O', 'A', 'H', 'R', 'P'], 'advanced');
         $porder = DataObjectFactory::Factory('POrder');
         $options = array_merge(array(
             '' => 'All'

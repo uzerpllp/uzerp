@@ -43,6 +43,7 @@ class MFWorkorder extends DataObject
 // Define relationships
 		$st_filter = new ConstraintChain();
         $st_filter->add(new Constraint('obsolete_date', 'is', 'NULL'));
+		$st_filter->add(new Constraint('comp_class', '=', 'M'));
 
 		$this->belongsTo('STItem', 'stitem_id', 'stitem', $st_filter); 
 		$this->belongsTo('Project', 'project_id', 'project'); 

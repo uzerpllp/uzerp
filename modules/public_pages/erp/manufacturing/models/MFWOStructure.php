@@ -1,14 +1,12 @@
 <?php
 
 /** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2022 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
 
 class MFWOStructure extends DataObject {
-
-	protected $version='$Revision: 1.14 $';
 	
 	protected $defaultDisplayFields = array('line_no'
 											,'wo_number'=>'Works Order'
@@ -24,7 +22,7 @@ class MFWOStructure extends DataObject {
 	function __construct($tablename='mf_wo_structures') {
 // Register non-persistent attributes
 		
-// Contruct the object
+// Construct the object
 		parent::__construct($tablename);
 
 // Set specific characteristics
@@ -56,40 +54,73 @@ class MFWOStructure extends DataObject {
 	
 	}
 
-	function copyStructure($data, &$errors) {
+	/**
+	 * Recursively explode phantom item structure
+	 *
+	 * @param MFStructure $phantom  Phantom MFStructure
+	 * @param array $items  MFStructure lines to return
+	 * @return array MFStructure  Children of the phantom
+	 */
+	public static function explodePhantom($phantom, &$items=[]){
+		$phantom = MFStructureCollection::getCurrent($phantom->ststructure_id);
+		foreach($phantom as $item) {
+			if ($item->comp_class == 'P') {
+				self::explodePhantom($item, $items);
+			} else {
+				$items[] = $item;
+			}
+		}
+		return $items;
+	}
 
-		$mfstructures = new MFStructureCollection(DataObjectFactory::Factory('MFStructure'));
+	/**
+	 * Get an array of MFWOStructure objects.
+	 * 
+	 * Phantoms are exploded, only children are copied.
+	 * Top level items are copied as-is.
+	 * Work Order structure line numbers start at 10
+	 * and are incremented by 10.
+	 *
+	 * @param MFWorkOrder $data
+	 * @param mixed $errors
+	 * @return Array array of MFWOStructure objects
+	 */
+	public static function copyStructure($data, &$errors) {
+		$mfstructures =  MFStructureCollection::getCurrent($data->stitem_id);;
+		$wo_structure = [];
+		$wo_structures = [];
+		$copyfields = ['qty', 'uom_id' ,'remarks' ,'waste_pc','ststructure_id'];
+		$line_no = '10';
 
-		$cc1=new ConstraintChain();
-		$cc1->add(new Constraint('stitem_id','=',$data->stitem_id));
-		$cc1->add(new Constraint('start_date','<=',fix_date(date(DATE_FORMAT))));
-		
-		$cc2=new ConstraintChain();
-		$cc2->add(new Constraint('end_date','>=',fix_date(date(DATE_FORMAT))));
-		$cc2->add(new Constraint('end_date','is','NULL'),'OR');
-				
-		$sh = new SearchHandler($mfstructures, false);
-		$sh->addConstraintChain($cc1);
-		$sh->addConstraintChain($cc2);
-		$mfstructures->load($sh);
-		$wo_structure=array();
-		$wo_structures=array();
-
-		$copyfields=array('line_no','qty'
-						 ,'uom_id','remarks'
-						 ,'waste_pc','ststructure_id');
 		foreach($mfstructures as $input) {
 			$wo_structure['work_order_id']=$data->id;
-			foreach ($copyfields as $field) {
-				$wo_structure[$field]=$input->$field;
-			}
-			$wo_structures[$input->line_no]=DataObject::Factory($wo_structure, $errors, 'MFWOStructure');
-		}
+			
+			if ($input->comp_class == 'P') {
+				$phantom_items = self::explodePhantom($input);
+				foreach ($phantom_items as $pitem) {
+					$wo_structure['line_no'] = $line_no;
+					foreach ($copyfields as $field) {
+						$wo_structure[$field] = $pitem->$field;
+					}
+					$wo_structure['qty'] = $input->qty * $pitem->qty;
+					$wo_structures[$line_no]=DataObject::Factory($wo_structure, $errors, 'MFWOStructure');
+					$line_no = $line_no + 10;
+				}
 
+			} else {
+				// Copy top level items
+				foreach ($copyfields as $field) {
+					$wo_structure['line_no'] = $line_no;
+					$wo_structure[$field]=$input->$field;
+				}
+				$wo_structures[$line_no]=DataObject::Factory($wo_structure, $errors, 'MFWOStructure');
+				$line_no = $line_no + 10;
+			}
+		}
 		return $wo_structures;
 	}
 
-	function exists($work_order_id) {
+	public static function exists($work_order_id) {
 		$db=&DB::Instance();
 		$query="SELECT count(*) as st
 				  FROM mf_wo_structures
@@ -100,7 +131,6 @@ class MFWOStructure extends DataObject {
 		} else {
 			return true;
 		}
-		
 	}
 
 	function getCurrentBalance($whlocation_id='', $whbin_id='') {

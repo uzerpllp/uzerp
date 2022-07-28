@@ -2537,8 +2537,8 @@ class SordersController extends printController
                         $check_location->load($data['from_whlocation_id']);
                         if ($stitem->comp_class == 'K' && $check_location->isBalanceEnabled() == false) {
                             // Get BOM
-                            $bom = MFStructureCollection::getCurrent($sorderline->stitem_id);
-                            if ($bom->isEmpty()) {
+                            $bom = STItem::explodeStructure($sorderline->stitem_id);
+                            if (empty($bom)) {
                                 $errors[] = 'line ' . $value['line_number'] . ' : No structures found for kit';
                             }
                             $data['book_qty'] = $data['qty'];
@@ -4233,7 +4233,7 @@ class SordersController extends printController
             $extra['delivery_details']['customer'] = $order->customer;
         }
 
-        $extra['delivery_details']['full_address'] = implode($this->formatAddress($order->del_address), ", ");
+        $extra['delivery_details']['full_address'] = implode(', ', $this->formatAddress($order->del_address));
 
         foreach($order->lines as $oline) {
             
@@ -4242,14 +4242,13 @@ class SordersController extends printController
                 $stitem->load($oline->stitem_id);
                 if ($stitem->comp_class == 'K') {
                     // Get BOM
-                    $bom = MFStructureCollection::getCurrent($oline->stitem_id);
-                    if (!$bom->isEmpty()) {
+                    $bom = STItem::explodeStructure($oline->stitem_id);
+                    if (!empty($bom)) {
                         $kit = [];
                         foreach ($bom as $item) {
                             $kit[]['ststructure'] = [ 'item' => $item->ststructure,
                                     'qty' => $item->qty * $oline->os_qty,
                                     'uom' => $item->uom];
-                            //$kit[] = $kit;
                         }
                         $kits[] = ['kit' => ['line_id' => $oline->id, 'line_number' => $oline->line_number, 'item' => $stitem->item_code, $kit]];
                     }

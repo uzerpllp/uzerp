@@ -29,7 +29,7 @@ class PermissionCollection extends DataObjectCollection
 			
 			if (is_array($permissions))
 			{
-				$sh->addConstraint(new Constraint('id', 'in', '(' . implode($permissions, ',') . ')'));
+				$sh->addConstraint(new Constraint('id', 'in', '(' . implode(',', $permissions) . ')'));
 			}
 			else
 			{
@@ -50,7 +50,7 @@ class PermissionCollection extends DataObjectCollection
 		
 		if (!empty($permissions))
 		{
-			$sh->addConstraint(new Constraint('id', 'in' , '(' . implode($permissions, ',') . ')'));
+			$sh->addConstraint(new Constraint('id', 'in' , '(' . implode(',', $permissions) . ')'));
 		}
 		
 		if (empty($parent))

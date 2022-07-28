@@ -877,8 +877,10 @@ class poproductlineheadersController extends printController
 
         $cc1->add(new Constraint('obsolete_date', '=', 'NULL'));
         $cc1->add(new Constraint('obsolete_date', '>', $date), 'OR');
-
-        $cc->add($cc1);
+        $cc2 = new ConstraintChain();
+        $cc2->add(new Constraint('comp_class', 'in', "('B','S')"));
+        $cc2->add($cc1);
+        $cc->add($cc2);
 
         $stitem = DataObjectFactory::Factory('STitem');
 

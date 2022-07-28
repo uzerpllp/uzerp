@@ -93,7 +93,7 @@ class MfstructuresController extends PrintController
 														  )
 										);
 
-		if (($transaction->comp_class=='M' || $transaction->comp_class=='S' || $transaction->comp_class=='K')
+		if ( (in_array($transaction->comp_class, ['M', 'S', 'K', 'P']))
 			&& (!$obsolete))
 		{
 			$sidebarlist['newStructure'] = array('tag' => 'Add to Structure'
@@ -380,6 +380,35 @@ class MfstructuresController extends PrintController
 		$this->view->set('sidebar', $sidebar);
 	}
 
+	/**
+	 * Test for a circular reference when adding structures
+	 * 
+	 * Note: this **only** tests for circular references in
+	 * the adjacency tree. The goal is to avoid infinite loops
+	 * when running recursive operations on nested structures,
+	 * e.g. MFWOStructure::explodePhantom.
+	 *
+	 * @param integer $start_structure_id  Start level STItem::id 
+	 * 					(the item being added to the structure)
+	 * @param integer $adding_to_item_id  STItem::id of the item being added to 
+	 * 					(the structure that $start_structure_id is being added to)
+	 * @param boolean $found_ref  
+	 * @return boolean return true if $adding_item_id appears
+	 * 					on a higher level structure.
+	 */
+	public static function testCircularRef($start_structure_id, $added_to_item_id, &$found_ref = false) {
+		$structure =  MFStructureCollection::getCurrent($start_structure_id);
+		foreach ($structure as $item) {
+			if ($item->ststructure_id == $added_to_item_id) {
+				$found_ref = true;
+				break;
+			} else {
+				$found_ref = self::testCircularRef($item->ststructure_id, $added_to_item_id);
+			}
+		}
+		return $found_ref;
+	}
+
 	public function save()
 	{
 
@@ -390,6 +419,17 @@ class MfstructuresController extends PrintController
 		$db->StartTrans();
 
 		$errors = array();
+
+		//Check for circular refs
+		$start_id = $this->_data[$this->modeltype]['ststructure_id'];
+		$adding_id = $this->_data[$this->modeltype]['stitem_id'];
+
+		if (self::testCircularRef($start_id, $adding_id)) {
+			$stitem = new STItem();
+			$stitem->load($this->_data[$this->modeltype]['ststructure_id']);
+			$errors[] = "{$stitem->item_code} is already referenced in a parent structure.";
+			$db->FailTrans();
+		}
 
 		if ($this->_data[$this->modeltype]['qty']<=0)
 		{
@@ -477,6 +517,15 @@ class MfstructuresController extends PrintController
 		$db->StartTrans();
 
 		$errors = array();
+
+		//Check for circular refs
+		$structure =  MFStructureCollection::getCurrent($this->_data[$this->modeltype]['ststructure_id']);
+		if (self::testCircularRef($structure, $this->_data[$this->modeltype]['stitem_id'])) {
+			$stitem = new STItem();
+			$stitem->load($this->_data[$this->modeltype]['ststructure_id']);
+			$errors[] = "{$stitem->item_code} is already referenced in a parent structure.";
+			$db->FailTrans();
+		}
 
 		$timestamp = strtotime(fix_date($this->_data[$this->modeltype]['start_date']));
 		// 86400 = 24 hours

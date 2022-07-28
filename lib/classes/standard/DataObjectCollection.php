@@ -1032,22 +1032,22 @@ class DataObjectCollection implements Iterator, Countable {
 		return $this->_dataobjects[$this->_pointer];
 	}
 
-	public function next()
+	public function next(): void
 	{
 		$this->_pointer++;
 	}
 
-	public function key()
+	public function key(): int
 	{
 		return $this->_pointer;
 	}
 
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->_pointer = 0;
 	}
 
-	public function valid()
+	public function valid(): bool
 	{
 		return ($this->_pointer<count($this));
 	}
@@ -1055,7 +1055,7 @@ class DataObjectCollection implements Iterator, Countable {
 	// end of iterator
 	
 	// to implement countable
-	public function count()
+	public function count(): int
 	{
 		return count($this->_dataobjects);
 	}

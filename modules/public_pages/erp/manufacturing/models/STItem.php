@@ -99,7 +99,8 @@ class STItem extends DataObject
 		$this->setEnum('comp_class', array('B' => 'Bought In',
 										   'K' => 'Sales Kit',
 										   'M' => 'Manufactured',
-										   'S' => 'Sub-Contracted'));
+										   'S' => 'Sub-Contracted',
+										   'P' => 'Phantom'));
 		$this->setEnum('abc_class', array( 'A' => 'A',
                                            'B'=>'B',
                                            'C'=>'C'));
@@ -274,7 +275,15 @@ class STItem extends DataObject
 
 	}
 
-	public static function nonObsoleteItems($date = null, $comp_class = null, $stitem_id = null)
+	/**
+	 * Return non-obsolete stock items
+	 *
+	 * @param Date $date  obsolete date
+	 * @param string $comp_class  item component class
+	 * @param integer $stitem_id  item id
+	 * @return void
+	 */
+	public static function nonObsoleteItems($date = null, $comp_class = ['M', 'B', 'S', 'P'], $stitem_id = null)
 	{
 		if (!$date)
 		{
@@ -310,9 +319,16 @@ class STItem extends DataObject
 		$cc3 = new ConstraintChain;
 		$cc3->add(new Constraint('latest_cost', '>', 0));
 
-		if ($comp_class)
+		if (!is_null($comp_class))
 		{
-			$cc3->add(new Constraint('comp_class', '=', $comp_class));
+			if (is_array($comp_class))
+			{
+				$cc3->add(new Constraint('comp_class', 'in', "('" . implode("','", $comp_class) . "')"));
+			}
+			else
+			{
+				$cc3->add(new Constraint('id', '=', $comp_class));
+			}
 		}
 
 		$cc1->add($cc2);
@@ -343,6 +359,7 @@ class STItem extends DataObject
 				$var[] = $this->calcLatestMat();
 				break;
 			case 'M':
+			case 'P':
 			case 'S':
 				$var[] = $this->calcLatestMat();
 				$var[] = $this->calcLatestLab();
@@ -1584,6 +1601,33 @@ class STItem extends DataObject
 	}
 
 	/**
+	 * Explode stock item structure
+	 * 
+	 * Explodes any phantoms in the structure of the stock item
+	 *
+	 * @param integer  $stitem_id  Top level stock item
+	 * @return array  an array of MFStructure objects
+	 */
+	public static function explodeStructure($stitem_id) {
+		$mfstructures =  MFStructureCollection::getCurrent($stitem_id);;
+		$structures = [];
+
+		foreach($mfstructures as $input) {
+			if ($input->comp_class == 'P') {
+				$phantom_items = MFWOStructure::explodePhantom($input);
+				foreach ($phantom_items as $pitem) {
+					$structures[] = $pitem;
+				}
+			} else {
+				// Copy top level items
+				$structures[] = $input;
+			}
+		}
+		return $structures;
+	}
+
+
+	/**
 	 * Produce a kit for this item
 	 *
 	 * @param integer $qty  quantity to produce
@@ -1616,6 +1660,12 @@ class STItem extends DataObject
 
 		$db->startTrans();
 
+		// Make sure we have a structure
+		$bom = self::explodeStructure($this->id);
+		if (empty($bom)) {
+			$errors[] = 'No structures found for kit';
+		}
+
 		// Produce kit item at target location
 		$models = STTransaction::prepareMove($data, $errors);
 		if (count($errors) == 0) {
@@ -1633,9 +1683,8 @@ class STItem extends DataObject
 			return false;
 		} else {
 			$db->CompleteTrans();
+
 			// Backflush materials
-			$bom = MFStructureCollection::getCurrent($this->id);
-		
 			$data = [];
 			$data['book_qty'] = $qty;
 			$data['stitem_id'] = $this->id;
