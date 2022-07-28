@@ -69,7 +69,7 @@ class MFOperation extends DataObject {
 		$this->setAdditional('suppliers', 'text');
 	}
 
-	function cb_loaded($success)
+	function cb_loaded()
 	{
 	    $this->latest_cost = add(
 			$this->latest_lab,

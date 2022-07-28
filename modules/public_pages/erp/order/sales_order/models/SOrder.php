@@ -143,7 +143,7 @@ class SOrder extends SPOrder {
 	}
 
 	// fire when the DataObject has loaded
-	function cb_loaded($success)
+	function cb_loaded()
 	{
 
 		if (isset($this->_data['currency_id']))
@@ -158,7 +158,7 @@ class SOrder extends SPOrder {
 
 	}
 
-	public static function Factory($header_data, &$errors)
+	public static function Factory($header_data, &$errors=[], $do_name=null)
 	{
 
 		// Check the Customer
@@ -414,7 +414,7 @@ class SOrder extends SPOrder {
 		return 'O';
 	}
 
-	public function save ()
+	public function save($debug=false)
 	{
 		$linestatuses = $this->getLineStatuses();
 
@@ -626,7 +626,7 @@ class SOrder extends SPOrder {
 	}
 
 
-	public function getLineStatuses() {
+	public function getLineStatuses($_orderline=null, $_orderlines=null) {
 		$sorderline = DataObjectFactory::Factory('SOrderLine');
 
 		$sorderlines = new SOrderLineCollection($this->orderline);
@@ -634,7 +634,7 @@ class SOrder extends SPOrder {
 		return parent::getLineStatuses($sorderline, $sorderlines);
 	}
 
-	public function getNextLineNumber ()
+	public function getNextLineNumber ($_orderline=null)
 	{
 
 		$sorderline = DataObjectFactory::Factory('SOrderLine');
