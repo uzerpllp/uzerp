@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.30.1] 2022-09-11
+
+### Fixed
+- Editing a sales order with a customer reference resulted in a warning. Changed to only warn if there is more than one order with the same reference.
+
 ## [1.30.0] 2022-07-28
 
 ### Fixed
