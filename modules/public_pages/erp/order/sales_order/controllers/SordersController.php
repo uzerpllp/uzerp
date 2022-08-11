@@ -538,8 +538,8 @@ class SordersController extends printController
                 $header['ext_reference']
             ));
 
-            if ($check_sorder->isLoaded()) {
-                $flash->addWarning('Order already exists for this customer reference');
+            if ($check_sorder->isLoaded() && $header['id'] != $check_sorder->id) {
+                $flash->addWarning("Order already exists for this customer with reference {$header['ext_reference']}");
             }
         }
 
