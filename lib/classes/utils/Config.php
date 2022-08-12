@@ -39,6 +39,7 @@ class Config {
 			// Load .env file and merge
 			$dotenv = Dotenv\Dotenv::createImmutable(FILE_ROOT . 'conf/');
 			$dotenv->safeLoad();
+			$dotenv->required(['USER_ACTIVITY_TIMEOUT_SECS'])->notEmpty()->isInteger();
 			$conf = $conf + $_ENV;
 			
 			// we have to populate the defaults here as we have values
