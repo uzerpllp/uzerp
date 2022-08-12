@@ -17,6 +17,7 @@ LOGIN_TIMEOUT
 		<link rel="stylesheet" type="text/css" href="/{$user_css}" />
 		{/if}
     	<script type="text/javascript" src="/assets/js/vendor/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="/assets/js/vendor/clipboardjs/clipboard.min.js"></script>
     	<script type="text/javascript" src="/{$module_js}"></script>
 	</head>
 	<body class="module-{$module|replace:'_':'-'} controller-{$controller|replace:'_':'-'}{if $action} action-{$action|ltrim:'_'|replace:'_':'-'}{/if}">
