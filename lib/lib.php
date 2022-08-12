@@ -182,6 +182,7 @@ function isLoggedIn()
 function setLoggedIn()
 {
 	$_SESSION['loggedin'] = TRUE;
+	$_SESSION['last_active'] = $_SERVER['REQUEST_TIME'];
 }
 
 /*
