@@ -18,10 +18,14 @@ class IndexController extends Controller
 
     protected $username = '';
 
-    public function __construct($module=null,$view)
+    public function __construct($module=null, $view)
     {
-        parent::__construct($module=null,$view);
+        parent::__construct($module, $view);
 
+        $this->logger = uzLogger::Instance();
+        // set log 'channel' for authentication error/audit messages
+        $this->logger = $this->logger->withName('uzerp_authentication');
+        
         // Form based login
         if (isset($_POST['username'])) {
             $this->username = $_POST['username'];
@@ -33,7 +37,7 @@ class IndexController extends Controller
         }
     }
 
-    public function index()
+    public function index($collection=null, $sh = '', &$c_query = null)
     {
 
         // if we're not yet secure, check to see if we could be
@@ -56,10 +60,114 @@ class IndexController extends Controller
         // don't show login form for non-interactive logins
         $injector = $this->_injector;
         $authentication = $injector->Instantiate('LoginHandler');
+        $require_mfa = false;
+        if (method_exists($authentication, 'require_factor')) {
+            $require_mfa = $authentication->require_factor();
+        }
+
+        // Enroll user for MFA
+        if ($require_mfa === true && (isset($_SESSION['mfa_status']) && $_SESSION['mfa_status'] == 'enrolling')) {
+            unset($_SESSION['mfa_status']);
+            $mfa_errors = [];
+            $user = DataObjectFactory::Factory('User');
+            $user->load($_SESSION['username']);
+    
+            if (!isset($_SESSION['mfa_pack'])) {
+                $pack = $authentication->validator->Enroll($user, $mfa_errors);
+                if (count($mfa_errors) > 0) {
+                    $this->logger->error('MFA Error on starting enrollment', ['username' => $this->username, 'errors' => $mfa_errors]);
+                }
+                $_SESSION['mfa_pack'] = $pack;
+            } else {
+                $pack = $_SESSION['mfa_pack'];
+            }
+            $qrcode_png = base64_encode($pack['qrCode']);
+            $this->view->set('qrcode', "data:image/png;base64, {$qrcode_png}");
+            $this->view->set('secret', $pack['secret']);
+            $this->_templateName = $this->getTemplateName('mfaenroll');
+        }
+
+        // Request MFA token 
+        if ($require_mfa === true && (isset($_SESSION['mfa_status']) && $_SESSION['mfa_status'] == 'validate')) {
+            $this->_templateName = $this->getTemplateName('mfavalidate');
+        }
+
         if (! $authentication->interactive()) {
             $this->login();
             exit();
         }
+    }
+
+
+    /**
+     * Process user MFA enrollment
+     *
+     * @return void
+     */
+    public function mfaenroll() {
+        if ($this->_injector->getRequest()->getMethod() !== 'POST'){
+            sendTo('index');
+        }
+        $flash = Flash::Instance();
+        $mfa_errors = [];
+        $injector = $this->_injector;
+        $authentication = $injector->Instantiate('LoginHandler');
+        
+        $user = DataObjectFactory::Factory('User');
+        $user->load($_SESSION['username']);
+
+        $pack = $_SESSION['mfa_pack'];
+        $code = $_POST['authcode'];
+
+        $enrolled = $authentication->validator->VerifyEnroll($user, $pack, $code, $mfa_errors);
+        if (count($mfa_errors) > 0) {
+            $this->logger->error('MFA Error on verifying enrollment', ['username' => $this->username, 'errors' => $mfa_errors]);
+        }
+        if ($enrolled === true) {
+            $user->update($user->username,
+                ['mfa_sid', 'mfa_enrolled'],
+                [$pack['sid'], 't']
+            );
+            unset($_SESSION['mfa_pack']);
+            $flash->addMessage('Enrollment successful');
+            $this->completeLogin($user);
+        }
+        $flash->addError('Enrollment failed');
+        sendTo('index');
+    }
+
+
+    /**
+     * Validate user MFA token
+     *
+     * @return void
+     */
+    public function mfavalidate() {
+        if ($this->_injector->getRequest()->getMethod() !== 'POST'){
+            sendTo('index');
+        }
+        $flash = Flash::Instance();
+        $mfa_errors = [];
+        $injector = $this->_injector;
+        $authentication = $injector->Instantiate('LoginHandler');
+        
+        $user = DataObjectFactory::Factory('User');
+        $user->load($_SESSION['username']);
+
+        $code = $_POST['authcode'];
+
+        $valid = $authentication->validator->ValidateToken($user, $code, $mfa_errors);
+        if (count($mfa_errors) > 0) {
+            $this->logger->error('MFA Error on token validation', ['username' => $this->username, 'errors' => $mfa_errors]);
+        }
+        if ($valid === true) {
+            unset($_SESSION['mfa_status']);
+            $this->completeLogin($user);
+        } else {
+            $flash->addError('Code not Valid');
+            sendBack();
+        }
+        sendTo('index');
     }
 
     public function login()
@@ -67,9 +175,10 @@ class IndexController extends Controller
         $injector = $this->_injector;
         $authentication = $injector->Instantiate('LoginHandler');
 
-        $logger = uzLogger::Instance();
-        // set log 'channel' for authentication error/audit messages
-        $logger = $logger->withName('uzerp_authentication');
+        $require_mfa = false;
+        if (method_exists($authentication, 'require_factor')) {
+            $require_mfa = $authentication->require_factor();
+        }
 
         $flash = Flash::Instance();
 
@@ -99,71 +208,31 @@ class IndexController extends Controller
             $user = DataObjectFactory::Factory('User');
             $user->load($this->username);
 
-            if ($user->access_enabled == 't') {
-
-                setLoggedIn();
-
+            if ($require_mfa === true && $user->mfa_enrolled !== 't') {
                 $_SESSION['username'] = $this->username;
-
-                $user->update($_SESSION['username'], 'last_login', date('Y-m-d H:i:s'));
-
-                if (isset($_POST['ajax'])) {
-
-                    // If login due to timeout prior to ajax request
-                    // need to override ajax request to display full
-
-                    unset($_POST['ajax']);
-
-                    if (isset($_SERVER['HTTP_REFERER'])) {
-
-                        // If browser agent supports http_referer
-                        // use this address instead of ajax request
-                        $url = parse_url($_SERVER['HTTP_REFERER']);
-
-                        unset($_POST);
-
-                        $components = explode('&', $url['query']);
-
-                        foreach ($components as $component) {
-                            list ($key, $value) = explode('=', $component);
-                            $_POST[$key] = $value;
-                        }
-                    }
+                $_SESSION['mfa_status'] = 'enrolling';
+                // User needs a uuid, make sure they have one
+                $user_id = $user->uuid;
+                if (empty($user_id)) {
+                    $uuid = Uuid::uuid4();
+                    $result = $user->update($user->username, 'uuid', $uuid);
                 }
+                sendTo('index');
+                exit();
+            }
 
-                $controller = (! empty($_POST['controller'])) ? $_POST['controller'] : '';
-                $module = (! empty($_POST['module'])) ? $_POST['module'] : '';
+            if ($require_mfa === true && $user->mfa_enrolled === 't') {
+                $_SESSION['username'] = $this->username;
+                $_SESSION['mfa_status'] = 'validate';
+                sendTo('index');
+                exit();
+            }
 
-                if (! empty($_POST['submodule'])) {
-                    $module = array(
-                        $module,
-                        $_POST['submodule']
-                    );
-                }
-
-                $action = (! empty($_POST['action']) && $_POST['action'] != 'login') ? $_POST['action'] : '';
-
-                unset($_POST['controller']);
-                unset($_POST['module']);
-                unset($_POST['action']);
-                unset($_POST['username']);
-                unset($_POST['password']);
-                unset($_POST['rememberUser']);
-                unset($_POST['csrf_token']);
-
-                // before we send away, lets cleanup the users tmp directory
-                // deletes any file older than 'yesturday', just to keep the file size down
-
-                clean_tmp_directory(DATA_USERS_ROOT . $_SESSION['username'] . '/TMP/');
-
-                if (AUDIT || get_config('AUDIT_LOGIN')) {
-                    $logger->info('SUCCESSFUL LOGIN', array('username' => $this->username));
-                }
-
-                sendTo($controller, $action, $module, $_POST);
+            if ($user->access_enabled == 't') {
+                $this->completeLogin($user);
             } else {
                 $flash->addError('Incorrect username or password');
-                $logger->warning('FAILED LOGIN, account disabled', array('username' => $this->username));
+                $this->logger->warning('FAILED LOGIN, account disabled', array('username' => $this->username));
                 if (! $authentication->interactive()) {
                     $this->view->display($this->getTemplateName('logout'));
                     exit();
@@ -172,15 +241,87 @@ class IndexController extends Controller
         } else {
             if (! $authentication->interactive()) {
                 $flash->addError('Incorrect username or password');
-                $logger->warning('FAILED LOGIN, either the username was not found in the database or system access is disabled', array('username' => $this->username));
+                $this->logger->warning('FAILED LOGIN, either the username was not found in the database or system access is disabled', array('username' => $this->username));
                 $this->view->display($this->getTemplateName('logout'));
                 exit();
             }
             $flash->addError('Incorrect username or password');
-            $logger->warning('FAILED LOGIN, Incorrect username or password', array('username' => $this->username));
+            $this->logger->warning('FAILED LOGIN, Incorrect username or password', array('username' => $this->username));
         }
         $this->index();
         $this->_templateName = $this->getTemplateName('index');
+    }
+
+    /**
+     * Complete the login process for an authenticated user
+     *
+     * @param User $user
+     * @return void
+     */
+    private function completeLogin(User $user)
+    {
+        setLoggedIn();
+
+        $_SESSION['username'] = $user->username;
+
+        $user->update($user->username, 'last_login', date('Y-m-d H:i:s'));
+
+        if (isset($_POST['ajax'])) {
+
+            // If login due to timeout prior to ajax request
+            // need to override ajax request to display full
+
+            unset($_POST['ajax']);
+
+            if (isset($_SERVER['HTTP_REFERER'])) {
+
+                // If browser agent supports http_referer
+                // use this address instead of ajax request
+                $url = parse_url($_SERVER['HTTP_REFERER']);
+
+                unset($_POST);
+
+                $components = explode('&', $url['query']);
+
+                foreach ($components as $component) {
+                    list ($key, $value) = explode('=', $component);
+                    $_POST[$key] = $value;
+                }
+            }
+        }
+
+        $controller = (! empty($_POST['controller'])) ? $_POST['controller'] : '';
+        $module = (! empty($_POST['module'])) ? $_POST['module'] : '';
+
+        if (! empty($_POST['submodule'])) {
+            $module = array(
+                $module,
+                $_POST['submodule']
+            );
+        }
+
+        $action = (! empty($_POST['action']) && $_POST['action'] != 'login') ? $_POST['action'] : '';
+
+        unset($_POST['controller']);
+        unset($_POST['module']);
+        unset($_POST['action']);
+        unset($_POST['username']);
+        unset($_POST['password']);
+        unset($_POST['rememberUser']);
+        unset($_POST['csrf_token']);
+
+        // before we send away, lets cleanup the users tmp directory
+        // deletes any file older than 'yesturday', just to keep the file size down
+
+        clean_tmp_directory(DATA_USERS_ROOT . $_SESSION['username'] . '/TMP/');
+
+        if (AUDIT || get_config('AUDIT_LOGIN')) {
+            $this->logger->info('SUCCESSFUL LOGIN', array('username' => $this->username));
+        }
+
+        session_regenerate_id(true);
+        sendTo($controller, $action, $module, $_POST);
+        exit();
     }
 
     public function password()
