@@ -12,7 +12,9 @@
         "adodb/adodb-php": "^5.20",
         "monolog/monolog": "^2.0",
         "ramsey/uuid": "^4.1",
-        "vlucas/phpdotenv": "^5.4"
+        "vlucas/phpdotenv": "^5.4",
+        "twilio/sdk": "^6.40",
+        "endroid/qr-code": "^3.9"
     },
 
     "autoload": {
