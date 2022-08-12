@@ -28,7 +28,7 @@ class DashboardController extends Controller
 		
 	}
 
-	public function index()
+	public function index($collection=null, $sh = '', &$c_query = null)
 	{
 		
 		// dynamically generate the quick links from the permissions for the selected module 
