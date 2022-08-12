@@ -15,5 +15,6 @@
 $(document).ready(function() {
 
 	$('input[name=username]').focus();
+	new ClipboardJS('.btn');
 
 });
