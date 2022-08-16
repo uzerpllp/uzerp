@@ -52,7 +52,7 @@ class TWValidator implements MFAValidator
                 ->newFactors
                 ->create("{$user->username}", "totp");
         } catch (Exception $e) {
-            $errors[] = $e->getMessage();
+            $errors[$e->getCode()] = $e->getMessage();
         }
 
         $pack = [];
@@ -83,12 +83,13 @@ class TWValidator implements MFAValidator
                 ->factors($params['sid'])
                 ->update(["authPayload" => $payload]);
         } catch (Exception $e) {
-            $errors[] = $e->getMessage();
+            $errors[$e->getCode()] = $e->getMessage();
         }
 
         if ($factor->status === 'verified') {
             return true;
         }
+        $errors[] = 'Enrollment factor verification failed';
         return false;
     }
 
@@ -108,7 +109,7 @@ class TWValidator implements MFAValidator
                 ->challenges
                 ->create($user->mfa_sid, ["authPayload" => $payload]);
         } catch (TwilioException $e) {
-            $errors[] = $e->getMessage();
+            $errors[$e->getCode()] = $e->getMessage();
         }
 
         if ($challenge->status === 'approved') {
