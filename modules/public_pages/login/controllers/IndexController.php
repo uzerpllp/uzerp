@@ -40,6 +40,10 @@ class IndexController extends Controller
     public function index($collection=null, $sh = '', &$c_query = null)
     {
 
+        if (!isset($_SESSION['post_login_page']) || empty($_SESSION['post_login_page'])){
+            $_SESSION['post_login_page'] = $this->_data;
+        }
+
         // if we're not yet secure, check to see if we could be
         if (SERVER_SECURE === FALSE) {
 
@@ -55,6 +59,7 @@ class IndexController extends Controller
         }
 
         $this->view->set('ajax', isset($this->_data['ajax']));
+        $this->view->set('action', 'login');
         $this->view->set('layout', 'loginpage');
 
         // don't show login form for non-interactive logins
@@ -75,7 +80,7 @@ class IndexController extends Controller
             if (!isset($_SESSION['mfa_pack'])) {
                 $pack = $authentication->validator->Enroll($user, $mfa_errors);
                 if (count($mfa_errors) > 0) {
-                    $this->logger->error('MFA Error on starting enrollment', ['username' => $this->username, 'errors' => $mfa_errors]);
+                    $this->logger->error('MFA Error on starting enrollment', ['username' => $_SESSION['username'], 'errors' => $mfa_errors]);
                 }
                 $_SESSION['mfa_pack'] = $pack;
             } else {
@@ -84,11 +89,13 @@ class IndexController extends Controller
             $qrcode_png = base64_encode($pack['qrCode']);
             $this->view->set('qrcode', "data:image/png;base64, {$qrcode_png}");
             $this->view->set('secret', $pack['secret']);
+            $this->view->set('action', 'mfaenroll');
             $this->_templateName = $this->getTemplateName('mfaenroll');
         }
 
         // Request MFA token 
         if ($require_mfa === true && (isset($_SESSION['mfa_status']) && $_SESSION['mfa_status'] == 'validate')) {
+            $this->view->set('action', 'mfavalidate');
             $this->_templateName = $this->getTemplateName('mfavalidate');
         }
 
@@ -120,9 +127,7 @@ class IndexController extends Controller
         $code = $_POST['authcode'];
 
         $enrolled = $authentication->validator->VerifyEnroll($user, $pack, $code, $mfa_errors);
-        if (count($mfa_errors) > 0) {
-            $this->logger->error('MFA Error on verifying enrollment', ['username' => $this->username, 'errors' => $mfa_errors]);
-        }
+
         if ($enrolled === true) {
             $user->update($user->username,
                 ['mfa_sid', 'mfa_enrolled'],
@@ -131,6 +136,17 @@ class IndexController extends Controller
             unset($_SESSION['mfa_pack']);
             $flash->addMessage('Enrollment successful');
             $this->completeLogin($user);
+        }
+        if (count($mfa_errors) > 0) {
+            if (array_key_exists(404, $mfa_errors) ||
+                array_key_exists(60311, $mfa_errors))
+            {
+                // The factor is no longer available to be validated or too many retries, remove it from the session.
+                unset($_SESSION['mfa_pack']);
+                $flash->addError('Factor expired, please log in to continue');
+                sendTo('index');
+            }
+            $this->logger->error('MFA Error on verifying enrollment', ['username' => $_SESSION['username'], 'errors' => $mfa_errors]);
         }
         $flash->addError('Enrollment failed');
         sendTo('index');
@@ -146,6 +162,13 @@ class IndexController extends Controller
         if ($this->_injector->getRequest()->getMethod() !== 'POST'){
             sendTo('index');
         }
+
+        // The user can cancel the token validation dialog
+        if (isset($this->_data['cancel'])) {
+            unset($_SESSION['mfa_status']);
+            sendTo('index');
+        }
+
         $flash = Flash::Instance();
         $mfa_errors = [];
         $injector = $this->_injector;
@@ -158,7 +181,7 @@ class IndexController extends Controller
 
         $valid = $authentication->validator->ValidateToken($user, $code, $mfa_errors);
         if (count($mfa_errors) > 0) {
-            $this->logger->error('MFA Error on token validation', ['username' => $this->username, 'errors' => $mfa_errors]);
+            $this->logger->error('MFA Error on token validation', ['username' => $_SESSION['username'], 'errors' => $mfa_errors]);
         }
         if ($valid === true) {
             unset($_SESSION['mfa_status']);
@@ -167,6 +190,7 @@ class IndexController extends Controller
             $flash->addError('Code not Valid');
             sendBack();
         }
+        unset($_SESSION['mfa_status']);
         sendTo('index');
     }
 
@@ -289,18 +313,17 @@ class IndexController extends Controller
                 }
             }
         }
+        $controller = (! empty($_SESSION['post_login_page']['controller'])) ? $_SESSION['post_login_page']['controller'] : '';
+        $module = (! empty($_SESSION['post_login_page']['module'])) ? $_SESSION['post_login_page']['module'] : '';
 
-        $controller = (! empty($_POST['controller'])) ? $_POST['controller'] : '';
-        $module = (! empty($_POST['module'])) ? $_POST['module'] : '';
-
-        if (! empty($_POST['submodule'])) {
+        if (! empty($_SESSION['post_login_page']['submodule'])) {
             $module = array(
                 $module,
-                $_POST['submodule']
+                $_SESSION['post_login_page']['submodule']
             );
         }
 
-        $action = (! empty($_POST['action']) && $_POST['action'] != 'login') ? $_POST['action'] : '';
+        $action = (! empty($_SESSION['post_login_page']['action']) && $_SESSION['post_login_page']['action'] != 'login') ? $_SESSION['post_login_page']['action'] : '';
 
         unset($_POST['controller']);
         unset($_POST['module']);
@@ -309,6 +332,8 @@ class IndexController extends Controller
         unset($_POST['password']);
         unset($_POST['rememberUser']);
         unset($_POST['csrf_token']);
+        unset($_POST['authcode']);
+        unset($_SESSION['post_login_page']);
 
         // before we send away, lets cleanup the users tmp directory
         // deletes any file older than 'yesturday', just to keep the file size down
@@ -316,7 +341,7 @@ class IndexController extends Controller
         clean_tmp_directory(DATA_USERS_ROOT . $_SESSION['username'] . '/TMP/');
 
         if (AUDIT || get_config('AUDIT_LOGIN')) {
-            $this->logger->info('SUCCESSFUL LOGIN', array('username' => $this->username));
+            $this->logger->info('SUCCESSFUL LOGIN', array('username' => $_SESSION['username']));
         }
 
         session_regenerate_id(true);

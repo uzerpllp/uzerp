@@ -31,14 +31,11 @@ LOGIN_TIMEOUT
 					<h2>{$config.SYSTEM_STATUS}</h2>
 				{/if}
 			</div>
-			<div class="form">
+			<div class="form {$action}">
 				{flash}
 				{include file=$templateName}
 			</div>
-			<div class="footer">
-				<p>{$config.BASE_TITLE} {$config.SYSTEM_VERSION} copyright &copy; <a href="http://www.uzerp.com/">uzERP LLP</a> 2007-{'Y'|date}</p>
-				<p>uzERP is Free Software released under the GNU/GPL Licence.</p>
-			</div>
+
 		</div>
 	</body>
 </html>
