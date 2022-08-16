@@ -39,6 +39,9 @@ class Config {
 			// Load .env file and merge
 			$dotenv = Dotenv\Dotenv::createImmutable(FILE_ROOT . 'conf/');
 			$dotenv->safeLoad();
+			// Absolute session age
+			$dotenv->required(['USER_SESSION_MAX_AGE_SECS'])->notEmpty()->isInteger();
+			// Require login after a period of inactivity
 			$dotenv->required(['USER_ACTIVITY_TIMEOUT_SECS'])->notEmpty()->isInteger();
 			$conf = $conf + $_ENV;
 			
