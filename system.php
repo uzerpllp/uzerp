@@ -294,8 +294,7 @@ class system
                 session_destroy();
                 session_unset();
                 //remove session cookie
-                $params = session_get_cookie_params();
-                setcookie(session_name(), '', 0, $params['path'], $params['domain'], $params['secure'], isset($params['httponly']));
+                addCookie(session_name(), '', 0);
                 sendTo(
                     $_GET['controller'],
                     $_GET['action'],

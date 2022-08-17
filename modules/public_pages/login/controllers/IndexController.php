@@ -214,14 +214,13 @@ class IndexController extends Controller
         }
 
         if (isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'true') {
-            $params = session_get_cookie_params();
-            setcookie("username", $this->username, time() + 3600, $params['path'], $params['domain'], $params['secure'], isset($params['httponly']));
+            addCookie("username", $this->username, time() + 3600);
         }
 
         // Set a device ID cookie for use with VAT MTD
         // Fraud protection
         $uuid = Uuid::uuid5(Uuid::NAMESPACE_X500, $this->username . '@' . $_SERVER['REMOTE_ADDR']);
-        setcookie("uzerpdevice", $uuid->toString(), time() + 31556952, $params['path'], $params['domain'], $params['secure'], isset($params['httponly']));
+        addCookie("uzerpdevice", $uuid->toString(), time() + 31556952);
 
         $available = SystemCompanySettings::Get('access_enabled');
 
@@ -476,8 +475,7 @@ class IndexController extends Controller
         session_unset();
 
         //remove session cookie
-        $params = session_get_cookie_params();
-        setcookie(session_name(), '', 0, $params['path'], $params['domain'], $params['secure'], isset($params['httponly']));
+        addCookie(session_name(), '', 0);
 
         // don't show the login form for non-interactive logins
         $injector = $this->_injector;
