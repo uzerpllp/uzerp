@@ -32,8 +32,8 @@ LOGIN_TIMEOUT
 				{/if}
 			</div>
 			<div class="form {$action}">
-				{flash}
 				{include file=$templateName}
+				{flash}
 			</div>
 
 		</div>
