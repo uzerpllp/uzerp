@@ -7,6 +7,7 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use Symfony\Component\HttpFoundation\Cookie;
 
 //set some defaults
 date_default_timezone_set('Europe/London');	//probably needs to be configurable
@@ -1902,6 +1903,62 @@ function registerProgress ($value = 0, $name = 'progress')
 	// Now need to re-start the session
 	session_start();
 
+}
+
+/**
+ * Set a cookie
+ * 
+ * Handles adding the samesite cookie attribute
+ *
+ * @param string $name
+ * @param string $value
+ * @param integer $expires
+ * @param boolean $replace
+ * @return void
+ */
+function addCookie ($name='', $value='', $expires=0, $replace=false)
+{
+	$samesite = false;
+	$params = session_get_cookie_params();
+
+	$cookieOptions = [
+		'expires' => $expires,
+		'path' => $params['path'],
+		'domain' => $params['domain'],
+		'secure' => $params['secure'],
+		'httponly' => $params['httponly'],
+	];
+
+	if (isset($params['secure']) && $params['secure']) {
+		$cookieOptions['samesite'] == 'strict';
+	}
+
+	// For PHP < 7.3 we need to set the cookie manually to add 'samesite'
+	if (!isset($params['samesite'])) {
+		if ($samesite === false) {
+			$cookie = new Cookie($name, $value,
+				$cookieOptions['expires'],
+				$cookieOptions['path'],
+				$cookieOptions['domain'],
+				$cookieOptions['secure'],
+				$cookieOptions['httponly']
+			);
+		} else {
+			$cookie = new Cookie($name, $value,
+				$cookieOptions['expires'],
+				$cookieOptions['path'],
+				$cookieOptions['domain'],
+				$cookieOptions['secure'],
+				$cookieOptions['httponly'],
+				false,
+				$cookieOptions['samesite']
+			);
+		}
+		header("Set-Cookie: {$cookie->__toString()}", $replace);
+		return;
+	}
+	// For PHP >= 7.3 use the new signature for setcookie
+	setcookie($name, $value, $cookieOptions);
 }
 
 /* End of file lib.php */
