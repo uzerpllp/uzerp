@@ -70,12 +70,13 @@ class IndexController extends Controller
             $require_mfa = $authentication->require_factor();
         }
 
+        $user = DataObjectFactory::Factory('User');
+        $user->load($_SESSION['username']);
+
         // Enroll user for MFA
         if ($require_mfa === true && (isset($_SESSION['mfa_status']) && $_SESSION['mfa_status'] == 'enrolling')) {
             unset($_SESSION['mfa_status']);
             $mfa_errors = [];
-            $user = DataObjectFactory::Factory('User');
-            $user->load($_SESSION['username']);
     
             if (!isset($_SESSION['mfa_pack'])) {
                 $pack = $authentication->validator->Enroll($user, $mfa_errors);
@@ -93,7 +94,14 @@ class IndexController extends Controller
             $this->_templateName = $this->getTemplateName('mfaenroll');
         }
 
-        // Request MFA token 
+        // Allow login without MFA and re-enable
+        if ($require_mfa === true && $user->mfa_enrolled === 't' && $user->mfa_enabled === 'f') {
+            $user->update($user->username, 'mfa_enabled', 't');
+            unset($_SESSION['mfa_status']);
+            $this->completeLogin($user);
+        }
+
+        // Request MFA token
         if ($require_mfa === true && (isset($_SESSION['mfa_status']) && $_SESSION['mfa_status'] == 'validate')) {
             $this->view->set('action', 'mfavalidate');
             $this->_templateName = $this->getTemplateName('mfavalidate');
@@ -111,10 +119,12 @@ class IndexController extends Controller
      *
      * @return void
      */
-    public function mfaenroll() {
+    public function mfaenroll()
+    {
         if ($this->_injector->getRequest()->getMethod() !== 'POST'){
             sendTo('index');
         }
+
         $flash = Flash::Instance();
         $mfa_errors = [];
         $injector = $this->_injector;
@@ -126,12 +136,13 @@ class IndexController extends Controller
         $pack = $_SESSION['mfa_pack'];
         $code = $_POST['authcode'];
 
+        $enrolled = false;
         $enrolled = $authentication->validator->VerifyEnroll($user, $pack, $code, $mfa_errors);
 
         if ($enrolled === true) {
             $user->update($user->username,
-                ['mfa_sid', 'mfa_enrolled'],
-                [$pack['sid'], 't']
+                ['mfa_sid', 'mfa_enrolled', 'mfa_enabled'],
+                [$pack['sid'], 't', 't']
             );
             unset($_SESSION['mfa_pack']);
             $flash->addMessage('Enrollment successful');
@@ -158,7 +169,8 @@ class IndexController extends Controller
      *
      * @return void
      */
-    public function mfavalidate() {
+    public function mfavalidate()
+    {
         if ($this->_injector->getRequest()->getMethod() !== 'POST'){
             sendTo('index');
         }
@@ -179,6 +191,7 @@ class IndexController extends Controller
 
         $code = $_POST['authcode'];
 
+        $valid = false;
         $valid = $authentication->validator->ValidateToken($user, $code, $mfa_errors);
         if (count($mfa_errors) > 0) {
             $this->logger->error('MFA Error on token validation', ['username' => $_SESSION['username'], 'errors' => $mfa_errors]);
@@ -194,6 +207,11 @@ class IndexController extends Controller
         sendTo('index');
     }
 
+    /**
+     * Process the user login
+     *
+     * @return void
+     */
     public function login()
     {
         $injector = $this->_injector;
@@ -214,7 +232,7 @@ class IndexController extends Controller
         }
 
         if (isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'true') {
-            addCookie("username", $this->username, time() + 3600);
+            addCookie("username", $this->username, time() + $_ENV['USER_SESSION_MAX_AGE_SECS']);
         }
 
         // Set a device ID cookie for use with VAT MTD
