@@ -117,4 +117,22 @@ class TWValidator implements MFAValidator
         }
         return false;
     }
+
+    /**
+     * Remove entity from Twilio Verify
+     *
+     * @param User $user
+     * @param [type] $errors
+     * @return void
+     */
+    public function ResetEnrollment(User $user, &$errors)
+    {
+        try {
+            $factors = $this->twilio->verify->v2->services($_ENV["TWILIO_SERVICE_SID"])
+                              ->entities($user->uuid)
+                              ->delete();
+        } catch (TwilioException $e) {
+            $errors[$e->getCode()] = $e->getMessage();
+        }
+    }
 }
