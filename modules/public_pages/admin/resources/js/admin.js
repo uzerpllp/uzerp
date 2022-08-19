@@ -4,7 +4,7 @@ $(document).ready(function() {
 	if (button) {
 		button.addEventListener('click', (event) => {
 			event.preventDefault();
-			const formElement = document.getElementById('save_form');
+			const formElement = document.querySelector('#admin-users-new #save_form');
 			const formData = new FormData(formElement);
 			formData.append("mfa_reset", true);
 
@@ -20,5 +20,4 @@ $(document).ready(function() {
 			});
 		});
 	};
-
 });
