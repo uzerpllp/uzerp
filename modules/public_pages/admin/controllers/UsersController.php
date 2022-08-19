@@ -87,7 +87,15 @@ class UsersController extends printController
         }
     }
 
-    public function index()
+    /**
+     * Index view
+     *
+     * @param DataObjectCollection $collection
+     * @param string $sh
+     * @param [type] $c_query
+     * @return void
+     */
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $flash = Flash::Instance();
 
@@ -135,7 +143,15 @@ class UsersController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 
-    public function save()
+    /**
+     * Save User model
+     *
+     * @param [type] $modelName
+     * @param array $dataIn
+     * @param array $errors
+     * @return void
+     */
+    public function save($modelName=null, $dataIn = [], &$errors = [])
     {
         if (! $this->CheckParams($this->modeltype)) {
             sendBack();
@@ -152,6 +168,11 @@ class UsersController extends printController
         if ($user !== FALSE) {
 
             $new_user = FALSE;
+
+            // Prevent mfa_enabled being set for a user that is not enrolled
+            if($user->mfa_enrolled === 'f' || $user->mfa_enrolled === null) {
+                $this->_data[$this->modeltype]['mfa_enabled'] = 'f';
+            }
 
             if ($user_data['password'] == $user->password) {
                 unset($this->_data[$this->modeltype]['password']);
@@ -299,6 +320,13 @@ class UsersController extends printController
         ));
         $companies->load($sh);
 
+        // Indicate to the template that MFA is enabled
+        $injector = $this->_injector;
+        $authentication = $injector->Instantiate('LoginHandler');
+        if (method_exists($authentication, 'require_factor')) {
+            $this->view->set('mfa_used', $authentication->require_factor());
+        }
+
         $this->view->set('selected_companies', $companies->getAssoc());
         $this->view->set('username', $id);
         $this->view->set('edit', TRUE);
@@ -309,6 +337,40 @@ class UsersController extends printController
         $debug = DebugOption::getUserOption($id);
         $this->view->set('debug_id', $debug->id);
         $this->view->set('selected_options', $debug->getOptions());
+    }
+
+    /**
+     * Reset MFA Enrollment for a User
+     *
+     * @return void
+     */
+    public function reset_mfa_enrollment()
+    {
+        $this->checkRequest(['post']);
+        $errors = [];
+        $flash = Flash::Instance();
+
+        if (isset($this->_data['mfa_reset'])) {
+            // Load the User object
+            $id = $this->_data[$this->modeltype]['username'];
+            $this->_uses[$this->modeltype]->load($id);
+            $user = $this->_uses[$this->modeltype];
+
+            $injector = $this->_injector;
+            $authentication = $injector->Instantiate('LoginHandler');
+            
+            // Remove MFA data from the User object
+            $authentication->validator->ResetEnrollment($user, $errors);
+            if ($errors) {
+                $flash->adderrors($errors);
+            }
+            $success = $user->update($id, ['mfa_enrolled', 'mfa_enabled', 'mfa_sid'], ['f', 'f', 'null']);
+            if ($success === false) {
+                $flash->adderror("Failed to reset MFA Enrollment for user: {$user->username}");
+            }
+            $flash->addwarning("MFA Enrollment reset for user: {$user->username}. The user must remove the account from their MFA app before re-enrolling.");
+            sendBack();
+        }
     }
 
     public function edit_preferences()
