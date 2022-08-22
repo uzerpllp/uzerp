@@ -129,8 +129,9 @@ p.step {
 		font-weight: bold;
 		letter-spacing: 0.03em;
 		cursor: pointer;
+		transition: background-color 0.3s;
 		&:hover {
-			background-color: fade(@orange, 30%);
+			background-color: darken(@orange, 12%);
 		}
 	}
 
@@ -141,8 +142,10 @@ p.step {
 		border: 1px solid var(--brand-color);
 		color: var(--brand-color);
 		margin-left: 5px;
+		transition: background-color 0.3s;
 		&:hover {
-			box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.3);
+			background-color: darken(@orange, 12%);
+			color: #fff;
 		}
 	}
 
