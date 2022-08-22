@@ -241,7 +241,8 @@ class IndexController extends Controller
         $user = DataObjectFactory::Factory('User');
         $user->load($this->username);
 
-        if ($authentication->doLogin() === true && $user->access_enabled == 't') {
+        // If the user has successfully authenticated and is allowed to access the system
+        if ($authentication->doLogin() === true && $user->access_enabled === 't') {
 
             // Start enrollment if MFA is enabled
             if ($require_mfa === true && $user->mfa_enrolled !== 't') {
@@ -270,7 +271,7 @@ class IndexController extends Controller
                 exit();
             }
             $flash->addError('Incorrect username or password');
-            $this->logger->warning('FAILED LOGIN, Incorrect username or password or user access disabled', array('username' => $this->username));
+            $this->logger->warning('FAILED LOGIN, Incorrect username or password, or user access disabled', array('username' => $this->username));
         }
         $this->index();
         $this->_templateName = $this->getTemplateName('index');
