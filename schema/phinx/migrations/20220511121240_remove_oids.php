@@ -9,7 +9,7 @@ use UzerpPhinx\UzerpMigration;
  */
 class RemoveOids extends UzerpMigration
 {
-    private $tables = [
+    protected $tables = [
         'public.activities',
         'public.activitytype',
         'public.campaigns',
