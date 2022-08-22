@@ -2,6 +2,7 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use Ramsey\Uuid\Uuid;
 
 /**
  *	uzERP Users Controller
@@ -179,6 +180,10 @@ class UsersController extends printController
             }
         }
 
+        if ($new_user === true) {
+            $this->_data[$this->modeltype]['uuid'] = Uuid::uuid4();
+        }
+
         if (empty($user_data['lastcompanylogin'])) {
             $this->_data[$this->modeltype]['lastcompanylogin'] = EGS_COMPANY_ID;
         }
@@ -350,27 +355,26 @@ class UsersController extends printController
         $errors = [];
         $flash = Flash::Instance();
 
-        if (isset($this->_data['mfa_reset'])) {
-            // Load the User object
-            $id = $this->_data[$this->modeltype]['username'];
-            $this->_uses[$this->modeltype]->load($id);
-            $user = $this->_uses[$this->modeltype];
+        // Load the User object
+        $id = $this->_data['id'];
+        $this->_uses[$this->modeltype]->load($id);
+        $user = $this->_uses[$this->modeltype];
 
-            $injector = $this->_injector;
-            $authentication = $injector->Instantiate('LoginHandler');
-            
-            // Remove MFA data from the User object
-            $authentication->validator->ResetEnrollment($user, $errors);
-            if ($errors) {
-                $flash->adderrors($errors);
-            }
-            $success = $user->update($id, ['mfa_enrolled', 'mfa_enabled', 'mfa_sid'], ['f', 'f', 'null']);
-            if ($success === false) {
-                $flash->adderror("Failed to reset MFA Enrollment for user: {$user->username}");
-            }
-            $flash->addwarning("MFA Enrollment reset for user: {$user->username}. The user must remove the account from their MFA app before re-enrolling.");
-            sendBack();
+        $injector = $this->_injector;
+        $authentication = $injector->Instantiate('LoginHandler');
+        
+        // Remove MFA data from the User object
+        $authentication->validator->ResetEnrollment($user, $errors);
+        if ($errors) {
+            $flash->adderrors($errors);
         }
+        $success = $user->update($id, ['mfa_enrolled', 'mfa_enabled', 'mfa_sid'], ['f', 'f', 'null']);
+        if ($success === false) {
+            $flash->adderror("Failed to reset MFA Enrollment for user: {$user->username}");
+        }
+        $flash->addwarning("MFA Enrollment reset for user: {$user->username}. The user must remove the account from their MFA app before re-enrolling.");
+        sendBack();
+
     }
 
     public function edit_preferences()
@@ -470,8 +474,9 @@ class UsersController extends printController
         sendTo($this->name, 'index', $this->_modules);
     }
 
-    private function addSidebar($username)
+    private function addSidebar($user)
     {
+        $username = $user->username;
         $sidebar = new SidebarController($this->view);
 
         $sidebar->addList('Actions', array(
@@ -510,9 +515,26 @@ class UsersController extends printController
                     'action' => 'delete',
                     'username' => $username
                 ),
-                'tag' => 'delete ' . $username
+                'tag' => 'delete ' . $username,
             )
         ));
+
+        if ($user->mfa_enrolled == 't') {
+            $sidebar->addList(
+                'Actions', [
+                    'mfareset' => [
+                        'link' => [
+                            'module' => 'admin',
+                            'controller' => 'users',
+                            'action' => 'reset_mfa_enrollment'],
+                        'tag' => 'Reset MFA Enrollment',
+                        'class' => 'confirm',
+                        'data_attr' => ['data_uz-confirm-message' => "If the users enrollment is reset they will be asked to enroll again on next login.",
+                                        'data_uz-action-id' => $username]
+                    ],
+                ]
+            );
+        }
 
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
@@ -581,7 +603,7 @@ class UsersController extends printController
 
         $this->view->set('preferences', $shared_prefs);
 
-        $this->addSidebar($username);
+        $this->addSidebar($res);
     }
 }
 
