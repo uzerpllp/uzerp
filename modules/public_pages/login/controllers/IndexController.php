@@ -238,19 +238,10 @@ class IndexController extends Controller
         $uuid = Uuid::uuid5(Uuid::NAMESPACE_X500, $this->username . '@' . $_SERVER['REMOTE_ADDR']);
         addCookie("uzerpdevice", $uuid->toString(), time() + 31556952);
 
-        /// THIS IS POINTLESS, THE SYSTEM COMPANY IS NOT SET (-1) HERE
-        // $available = SystemCompanySettings::Get('access_enabled');
-
-        // if ($available == 'NONE') {
-        //     $flash->addError('The system is unavailable at present');
-        //     sendTo();
-        //     exit();
-        // }
-
         $user = DataObjectFactory::Factory('User');
         $user->load($this->username);
 
-        if ($authentication->doLogin() !== false && $user->access_enabled == 't') {
+        if ($authentication->doLogin() === true && $user->access_enabled == 't') {
 
             // Start enrollment if MFA is enabled
             if ($require_mfa === true && $user->mfa_enrolled !== 't') {
