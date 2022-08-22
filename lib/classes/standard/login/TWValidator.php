@@ -14,6 +14,7 @@ class TWValidator implements MFAValidator
 {
     public function __construct()
     {
+        $this->twillio_errors = [404, 60310, 60311];
         $dotenv = Dotenv\Dotenv::createImmutable(FILE_ROOT . 'conf/');
         $dotenv->safeLoad();
         try {
@@ -84,12 +85,15 @@ class TWValidator implements MFAValidator
                 ->update(["authPayload" => $payload]);
         } catch (Exception $e) {
             $errors[$e->getCode()] = $e->getMessage();
+            if ( in_array($e->getCode(), $this->verify_errors)) {
+                $errors['verification-failed'] = $e->getMessage();
+            }
         }
 
         if ($factor->status === 'verified') {
             return true;
         }
-        $errors[] = 'Enrollment factor verification failed';
+
         return false;
     }
 

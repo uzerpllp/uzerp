@@ -149,9 +149,7 @@ class IndexController extends Controller
             $this->completeLogin($user);
         }
         if (count($mfa_errors) > 0) {
-            if (array_key_exists(404, $mfa_errors) ||
-                array_key_exists(60311, $mfa_errors))
-            {
+            if (array_key_exists('verification-failed', $mfa_errors)) {
                 // The factor is no longer available to be validated or too many retries, remove it from the session.
                 unset($_SESSION['mfa_pack']);
                 $flash->addError('Factor expired, please log in to continue');
@@ -240,28 +238,29 @@ class IndexController extends Controller
         $uuid = Uuid::uuid5(Uuid::NAMESPACE_X500, $this->username . '@' . $_SERVER['REMOTE_ADDR']);
         addCookie("uzerpdevice", $uuid->toString(), time() + 31556952);
 
-        $available = SystemCompanySettings::Get('access_enabled');
+        /// THIS IS POINTLESS, THE SYSTEM COMPANY IS NOT SET (-1) HERE
+        // $available = SystemCompanySettings::Get('access_enabled');
 
-        if ($available == 'NONE') {
-            $flash->addError('The system is unavailable at present');
-        } elseif ($authentication->doLogin() !== FALSE) {
+        // if ($available == 'NONE') {
+        //     $flash->addError('The system is unavailable at present');
+        //     sendTo();
+        //     exit();
+        // }
 
-            $user = DataObjectFactory::Factory('User');
-            $user->load($this->username);
+        $user = DataObjectFactory::Factory('User');
+        $user->load($this->username);
 
+        if ($authentication->doLogin() !== false && $user->access_enabled == 't') {
+
+            // Start enrollment if MFA is enabled
             if ($require_mfa === true && $user->mfa_enrolled !== 't') {
                 $_SESSION['username'] = $this->username;
                 $_SESSION['mfa_status'] = 'enrolling';
-                // User needs a uuid, make sure they have one
-                $user_id = $user->uuid;
-                if (empty($user_id)) {
-                    $uuid = Uuid::uuid4();
-                    $result = $user->update($user->username, 'uuid', $uuid);
-                }
                 sendTo('index');
                 exit();
             }
 
+            // Ask for a token if MFA is enabled
             if ($require_mfa === true && $user->mfa_enrolled === 't') {
                 $_SESSION['username'] = $this->username;
                 $_SESSION['mfa_status'] = 'validate';
@@ -269,25 +268,18 @@ class IndexController extends Controller
                 exit();
             }
 
-            if ($user->access_enabled == 't') {
-                $this->completeLogin($user);
-            } else {
-                $flash->addError('Incorrect username or password');
-                $this->logger->warning('FAILED LOGIN, account disabled', array('username' => $this->username));
-                if (! $authentication->interactive()) {
-                    $this->view->display($this->getTemplateName('logout'));
-                    exit();
-                }
-            }
+            // Complete the login process for all other login methods
+            $this->completeLogin($user);
+
         } else {
             if (! $authentication->interactive()) {
                 $flash->addError('Incorrect username or password');
-                $this->logger->warning('FAILED LOGIN, either the username was not found in the database or system access is disabled', array('username' => $this->username));
+                $this->logger->warning('FAILED LOGIN, perhaps the username was not found in the database', array('username' => $this->username));
                 $this->view->display($this->getTemplateName('logout'));
                 exit();
             }
             $flash->addError('Incorrect username or password');
-            $this->logger->warning('FAILED LOGIN, Incorrect username or password', array('username' => $this->username));
+            $this->logger->warning('FAILED LOGIN, Incorrect username or password or user access disabled', array('username' => $this->username));
         }
         $this->index();
         $this->_templateName = $this->getTemplateName('index');
