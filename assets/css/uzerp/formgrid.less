@@ -73,13 +73,45 @@ See: modules/public_pages/admin/templates/users/new.tpl for an example.
 Note the additional markup and smarty plugin to produce <h2> for section 
 headers instead od <dt>.
 */
+
+body.module-admin.controller-users.action-edit,
+body.module-contacts.controller-partynotes.action-new  {
+    #main_without_sidebar {
+        background-color: #fff;
+    }
+}
+
+.submit() {
+    background-image: none;
+    background-color: var(--brand-color);
+    text-shadow: none;
+    border: none;
+    padding: 10px 20px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    &:hover {
+        background-color: darken(@orange, 12%);
+    }
+}
+
 #view_page {
+    sl-select:not(:defined) {
+        display: block;
+        height: 100vh;
+        opacity: 0;
+        transition: opacity 0s ease-in-out;
+        }
 
     h2.heading {
-        background: #ddd;
-        padding: 10px;
-        font-size: 13px;
+        margin: 20px;
+        padding-bottom: 5px;;
+        font-size: 16px;
         color: #2e2e2e;
+        border-bottom: 1px solid #dddddd;
     }
 
     .help {
@@ -89,34 +121,50 @@ headers instead od <dt>.
         padding-left: 7px;
     }
 
-    dd.submit, dt.submit {
-        border: 0 !important;
-    }
-
-    dl.form-actions {
-        display: inline-block;
-        margin-top: 10px;
-        border-top: 10px solid #ddd;
-        clear: both;
+    .form-actions {
         width: 100%;
+        dt {
+            background: none !important;
+            border: 0 !important;
+            padding: 15px 0 0 !important;
+            width: 0;
+        }
+
+        dd {
+           background: none !important;
+           border: 0 !important;
+           padding: 15px 0 0 !important;
+           width: 100%;
+
+           input {
+                .submit();
+                float: right;
+                margin-right: 20px;
+           }
+        }
     }
 
     .form-columns {
         display: block;
-        dl {
+        .col {
+            background-color: #f6f6f6;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            float: none;
             width: 100%;
         }
     }
 
     .viewgrid {
         display: grid;
-        grid-template-columns: 0.5fr 1em 1fr;
-        grid-gap: 0.3em 0.6em;
+        grid-template-columns: 0.5fr 0.25fr 1fr;
+        grid-gap: 0.6em 0.6em;
         grid-auto-flow: dense;
         align-items: center;
-        padding: 10px;
-        background: #ffff;
+        padding: 10px 0px 50px 0px;
         font-size: 0.8rem;
+        background-color: #f6f6f6;
+        width: 100%;
 
         dd {
             grid-column: 2 ~"/" 4;
@@ -127,11 +175,17 @@ headers instead od <dt>.
             background: none;
             line-height: 2rem;
             font-size: 0.8rem;
+            margin-right: 20px;
         }
 
-        input, select {
+        textarea, input, select {
             font-size: 0.8rem;
-            padding: 3px;
+            padding: 6px;
+            border-color: #d1d1d1;
+            border-radius: 3px;
+            &:hover {
+                border-color: darken(#d1d1d1, 20%);
+            }
         }
 
         input[type="checkbox"], input[type="radio"] {
@@ -152,25 +206,15 @@ headers instead od <dt>.
         }
 
         dt, dt label, input[type="checkbox"] + label, input[type="radio"] + label {
-        width: auto;
-        height: auto;
-        padding: 0;
-        margin: 0;
-        border: none;
-        background: none;
-        line-height: 2rem;
-        }
-
-        dt.submit, dd.submit {
-            background: none !important;
-            border: none !important;
-            padding: 15px 0 0 !important;
-        }
-
-        dd.submit {
-            display: flex;
-            justify-content: flex-end;
-            flex-direction: row;
+            width: auto;
+            height: auto;
+            padding: 0;
+            margin: 0;
+            border: none;
+            background: none;
+            line-height: 2rem;
+            color: #2e2e2e;
+            font-weight: 700;
         }
 
         textarea + label {
@@ -189,19 +233,6 @@ headers instead od <dt>.
         }
     }
 
-    #view_page dl.viewgrid {
-        width: 100%;
-    }
-
-    .split-form {
-        display: block;
-        background: #e1e1e1;
-
-        .view_grid {
-            width: unset;
-        }
-    }
-
     @media screen and (min-width: 800px) {
         #view_page .viewgrid {
             dd input, dd select {
@@ -209,17 +240,17 @@ headers instead od <dt>.
             }
         }
 
-        .split-form {
-            display: flex;
-        }
-
         .form-columns {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            dl {
+            .col {
                 width: 49%;
             }
+        }
+
+        .form-actions.single-form{
+            width: 50%;
         }
     }
 }
