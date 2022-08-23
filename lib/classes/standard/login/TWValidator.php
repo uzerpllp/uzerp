@@ -24,18 +24,17 @@ class TWValidator implements MFAValidator
                                'TWILIO_SERVICE_SID'])->notEmpty();
             $sid = $_ENV["TWILIO_ACCOUNT_SID"];
             $token = $_ENV["TWILIO_AUTH_TOKEN"];
-
-            // Create the Twilio API client
-            $this->twilio = new Client($sid, $token);
         }
         catch (Exception $e)
         {
-            // TODO: Log exception $e
-            // 
             throw new Exception('Cannot start application, 
                 some system configuration values are missing. 
                 Please see the log for more information.');
+            exit();
         }
+
+        // Create the Twilio API client
+        $this->twilio = new Client($sid, $token);
     }
 
 
