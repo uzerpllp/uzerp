@@ -39,7 +39,6 @@ class IndexController extends Controller
 
     public function index($collection=null, $sh = '', &$c_query = null)
     {
-
         if (!isset($_SESSION['post_login_page']) || empty($_SESSION['post_login_page'])){
             $_SESSION['post_login_page'] = $this->_data;
         }
@@ -62,7 +61,6 @@ class IndexController extends Controller
         $this->view->set('action', 'login');
         $this->view->set('layout', 'loginpage');
 
-        // don't show login form for non-interactive logins
         $injector = $this->_injector;
         $authentication = $injector->Instantiate('LoginHandler');
         $require_mfa = false;
@@ -107,6 +105,7 @@ class IndexController extends Controller
             $this->_templateName = $this->getTemplateName('mfavalidate');
         }
 
+        // don't show login form for non-interactive logins
         if (! $authentication->interactive()) {
             $this->login();
             exit();
