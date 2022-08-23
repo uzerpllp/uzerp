@@ -137,7 +137,7 @@ FUNC;
      */
     public function down()
     {
-		$this->dropTable('deps_saved_ddl');
+		$this->table('deps_saved_ddl')->drop()->save();
 		$this->query('DROP FUNCTION deps_save_and_drop_dependencies(character varying, character varying)');
 		$this->query('DROP FUNCTION deps_restore_dependencies(character varying, character varying)');
     }
