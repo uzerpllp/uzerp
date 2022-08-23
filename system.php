@@ -289,17 +289,19 @@ class system
 
             $this->user = getCurrentUser();
 
-            if(($_SERVER['REQUEST_TIME'] > $_SESSION['last_active'] + $_ENV['USER_ACTIVITY_TIMEOUT_SECS'])
-              || ($_SERVER['REQUEST_TIME'] > $_SESSION['started'] + $_ENV['USER_SESSION_MAX_AGE_SECS'])){
-                session_destroy();
-                session_unset();
-                //remove session cookie
-                addCookie(session_name(), '', 0);
-                sendTo(
-                    $_GET['controller'],
-                    $_GET['action'],
-                    $_GET['module']
-                );
+            if(isset($_ENV['UZERP_MANAGE_USER_SESSIONS']) && $_ENV['UZERP_MANAGE_USER_SESSIONS'] === true) {
+                if(($_SERVER['REQUEST_TIME'] > $_SESSION['last_active'] + $_ENV['USER_ACTIVITY_TIMEOUT_SECS'])
+                || ($_SERVER['REQUEST_TIME'] > $_SESSION['started'] + $_ENV['USER_SESSION_MAX_AGE_SECS'])){
+                    session_destroy();
+                    session_unset();
+                    //remove session cookie
+                    addCookie(session_name(), '', 0);
+                    sendTo(
+                        $_GET['controller'],
+                        $_GET['action'],
+                        $_GET['module']
+                    );
+                }
             }
             $_SESSION['last_active'] = $_SERVER['REQUEST_TIME'];
             
