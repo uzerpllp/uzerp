@@ -36,7 +36,7 @@
 					{select attribute='del_address_id' label='Delivery Address' nonone=true options=$deliveryAddresses}
 					{select attribute='inv_address_id' label='Invoice Address' options=$invoiceAddresses value=$invoice_address}
 					{if $SInvoice->sales_order_number === ''}
-						{select attribute='delivery_term_id' label='Delivery Address'}
+						{select attribute='delivery_term_id'}
 					{/if}
 					{/view_section}
 					{submit}
