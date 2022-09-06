@@ -276,6 +276,7 @@ class system
      */
     public function display()
     {
+
         $this->load_essential();
 
         debug('system::display session data:' . print_r($_SESSION, TRUE));
@@ -288,6 +289,22 @@ class system
 
             $this->user = getCurrentUser();
 
+            if(isset($_ENV['UZERP_MANAGE_USER_SESSIONS']) && $_ENV['UZERP_MANAGE_USER_SESSIONS'] === true) {
+                if(($_SERVER['REQUEST_TIME'] > $_SESSION['last_active'] + $_ENV['USER_ACTIVITY_TIMEOUT_SECS'])
+                || ($_SERVER['REQUEST_TIME'] > $_SESSION['started'] + $_ENV['USER_SESSION_MAX_AGE_SECS'])){
+                    session_destroy();
+                    session_unset();
+                    //remove session cookie
+                    addCookie(session_name(), '', 0);
+                    sendTo(
+                        $_GET['controller'],
+                        $_GET['action'],
+                        $_GET['module']
+                    );
+                }
+            }
+            $_SESSION['last_active'] = $_SERVER['REQUEST_TIME'];
+            
             $this->access = AccessObject::Instance($_SESSION['username']);
         } else {
 
@@ -803,8 +820,11 @@ class system
                     'password',
                     'requestpassword',
                     'login',
-                    'logout'
+                    'logout',
+                    'mfaenroll',
+                    'mfavalidate'
                 );
+
                 if (! in_array(strtolower($this->action), $actions)) {
                     $this->action = 'index';
                 }

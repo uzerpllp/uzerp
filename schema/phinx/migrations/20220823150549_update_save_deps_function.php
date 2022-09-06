@@ -1,21 +1,18 @@
 <?php
+declare(strict_types=1);
 
-use Phinx\Migration\AbstractMigration;
+use UzerpPhinx\UzerpMigration;
 
-class SaveDepsFunction extends AbstractMigration
+final class UpdateSaveDepsFunction extends UzerpMigration
 {
     /**
-     * Migrate Up.
+     * Update save view dependencies DB function
+     *
+     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        $users = $this->table('deps_saved_ddl', array('id' => 'deps_id'));
-        $users->addColumn('deps_view_schema', 'string', array('limit' => 255))
-			  ->addColumn('deps_view_name', 'string', array('limit' => 255))
-			  ->addColumn('deps_ddl_to_run', 'text')
-			  ->save();
-
-		$add_drop_deps_function = <<<'FUNC'
+		$update_drop_deps_function = <<<'FUNC'
 create or replace function deps_save_and_drop_dependencies(p_view_schema varchar, p_view_name varchar) returns void as
 $$
 declare
@@ -27,7 +24,7 @@ for v_curr in
   (
   with recursive recursive_deps(obj_schema, obj_name, obj_type, depth) as 
   (
-    select p_view_schema, p_view_name, null::varchar, 0
+    select p_view_schema collate "C", p_view_name collate "C", null::varchar, 0
     union
     select dep_schema::varchar, dep_name::varchar, dep_type::varchar, recursive_deps.depth + 1 from 
     (
@@ -106,39 +103,6 @@ $$
 LANGUAGE plpgsql;
 FUNC;
 
-		$add_restore_deps_function = <<<'FUNC'
-create or replace function deps_restore_dependencies(p_view_schema varchar, p_view_name varchar) returns void as
-$$
-declare
-  v_curr record;
-begin
-for v_curr in 
-(
-  select deps_ddl_to_run 
-  from deps_saved_ddl
-  where deps_view_schema = p_view_schema and deps_view_name = p_view_name
-  order by deps_id desc
-) loop
-  execute v_curr.deps_ddl_to_run;
-end loop;
-delete from deps_saved_ddl
-where deps_view_schema = p_view_schema and deps_view_name = p_view_name;
-end;
-$$
-LANGUAGE plpgsql;
-FUNC;
-
-		$this->query($add_drop_deps_function);
-		$this->query($add_restore_deps_function);
-    }
-
-    /**
-     * Migrate Down.
-     */
-    public function down()
-    {
-		$this->table('deps_saved_ddl')->drop()->save();
-		$this->query('DROP FUNCTION deps_save_and_drop_dependencies(character varying, character varying)');
-		$this->query('DROP FUNCTION deps_restore_dependencies(character varying, character varying)');
+        $this->query($update_drop_deps_function);
     }
 }

@@ -25,6 +25,9 @@
  *	along with uzERP.  If not, see <http://www.gnu.org/licenses/>.
  **/
 session_start();
+if (!isset($_SESSION['started'])) {
+    $_SESSION['started'] = $_SERVER['REQUEST_TIME'];
+}
 
 // define time at start of request
 define('START_TIME', microtime(TRUE));

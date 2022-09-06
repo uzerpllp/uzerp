@@ -61,6 +61,8 @@ var jsFiles = [
         'assets/js/vendor/wijmo/jquery.wijmo.wijbarchart.min.js',
         'assets/js/vendor/wijmo/external/jquery.glob.min.js',
         'assets/js/vendor/jquery.tableScroll/jquery.tablescroll.js',
+	// Other js
+	'assets/js/vendor/clipboardjs/clipboard.min.js',
         // uzLET js
         'modules/public_pages/**/resources/js/*.uzlet.js'
     ],

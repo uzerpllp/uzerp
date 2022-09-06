@@ -66,7 +66,7 @@ class User extends DataObject
 		return $this->getAll($cc, $ignore_tree);
 	}
 
-	function getAll(ConstraintChain $cc = null, $ignore_tree = false)
+	function getAll(ConstraintChain $cc = null, $ignore_tree = FALSE, $use_collection = FALSE, $limit = '')
 	{
 		$db = DB::Instance();
 
@@ -84,6 +84,7 @@ class User extends DataObject
 		$tablename = $coln->_tablename;
 
 		$cc->add(new Constraint('usercompanyid','=',EGS_COMPANY_ID));
+		$cc->add(new Constraint('access_enabled','is', true));
 
 		$query = 'SELECT '.$this->idField.' as id, '.$this->getIdentifier().' FROM '.$tablename;
 

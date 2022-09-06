@@ -39,6 +39,17 @@ class Config {
 			// Load .env file and merge
 			$dotenv = Dotenv\Dotenv::createImmutable(FILE_ROOT . 'conf/');
 			$dotenv->safeLoad();
+			try {
+				if ($dotenv->ifPresent('UZERP_MANAGE_USER_SESSIONS')->isBoolean()) {
+					// Absolute session age
+					$dotenv->required(['USER_SESSION_MAX_AGE_SECS'])->notEmpty()->isInteger();
+					// Require login after a period of inactivity
+					$dotenv->required(['USER_ACTIVITY_TIMEOUT_SECS'])->notEmpty()->isInteger();
+				}
+			} catch (Exception $e) {
+				echo($e->getMessage());
+				exit();
+			}
 			$conf = $conf + $_ENV;
 			
 			// we have to populate the defaults here as we have values

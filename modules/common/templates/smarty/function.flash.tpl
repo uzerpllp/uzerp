@@ -9,7 +9,10 @@
 	{if $function_flash.messages}
 		
 		<script type="text/javascript">
-			var button = document.getElementById("messages_button").style.display='block';
+			var button = document.getElementById("messages_button");
+			if (button) {
+				button.style.display='block';
+			}
 		</script>
 		
 		<ul id="messages">
@@ -25,7 +28,10 @@
 	{if $function_flash.warnings}
 	
 		<script type="text/javascript">
-			var button = document.getElementById("warnings_button").style.display='block';
+			var button = document.getElementById("warnings_button");
+			if (button) {
+				button.style.display='block';
+			}
 		</script>
 		
 		<ul id="warnings">
@@ -42,7 +48,10 @@
 	{if $function_flash.errors}
 	
 		<script type="text/javascript">
-			var button = document.getElementById("errors_button").style.display='block';
+			var button = document.getElementById("errors_button");
+			if (button) {
+				button.style.display='block';
+			}
 		</script>
 		
 		<ul id="errors">

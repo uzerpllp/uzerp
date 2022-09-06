@@ -17,6 +17,7 @@ LOGIN_TIMEOUT
 		<link rel="stylesheet" type="text/css" href="/{$user_css}" />
 		{/if}
     	<script type="text/javascript" src="/assets/js/vendor/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="/assets/js/vendor/clipboardjs/clipboard.min.js"></script>
     	<script type="text/javascript" src="/{$module_js}"></script>
 	</head>
 	<body class="module-{$module|replace:'_':'-'} controller-{$controller|replace:'_':'-'}{if $action} action-{$action|ltrim:'_'|replace:'_':'-'}{/if}">
@@ -30,14 +31,11 @@ LOGIN_TIMEOUT
 					<h2>{$config.SYSTEM_STATUS}</h2>
 				{/if}
 			</div>
-			<div class="form">
-				{flash}
+			<div class="form {$action}">
 				{include file=$templateName}
+				{flash}
 			</div>
-			<div class="footer">
-				<p>{$config.BASE_TITLE} {$config.SYSTEM_VERSION} copyright &copy; <a href="http://www.uzerp.com/">uzERP LLP</a> 2007-{'Y'|date}</p>
-				<p>uzERP is Free Software released under the GNU/GPL Licence.</p>
-			</div>
+
 		</div>
 	</body>
 </html>
