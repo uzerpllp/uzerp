@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Integration with Twilio Verify to provide a TOTP second factor for logins.
+- A country of origin can now be selected for Sales Products. The country can be shown on sales invoice outputs, if required.
 
 ## [1.30.1] 2022-08-11
 
