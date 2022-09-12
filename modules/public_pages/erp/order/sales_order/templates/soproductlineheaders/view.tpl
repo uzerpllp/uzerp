@@ -11,6 +11,7 @@
 				{view_data attribute="description"}
 				{view_data attribute="stitem" label="Stock Item"}
 				{view_data attribute='ean' label="EAN"}
+				{view_data attribute='countrycode'}
 				{view_data attribute="product_group"}
 				{view_data attribute="uom_name"}
 				{view_data attribute="gl_account"}

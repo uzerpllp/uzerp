@@ -155,6 +155,7 @@ class soproductlineheadersController extends printController
         }
 
         $this->view->set('tax_rates', $tax_rates);
+        $this->view->set('country', $this->country);
     }
 
     public function save()

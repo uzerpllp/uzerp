@@ -28,6 +28,7 @@
 					{input type='checkbox' attribute="cascade_description_change" label="Update Product-line descriptions" value=false}
 				{/if}
 				{input type='text' attribute='ean' label="EAN"}
+				{select attribute='country_of_origin'}
 				{select attribute='stuom_id' options=$uoms label='UoM'}
 				{select attribute='tax_rate_id' options=$tax_rates label='Tax Rate'}
 				{input type='text' attribute='commodity_code'}
