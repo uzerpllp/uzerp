@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- Broken layout on employee personal data deletion form.
+
 ### Added
 - Integration with Twilio Verify to provide a TOTP second factor for logins.
 - A country of origin can now be selected for Sales Products. The country can be shown on sales invoice outputs, if required.
