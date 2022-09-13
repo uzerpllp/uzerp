@@ -59,7 +59,7 @@ final class AddCountryOfOriginForSoProduclinesOverview extends UzerpMigration
             JOIN gl_accounts gla ON plh.glaccount_id = gla.id
             JOIN gl_centres glc ON plh.glcentre_id = glc.id
             LEFT JOIN countries ON countries.code = plh.country_of_origin;
-    VIEW;
+VIEW;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -114,7 +114,7 @@ final class AddCountryOfOriginForSoProduclinesOverview extends UzerpMigration
             JOIN taxrates tax ON plh.tax_rate_id = tax.id
             JOIN gl_accounts gla ON plh.glaccount_id = gla.id
             JOIN gl_centres glc ON plh.glcentre_id = glc.id;
-    VIEW;
+VIEW;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

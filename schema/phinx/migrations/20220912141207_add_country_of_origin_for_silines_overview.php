@@ -79,7 +79,7 @@ final class AddCountryOfOriginForSilinesOverview extends UzerpMigration
             LEFT JOIN so_product_lines spl ON spl.id = sl.productline_id
             LEFT JOIN so_product_lines_header sph ON sph.id = spl.productline_header_id
             LEFT JOIN countries ON countries.code = sph.country_of_origin;
-    VIEW;
+VIEW;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -154,7 +154,7 @@ final class AddCountryOfOriginForSilinesOverview extends UzerpMigration
             LEFT JOIN st_items i ON i.id = sl.stitem_id
             LEFT JOIN so_product_lines spl ON spl.id = sl.productline_id
             LEFT JOIN so_product_lines_header sph ON sph.id = spl.productline_header_id;
-    VIEW;
+VIEW;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
