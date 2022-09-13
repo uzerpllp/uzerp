@@ -13,6 +13,8 @@
 	{view_data attribute='product_group'}
 	{input type='hidden'  attribute='prod_group_id' }
 	{view_data attribute='tax_rate'}
+	{view_data attribute='country_of_origin'}
+	{view_data attribute='commodity_code'}
 	{view_data attribute='gl_account'}
 	{view_data attribute='gl_centre'}
 	{input type='hidden'  attribute='glcentre_id' }

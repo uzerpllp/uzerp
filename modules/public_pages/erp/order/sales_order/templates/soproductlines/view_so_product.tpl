@@ -14,6 +14,7 @@
 				{view_data attribute='product_group'}
 				{view_data attribute='uom_name'}
 				{view_data attribute="tax_rate"}
+				{view_data attribute='country_of_origin'}
 				{view_data attribute='commodity_code'}
 			</dl>
 		    <dl class="float-right" >

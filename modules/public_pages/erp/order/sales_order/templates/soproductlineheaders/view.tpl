@@ -11,7 +11,6 @@
 				{view_data attribute="description"}
 				{view_data attribute="stitem" label="Stock Item"}
 				{view_data attribute='ean' label="EAN"}
-				{view_data attribute='countrycode'}
 				{view_data attribute="product_group"}
 				{view_data attribute="uom_name"}
 				{view_data attribute="gl_account"}
@@ -19,6 +18,7 @@
 				{view_data attribute="start_date"}
 				{view_data attribute="end_date"}
 				{view_data attribute="tax_rate"}
+				{view_data attribute='countrycode' label='Country of Origin'}
 				{view_data attribute='commodity_code'}
 				{view_data attribute="not_despatchable" label="Hidden on Despatch Notes"}
 			{/with}
