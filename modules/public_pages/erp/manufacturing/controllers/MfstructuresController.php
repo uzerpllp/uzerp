@@ -519,8 +519,8 @@ class MfstructuresController extends PrintController
 		$errors = array();
 
 		//Check for circular refs
-		$structure =  MFStructureCollection::getCurrent($this->_data[$this->modeltype]['ststructure_id']);
-		if (self::testCircularRef($structure, $this->_data[$this->modeltype]['stitem_id'])) {
+		$structure_id = $this->_data[$this->modeltype]['ststructure_id'];
+		if (self::testCircularRef($structure_id, $this->_data[$this->modeltype]['stitem_id'])) {
 			$stitem = new STItem();
 			$stitem->load($this->_data[$this->modeltype]['ststructure_id']);
 			$errors[] = "{$stitem->item_code} is already referenced in a parent structure.";
