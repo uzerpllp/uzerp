@@ -31,7 +31,7 @@ class SordersController extends printController
      *
      * @return void
      */
-    public function index()
+    public function index($collection=null, $sh='', &$c_query=null)
     {
         $this->view->set('clickaction', 'view');
         $s_data = array();
@@ -357,7 +357,7 @@ class SordersController extends printController
         sendBack();
     }
 
-    public function delete()
+    public function delete($modelName=null)
     {
         $flash = Flash::Instance();
 
@@ -514,7 +514,7 @@ class SordersController extends printController
         $this->view->set('tasks', $this->getTaskList($sorder->project_id));
     }
 
-    public function save()
+    public function save($modelName=null, $dataIn=array(), &$errors=array())
     {
         if (! $this->checkParams($this->modeltype)) {
             sendBack();
