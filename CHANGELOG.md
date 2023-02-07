@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Removed
+- Browser based printing user setting
+
+### Fixed
+- Incorrect checking of circular reference when substituting item in structure
+
 ## [1.31.3] 2022-09-14
 
 ### Changed
