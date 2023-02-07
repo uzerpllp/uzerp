@@ -1501,18 +1501,6 @@ function remove_line_breaks($string)
 	
 }
 
-/*
- function systemError($errno, $errstr, $errfile='', $errline=null) {
- $db=DB::Instance();
- if (defined('SETUP') && !SETUP && $db->connected) {
- $errorhandler=ErrorHandler::Instance();
- $errorhandler->system_error($errno, $errstr, $errfile, $errline);
- } else {
- $flash=Flash::Instance();
- $flash->addError('System Error - '.$errno.' '.$errstr.' in '.$errfile.' line '.$errline);
- }
- }
- */
 function json_reply($data)
 {
 	

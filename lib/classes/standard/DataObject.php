@@ -3462,10 +3462,13 @@ class DataObject implements Iterator
         return (isset($this->hidden[$field]) && $this->hidden[$field] === 1);
     }
 
-    public function findAll()
-    {
-        $search = new SearchHandler($this);
-    }
+    /**
+     * NOT USED
+     */
+    //public function findAll()
+    //{
+    //    $search = new SearchHandler($this);
+    //}
 
     public function isHandled($field)
     {
