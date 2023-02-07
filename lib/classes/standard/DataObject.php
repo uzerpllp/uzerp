@@ -3905,6 +3905,15 @@ class DataObject implements Iterator
         return array_search($field, $this->defaultsNotAllowed);
     }
 
+    /**
+     * Return an associative array of key/value
+     * pairs to use with json_encode
+     * 
+     * TODO: Perhaps move this to a utility lib?
+     *
+     * @param array $array
+     * @return array
+     */
     public static function toJSONArray($array)
     {
         $output = array();
