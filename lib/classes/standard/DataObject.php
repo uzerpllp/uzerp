@@ -3905,7 +3905,7 @@ class DataObject implements Iterator
         return array_search($field, $this->defaultsNotAllowed);
     }
 
-    public function toJSONArray($array)
+    public static function toJSONArray($array)
     {
         $output = array();
 
