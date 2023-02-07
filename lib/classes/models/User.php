@@ -1,7 +1,7 @@
 <?php
 
 /**
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *	(c) 2023 uzERP LLP (support#uzerp.com). All rights reserved.
  *
  *	Released under GPLv3 license; see LICENSE.
  **/
@@ -143,7 +143,7 @@ class User extends DataObject
 		return $results;
 	}
 
-	public function load($clause, $override = false)
+	public function load($clause, $override=false, $return=false)
 	{
 		return parent::load($clause, true);
 	}
@@ -219,7 +219,7 @@ class User extends DataObject
 		return false;
 	}
 
-	function getCount()
+	function getCount($constraint='')
 	{
 		$db = &DB::Instance();
 
@@ -247,7 +247,7 @@ class User extends DataObject
 
 		$query = 'SELECT count(*) FROM '.$tablename;
 
-		if (count($cc) > 0) {
+		if (iterator_count($cc) > 0) {
 			$query .= ' WHERE '.$cc->__toString();
 		}
 

@@ -61,7 +61,7 @@ class Address extends DataObject
 		
 	}
 	
-	function delete($id = '', &$errors = array())
+	function delete($id = '', &$errors = array(), $archive = FALSE, $archive_table = null, $archive_schema = null)
 	{
 		if (!$this->isLoaded())
 		{
