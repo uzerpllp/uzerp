@@ -114,16 +114,14 @@ class SharedPreferences extends ModulePreferences
 			);
 		}
 
-// pdf-preview/pdf-browser-printing
+// pdf-preview
 		if ($getCurrentValues)
 		{
 			$pdf_preview			= $userPreferences->getPreferenceValue('pdf-preview', 'shared');
-			$pdf_browser_printing	= $userPreferences->getPreferenceValue('pdf-browser-printing', 'shared');
 		}
 		else
 		{
 			$pdf_preview = 'off';
-			$pdf_browser_printing = 'off';
 		}
 
 		$this->registerPreference(
@@ -134,17 +132,6 @@ class SharedPreferences extends ModulePreferences
 				'status'		=> (empty($pdf_preview) || $pdf_preview == 'off') ? 'off' : 'on',
 				'default'		=> 'off',
 				'position'		=> 6
-			)
-		);
-
-		$this->registerPreference(
-			array(
-				'name'			=> 'pdf-browser-printing',
-				'display_name'	=> 'Enable browser PDF printing',
-				'type'			=> 'checkbox',
-				'status'		=> (empty($pdf_browser_printing) || $pdf_browser_printing == 'off') ? 'off' : 'on',
-				'default'		=> 'off',
-				'position'		=> 7
 			)
 		);
 

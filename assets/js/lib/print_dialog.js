@@ -70,42 +70,34 @@ function uz_print_dialog(args) {
 	// hit the specified url
 	// we're not using uz_ajax here, so aren't protected against logouts
 	
-	if ($_GET.printaction == 'quick_output')
-	{
-		uz_print_dialog_generate($print_dialog, options.url, options.data);
-	}
-	else
-	{
-	
-		$.ajax({
-			type		: 'POST',
-			url			: options.url + '&ajax=',
-			data		: options.data,
-			dataType	: "html",
-			success		: function (data) {
-				// ATTN: *sigh* as we're dealing with html here we cannot return out loverly JSON errors, instead
-				// if the first 7 characters are "FAILURE", anything after the 8th character is the errors
-				if (data.substr(0, 7) === "FAILURE") {
-					var error_text;
-					if (data.substr(8) !== '') {
-						error_text = data.substr(8);
-					} else {
-						error_text = "An error occured";
-					}
-					$('.print_wait', $print_dialog).hide();
-					$('.print_failure', $print_dialog).show().children('.wait_message').html(error_text);
+	$.ajax({
+		type		: 'POST',
+		url			: options.url + '&ajax=',
+		data		: options.data,
+		dataType	: "html",
+		success		: function (data) {
+			// ATTN: *sigh* as we're dealing with html here we cannot return out loverly JSON errors, instead
+			// if the first 7 characters are "FAILURE", anything after the 8th character is the errors
+			if (data.substr(0, 7) === "FAILURE") {
+				var error_text;
+				if (data.substr(8) !== '') {
+					error_text = data.substr(8);
 				} else {
-					$('.print_wait', $print_dialog).hide();
-					$print_dialog.append(data);
-					$('#printtype, #printaction', $print_dialog).trigger('change');
-					
-					bind_print_dialog_buttons($print_dialog);
-					
+					error_text = "An error occured";
 				}
+				$('.print_wait', $print_dialog).hide();
+				$('.print_failure', $print_dialog).show().children('.wait_message').html(error_text);
+			} else {
+				$('.print_wait', $print_dialog).hide();
+				$print_dialog.append(data);
+				$('#printtype, #printaction', $print_dialog).trigger('change');
+				
+				bind_print_dialog_buttons($print_dialog);
+				
 			}
-		});
-	}
-	
+		}
+	});
+
 }
 
 function uz_print_dialog_generate($print_dialog, url, data) {

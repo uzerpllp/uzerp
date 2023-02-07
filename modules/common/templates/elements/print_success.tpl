@@ -5,10 +5,6 @@
  **}
 {* $Revision: 1.7 $ *}
 
-{if $options.pdf_browser_printing===TRUE}
-	<iframe style="display: none;" src="{$options.location}" id="PDFtoPrint"></iframe>
-{/if}
-
 {if $options.pdf_preview===TRUE}
 	<ul class="pdf-preview" data-build-preview-link="{$option.pdf_preview_link}" data-pdf-location="{$options.paths.temp_file_path}" >
 		<li>Building PDF Preview...</li>

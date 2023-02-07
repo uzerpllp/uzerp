@@ -62,9 +62,6 @@
 					<li>
 						<label for="printaction">Action:</label>
 						<select id="printaction" name="print[printaction]" >
-							{if $options.pdf_browser_printing === TRUE }
-								<option value="quick_output">Quick Output</a>
-							{/if}
 							{html_options options=$options.print_action selected=$options.default_print_action}
 						</select>
 					</li>

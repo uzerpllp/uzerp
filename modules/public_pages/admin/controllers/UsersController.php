@@ -589,7 +589,6 @@ class UsersController extends printController
 
         $shared_prefs['shared']['items_per_page'] = $prefs->getPreferenceValue('items-per-page', 'shared');
         $shared_prefs['shared']['pdf_preview'] = $prefs->getPreferenceValue('pdf-preview', 'shared');
-        $shared_prefs['shared']['pdf_browser-printing'] = $prefs->getPreferenceValue('pdf-browser-printing', 'shared');
         $shared_prefs['shared']['default_page'] = $prefs->getPreferenceValue('default_page', 'shared');
 
         $default_printer = $prefs->getPreferenceValue('default_printer', 'shared');

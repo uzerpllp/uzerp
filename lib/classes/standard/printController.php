@@ -1436,7 +1436,6 @@ class printController extends Controller
 
         // if we're one of the appropriate actions...
         if (in_array($print_action, array(
-            'quick_output',
             'save'
         ))) {
 
@@ -1485,31 +1484,6 @@ class printController extends Controller
                 return $this->build_print_dialog_response(TRUE, array(
                     'message' => $message
                 ));
-
-                break;
-
-            case 'quick_output':
-
-                $parts = array();
-
-                if ($options['pdf_browser_printing'] === TRUE) {
-                    $parts[1] = '<strong>print</strong> using the button below, alternatively to ';
-                    $parts[2] = 'view, save and email';
-                } else {
-                    $parts[1] = '';
-                    $parts[2] = 'view, save, email and print';
-                }
-
-                $message = '<p>You can %s<strong>%s</strong> using the <strong>open</strong> button below.</p>';
-
-                $message = sprintf($message, $parts[1], $parts[2]);
-
-                return $this->build_print_dialog_response(TRUE, array(
-                    'action' => strtolower($params['printaction']),
-                    'location' => $paths['user_http_path'],
-                    'filename' => $paths['filename'],
-                    'message' => $message
-                ), $params);
 
                 break;
 
@@ -2127,15 +2101,6 @@ class printController extends Controller
             }
 
             if (in_array($params['printaction'], array(
-                'quick_output',
-                'view',
-                'save'
-            )) && $options['pdf_browser_printing'] === TRUE && ! isset($params['no_print'])) {
-                $options['buttons']['print'] = TRUE;
-            }
-
-            if (in_array($params['printaction'], array(
-                'quick_output',
                 'view',
                 'save'
             ))) {
@@ -2317,25 +2282,20 @@ class printController extends Controller
     {
         $prefs = array(
             'pdf_preview' => FALSE,
-            'pdf_browser_printing' => FALSE
         );
 
-        // the success page structure will depend on pdf-preview and pdf-browser-printing
+        // the success page structure will depend on pdf-preview
         // being enabled, go fetch these values from the users preferences
 
         $userPreferences = UserPreferences::instance();
         $pdf_preview = $userPreferences->getPreferenceValue('pdf-preview', 'shared');
-        $pdf_browser_printing = $userPreferences->getPreferenceValue('pdf-browser-printing', 'shared');
 
-        // set pdf_preview + pdf_browser_printing states
+        // set pdf_preview state
 
         if ((! empty($pdf_preview) && $pdf_preview == 'on') && HAS_CONVERT === TRUE) {
             $prefs['pdf_preview'] = TRUE;
         }
 
-        if (! empty($pdf_browser_printing) && $pdf_browser_printing == 'on') {
-            $prefs['pdf_browser_printing'] = TRUE;
-        }
 
         if ($prefs['pdf_preview'] === TRUE) {
 

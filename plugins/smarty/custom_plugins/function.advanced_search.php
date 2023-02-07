@@ -25,14 +25,6 @@ function smarty_function_advanced_search($params, &$smarty) {
 		$data['action'] = $params['action'];
 	}
 	
-	$userPreferences 		= UserPreferences::instance();
-	$pdf_browser_printing	= $userPreferences->getPreferenceValue('pdf-browser-printing', 'shared');
-	
-	if (!empty($pdf_browser_printing) && $pdf_browser_printing == 'on')
-	{
-		$data['additional_data']['printaction'] = 'quick_output';
-	}
-	
 	// fetch smarty plugin template
 	return smarty_plugin_template($smarty, $data, 'function.advanced_search');
 

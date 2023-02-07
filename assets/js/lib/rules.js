@@ -547,11 +547,6 @@ $(document).ready(function () {
 				$_GET.printaction	= 'PrintCollection';
 				$_GET.action		= 'printDialog';
 			}
-			else
-			{
-				// Quick output - bypass Print Dialog popup
-				form_data += "&ajax_print=&print[printtype]=pdf&print[printaction]=quick_output"
-			}
 
 			var link = '/?' + makeQueryString($_GET) + '&ajax=';
 			uz_print_dialog({
@@ -570,12 +565,7 @@ $(document).ready(function () {
 				$_GET.printaction	= $_GET.action;
 				$_GET.action		= 'printDialog';
 			}
-			else
-			{
-				// Quick output - bypass Print Dialog popup
-				form_data += "&ajax_print=&print[printtype]=pdf&print[printaction]=quick_output"
-			}
-			
+
 			var link = '/?' + makeQueryString($_GET);
 						
 			uz_print_dialog({
