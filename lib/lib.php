@@ -638,15 +638,22 @@ function setRefererPage()
 // define the autoload function
 // we have to do this as smarty 3 has it's own autoloader that would superceed this
 
-spl_autoload_register('__autoload');
 
-function __autoload($var)
+/**
+ * Define the uzERP autoload function
+ *
+ * @param string $class_name
+ * @return void
+ */
+function uz_autoload($class_name)
 {
 	
 	$autoloader = AutoLoader::Instance();
-	$autoloader->load($var);
+	$autoloader->load($class_name);
 	
 }
+spl_autoload_register('uz_autoload');
+
 
 function with(&$params, &$smarty)
 {
