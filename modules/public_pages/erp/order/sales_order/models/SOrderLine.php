@@ -153,7 +153,7 @@ class SOrderLine extends SPOrderLine {
 
 	}
 
-	public static function Factory (SOrder $header, $line_data, &$errors)
+	public static function lineFactory (SOrder $header, $line_data, &$errors)
 	{
 
 		if (empty($line_data['order_id']))

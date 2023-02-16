@@ -217,7 +217,7 @@ class SorderlinesController extends printController
                     $data['glaccount_centre_id'] = NULL;
                 }
 
-                $sorderline = SOrderLine::Factory($sorder, $data, $errors);
+                $sorderline = SOrderLine::lineFactory($sorder, $data, $errors);
 
                 if ($sorder->due_date < $sorderline->due_delivery_date) {
                     $sorder->due_date = $sorderline->due_delivery_date;

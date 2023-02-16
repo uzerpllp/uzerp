@@ -1308,7 +1308,7 @@ class SordersController extends printController
 
         if ($result) {
             foreach ($lines_data as $line_data) {
-                $orderline = SOrderLine::Factory($order, $line_data, $errors);
+                $orderline = SOrderLine::lineFactory($order, $line_data, $errors);
 
                 if ($orderline) {
                     $result = $orderline->save();
@@ -2466,7 +2466,7 @@ class SordersController extends printController
                     $data['base_net_value'] = round(bcdiv($data['net_value'], $data['rate'], 4), 2);
                     $data['twin_net_value'] = round(bcmul($data['base_net_value'], $data['twin_rate'], 4), 2);
                     $data['del_qty'] = 0;
-                    $neworderline = SOrderLine::Factory($sorder, $data, $errors);
+                    $neworderline = SOrderLine::lineFactory($sorder, $data, $errors);
                     if (count($errors) > 0 || ! $neworderline || ! $neworderline->save()) {
                         $errors[] = 'line ' . $value['line_number'] . ' : Failed to back order item';
                     } else {
@@ -2651,7 +2651,7 @@ class SordersController extends printController
                     $data['twin_rate'] = $sorderline->twin_rate;
                     $data['base_net_value'] = round(bcdiv($data['net_value'], $data['rate'], 4), 2);
                     $data['twin_net_value'] = round(bcmul($data['base_net_value'], $data['twin_rate'], 4), 2);
-                    $neworderline = SOrderLine::Factory($sorder, $data, $errors);
+                    $neworderline = SOrderLine::lineFactory($sorder, $data, $errors);
                     if (count($errors) > 0 || ! $neworderline || ! $neworderline->save()) {
                         $errors[] = 'Failed to unpick required amount';
                     } else {
