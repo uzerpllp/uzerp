@@ -348,7 +348,7 @@ class SordersController extends printController
                 default:
                     $doctype = 'sales order';
             }
-            $flash->addMessage("New ${doctype} saved");
+            $flash->addMessage("New {$doctype} saved");
             sendTo($this->name, 'view', $this->_modules, array(
                 $order->idField => $result['internal_id']
             ));
@@ -429,7 +429,7 @@ class SordersController extends printController
                 $message_type = strtolower($sorder->getFormatted('type'));
             }
 
-            $flash->addError("Cannot add new ${message_type}, customer on stop");
+            $flash->addError("Cannot add new {$message_type}, customer on stop");
             sendBack();
         }
 

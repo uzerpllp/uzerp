@@ -185,7 +185,7 @@ class GltransactionheadersController extends printController
 			$this->_data[$this->modeltype]['year'] = $this->_data['year'];
 			$this->_data[$this->modeltype]['accrual_period_id'] = null;
 			$this->_data[$this->modeltype]['accrual'] = false;
-			$this->_data[$this->modeltype]['reference'] = "Year-end Closing balance adjustment as at ${ref_date}";
+			$this->_data[$this->modeltype]['reference'] = "Year-end Closing balance adjustment as at {$ref_date}";
 		} else {
 			$period = $period->loadPeriod($this->_data[$this->modeltype]['transaction_date']);
 		}

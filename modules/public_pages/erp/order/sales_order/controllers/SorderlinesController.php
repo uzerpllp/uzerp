@@ -503,7 +503,7 @@ class SorderlinesController extends printController
         $order = DataObjectFactory::Factory('SOrder');
         $order->load($this->_data['order_id']);
         $order_type = $order->getFormatted('type');
-        $this->view->set('page_title', "View ${order_type} Lines");
+        $this->view->set('page_title', "View {$order_type} Lines");
     }
 
     protected function getPageName($base = null, $action = null)

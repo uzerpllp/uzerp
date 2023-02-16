@@ -334,7 +334,7 @@ class DataObject implements Iterator
                 $this->orderoverride = TRUE;
             } else {
                 $fields = implode(', ', array_diff($sort_fields, array_keys($this->_fields)));
-                throw new Exception("field(s) '${fields}' not found in ${model} model display fields");
+                throw new Exception("field(s) '{$fields}' not found in {$model} model display fields");
             }
         }
     }
