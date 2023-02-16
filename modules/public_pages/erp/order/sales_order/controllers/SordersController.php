@@ -2996,7 +2996,7 @@ class SordersController extends printController
         if (count($errors) == 0) {
             if ($invoice->isLoaded()) {
                 $invoice_trans = DataObjectFactory::Factory('SLTransaction');
-                $invoice_trans->identifierField = gross_value;
+                $invoice_trans->identifierField = 'gross_value';
 
                 $cc = new ConstraintChain();
                 $cc->add(new Constraint('transaction_type', '=', 'I'));
