@@ -768,11 +768,6 @@ class AccessObject {
 		
 	}
 	
-//	public function getOwner($pid)
-//	{
-//		$permission = DataObjectFactory::Factory('Permission');
-//		return $permission->getParent($pid);
-//	}
 
 	public function getParentPermission($pid, $modules, $controller = '', $action = '')
 	{

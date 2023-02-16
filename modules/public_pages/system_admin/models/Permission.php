@@ -88,28 +88,6 @@ class Permission extends DataObject {
 		
 	}
 
-	function getParent($pid)
-	{
-		
-		$this->load($pid);
-		
-		if ($this->isLoaded() && !is_null($this->parent_id))
-		{
-			
-//			$permission = new Permission();
-			$permission = DataObjectFactory::Factory('Permission');
-			$permission->load($this->parent_id);
-			
-			if ($permission)
-			{
-				return $permission;
-			}
-			
-		}
-		
-		return '';
-		
-	}
 	
 	function getPermissionsAsTree($id = NULL, $parent, $sitetree, $types = NULL, $name = NULL)
 	{
