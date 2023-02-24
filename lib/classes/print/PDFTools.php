@@ -24,7 +24,7 @@ class PDFTools
      * @param string $file, the file to append
      * @param string $output, the file to append to
      */
-    public function append($file, $output)
+    public static function append($file, $output)
     {
 
         if (!file_exists($file)) {
