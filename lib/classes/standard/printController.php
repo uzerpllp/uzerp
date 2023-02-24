@@ -1037,6 +1037,7 @@ class printController extends Controller
     {
         $printers = array();
         $ipp = new CupsPrintIPP();
+        self::setPrinterLog($ipp);
 
         if ($ipp->getPrinters()) {
 
