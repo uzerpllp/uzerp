@@ -29,6 +29,7 @@ class HasRole extends DataObject
 
 	function getRoleID($username)
 	{
+		if (empty($username)) return [];
 // Get the roles for the user company id
 // Could simplify this by putting usercompanyid on hasrole?
 		$role = DataObjectFactory::Factory('Role');
@@ -48,6 +49,8 @@ class HasRole extends DataObject
 
 	function getUsers($roleid)
 	{
+		if (empty($roleid)) return [];
+
 		$cc = new ConstraintChain();
 
 		if (is_array($roleid))
