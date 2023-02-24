@@ -51,7 +51,7 @@ class Audit extends DataObject
         return $audit;
     }
 
-    public function update($id, $fields, $values)
+    public function updateHeader()
     {
         if (isLoggedIn()) {
             if (isset($_SESSION['customer_id'])) {
