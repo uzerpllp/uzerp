@@ -164,6 +164,6 @@ if (AUDIT || get_config('AUDIT_LOGIN')) {
 
     $audit = Audit::Instance();
     $audit->write(print_r($system->controller->_data, TRUE) . print_r($system->flash, TRUE), TRUE, (microtime(TRUE) - START_TIME));
-    $audit->update();
+    $audit->updateHeader();
 }
 ?>

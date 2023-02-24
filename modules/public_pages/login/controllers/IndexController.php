@@ -469,7 +469,7 @@ class IndexController extends Controller
         if (AUDIT || get_config('AUDIT_LOGIN')) {
             $audit = Audit::Instance();
             $audit->write('logout', TRUE, (microtime(TRUE) - START_TIME));
-            $audit->update();
+            $audit->updateHeader();
         }
 
         session_destroy();
