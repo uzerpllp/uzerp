@@ -450,12 +450,12 @@ class system
             $currency->loadBy('currency', EGS_CURRENCY);
 
             if ($currency) {
-                define('EGS_CURRENCY_SYMBOL', utf8_decode($currency->symbol));
+                define('EGS_CURRENCY_SYMBOL', mb_convert_encoding($currency->symbol, 'UTF-8'));
             }
         }
 
         if (! defined('EGS_CURRENCY_SYMBOL')) {
-            define('EGS_CURRENCY_SYMBOL', utf8_decode('£'));
+            define('EGS_CURRENCY_SYMBOL', mb_convert_encoding('£', 'UTF-8'));
         }
 
         /**

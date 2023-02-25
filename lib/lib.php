@@ -681,13 +681,6 @@ function uzh($string, $quote_style = ENT_NOQUOTES) {
 	
 	static $cache;
 	
-	//	if(method_exists($string,'__toString')) {
-	//		$string = $string->__toString();
-	//	}
-	//	if(utf8_encode(utf8_decode($string)) != $string) {
-	//		$string = utf8_encode($string);
-	//	}
-	
 	if (!isset($cache[$string]))
 	{
 		$cache[$string] = nl2br(htmlentities($string, $quote_style, 'UTF-8'));
