@@ -2,15 +2,6 @@
 /**
  * Making Tax Digital for VAT
  * Oauth2 client and API Access
- * 
- * @author uzERP LLP and Steve Blamey <sblamey@uzerp.com>
- * @license GPLv3 or later
- * @copyright (c) 2020 uzERP LLP (support#uzerp.com). All rights reserved.
- *
- * uzERP is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
  */
 
 use \League\OAuth2\Client\Provider\GenericProvider;
@@ -18,14 +9,15 @@ use \League\OAuth2\Client\Token;
 
 class MTD {
 
-    private $provider;
+    public $provider;
     private $accessToken;
     private $base_url;
-    private $fraud_protection_headers;
+    public $fraud_protection_headers;
     private $vrn;
     private $config_key;
     private $client_fp_info;
     private $logger;
+    private $api_part;
     
     /**
      * MTD Class Constructor
@@ -106,7 +98,7 @@ class MTD {
 
         // Gov-Client-Browser-Plugins
         // Modern browsers return an empty list
-        $browser_plugins = get_object_vars($this->client_fp_info->plugins);
+        $browser_plugins = $this->client_fp_info->plugins;
         if (count($browser_plugins) > 0) {
             $plugin_names = [];
             foreach ($browser_plugins as $plugin) {
