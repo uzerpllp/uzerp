@@ -43,7 +43,7 @@ class PartyAddress extends DataObject
 		return $this->fulladdress;
 	}
 	
-	function delete($id = '', &$errors = array())
+	function delete($id = null, &$errors = [], $archive = false, $archive_table = null, $archive_schema = null)
 	{
 		
 		if (empty($id))
@@ -82,7 +82,7 @@ class PartyAddress extends DataObject
 		
 	}
 
-	function save()
+	function save($debug = false)
 	{
 		
 		$partyaddress = DataObjectFactory::Factory('PartyAddress');

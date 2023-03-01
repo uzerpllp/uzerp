@@ -57,7 +57,7 @@ class Contactmethod extends DataObject
 	
 	}
 	
-	function delete($id = '', &$errors = array())
+	function delete($id = null, &$errors = [], $archive = false, $archive_table = null, $archive_schema = null)
 	{
 		if (!$this->isLoaded())
 		{

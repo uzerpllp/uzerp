@@ -38,7 +38,7 @@ class PartyContactMethod extends DataObject
  		$this->getField('name')->setDefault('MAIN');
 	}
 
-	function delete($id = '', &$errors = array())
+	function delete($id = null, &$errors = [], $archive = false, $archive_table = null, $archive_schema = null)
 	{
 		
 		if (empty($id))
@@ -77,7 +77,7 @@ class PartyContactMethod extends DataObject
 		
 	}
 		
-	function save()
+	function save($debug = false)
 	{
 		
 		if ($this->contactmethod_id!='')
