@@ -1,16 +1,7 @@
 <?php
 
-/**
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
- *
- *	Released under GPLv3 license; see LICENSE.
- **/
-
 class HrController extends printController
 {
-
-	protected $version='$Revision: 1.1 $';
-
 	public function __construct($module = null, $action = null) {
 
 	    parent::__construct($module, $action);
@@ -18,7 +9,8 @@ class HrController extends printController
 	    $policy = DataObjectFactory::Factory('SystemObjectPolicy');
 	    if ($policy->getCount() == 0)
 	    {
-	        throw new Exception("HR Expenses and Holiday Requests require System Policies to be defined.");
+	        $flash = Flash::Instance();
+			$flash->addError('HR Expenses and Holiday Requests require System Policies to be defined.');
 	    }
 	}
 
