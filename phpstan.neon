@@ -1,0 +1,13 @@
+parameters:
+	paths:
+		- lib
+		- modules
+		- plugins
+	bootstrapFiles:
+		- utils/dev/loader.php
+	level: 0
+
+	ignoreErrors:
+		-
+			message: '#Undefined variable: \$this#'
+			path: tests/Pest.php

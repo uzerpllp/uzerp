@@ -1,0 +1,9 @@
+
+repos:
+- repo: local
+  hooks:
+    - id: phpstan
+      name: Check PHP coding standards
+      entry: podman exec -it uzerp-app-dev vendor/bin/phpstan analyse --autoload-file utils/dev/loader.php
+      language: system
+      types: [php]

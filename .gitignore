@@ -45,3 +45,6 @@ apc.php
 
 # FOP PDF
 /PDF/
+
+# Pest/php-unit
+.phpunit.result.cache
