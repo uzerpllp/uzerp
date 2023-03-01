@@ -108,7 +108,7 @@ svg[hidden] {
   margin: 0.25em;
   padding: 1em;
   background: transparent;
-  color: var(--text-color-1);
+  color: #fff;
   font-weight: bold;
   text-decoration: none;
   font-family: inherit;
@@ -117,12 +117,12 @@ svg[hidden] {
   text-shadow: none;
 }
 
-.clicky-menu a:hover,
+.clicky-menu li.nav a:hover,
 .clicky-menu button:hover {
   background: var(--background-2);
 }
 
-.clicky-menu a:hover {
+.clicky-menu li.nav a:hover {
   color: var(--brand-color) !important;
   transition: background ease-in-out 0.25s;
   border-radius: 3px;
@@ -317,10 +317,16 @@ ul[aria-hidden=false].panel li * {
 }
 
 .clicky-menu button[aria-expanded=true] {
-  background: var(--background-2);
+  background: var(--light-brand-color);
 }
 
+.clicky-menu > li#nav-user-home > a:hover,
 .clicky-menu button:hover {
-  background: var(--background-2);
+  background: var(--light-brand-color);
   transition: background ease-in-out 0.2s;
+  color: #fff;
+}
+
+svg symbol#arrow polyline {
+  stroke:#fff;
 }
