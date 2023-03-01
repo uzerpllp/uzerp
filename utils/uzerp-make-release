@@ -73,7 +73,7 @@ make_release()
          if [ "${USE_DEV_REQ}" == "NO" ]; then
             # Install uzERP dependencies using composer
             install_composer
-            php $RELEASE_ROOT/composer.phar install
+            php $RELEASE_ROOT/composer.phar install --no-dev
          else
             echo "Copying PHP depndencies from local git repository directory"
             cp -r $REPO/vendor $RELEASE_WORKDIR
@@ -92,6 +92,7 @@ make_release()
          rm package.json
          rm composer.json
          rm -rf .github
+         rm -rf tests
 
          # Create the release archive
          tar --exclude-vcs-ignores --exclude-vcs -zcf $RELEASE_ROOT/${RELEASE_FILE} \
