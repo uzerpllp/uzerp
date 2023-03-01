@@ -1,20 +1,12 @@
 <?php
-/**
- *	@author uzERP LLP and Steve Blamey <sblamey@uzerp.com>
- *	@license GPLv3 or later
- *	@copyright (c) 2020 uzERP LLP (support#uzerp.com). All rights reserved.
- *
- *	uzERP is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	any later version.
- */
+
 class VatController extends printController
 {
 
-	protected $version = '$Revision: 1.30 $';
 	protected $_templateobject;
 	protected $titles;
+	public $view;
+	public $_modules;
 	
 	public function __construct($module = null, $action = null)
 	{
@@ -28,7 +20,7 @@ class VatController extends printController
 
 	}
 	
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$errors = array();
 		$s_data = array();
@@ -190,10 +182,8 @@ class VatController extends printController
 			$this->view->set('value', un_fix_date($invoice->invoice_date));
 			$this->setTemplateName('text_inner');
 		}
-		else
-		{
-			return $invoice->invoice_date;
-		}
+
+		return $invoice->invoice_date;
 	}
 
 	/**
@@ -698,7 +688,7 @@ class VatController extends printController
 		parent::index($collection, $sh);
 
 		$this->view->set('adjustments', $collection);
-		$this->view->set('page_title',"Adjustments to {$s_data[year]}/{$s_data[tax_period]} VAT Return");
+		$this->view->set('page_title',"Adjustments to {$s_data['year']}/{$s_data['tax_period']} VAT Return");
 		
 		$sidebar = new SidebarController($this->view);
 
@@ -715,7 +705,7 @@ class VatController extends printController
 						 ,'controller'=>$this->name
 						 ,'action'=>'view'
 						 ,'id' => $return->id
-			], 'tag'=>"View {$s_data[year]}/{$s_data[tax_period]} VAT Return"
+			], 'tag'=>"View {$s_data['year']}/{$s_data['tax_period']} VAT Return"
 		];
 
 		$sidebar->addList('VAT Returns', $returns_sidebar);
@@ -772,7 +762,7 @@ class VatController extends printController
 		}
 
 		$this->view->set('vat_return', $return->id);
-		$this->view->set('page_title',"Make adjustment to {$s_data[year]}/{$s_data[tax_period]} VAT Return");
+		$this->view->set('page_title',"Make adjustment to {$s_data['year']}/{$s_data['tax_period']} VAT Return");
 
 	}
 
