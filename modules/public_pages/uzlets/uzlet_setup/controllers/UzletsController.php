@@ -1,14 +1,6 @@
 <?php
 
-/** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **/
-
-class UzletsController extends PrintController {
-
-	protected $version = '$Revision: 1.4 $';
+class UzletsController extends printController {
 
 	protected $_templateobject;
 
@@ -22,7 +14,7 @@ class UzletsController extends PrintController {
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query=null)
 	{
 		
 		$errors = array();
@@ -100,7 +92,7 @@ class UzletsController extends PrintController {
 				
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = array(), &$errors = array())
 	{
 		$flash = Flash::Instance();
 		
@@ -183,8 +175,9 @@ class UzletsController extends PrintController {
 		{
 			$flash->addErrors($errors);
 			sendBack();
-			
 		}
+
+		return true;
 	}
 		
 	protected function getPageName($base = null, $action = null)
