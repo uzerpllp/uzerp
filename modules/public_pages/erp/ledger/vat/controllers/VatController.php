@@ -3,10 +3,7 @@
 class VatController extends printController
 {
 
-	protected $_templateobject;
 	protected $titles;
-	public $view;
-	public $_modules;
 	
 	public function __construct($module = null, $action = null)
 	{
