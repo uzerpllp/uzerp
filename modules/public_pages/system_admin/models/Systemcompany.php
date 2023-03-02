@@ -1,14 +1,6 @@
 <?php
 
-/** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **/
-
 class Systemcompany extends DataObject {
-
-	protected $version = '$Revision: 1.20 $';
 	
 	protected $defaultDisplayFields = array('company'=>'Company'
 										   ,'access_enabled'=>'Access'
@@ -45,7 +37,7 @@ class Systemcompany extends DataObject {
 		$this->getField('access_enabled')->setDefault('FULL');
 	}
 
-	public function publish (&$errors)
+	public function publish (&$errors = [])
 	{
 		$name = "abc";
 		
@@ -313,8 +305,6 @@ class Systemcompany extends DataObject {
 		$cc = new ConstraintChain();
 		
 		$cc->add(new Constraint('company_id', '=', $this->company_id));
-		
-		$people->getCurrent($cc1);
 		
 		return $people->getAll($cc, TRUE);
 		
