@@ -1,27 +1,17 @@
 <?php
 
-/**
- *  Controller Class
- *
- *  @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
- *  @license GPLv3 or later
- *  @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
- *
- *  uzERP is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- */
 abstract class Controller
 {
 
-    protected $version = '$Revision: 1.120 $';
-    private $_action;
     protected $_uses = array();
     public static $accessControlled = false;
     public $_data = array();
     public $_templateName;
     public $modeltype;
+    public $view;
+    protected $pid;
+    protected $module;
+    protected $_modules;
     protected $saved_models = array();
     protected $saved_model = false;
     protected $relatedFields;
@@ -30,6 +20,8 @@ abstract class Controller
     protected $name;
     protected $context = array();
     protected $_templateobject;
+    protected $_injector;
+    private $_action;
 
     /*
      * @protected array[] List of actions that are available via permissions
@@ -88,12 +80,6 @@ abstract class Controller
             }
         } else {
             $this->_modules[$mod_text] = $module;
-        }
-
-        if (! empty($this->_modules) && is_array($this->_modules)) {
-            foreach ($this->_modules as $mod) {
-                $this->_modules_string .= '/' . $mod;
-            }
         }
     }
 
@@ -155,8 +141,6 @@ abstract class Controller
     public function getTemplateName($action, $mustexist = true)
     {
         debug('Controller(' . $this->name . ')::getTemplateName Looking for template ' . $action);
-
-        $module = $this->_modules_string;
 
         $action = strtolower($action);
 
@@ -1117,7 +1101,7 @@ abstract class Controller
     protected function viewRelated($name)
     {
         if (empty($this->modeltype)) {
-            $system = System::Instance();
+            $system = system::Instance();
             $this->dataError('Unable to action request - check the registration of the ' . $system->modules['module'] . '  module');
             sendBack();
         }
@@ -1554,7 +1538,7 @@ abstract class Controller
                 return array();
             }
         }
-        $field_options = new fieldOptions();
+        $field_options = new FieldOptions();
         if (isset($this->_data['autocomplete'])) {
             $field_options->_autocomplete = true;
             $field_options->_autocomplete_value = $this->_data['id'];
@@ -1657,11 +1641,6 @@ abstract class Controller
         unset($data['id']);
         unset($data['pid']);
         return $data;
-    }
-
-    public function version()
-    {
-        return $this->version;
     }
 
     protected function returnJSONResponse($status, $extra = array())
