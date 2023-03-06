@@ -11,6 +11,7 @@
 			{input type='hidden' attribute='id'}
 			{input type='hidden' attribute='type'}
 			{input type='hidden' attribute='parent_id'}
+			{input type='hidden' attribute='display_in_sidebar'}
 			<ul>
 				<li>
 					<label>Permission</label>

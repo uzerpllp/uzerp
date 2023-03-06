@@ -22,7 +22,7 @@ class PermissionsController extends Controller {
 		
 	}
 
-	public function index()
+	public function index($collection = null, $sh = null, &$c_query = null)
 	{
 		
 		$permissions	= new PermissionCollection($this->_templateobject);
@@ -141,7 +141,7 @@ class PermissionsController extends Controller {
 		
 	}
 	
-	public function delete()
+	public function delete($modelName = null)
 	{
 		
 		// we're echoing JSON, so lets tell the browser
@@ -152,7 +152,7 @@ class PermissionsController extends Controller {
 		// get the id from data
 		if (is_ajax())
 		{
-			$id = (!empty($this->_data['id']) ? $this->_data['id'] : $_id);
+			$id = (!empty($this->_data['id']) ? $this->_data['id'] : null);
 		}
 		
 		$permission = new Permission();
@@ -171,7 +171,7 @@ class PermissionsController extends Controller {
 		
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = array(), &$errors = array())
 	{
 		
 		$db = DB::Instance();
@@ -379,7 +379,7 @@ class PermissionsController extends Controller {
 			
 		}
 				
-		if (empty($eerrors))
+		if (empty($errors))
 		{		
 			
 			$db->CompleteTrans();
