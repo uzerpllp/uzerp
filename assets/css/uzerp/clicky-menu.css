@@ -246,7 +246,7 @@ svg[hidden] {
   .clicky-menu ul .nav-group-title,
   .clicky-menu ul span.not-allowed
    {
-    padding: .45em .5em .25em .5em;
+    padding: 5px;
     white-space: nowrap;
     font-size: 14px;
   }
@@ -325,8 +325,4 @@ ul[aria-hidden=false].panel li * {
   background: var(--light-brand-color);
   transition: background ease-in-out 0.2s;
   color: #fff;
-}
-
-svg symbol#arrow polyline {
-  stroke:#fff;
 }
