@@ -1,11 +1,4 @@
 <?php
- 
-/** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **/
-
 /**
  * Used for representing SearchFields that accept text from the user
  * The different types that can be set determine the placement of wildcards (%s) within the comparison
@@ -13,7 +6,6 @@
 
 class TextSearchField extends SearchField {
 
-	protected $version	= '$Revision: 1.9 $';
 	protected $value	= '';
 	
 	public function toHTML()
@@ -50,7 +42,10 @@ class TextSearchField extends SearchField {
 		
 		if (!empty($value))
 		{
-			
+			// Ensure input value is properly escaped
+			$db = DB::Instance();
+			$value = $db->qStr($value);
+
 			switch($this->type)
 			{
 				
