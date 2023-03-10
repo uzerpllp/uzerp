@@ -10,7 +10,8 @@
 		<h3>Sales Invoice Lines</h3>
 		<dt>Total Quantity</dt><dd>{$total_qty}</dt>
 		<dt>Total Value</dt><dd>{$total_value|string_format:'%.2f'}</dt>
-		<br>
+	</div>
+	<div id="view_page" class="clearfix">
 		{paging}
 		{data_table}
 			{heading_row}
