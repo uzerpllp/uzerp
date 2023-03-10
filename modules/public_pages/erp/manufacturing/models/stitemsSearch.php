@@ -128,7 +128,7 @@ class stitemsSearch extends BaseSearch {
 					// No break - we need to execute the code below too
 				case 'notobsolete':
 					if ((!isset($search_data['obsolete_date'])) ||
-					   (!$search_data['obsolete_date'])) {
+					   (!$search_data['obsolete_date']) || (! empty($search_data['clear']))) {
 						$search_data['obsolete_date'] = $default_date;
 					} else {
 						$default_date = $search_data['obsolete_date'];
