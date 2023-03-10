@@ -10,7 +10,14 @@ class TextSearchField extends SearchField {
 	
 	public function toHTML()
 	{
-		
+		$flash = Flash::Instance();
+		$errors = $flash->getMessages('errors');
+		if (array_key_exists($this->fieldname, $errors)) {
+			$class = 'field-error';
+			$error_message = $errors[$this->fieldname];
+		}
+		$error_str = "class=\"{$class}\" data-field-error=\"{$error_message}\"";
+
 		$value = $this->value;
 		
 		if (empty($this->value))
@@ -19,7 +26,7 @@ class TextSearchField extends SearchField {
 		}
 		
 		// change to facilitate list
-		$html = '<input type="text" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . uzh(stripslashes($value)) . '" /></li>';
+		$html = '<input '.$error_str.' type="text" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . uzh(stripslashes($value)) . '" /></li>';
 		
 		return $this->labelHTML() . $html;
 		
@@ -44,7 +51,7 @@ class TextSearchField extends SearchField {
 		{
 			// Ensure input value is properly escaped
 			$db = DB::Instance();
-			$value = $db->qStr($value);
+			$value = preg_quote($value);
 
 			switch($this->type)
 			{
