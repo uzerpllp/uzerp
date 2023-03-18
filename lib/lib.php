@@ -258,13 +258,7 @@ function setupLoggedInUser()
 				if (count($companies) > 0) {
 					define('EGS_COMPANY_ID', $companies[0]['usercompanyid']);
 				}
-				else
-				{
-					define('EGS_COMPANY_ID', $person->usercompanyid);
-				}
-				
 			}
-				
 		}
 		
 		$_SESSION['EGS_COMPANY_ID'] = EGS_COMPANY_ID;
@@ -325,7 +319,22 @@ function sendTo()
 		// Close dialog and refresh page or redirect?
 		if (isset($_GET['refresh']) || isset($_POST['refresh']))
 		{
-			echo returnJSONResponse(TRUE,array(''));
+			// Include any parameters passed from the caller
+			$url_params = [];
+			$model_name = ''; // subordinate fk model name
+			if (isset($system->controller->modeltype)) {
+				$model_name = strtolower($system->controller->modeltype);
+			}
+
+			foreach ($args[3] as $param => $val) {
+				if ($param == 'id') {
+					$url_params[$model_name.'_id'] = $val;
+				} else {
+					$url_params[$param] = $val;
+				}
+			}
+			
+			echo returnJSONResponse(true, ['refresh_params' => $url_params]);
 		}
 		else
 		{
@@ -334,7 +343,7 @@ function sendTo()
 						'action'=>$args[1],
 						'other'=>$args[3]
 						);
-			echo returnJSONResponse(TRUE,array('redirect'=>'/?'.setParamsString($link)));
+			echo returnJSONResponse(true, ['redirect' => '/?'.setParamsString($link)]);
 		}
 
 		exit;
@@ -793,10 +802,10 @@ function link_to($params, $data = FALSE, $html = TRUE) {
 	
 	if (empty($pid))
 	{
-		$pid = $ao->getPermission($module, $controller, $action);
+		$pid = $ao->getPermission($module, $controller, $action); /** @phpstan-ignore-line */
 	}
 
-	$allowed = $ao->hasPermission($module, $controller, $action, $pid);
+	$allowed = $ao->hasPermission($module, $controller, $action, $pid); /** @phpstan-ignore-line */
 	
 	$modules = array();
 
@@ -1947,6 +1956,27 @@ function addCookie ($name='', $value='', $expires=0, $replace=false)
 	}
 	// For PHP >= 7.3 use the new signature for setcookie
 	setcookie($name, $value, $cookieOptions);
+}
+
+/**
+ * Get javascript file path for a module
+ *
+ * @param String $module
+ * @return String file path
+ */
+function getModuleJS(String $module) {
+	global $system;
+
+	$jsdir = $system::findModulePath(PUBLIC_MODULES, $module, FALSE);
+	$jsdir .= DIRECTORY_SEPARATOR . 'resources/js';
+	if (!strpos($jsdir, 'user/modules')) {
+		$jsdir = str_replace(FILE_ROOT . 'modules/public_pages' , 'dist/js/modules', $jsdir);
+	} else {
+		// Serve user module js from module directory
+		$jsdir = str_replace(FILE_ROOT , '', $jsdir);
+	}
+	$paths = glob("{$jsdir}/*.js");
+	return DIRECTORY_SEPARATOR . $paths[0];
 }
 
 /* End of file lib.php */
