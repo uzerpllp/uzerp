@@ -1,13 +1,5 @@
 <?php
 
-/**
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
- *
- *	Released under GPLv3 license; see LICENSE.
- **/
-
-/* $Revision: 1.35 $ */
-
 function smarty_function_input($params, &$smarty)
 {
 
@@ -33,6 +25,14 @@ function smarty_function_input($params, &$smarty)
 		'display_tags'	=> !(isset($params['tags']) && $params['tags'] == 'none' || isset($with['tags']) && $with['tags'] == 'none'),
 		'display_label'	=> (!isset($params['nolabel']) || $params['nolabel'] === FALSE)
 	);
+
+	// If there was en error or failed validation, add a class and message to the input.
+	$flash = Flash::Instance();
+	$errors = $flash->getMessages('errors');
+	if (array_key_exists($attribute, $errors) || (isset($with) && array_key_exists(strtolower(get_class($with['model'])).'_'.$attribute, $errors))) {
+		$data['attrs']['class'][]	= 'field-error';
+		$data['attrs']['data-field-error'] = $errors[$attribute];
+	}
 
 	// append any data attributes passed in through params with the attrs array
 	$data['attrs'] += build_data_attributes($params);
@@ -195,7 +195,11 @@ function smarty_function_input($params, &$smarty)
 					&& $model->idField != $attribute
 					&& $params['force']!=true)
 				{
-					$data['attrs']['value'] = $controller_data[$attribute];
+					// If the value has been set above, don't clobber it!
+					if (empty($data['attrs']['value'])) {
+						$data['attrs']['value'] = $controller_data[$attribute];
+					}
+					
 					$params['type'] = 'hidden';
 				}
 
@@ -380,7 +384,7 @@ function smarty_function_input($params, &$smarty)
 
 	if (($field->not_null == 1 && $params['type'] !== 'checkbox' && empty($params['alias']) && !isset($params['readonly'])))
 	{
-		$data['label']['value']		.= ' *';
+		$data['label']['value']		.= ' <span class="req-field-indicator">*</span>';
 		$data['attrs']['class'][]	 = 'required';
 	}
 
