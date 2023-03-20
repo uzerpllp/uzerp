@@ -29,7 +29,7 @@ class PersonsController extends printController
         $this->uses($this->_templateobject);
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $s_data = array();
 
@@ -69,9 +69,6 @@ class PersonsController extends printController
 
         // Get the Person Object
         $person = $this->_uses[$this->modeltype];
-
-        // get company list
-        $companylist = $this->getOptions($this->_templateobject, 'company_id', 'getOptions', 'getOptions');
 
         // get the default/current selected company
         $company_id = '';
@@ -147,6 +144,13 @@ class PersonsController extends printController
         }
 
         $this->view->set('address', $address);
+
+        if (isset($this->_data['dialog'])) {
+            // Displaying a dialog to add a person, so url path for the
+            // modules JS file to the view.
+            $js = getModuleJS($this->module);
+            $this->view->set('modulejs', $js);
+        }
     }
 
     public function view()
@@ -544,32 +548,7 @@ class PersonsController extends printController
         parent::index($people, $sh);
     }
 
-    public function publish()
-    {
-        $flash = Flash::Instance();
-
-        $errors = array();
-
-        if ($this->checkParams('id')) {
-            $person = $this->_templateobject;
-
-            $person->load($this->_data['id']);
-
-            if (Publish::addUser($person, $errors)) {
-                $flash->addMessage($person->firstname . ' ' . $person->surname . ' successfully published');
-            } else {
-                $flash->addError('Failed to publish ' . $person->firstname . ' ' . $person->surname);
-            }
-        }
-
-        if (count($errors) > 0) {
-            $flash->addErrors($errors);
-        }
-
-        sendTo($this->name, 'index', $this->_modules);
-    }
-
-    public function delete()
+    public function delete($modelName = null)
     {
         $this->checkRequest(['post'], true);
 
@@ -611,7 +590,15 @@ class PersonsController extends printController
         }
     }
 
-    public function save()
+    /**
+     * Save Person
+     *
+     * @param string $modelName
+     * @param array $dataIn
+     * @param array $errors
+     * @return void
+     */
+    public function save($modelName = null, $dataIn = [], &$errors = [])
     {
         $errors = array();
 
@@ -730,8 +717,11 @@ class PersonsController extends printController
             if ($result) {
                 // All OK
                 $db->CompleteTrans();
+                $slmaster = new SLCustomer();
+                $slmaster->loadBy('company_id', $this->_data['Person']['company_id']);
                 sendTo($this->name, 'view', $this->_modules, array(
-                    $personidfield => $person_id
+                    $personidfield => $person_id,
+                    'slmaster_id' => $slmaster->id
                 ));
             }
         }
@@ -800,7 +790,7 @@ class PersonsController extends printController
         } else
             if (count($this->_data['headings']) > 0) {
                 $columnheadings = $this->_data['headings'];
-            }
+        }
 
         $data = parse_csv_file($filename, $columnheadings);
 
@@ -817,7 +807,7 @@ class PersonsController extends printController
         foreach ($data as $person_data) {
             $company = DataObjectFactory::Factory('Company');
 
-            if (in_array('company', $columnheadings)) {
+            if (is_array($columnheadings) && in_array('company', $columnheadings)) {
                 if (isset($this->_data['unique_companies'])) {
                     $co_loaded = $company->loadBy('name', $person_data['company']);
                 }
