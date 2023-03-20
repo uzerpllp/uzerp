@@ -2,13 +2,6 @@
  * Global Rules
  * 
  * rules.js
- *
- * $Revision: 1.77 $
- * 
- *      (c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
- *
- *      Released under GPLv3 license; see LICENSE.
- *
  */
 
 // force a window resize on load
@@ -418,7 +411,7 @@ $(document).ready(function () {
 			data		: form_data,
 			type		: 'add',
 			height		: 550,
-			width		: 550,
+			width		: '50%',
 			resizable	: true,
 			callback	: function() {
 			
