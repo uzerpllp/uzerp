@@ -1,10 +1,4 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **}
-{* 	$Revision: 1.14 $ *}	
-{content_wrapper}
+{content_wrapper data_jsinclude=$modulejs}
 	{form controller=$controller|default:"persons" action="save"}
 		{include file='elements/auditfields.tpl' }
 		{with model=$Person->party}
