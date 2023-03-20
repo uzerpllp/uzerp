@@ -1,10 +1,4 @@
 <?php
- 
-/** 
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **/
 
 function smarty_block_content_wrapper($params, $content, &$smarty, $repeat)
 {
@@ -34,6 +28,9 @@ function smarty_block_content_wrapper($params, $content, &$smarty, $repeat)
 		
 	if (!empty($content))
 	{
+
+		// append any data attributes passed in through params with the attrs array
+		$data['attrs'] += build_data_attributes($params);
 
 		/*
 		 * Page Identifier
