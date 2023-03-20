@@ -1,15 +1,9 @@
 <?php
 
-/**
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
- *
- *	Released under GPLv3 license; see LICENSE.
- **/
 class StitemsController extends printController
 {
 
-    protected $version = '$Revision: 1.68 $';
-
+    protected $module_prefs = [];
     protected $_templateobject;
 
     public function __construct($module = null, $action = null)
@@ -25,7 +19,7 @@ class StitemsController extends printController
         $this->view->set('module_prefs', $this->module_prefs);
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $errors = array();
         $s_data = array();
@@ -109,7 +103,7 @@ class StitemsController extends printController
         parent::_new();
     }
 
-    public function delete()
+    public function delete($modelName = null)
     {
         $flash = Flash::Instance();
 
@@ -118,7 +112,7 @@ class StitemsController extends printController
         sendTo($this->name, 'index', $this->_modules);
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) :void
     {
         if (! $this->CheckParams($this->modeltype)) {
             sendBack();
@@ -1289,6 +1283,7 @@ class StitemsController extends printController
             $s_data['stitem_id'] = $this->_data['Search']['stitem_id'];
         }
 
+        $s_data['status'] = 'all';
         $this->setSearch('stitemsSearch', 'viewSalesorders', $s_data);
 
         $id = $this->search->getValue('stitem_id');
