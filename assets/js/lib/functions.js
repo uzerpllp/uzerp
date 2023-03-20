@@ -18,6 +18,13 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
+function dynamicallyLoadScript(url) {
+    var script = document.createElement("script");  // create a script DOM node
+    script.src = url;  // set its src to the provided URL
+   
+    document.head.appendChild(script);  // add it to the end of the head section of the page (could change 'head' to 'body' to add it to the end of the body section instead)
+}
+
 $.ajaxPrefilter(function (options, originalOptions, xhr) {
         if (!csrfSafeMethod(options.type) && !this.crossDomain) {
             xhr.setRequestHeader("X-CSRF-Token", $('meta[name=csrf-token]').attr("content"));
@@ -242,11 +249,17 @@ function dialogButton (options) {
 				
 				if (data.substr(0, 1) == '{') {
 					var jsondata = JSON.parse(data);
-					
 					if (jsondata.status==true) {
-						
-						if(jsondata.redirect!=undefined && jsondata.redirect!='') {
-//							window.location.href=jsondata.redirect;
+						if(jsondata.refresh_params!=undefined && jsondata.refresh_params!='') {
+							// Refreshing. Add any additional url params to the url and load it
+							var url = new URL(window.location.href);
+							for (const prop in jsondata.refresh_params) {
+								url.searchParams.delete(prop);
+								url.searchParams.append(prop, jsondata.refresh_params[prop]);
+							}
+							window.location.href = url;
+						}
+						else if(jsondata.redirect!=undefined && jsondata.redirect!='') {
 							// This is a pop-up dialog; ignore the redirect
 							// and redisplay the calling page
 							location.reload();
@@ -278,7 +291,6 @@ function dialogButton (options) {
 				var buttons = dialogButtonSetup(
 					options,
 					{
-						saveaddButton: true,
 						saveButton: true,
 						cancelButton: true,
 					}
@@ -427,6 +439,16 @@ function formDialog(optionArgs) {
 						cancelButton	: true,
 					}
 				);
+			
+			} else if (options.type == 'add') {
+			
+				var buttons = dialogButtonSetup(
+					options,
+					{
+						saveButton		: true,
+						cancelButton	: true,
+					}
+				);
 				
 			} else {
 				var buttons = dialogButtonSetup(
@@ -440,6 +462,15 @@ function formDialog(optionArgs) {
 			}
 			
 			$(this).dialog("option", "buttons", buttons);
+
+			// Load dependent module js, if specified
+			// Sometimes a dialog will display a template that
+			// requires JS from its home model to work correctly,
+			// e.g. adding new person on sales order header.
+			const wrapper = document.querySelector(".ui-dialog .content_wrapper");
+			if (typeof wrapper.dataset.jsinclude !== "undefined") {
+				dynamicallyLoadScript(wrapper.dataset.jsinclude);
+			}
 			
 		},
 		close: function() {
