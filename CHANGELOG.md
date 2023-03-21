@@ -1,13 +1,21 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.31.4]
+
+### Change
+- When viewing a stock item, show all related sales orders instead of using the default order search for new, open, etc.
 
 ### Removed
-- Browser based printing user setting
+- Browser based printing user setting.
 
 ### Fixed
-- Incorrect checking of circular reference when substituting item in structure
+- Incorrect checking of circular reference when substituting item in structure.
+- Group permissions could not be saved.
+- Search input for text not escaped correctly, causing database error on searches containg '('.
+- Default date not set when stock item search is cleared, resulting in an error.
+- Stock items show related invoices did not use full width of screen.
+- Adding a new person (via dialog) during sales order entry did not work.
 
 ## [1.31.3] 2022-09-14
 
@@ -1079,6 +1087,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.31.4]: https://github.com/uzerpllp/uzerp/compare/1.31.3...1.31.4
 [1.31.3]: https://github.com/uzerpllp/uzerp/compare/1.31.2...1.31.3
 [1.31.2]: https://github.com/uzerpllp/uzerp/compare/1.31.1...1.31.2
 [1.31.1]: https://github.com/uzerpllp/uzerp/compare/1.30.0...1.31.1
