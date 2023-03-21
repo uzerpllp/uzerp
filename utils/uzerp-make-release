@@ -88,9 +88,12 @@ make_release()
 
          # Remove uneeded files/directories
          rm -rf node_modules
-         rm gulpfile.js
-         rm package.json
-         rm composer.json
+         rm -f gulpfile.js
+         rm -f package.json
+         rm -f composer.json
+         rm -f ecs.php
+         rm -f phpstan.neon
+         rm -f rector.php
          rm -rf .github
          rm -rf tests
 
