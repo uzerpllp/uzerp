@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+## Added
+- View the receive stock action alongside the delivery address when viewing purchase orders.
+
 ## [1.31.4]
 
 ### Change
