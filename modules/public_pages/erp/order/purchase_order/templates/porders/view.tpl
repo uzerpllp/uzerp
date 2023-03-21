@@ -65,6 +65,7 @@
 						{if $use_sorder_delivery == 't'}
 						{view_data value="Yes" label='Override with SO delivery address' id="deliv_override"}
 						{/if}
+						{view_data attribute="receive_action" value=$receive_action}
 					{/view_section}
 				{/with}
 				{with model=$POrder}

@@ -30,7 +30,7 @@ class PordersController extends printController
         $this->uses($this->_templateobject);
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $this->view->set('clickaction', 'view');
 
@@ -267,7 +267,7 @@ class PordersController extends printController
         sendBack();
     }
 
-    public function delete()
+    public function delete($modelName = null)
     {
         $flash = Flash::Instance();
 
@@ -379,7 +379,7 @@ class PordersController extends printController
             $porder->sales_order_id = $this->_data['sales_order_id'];
         }
 
-        $this->view->set('sales_orders', $this->getSalesOrders($sales_order_id));
+        $this->view->set('sales_orders', $this->getSalesOrders($porder->sales_order_id));
 
         // Use SO Delivery Address
         if (! $porder->isLoaded() && ! empty($this->_data['use_sorder_delivery'])) {
@@ -387,7 +387,7 @@ class PordersController extends printController
         }
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) :void
     {
         if (! $this->checkParams($this->modeltype)) {
             sendBack();
@@ -478,6 +478,9 @@ class PordersController extends printController
     public function view()
     {
         $order = $this->order_details();
+        $receive_action = new WHAction();
+        $receive_action->load($order->receive_action);
+        $this->view->set('receive_action', "{$receive_action->action_name} - $receive_action->description");
 
         $id = $order->{$order->idField};
         $type = $order->getFormatted('type');
@@ -1965,7 +1968,7 @@ class PordersController extends printController
 
             // Save the header
             if ($pinvoice) {
-                $result == false;
+                $result = false;
                 $result = $pinvoice->save();
                 if (! $result) {
                     $errors[] = 'Failed to create invoice';
