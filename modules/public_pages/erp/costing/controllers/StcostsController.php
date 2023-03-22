@@ -22,7 +22,7 @@ class StcostsController extends printController {
 		$this->uses($this->_templateobject);
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$errors=array();
 		$defaults=array();
@@ -341,7 +341,6 @@ class StcostsController extends printController {
 
 		$cc = new ConstraintChain;
 		$db = DB::Instance();
-//		$db->Debug();
 
 		$between = "'".$date."' BETWEEN ".$db->IfNull('start_date', "'".$date."'").' AND '.$db->IfNull('end_date', "'".$date."'");
 
@@ -361,9 +360,7 @@ class StcostsController extends printController {
 			$stitem_ids[] = $child_structure->ststructure_id;
 		}
 
-		$in = 'stitem_id IN ('.implode(',', $stitem_ids).')';
-
-		$cc->add(new Constraint('', '', '('.$in.')'));
+		$cc->add(new Constraint('stitem_id', '=', $stitem->id));
 
 		$mfoperations = self::getOperationCosts($cc, $type);
 		$mfoutsideops = self::getOutsideOperationCosts($cc, $type);
