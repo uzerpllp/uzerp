@@ -1979,5 +1979,26 @@ function getModuleJS(String $module) {
 	return DIRECTORY_SEPARATOR . $paths[0];
 }
 
+
+/**
+ * Sanitize arrays and strings
+ *
+ * @param mixed $input (string|array)
+ * @return string|array
+ */
+function sanitize($input)
+{
+	if (is_array($input)) {
+		foreach ($input as $key=>$value) {
+			$safe_key = htmlentities(strip_tags($key), 0, 'UTF-8');
+			$result[$safe_key] = sanitize($value);
+		}
+	} else {
+		$result = htmlentities($input, 0, 'UTF-8');
+	}
+
+		return $result;
+		//return $input;
+}
 /* End of file lib.php */
 /* Location: ./lib/lib.php */
