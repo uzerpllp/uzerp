@@ -11,7 +11,7 @@
 	<input title="Enter the code from your authenticator app" name="authcode" type="password" class="required" autocomplete="off" autofocus>
 	<input type="submit" class="submit" value="Validate">
 	<button id="cancel" class="submit secondary-action">Cancel</button>
-	{foreach name=request item=item key=key from=$smarty.get}
+	{foreach name=request item=item key=key from=$controller_data}
 		<input type="hidden" name="{$key}" value="{$item}">
 	{/foreach}
 </form>
