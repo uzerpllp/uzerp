@@ -527,7 +527,7 @@ class system
         // $self['controller']=$controllername;
         // $self['action']=$action;
 
-        $qstring = sanitize($_GET);
+        $qstring = \sanitize($_GET);
         foreach ($qstring as $qname => $qvalue) {
 
             if (! in_array($qname, array(
@@ -850,8 +850,8 @@ class system
             unset($_SESSION['data']);
         }
 
-        $getVars = sanitize($_GET);
-        $postVars = stripTags($_POST);
+        $getVars = \sanitize($_GET);
+        $postVars = \stripTags($_POST);
         $this->controller->setData($getVars);
         $this->controller->setData($postVars);
     }
