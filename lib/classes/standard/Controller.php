@@ -735,7 +735,6 @@ abstract class Controller
 
     public function setData($array, $subarray = null)
     {
-        $array = sanitize($array);
         if (is_array($array) && ! isset($subarray)) {
             $this->_data = $this->_data + $array;
         } else {

@@ -840,7 +840,6 @@ class system
 
         $this->controller = new $controller($this->module, $this->view);
         $this->controller->setInjector($this);
-        $this->controller->setData($this->router->Dispatch());
 
         // If session timed out on input form, get the saved form data
         // after the user has logged back in
@@ -851,8 +850,10 @@ class system
             unset($_SESSION['data']);
         }
 
-        $this->controller->setData($_GET);
-        $this->controller->setData($_POST);
+        $getVars = sanitize($_GET);
+        $postVars = stripTags($_POST);
+        $this->controller->setData($getVars);
+        $this->controller->setData($postVars);
     }
 
 
