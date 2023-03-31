@@ -1,8 +1,3 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **}
 <h2>Login</h2>
 <form enctype="multipart/form-data" id="save_form" name="login" action="/?action=login" method="post" >
     <input type="hidden" name="csrf_token" id="csrf_token_id" value="{$csrf_token}" />

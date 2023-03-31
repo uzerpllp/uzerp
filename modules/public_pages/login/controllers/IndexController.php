@@ -17,6 +17,7 @@ class IndexController extends Controller
 {
 
     protected $username = '';
+    protected $logger;
 
     public function __construct($module=null, $view)
     {
@@ -478,12 +479,12 @@ class IndexController extends Controller
         //remove session cookie
         addCookie(session_name(), '', 0);
 
-        // don't show the login form for non-interactive logins
+        // don't go to login form for non-interactive logins
         $injector = $this->_injector;
         $authentication = $injector->Instantiate('LoginHandler');
         if (! $authentication->interactive()) {
-            $this->view->display($this->getTemplateName('logout'));
-            exit();
+            $this->_templateName = $this->getTemplateName('logout');
+            return $this->index();
         }
 
         header("Location: /");
