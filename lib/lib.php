@@ -1990,11 +1990,11 @@ function sanitize($input)
 {
 	if (is_array($input)) {
 		foreach ($input as $key=>$value) {
-			$safe_key = htmlentities(strip_tags($key), 0, 'UTF-8');
+			$safe_key = htmlentities(strip_tags($key), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8');
 			$result[$safe_key] = sanitize($value);
 		}
 	} else {
-		$result = htmlentities($input, 0, 'UTF-8');
+		$result = htmlentities($input, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8');
 	}
 
 		return $result;
@@ -2010,7 +2010,7 @@ function stripTags($input)
 {
 	if (is_array($input)) {
 		foreach ($input as $key=>$value) {
-			$safe_key = trim(htmlentities(strip_tags($key), 0, 'UTF-8'));
+			$safe_key = trim(htmlentities(strip_tags($key), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8'));
 			$result[$safe_key] = stripTags($value);
 		}
 	} else {
