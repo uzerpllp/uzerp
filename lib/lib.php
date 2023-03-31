@@ -1998,7 +1998,26 @@ function sanitize($input)
 	}
 
 		return $result;
-		//return $input;
+}
+
+/**
+ * Strip html tags from arrays and strings
+ *
+ * @param mixed $input (string|array)
+ * @return string|array
+ */
+function stripTags($input)
+{
+	if (is_array($input)) {
+		foreach ($input as $key=>$value) {
+			$safe_key = trim(htmlentities(strip_tags($key), 0, 'UTF-8'));
+			$result[$safe_key] = stripTags($value);
+		}
+	} else {
+		$result = trim(strip_tags($input));
+	}
+
+		return $result;
 }
 /* End of file lib.php */
 /* Location: ./lib/lib.php */
