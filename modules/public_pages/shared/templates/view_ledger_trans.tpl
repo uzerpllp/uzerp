@@ -8,7 +8,7 @@
 	{advanced_search}
 	{assign var=templatemodel value=$collection->getModel()}
 	{assign var=fields value=$collection->getHeadings()}
-	{form controller=$controller action="save_contras" _id=$smarty.get.id}
+	{form controller=$controller action="save_contras" _id=$controller_data.id}
 		{paging}
 		{input type='hidden' model=$ledger_account attribute='id'}
 		{input type='hidden' model=$ledger_account attribute='payment_term_id'}

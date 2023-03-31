@@ -1,10 +1,5 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **}
 {content_wrapper}
-	{form controller="employees" action="save_allocation" _employee_id=$smarty.get.employee_id}
+	{form controller="employees" action="save_allocation" _employee_id=$controller_data.employee_id}
 	{data_table}
 		{heading_row}
 			{heading_cell field="employee"}

@@ -1,11 +1,5 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **}
-{* $Revision: 1.18 $ *}
 {content_wrapper}
-	{form controller="plsuppliers" action="save_allocation" _id=$smarty.get.id}
+	{form controller="plsuppliers" action="save_allocation" _id=$controller_data.id}
 		{data_table class="uz-grid-table"}
 			{heading_row}
 				{heading_cell field="supplier"}

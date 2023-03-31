@@ -12,7 +12,7 @@
 				{input type='hidden'  attribute='id' }
 				{input type='hidden'  attribute='task_id' }
 				{select  attribute='resource_id' use_collection="true" constraint="project_id,=,{$Task->project_id}"}
-				{if $smarty.get.conflict}
+				{if $controller_data.conflict}
 					{input type='checkbox' attribute='ignore' label='Ignore conflicts'}
 				{/if}
 			{/view_section}

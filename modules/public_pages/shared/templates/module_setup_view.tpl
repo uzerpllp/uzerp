@@ -1,12 +1,6 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **}
-{* $Revision: 1.11 $ *}
 {content_wrapper}
 	<div id="setup_items">
-		<h3>{$smarty.get.option|prettify}</h3>
+		<h3>{$controller_data.option|prettify}</h3>
 		
 		{form module=$module controller=$controller action=delete_items notags=true}
 			<table id="setup_table" class="datagrid">
@@ -36,13 +30,13 @@
 							{assign var=grid_row value='odd'}
 						{/if}
 						<tr id="setuprow_{$item->id}">
-							<td>{link_to module=$module controller=$controller action=edit option=$smarty.get.option id=$item->id value='edit'}</td>
+							<td>{link_to module=$module controller=$controller action=edit option=$controller_data.option id=$item->id value='edit'}</td>
 							{foreach item=field key=fieldname from=$extrafields}
 								{if $field.type != 'hidden'}
 									<td>{$item->getFormatted($fieldname)}</td>
 								{/if}
 							{/foreach}
-							<td class="narrow"><input type="checkbox" name="delete_items[{$smarty.get.option}][{$item->id}]" />
+							<td class="narrow"><input type="checkbox" name="delete_items[{$controller_data.option}][{$item->id}]" />
 						</tr>
 					{/foreach}
 				</tbody>
@@ -59,7 +53,7 @@
 			{/if}
 			Item
 		</h2>
-		{form module=$module controller=$controller action=save_item _option=$smarty.get.option notags=true}
+		{form module=$module controller=$controller action=save_item _option=$controller_data.option notags=true}
 			<table id="setup_edit_table">
 				{with model=$model}
 				{foreach name=edit_extrafields item=field key=name from=$edit_extrafields}
