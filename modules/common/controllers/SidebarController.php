@@ -57,7 +57,9 @@ class SidebarController {
 				
 				foreach ($link as $urlkey => $url)
 				{
-					
+					// Sanitize the tag for display
+					$data[$linkkey]['tag'] = uzh($data[$linkkey]['tag']);
+
 					if (is_array($url) && !$this->checkPermissions($url))
 					{
 						unset($data[$linkkey][$urlkey]);
