@@ -686,6 +686,13 @@ function with(&$params, &$smarty)
 
 }
 
+/**
+ * Sanitize string for output in templates
+ *
+ * @param String $string
+ * @param Const(htmlentities flags) $quote_style
+ * @return string
+ */
 function uzh($string, $quote_style = ENT_NOQUOTES) {
 	
 	static $cache;
@@ -2000,24 +2007,5 @@ function sanitize($input)
 		return $result;
 }
 
-/**
- * Strip html tags from arrays and strings
- *
- * @param mixed $input (string|array)
- * @return string|array
- */
-function stripTags($input)
-{
-	if (is_array($input)) {
-		foreach ($input as $key=>$value) {
-			$safe_key = trim(htmlentities(strip_tags($key), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8'));
-			$result[$safe_key] = stripTags($value);
-		}
-	} else {
-		$result = trim(strip_tags($input));
-	}
-
-		return $result;
-}
 /* End of file lib.php */
 /* Location: ./lib/lib.php */
