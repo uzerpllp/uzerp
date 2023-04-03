@@ -851,9 +851,8 @@ class system
         }
 
         $getVars = \sanitize($_GET);
-        $postVars = \stripTags($_POST);
         $this->controller->setData($getVars);
-        $this->controller->setData($postVars);
+        $this->controller->setData($_POST);
     }
 
 
