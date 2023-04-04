@@ -281,7 +281,7 @@ class STItem extends DataObject
 	 * @param Date $date  obsolete date
 	 * @param string $comp_class  item component class
 	 * @param integer $stitem_id  item id
-	 * @return void
+	 * @return mixed
 	 */
 	public static function nonObsoleteItems($date = null, $comp_class = ['M', 'B', 'S', 'P'], $stitem_id = null)
 	{
@@ -1523,7 +1523,7 @@ class STItem extends DataObject
 		$this->outside_ops			= null;
 	}
 
-	public function load($clause,$override=false)
+	public function load($clause, $override = false, $return = false)
 	{
 		$this->clearCachedItems();
 
