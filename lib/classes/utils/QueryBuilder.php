@@ -10,7 +10,9 @@ class QueryBuilder {
 
 	protected $version = '$Revision: 1.12 $';
 	
+	private $db;
 	private $doname;
+	private $tablename = '';
 	private $model;
 	private $fields;
 	private $field_array = array();
@@ -18,6 +20,9 @@ class QueryBuilder {
 	private $order_string = '';
 	private $limit_string = '';
 	private $distinct = false;
+	private $select_string = '';
+	private $from_string = '';
+	private $where_string = '';
 	
 	public function __construct($db, $do = null)
 	{
@@ -269,7 +274,6 @@ class QueryBuilder {
 	 */
 	public function orderby($orderby, $orderdir)
 	{
-		
 		if (!is_array($orderby))
 		{
 			$orderby = array($orderby);
@@ -284,7 +288,13 @@ class QueryBuilder {
 		
 		foreach ($orderby as $i => $fieldname)
 		{
-			
+			// orderby is potential user input, it may have come via a URL parameter on an index view
+			// Ignore if it doesn't match a model field.
+			//
+			// Note that postgres supports CASE statements in orderby, which we don't use and can
+			// be leveraged for SQL injection.
+			if (isset($this->model) && $this->model->getField($fieldname) === false) continue;
+
 			if (is_array($this->field_array) && count($this->field_array) > 0)
 			{
 				
