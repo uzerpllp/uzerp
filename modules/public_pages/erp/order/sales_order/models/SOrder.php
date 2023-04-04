@@ -589,7 +589,7 @@ class SOrder extends SPOrder {
 		return false;
 	}
 
-	public function lineExistsInDespatchLines($line_id)
+	public static function lineExistsInDespatchLines($line_id)
 	{
 		/**
 		 * if the line exists within so_despatchlines then return its dispatch
