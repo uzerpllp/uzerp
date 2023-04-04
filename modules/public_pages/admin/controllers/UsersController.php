@@ -276,7 +276,7 @@ class UsersController extends printController
     public function saveroles()
     {
         $username = $this->_data['username'];
-        $role = $this->_data['roles'];
+        $roles = $this->_data[$this->modeltype]['roles'];
 
         User::setRoles($username, $roles);
 
@@ -422,7 +422,7 @@ class UsersController extends printController
 
         $flash = Flash::Instance();
 
-        $userPreferences = ManagedUserPreferences::instance($username);
+        $userPreferences = ManagedUserPreferences::instance($user->username);
 
         // FIXME: Validate incomming data against supplied values
         foreach ($preferenceNames as $preferenceName) {
@@ -592,7 +592,7 @@ class UsersController extends printController
         $shared_prefs['shared']['default_page'] = $prefs->getPreferenceValue('default_page', 'shared');
 
         $default_printer = $prefs->getPreferenceValue('default_printer', 'shared');
-        $printers = $this->selectPrinters();
+        $printers = $this::selectPrinters();
 
         if (isset($printers[$default_printer])) {
             $shared_prefs['shared']['default_printer'] = $printers[$default_printer];

@@ -23,7 +23,7 @@ class PoreceivedlinesController extends printController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		$s_data = array();
@@ -76,7 +76,7 @@ class PoreceivedlinesController extends printController
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		$flash = Flash::Instance();
 		
@@ -85,7 +85,7 @@ class PoreceivedlinesController extends printController
 		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) :void
 	{
 		$flash=Flash::Instance();
 		
@@ -734,7 +734,7 @@ class PoreceivedlinesController extends printController
 		
 		$this->view->set('POReceivedlines', $poreceivedlines);
 		
-		$this->view->set('printers', $this->selectPrinters());
+		$this->view->set('printers', $this::selectPrinters());
 		$this->view->set('default_printer', $this->getDefaultPrinter());
 		
 		$sidebar = new SidebarController($this->view);
@@ -830,9 +830,9 @@ class PoreceivedlinesController extends printController
 		$response = json_decode($this->generate_output($data,$options));
 							
 		if($response->status!==true) {
-			$flash->addError(get_class($report).": ".$response->message);
+			$flash->addError($options['report'].": ".$response->message);
 		} else {
-			$flash->addMessage(get_class($report)." printed successfully");
+			$flash->addMessage($options['report']." printed successfully");
 		}
 		sendBack();
 		
