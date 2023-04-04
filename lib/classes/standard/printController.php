@@ -6,18 +6,13 @@ use PHPMailer\PHPMailer\Exception;
 /**
  * Extends Controller to add output capabilities
  *
- * @package standard
- * @author uzERP LLP and Steve Blamey <blameys@blueloop.net>
- * @license GPLv3 or later
- * @copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
  **/
-
-
 
 class printController extends Controller
 {
 
     public $rec_count;
+    public $output_types = [];
 
     protected $tables = array();
 
@@ -42,6 +37,8 @@ class printController extends Controller
     protected $footerline;
 
     protected $page = array();
+    protected $currentPage;
+    protected $company;
 
     public $printtype = array(
         'pdf' => 'PDF',
@@ -97,7 +94,7 @@ class printController extends Controller
         // If selection of display fields is disabled, don't set them up
         if (! $this->search->disable_field_selection) {
             foreach ($model->getFields() as $fieldname => $field) {
-                if ($fieldname != 'id' && $fieldname != 'usercompanyid' && substr($fieldname, - 3) != '_id' && ! isset($model->belongsToField[$fieldname]) && ! $model->isHidden($fieldname)) {
+                if ($fieldname != 'id' && $fieldname != 'usercompanyid' && substr($fieldname, - 3) != '_id' && ! isset($model->belongsToField[$fieldname]) && ! $model->isHidden($fieldname) && (!$field->ignoreField === true || $field->isComposite === true)) {
                     $display_fields[$fieldname] = $field->tag;
                 }
             }
@@ -574,7 +571,7 @@ class printController extends Controller
                         'textdelimiter' => $header->textdelimiter
                     );
 
-                    $progressbar = new progressBar($header->process);
+                    $progressbar = new Progressbar($header->process);
 
                     $controller = $this;
 
@@ -675,7 +672,7 @@ class printController extends Controller
 
         $this->view->set('filename', $filename);
         $this->view->set('page_title', $this->getPageName("", $this->_data['printaction'] . ' for '));
-        $this->view->set('printers', $this->selectPrinters());
+        $this->view->set('printers', $this::selectPrinters());
 
         $userPreferences = UserPreferences::instance(EGS_USERNAME);
         $this->view->set('default_printer', $this->getDefaultPrinter());
@@ -820,7 +817,7 @@ class printController extends Controller
         $this->view->set('page_title', $this->getPageName("", $this->_data['printaction'] . ' for '));
 
         $options['filename'] = $filename;
-        $options['printers'] = $this->selectPrinters();
+        $options['printers'] = $this::selectPrinters();
 
         // discover and set the default printer
         $userPreferences = UserPreferences::instance(EGS_USERNAME);
@@ -1129,7 +1126,6 @@ class printController extends Controller
      * @access public
      * @param array $params
      * @param array $options
-     * @return string (json)
      */
     public function generate_output($params, $options)
     {
@@ -2115,7 +2111,7 @@ class printController extends Controller
             $options['html'] = $this->view->fetch($this->getTemplateName('print_success'));
         }
 
-        audit(print_r($this->_data, TRUE) . print_r($response, TRUE));
+        audit(print_r($this->_data, TRUE));
 
         return json_encode($options);
     }
@@ -3351,7 +3347,7 @@ class printController extends Controller
         return $this->generate_xml($options);
     }
 
-    private function setPrinterLog($ipp)
+    private static function setPrinterLog($ipp)
     {
         $ipp_log_path = get_config('IPP_LOG_PATH');
         $ipp_log_type = get_config('IPP_LOG_TYPE');
