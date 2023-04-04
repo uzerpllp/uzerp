@@ -151,14 +151,6 @@ abstract class Controller
         return $this->view->getTemplateName($action);
     }
 
-    /**
-     * Index
-     *
-     * Handles the logic behind overview pages
-     * called from extension-classes, which are left to handle actions and setting up the search fields
-     *
-     * @param DataObjectCollection $collection
-     */
     public function setSearchHandler(DataObjectCollection $collection, $search_id = NULL, $force_use_session = false)
     {
         if (! is_null($search_id)) {
@@ -207,8 +199,20 @@ abstract class Controller
         return $sh;
     }
 
+    /**
+     * index
+     *
+     * @param DataObjectCollection $collection
+     * @param SearchHandler $sh
+     * @param [type] $c_query
+     * @return void
+     */
     public function index(DataObjectCollection $collection, $sh = '', &$c_query = null)
     {
+        $flash = Flash::Instance();
+		$logger = uzLogger::Instance();
+		$logger = $logger->withName('uzerp');
+
         showtime('start-controller-index');
         $collection->setParams();
         if (! ($sh instanceof SearchHandler)) {
@@ -235,7 +239,12 @@ abstract class Controller
         // so why not here?
         showtime('pre-load');
 
-        $collection->load($sh, $c_query);
+        try {
+            $collection->load($sh, $c_query);
+        } catch (Exception $e) {
+            $flash->addError('Failed to load data');
+			$logger->error('DataObjectCollection::_load() failed', [$e]);
+        }
         $this->view->set('total_records', $collection->total_records);
         $this->view->set('num_records', $collection->num_records);
         $this->view->set('num_pages', $collection->num_pages);
