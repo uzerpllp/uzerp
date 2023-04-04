@@ -55,7 +55,7 @@ class STuomconversion extends DataObject {
 		}
 	}
 	
-	public function getUomList($stitem_id, $uom_id) {
+	public static function getUomList($stitem_id, $uom_id) {
 		$db=&DB::Instance();
 		$query="SELECT to_uom_id
 					, to_uom_name
