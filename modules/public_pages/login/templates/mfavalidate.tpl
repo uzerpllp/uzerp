@@ -12,6 +12,6 @@
 	<input type="submit" class="submit" value="Validate">
 	<button id="cancel" class="submit secondary-action">Cancel</button>
 	{foreach name=request item=item key=key from=$controller_data}
-		<input type="hidden" name="{$key}" value="{$item}">
+		<input type="hidden" name="{$key|escape}" value="{$item|escape}">
 	{/foreach}
 </form>
