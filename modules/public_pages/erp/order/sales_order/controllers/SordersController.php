@@ -493,7 +493,7 @@ class SordersController extends printController
         $this->payment_terms($default_customer);
 
         // get Sales Order Notes for default customer or first in customer
-        $this->getNotes($person, $default_customer);
+        $this->getNotes($default_person, $default_customer);
 
         // get despatch actions
         $despatch_actions = WHAction::getDespatchActions();
@@ -514,7 +514,7 @@ class SordersController extends printController
         $this->view->set('tasks', $this->getTaskList($sorder->project_id));
     }
 
-    public function save($modelName=null, $dataIn=array(), &$errors=array())
+    public function save($modelName=null, $dataIn=array(), &$errors=array()) : void
     {
         if (! $this->checkParams($this->modeltype)) {
             sendBack();
@@ -1106,7 +1106,7 @@ class SordersController extends printController
 
         $lines += $customer_lines;
 
-        $products = new SOProductLineCollection($product);
+        $products = new SOProductlineCollection($product);
 
         if (! isset($this->_data['orderby']) && ! isset($this->_data['page'])) {
             $sh = new SearchHandler($products, false);
@@ -1165,7 +1165,7 @@ class SordersController extends printController
 
         $selectedproduct = empty($_SESSION['selectedproducts']) ? array() : $_SESSION['selectedproducts'];
 
-        $selectedproducts = new SOProductLineCollection(DataObjectFactory::Factory('SOProductLine'));
+        $selectedproducts = new SOProductlineCollection(DataObjectFactory::Factory('SOProductLine'));
 
         if (! empty($selectedproduct)) {
             $sh = new SearchHandler($selectedproducts, false);
@@ -1185,8 +1185,6 @@ class SordersController extends printController
     {
         $params = explode('=', $this->_data['id']);
 
-        $linkdata = SESSION::Instance();
-
         $selectedproduct = empty($_SESSION['selectedproducts']) ? array() : $_SESSION['selectedproducts'];
 
         if (isset($selectedproduct[$params[0]])) {
@@ -1199,7 +1197,7 @@ class SordersController extends printController
 
         $_SESSION['selectedproducts'] = $selectedproduct;
 
-        $selectedproducts = new SOProductLineCollection(DataObjectFactory::Factory('SOProductLine'));
+        $selectedproducts = new SOProductlineCollection(DataObjectFactory::Factory('SOProductLine'));
 
         if (! empty($selectedproduct)) {
             $sh = new SearchHandler($selectedproducts, false);
@@ -1234,7 +1232,7 @@ class SordersController extends printController
             sendBack();
         }
 
-        $productlines = new SOProductLineCollection(DataObjectFactory::Factory('SOProductLine'));
+        $productlines = new SOProductlineCollection(DataObjectFactory::Factory('SOProductLine'));
 
         $sh = new SearchHandler($productlines, false);
 
@@ -2237,7 +2235,7 @@ class SordersController extends printController
         $sorder = $this->_uses[$this->modeltype];
         $this->view->set('page_title', 'Print Item Labels - Sales Order');
         $this->view->set('no_ordering', true);
-        $this->view->set('printers', $this->selectPrinters());
+        $this->view->set('printers', $this::selectPrinters());
         $this->view->set('default_printer', $this->getDefaultPrinter());
     }
 
@@ -3150,7 +3148,7 @@ class SordersController extends printController
         );
         unset($this->_data['depends']);
 
-        return $this->getOptions($this->_templateobject, 'person_id', 'getPeople', 'getOptions', $smarty_params, $depends);
+        return $this->getOptions($this->_templateobject, 'person_id', 'getPeople', 'getOptions', $smarty_params);
     }
 
     public function select_for_invoicing()
@@ -3713,7 +3711,7 @@ class SordersController extends printController
 
         // build extra array
         $extra = array(
-            'title' => prettify($title) . ' Sales Orders as at ' . un_fix_date(fix_date(date(DATE_FORMAT))),
+            'title' => 'Sales Orders at ' . un_fix_date(fix_date(date(DATE_FORMAT))),
             'showlines' => true
         );
 
@@ -4148,6 +4146,10 @@ class SordersController extends printController
     public function printPickList($status = 'generate')
     {
 
+        // load the model
+        $order = $this->_uses[$this->modeltype];
+        $order->load($this->_data['id']);
+
         // build options array
         $options = array(
             'type' => array(
@@ -4160,17 +4162,13 @@ class SordersController extends printController
                 'email' => '',
                 'view' => ''
             ),
-            'filename' => 'SOPickList' . $id,
+            'filename' => 'SOPickList' . $order->id,
             'report' => 'SOPickList'
         );
 
         if (strtolower($status) == "dialog") {
             return $options;
         }
-
-        // load the model
-        $order = $this->_uses[$this->modeltype];
-        $order->load($this->_data['id']);
 
         // build line status condition
         $line = DataObjectFactory::Factory('SOrderLine');
@@ -4472,7 +4470,7 @@ class SordersController extends printController
         );
         unset($this->_data['depends']);
 
-        return $this->getOptions($this->_templateobject, 'project_id', 'getProjects', 'getOptions', $smarty_params, $depends);
+        return $this->getOptions($this->_templateobject, 'project_id', 'getProjects', 'getOptions', $smarty_params);
     }
 
     public function getTaskList($_project_id = '')

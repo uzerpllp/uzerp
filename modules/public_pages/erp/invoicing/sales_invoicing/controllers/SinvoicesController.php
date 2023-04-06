@@ -60,7 +60,7 @@ class SinvoicesController extends printController
         );
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $this->view->set('clickaction', 'view');
         $errors = array();
@@ -635,7 +635,7 @@ class SinvoicesController extends printController
         $this->view->set('default_inv_address', $customer->billing_address_id);
 
         // get Sales Invoice Notes for default customer or first in customer
-        $this->getNotes($person, $default_customer);
+        $this->getNotes($default_person, $default_customer);
 
         // Get Projects and tasks
         $projects = $this->getProjects($default_customer);
@@ -648,7 +648,7 @@ class SinvoicesController extends printController
         $this->view->set('tasks', $this->getTaskList($sinvoice->project_id));
     }
 
-    public function delete()
+    public function delete($modelName = null)
     {
         $flash = Flash::Instance();
 
@@ -762,7 +762,7 @@ class SinvoicesController extends printController
         ));
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) : void
     {
         if (! $this->checkParams($this->modeltype)) {
             sendBack();
@@ -918,7 +918,7 @@ class SinvoicesController extends printController
         );
         unset($this->_data['depends']);
 
-        return $this->getOptions($this->_templateobject, 'person_id', 'getPeople', 'getOptions', $smarty_params, $depends);
+        return $this->getOptions($this->_templateobject, 'person_id', 'getPeople', 'getOptions', $smarty_params);
     }
 
     public function getPersonAddresses($_person_id = '', $_type = '', $_slmaster_id = '')
@@ -1007,7 +1007,7 @@ class SinvoicesController extends printController
         ));
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
-        $this->view->set('printers', $this->selectPrinters());
+        $this->view->set('printers', $this::selectPrinters());
         $this->view->set('default_printer', $this->getDefaultPrinter());
         $this->view->set('page_title', $this->getPageName('', 'Print/Post'));
 
@@ -1683,7 +1683,7 @@ class SinvoicesController extends printController
         );
         unset($this->_data['depends']);
 
-        return $this->getOptions($this->_templateobject, 'project_id', 'getProjects', 'getOptions', $smarty_params, $depends);
+        return $this->getOptions($this->_templateobject, 'project_id', 'getProjects', 'getOptions', $smarty_params);
     }
 
     public function getTaskList($_project_id = '')

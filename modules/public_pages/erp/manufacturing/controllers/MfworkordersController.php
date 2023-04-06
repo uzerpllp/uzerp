@@ -12,6 +12,7 @@ class MfworkordersController extends ManufacturingController
 	protected $version = '$Revision: 1.72 $';
 
 	protected $_templateobject;
+	protected $module_prefs;
 
 	use getSalesOrderOptions;
 
@@ -27,7 +28,7 @@ class MfworkordersController extends ManufacturingController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$errors = array();
 
@@ -306,7 +307,7 @@ class MfworkordersController extends ManufacturingController
 		$this->view->set('order_lines', $orderlines);
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		if (!$this->CheckParams($this->_templateobject->idField))
 		{
@@ -320,7 +321,7 @@ class MfworkordersController extends ManufacturingController
 		sendTo($this->name, 'index', $this->_modules);
 	}
 
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) :void
 	{
 
 		if (!$this->CheckParams($this->modeltype))
@@ -591,7 +592,7 @@ class MfworkordersController extends ManufacturingController
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 
-		$this->view->set('printers', $this->selectPrinters());
+		$this->view->set('printers', $this::selectPrinters());
 		$this->view->set('default_printer', $this->getDefaultPrinter());
 
 	}

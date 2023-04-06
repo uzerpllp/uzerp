@@ -4,8 +4,8 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {content_wrapper}
-	{form controller=$self.controller action="timeshift" id=$smarty.get.id}
-	<input type="hidden" name="id" value="{$smarty.get.id}"/>
+	{form controller=$self.controller action="timeshift" id=$controller_data.id}
+	<input type="hidden" name="id" value="{$controller_data.id}"/>
 	<dl id="report_filter">
 		<dt class="heading">Time-shift project</dt>
 		<dt>

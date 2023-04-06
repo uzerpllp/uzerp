@@ -174,9 +174,10 @@ class BaseSearch
     }
 
     /**
-     *
+     * Tests the given $groupname against the list of allowable groupnames
+     * 
      * @param $groupname string
-     * @return boolean Tests the given $groupname against the list of allowable groupnames
+     * @return void
      */
     private function testGroup($groupname)
     {
@@ -344,7 +345,9 @@ class BaseSearch
 
             foreach ($fields as $field) {
 
-                $value = $field->getCurrentValue();
+                // Sanitize the value for display
+                $value = uzh($field->getCurrentValue());
+
                 $block_start = '';
                 $block_end = '';
                 $field_start = '';

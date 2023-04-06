@@ -41,7 +41,7 @@
 			<input type="hidden" name="csrf_token" id="csrf_token_id" value="{$csrf_token}">
 			<input title="Enter the code from your authenticator app" name="authcode" type="password" class="required" autocomplete="off" placeholder="000 000" autofocus>
 			<input type="submit" class="submit {$submit_class}" value="Activate">
-			{foreach name=request item=item key=key from=$smarty.get}
+			{foreach name=request item=item key=key from=$controller_data}
 				<input type="hidden" name="{$key}" value="{$item}">
 			{/foreach}
 		</form>

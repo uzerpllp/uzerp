@@ -270,7 +270,6 @@ class system
         $loaded = TRUE;
     }
 
-
     /*
      * Main control function to set up environment, set route (module, controller, action) and call controller action
      */
@@ -477,119 +476,115 @@ class system
 
         $cache_key = md5($_SERVER['REQUEST_URI'] . EGS_COMPANY_ID . EGS_USERNAME);
 
-        if (TRUE || ! $smarty->isCached('index.tpl', $cache_key)) {
 
+        $flash = Flash::Instance();
+        $config = Config::Instance();
+
+        // output all the variables to smarty
+        // this replaces $smarty.const.setting_name
+
+        $this->view->assign('config', $config->get_all());
+
+        setRefererPage();
+
+        debug('system::display Calling function ' . get_class($controller) . '::' . $action);
+        // echo 'system::display (1),'.microtime(TRUE).'<br>';
+
+        $controller->$action();
+
+        // echo 'system::display (2),'.microtime(TRUE).'<br>';
+
+        $flash->save();
+
+        // Save any flash messages for audit purposes
+        $this->flash['errors'] = $flash->getMessages('errors');
+        $this->flash['warnings'] = $flash->getMessages('warnings');
+        $this->flash['messages'] = $flash->getMessages('messages');
+
+        if (isLoggedIn()) {
+            $this->access->save();
+        }
+
+        // assign stuff to smarty
+        $controller->assignModels();
+
+        // this code fires $controller->index() if (perhaps) getPrintActions doesn't exist,
+        // thus overwriting the sidebar. Only fire if subclass of printController
+        if (is_subclass_of($controller, 'printController') && $action != 'printDialog') {
+            $this->view->assign('printaction', $controller->getPrintActions());
+        }
+
+        $controllername = str_replace('Controller', '', get_class($controller));
+        $this->pid = $this->access->getPermission($this->modules, $controllername, $action);
+        $self = array();
+
+        if (! empty($this->pid)) {
+            $self['pid'] = $this->pid;
+        }
+
+        $self['modules'] = $this->modules;
+
+        // $self['controller']=$controllername;
+        // $self['action']=$action;
+
+        $qstring = \sanitize($_GET);
+        foreach ($qstring as $qname => $qvalue) {
+
+            if (! in_array($qname, array(
+                'orderby',
+                'page'
+            ))) {
+                $self[$qname] = $qvalue;
+            }
+        }
+
+        $this->view->assign('self', $self);
+
+        if (isset($this->user)) {
+            $this->view->assign('current_user', $this->user);
+        }
+
+        // Session timed out on input form so save the form data while the user logs back in
+        // See system::setController for where the form data is read after logging back in
+
+        if ($this->modules['module'] == 'login' && ! empty($_POST)) {
+            $_SESSION['data'] = $_POST;
+        }
+
+        $echo = $controller->view->get('echo');
+
+        if (($this->ajax || $this->json) && $echo !== FALSE) {
+            echo $controller->view->get('echo');
+            exit();
+        } elseif ($this->modules['module'] == 'login') {
+
+            $current = getParamsArray($_SERVER['QUERY_STRING']);
+            $referer['modules'] = $current['modules'];
+            $referer['controller'] = 'Index';
+            $referer['action'] = 'index';
+
+            $_SESSION['referer'][setParamsString($current)] = setParamsString($referer);
+        } elseif (! isset($_GET['ajax'])) {
+
+            $referer = '';
+
+            if (! empty($_POST)) {
+                // This is a save form so set the referer to be the referer's referer!
+                $referer = (isset($_SESSION['refererPage'])) ? $_SESSION['refererPage'] : '';
+            }
+
+            setReferer($referer);
+
+            $current = getParamsArray($_SERVER['QUERY_STRING']);
             $flash = Flash::Instance();
-            $config = Config::Instance();
 
-            // output all the variables to smarty
-            // this replaces $smarty.const.setting_name
+            $current += array(
+                'messages' => $flash->getMessages('messages'),
+                'warnings' => $flash->getMessages('warnings'),
+                'errors' => $flash->getMessages('errors')
+            );
 
-            $this->view->assign('config', $config->get_all());
-
-            setRefererPage();
-
-            debug('system::display Calling function ' . get_class($controller) . '::' . $action);
-            // echo 'system::display (1),'.microtime(TRUE).'<br>';
-
-            $controller->$action();
-
-            // echo 'system::display (2),'.microtime(TRUE).'<br>';
-
-            $flash->save();
-
-            // Save any flash messages for audit purposes
-            $this->flash['errors'] = $flash->getMessages('errors');
-            $this->flash['warnings'] = $flash->getMessages('warnings');
-            $this->flash['messages'] = $flash->getMessages('messages');
-
-            if (isLoggedIn()) {
-                $this->access->save();
-            }
-
-            // assign stuff to smarty
-            $controller->assignModels();
-
-            // this code fires $controller->index() if (perhaps) getPrintActions doesn't exist,
-            // thus overwriting the sidebar. Only fire if subclass of printController
-            if (is_subclass_of($controller, 'printController') && $action != 'printDialog') {
-                $this->view->assign('printaction', $controller->getPrintActions());
-            }
-
-            $controllername = str_replace('Controller', '', get_class($controller));
-            $this->pid = $this->access->getPermission($this->modules, $controllername, $action);
-            $self = array();
-
-            if (! empty($this->pid)) {
-                $self['pid'] = $this->pid;
-            }
-
-            $self['modules'] = $this->modules;
-
-            // $self['controller']=$controllername;
-            // $self['action']=$action;
-
-            $qstring = $_GET;
-
-            foreach ($qstring as $qname => $qvalue) {
-
-                if (! in_array($qname, array(
-                    'orderby',
-                    'page'
-                ))) {
-                    $self[$qname] = $qvalue;
-                }
-            }
-
-            $this->view->assign('self', $self);
-
-            if (isset($this->user)) {
-                $this->view->assign('current_user', $this->user);
-            }
-
-            // Session timed out on input form so save the form data while the user logs back in
-            // See system::setController for where the form data is read after logging back in
-
-            if ($this->modules['module'] == 'login' && ! empty($_POST)) {
-                $_SESSION['data'] = $_POST;
-            }
-
-            $echo = $controller->view->get('echo');
-
-            if (($this->ajax || $this->json) && $echo !== FALSE) {
-                echo $controller->view->get('echo');
-                exit();
-            } elseif ($this->modules['module'] == 'login') {
-
-                $current = getParamsArray($_SERVER['QUERY_STRING']);
-                $referer['modules'] = $current['modules'];
-                $referer['controller'] = 'Index';
-                $referer['action'] = 'index';
-
-                unset($referer['other']);
-                $_SESSION['referer'][setParamsString($current)] = setParamsString($referer);
-            } elseif (! isset($_GET['ajax'])) {
-
-                $referer = '';
-
-                if (! empty($_POST)) {
-                    // This is a save form so set the referer to be the referer's referer!
-                    $referer = (isset($_SESSION['refererPage'])) ? $_SESSION['refererPage'] : '';
-                }
-
-                setReferer($referer);
-
-                $current = getParamsArray($_SERVER['QUERY_STRING']);
-                $flash = Flash::Instance();
-
-                $current += array(
-                    'messages' => $flash->getMessages('messages'),
-                    'warnings' => $flash->getMessages('warnings'),
-                    'errors' => $flash->getMessages('errors')
-                );
-
-                $_SESSION['submit_token']['current'] = $current;
-            }
+            $_SESSION['submit_token']['current'] = $current;
         }
 
         // Set the user's 'home' link
@@ -845,7 +840,6 @@ class system
 
         $this->controller = new $controller($this->module, $this->view);
         $this->controller->setInjector($this);
-        $this->controller->setData($this->router->Dispatch());
 
         // If session timed out on input form, get the saved form data
         // after the user has logged back in
@@ -856,7 +850,8 @@ class system
             unset($_SESSION['data']);
         }
 
-        $this->controller->setData($_GET);
+        $getVars = \sanitize($_GET);
+        $this->controller->setData($getVars);
         $this->controller->setData($_POST);
     }
 
@@ -1251,7 +1246,7 @@ class system
             return;
         }
 
-        $system = System::Instance();
+        $system = system::Instance();
         $scan_dirs = self::scanDirectories(PUBLIC_MODULES, $module, FALSE);
 
         switch (strtolower($type)) {

@@ -64,11 +64,6 @@ class SOrderLine extends SPOrderLine {
  		$this->belongsTo('STItem', 'stitem_id', 'stitem');
   		$this->belongsTo('TaxRate', 'tax_rate_id', 'tax_rate');
 
-// Define field formats
- 		$this->getField('price')->setFormatter(new PriceFormatter());
-		$this->getField('net_value')->setFormatter(new PriceFormatter());
-		$this->getField('base_net_value')->setFormatter(new PriceFormatter());
-
 // Define validation
 		$this->addValidator(new fkFieldCombinationValidator('GLAccountCentre',array('glaccount_id'=>'glaccount_id','glcentre_id'=>'glcentre_id')));
 
@@ -109,6 +104,15 @@ class SOrderLine extends SPOrderLine {
 
 	}
 
+	function cb_loaded()
+	{
+		// Set these formatters here because they depend on the loaded currency_id
+		$this->getField('price')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
+		$this->getField('net_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
+		$this->getField('base_net_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
+	}
+
+
 	public function delete ($id = null, &$errors = array(), $archive = FALSE, $archive_table = null, $archive_schema = null)
 	{
 
@@ -129,7 +133,7 @@ class SOrderLine extends SPOrderLine {
 		if ($result)
 		{
 			// Now update the line numbers of following lines
-			$sorderlines = new SorderLineCollection($this);
+			$sorderlines = new SOrderLineCollection($this);
 
 			$sh = new SearchHandler($sorderlines, false);
 

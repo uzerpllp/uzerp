@@ -27,7 +27,7 @@ class SodespatchlinesController extends printController
         $this->uses($this->_templateobject);
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $s_data = array();
 
@@ -132,19 +132,15 @@ class SodespatchlinesController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 
-    public function delete()
+    public function delete($modelName = null)
     {
-        $flash = Flash::Instance();
-
         parent::delete('SODespatchLine');
 
         sendTo($this->name, 'index', $this->_modules);
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) :void
     {
-        $flash = Flash::Instance();
-
         if (parent::save('SODespatchLine')) {
             sendTo($this->name, 'index', $this->_modules);
         } else {
@@ -285,7 +281,7 @@ class SodespatchlinesController extends printController
                     $result = $despatchline->update($despatch->id, 'status', 'X');
 
                     if ($result === false) {
-                        $flash->addError('Error updating Despatch Note ' . $despatch_note);
+                        $flash->addError('Error updating Despatch Note ' . $key);
                         $db->FailTrans();
                         sendBack();
                     }
@@ -391,7 +387,7 @@ class SodespatchlinesController extends printController
                     $result = $despatchline->update($despatch->id, 'status', 'D');
 
                     if ($result === false) {
-                        $flash->addError('Error updating Despatch Note ' . $despatch_note);
+                        $flash->addError('Error updating Despatch Note ' . $key);
                         $db->FailTrans();
                         sendBack();
                     }
@@ -680,7 +676,7 @@ class SodespatchlinesController extends printController
         } elseif ($this->_data['type'] == 'print') {
             $this->_templateName = $this->getTemplateName('print_despatch_notes');
             $this->view->set('page_title', $this->getPageName('- Print Despatch Notes'));
-            $this->view->set('printers', $this->selectPrinters());
+            $this->view->set('printers', $this::selectPrinters());
             $this->view->set('default_printer', $this->getDefaultPrinter());
         } else {
             $this->dataError();

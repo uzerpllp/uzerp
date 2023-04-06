@@ -686,6 +686,13 @@ function with(&$params, &$smarty)
 
 }
 
+/**
+ * Sanitize string for output in templates
+ *
+ * @param String $string
+ * @param Const(htmlentities flags) $quote_style
+ * @return string
+ */
 function uzh($string, $quote_style = ENT_NOQUOTES) {
 	
 	static $cache;
@@ -1977,6 +1984,27 @@ function getModuleJS(String $module) {
 	}
 	$paths = glob("{$jsdir}/*.js");
 	return DIRECTORY_SEPARATOR . $paths[0];
+}
+
+
+/**
+ * Sanitize arrays and strings
+ *
+ * @param mixed $input (string|array)
+ * @return string|array
+ */
+function sanitize($input)
+{
+	if (is_array($input)) {
+		foreach ($input as $key=>$value) {
+			$safe_key = htmlentities(strip_tags($key), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8');
+			$result[$safe_key] = sanitize($value);
+		}
+	} else {
+		$result = htmlentities($input, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8');
+	}
+
+		return $result;
 }
 
 /* End of file lib.php */

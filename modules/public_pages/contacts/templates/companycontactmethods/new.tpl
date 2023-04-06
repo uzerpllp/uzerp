@@ -12,11 +12,11 @@
 					{input type='hidden'  attribute='id' }
 					{include file='elements/auditfields.tpl' }
 					{input type='text'  attribute='name' class="compulsory" }
-					{if $smarty.get.type eq 'T'}
+					{if $controller_data.type eq 'T'}
 						{input type='text'  attribute='contact' label='Telephone number' class="compulsory" }
-					{elseif $smarty.get.type eq 'F'}
+					{elseif $controller_data.type eq 'F'}
 						{input type='text'  attribute='contact' label='Fax number' class="compulsory" }
-					{elseif $smarty.get.type eq 'E'}
+					{elseif $controller_data.type eq 'E'}
 						{input type='text'  attribute='contact' label='Email address' class="compulsory" }
 					{else}
 						{input type='text'  attribute='contact' class="compulsory" }

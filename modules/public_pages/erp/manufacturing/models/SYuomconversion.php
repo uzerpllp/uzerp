@@ -42,7 +42,7 @@ class SYuomconversion extends DataObject {
 		}
 	}
 		
-	public function getUomList($uom_id) {
+	public static function getUomList($uom_id) {
 		$db=&DB::Instance();
 		$query="SELECT to_uom_id
 					, to_uom_name

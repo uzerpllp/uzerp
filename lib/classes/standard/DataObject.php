@@ -542,15 +542,10 @@ class DataObject implements Iterator
             $t->user_defaults_allowed = TRUE;
         }
 
-        $this->_fields[$fieldname] = new Datafield($t);
+        $this->_fields[$fieldname] = new DataField($t);
     }
 
-    /**
-     * Might this be needed?
-     *
-     * @return DataField[] An array of DataField Objects
-     */
-    public function setDefaultDisplayFields($fields)
+    public function setDefaultDisplayFields($fields) : void
     {
         $this->defaultDisplayFields = $fields;
     }
@@ -1914,6 +1909,8 @@ class DataObject implements Iterator
             return $string;
         }
 
+        $handlers = $this->searchHandlers;
+
         if (isset($this->hasManyThrough[$var])) {
 
             $jo = $this->hasManyThrough[$var]['jo'];
@@ -1963,8 +1960,6 @@ class DataObject implements Iterator
             if (! $this->isLoaded()) {
                 return $collection;
             }
-
-            $handlers = $this->searchHandlers;
 
             if (! isset($handlers[$var])) {
                 $sh = new SearchHandler($collection, FALSE);
@@ -2402,6 +2397,7 @@ class DataObject implements Iterator
                 $this->_fields[$fieldname] = clone $model->getField($fieldname);
 
                 $this->_fields[$fieldname]->ignoreField = TRUE;
+                $this->_fields[$fieldname]->isComposite = true;
 
                 $this->compositesField[$fieldname] = $name;
             }
@@ -3168,7 +3164,8 @@ class DataObject implements Iterator
             $parent_id = $id;
         }
 
-        $doc = new get_class($this) . 'Collection';
+        $class = (get_class($this)) . 'Collection';
+        $doc = new $class;
         $db = &DB::Instance();
         $query = 'SELECT ' . $this->idField . ' FROM ' . $this->_tablename . ' WHERE ' . $this->parent_field . (! empty($parent_id) ? '=' . $db->qstr($parent_id) : ' IS NULL');
         $siblings = $db->GetCol($query);
