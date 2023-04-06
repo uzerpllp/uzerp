@@ -440,7 +440,7 @@ function formDialog(optionArgs) {
 					}
 				);
 			
-			} else if (options.type == 'add') {
+			} else if (options.type == 'addn') {
 			
 				var buttons = dialogButtonSetup(
 					options,

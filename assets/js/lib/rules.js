@@ -409,7 +409,7 @@ $(document).ready(function () {
 			refresh		: true,
 			url			: $self.attr('href'),
 			data		: form_data,
-			type		: 'add',
+			type		: 'addn',
 			height		: 550,
 			width		: '50%',
 			resizable	: true,
