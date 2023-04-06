@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Show 'save and add another' button on 'add' type dialogs (e.g. orderline) but not when using the '+' next to data on forms
 - Sanitize URL parameters
 - Escape some outputs in the sidebar and search from
+- Escape cookie values used in login form
 - Only use valid columns for order-by when building SQL queries
 
 ## [1.31.4]
