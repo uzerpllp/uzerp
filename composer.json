@@ -1,7 +1,7 @@
 {
     "require": {
         "robmorgan/phinx": "^0.12",
-        "smarty/smarty": "^3.1.45",
+        "smarty/smarty": "^3.1.48",
         "riimu/kit-csrf": "^2.4",
         "symfony/http-foundation": "^3.4",
         "symfony/yaml": "^3.4",
