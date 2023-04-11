@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.31.6]
+
+- Minor CSS update to login
+
 ## [1.31.5]
 
 ## Added
@@ -1100,6 +1104,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.31.6]: https://github.com/uzerpllp/uzerp/compare/1.31.5...1.31.6
 [1.31.5]: https://github.com/uzerpllp/uzerp/compare/1.31.4...1.31.5
 [1.31.4]: https://github.com/uzerpllp/uzerp/compare/1.31.3...1.31.4
 [1.31.3]: https://github.com/uzerpllp/uzerp/compare/1.31.2...1.31.3
