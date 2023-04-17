@@ -683,7 +683,7 @@ class SOrder extends SPOrder {
 		{
 			$line['order_id'] = $order->{$order->idField};
 
-			$orderline = SOrderLine::Factory($order, $line, $errors);
+			$orderline = SOrderLine::lineFactory($order, $line, $errors);
 
 			if (!$orderline || count($errors)>0)
 			{
