@@ -291,6 +291,7 @@ function dialogButton (options) {
 				var buttons = dialogButtonSetup(
 					options,
 					{
+						saveaddButton: true,
 						saveButton: true,
 						cancelButton: true,
 					}
