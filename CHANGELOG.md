@@ -1,16 +1,23 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.31.7]
+
+### Fixed
+
+- Save and add another button not working correctly on sales and purchase orders.
+- Error when on sales order/quote save as new.
+
 ## [1.31.6]
 
 - Minor CSS update to login
 
 ## [1.31.5]
 
-## Added
+### Added
 - View the receive stock action alongside the delivery address when viewing purchase orders.
 
-## Fixed
+### Fixed
 - Show correct currency symbol on pro-forma invoice output
 - Show 'save and add another' button on 'add' type dialogs (e.g. orderline) but not when using the '+' next to data on forms
 - Sanitize URL parameters
@@ -1104,6 +1111,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.31.7]: https://github.com/uzerpllp/uzerp/compare/1.31.6...1.31.7
 [1.31.6]: https://github.com/uzerpllp/uzerp/compare/1.31.5...1.31.6
 [1.31.5]: https://github.com/uzerpllp/uzerp/compare/1.31.4...1.31.5
 [1.31.4]: https://github.com/uzerpllp/uzerp/compare/1.31.3...1.31.4
