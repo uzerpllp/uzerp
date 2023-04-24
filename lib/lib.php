@@ -691,19 +691,10 @@ function with(&$params, &$smarty)
  *
  * @param String $string
  * @param Const(htmlentities flags) $quote_style
- * @return string
+ * @return String
  */
 function uzh($string, $quote_style = ENT_NOQUOTES) {
-	
-	static $cache;
-	
-	if (!isset($cache[$string]))
-	{
-		$cache[$string] = nl2br(htmlentities($string, $quote_style, 'UTF-8'));
-	}
-	
-	return $cache[$string];
-	
+	return nl2br(htmlentities($string, $quote_style, 'UTF-8'));
 }
 
 function u($string)
