@@ -1,18 +1,24 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [1.31.7]
+## [1.31.8] 2023-04-24
+
+### Fixed
+
+- Stock item list (index) view: items with zero stock balance had an empty balance value instead of 0.
+
+## [1.31.7] 2023-04-19
 
 ### Fixed
 
 - Save and add another button not working correctly on sales and purchase orders.
 - Error when on sales order/quote save as new.
 
-## [1.31.6]
+## [1.31.6] 2023-04-11
 
 - Minor CSS update to login
 
-## [1.31.5]
+## [1.31.5] 2023-04-06
 
 ### Added
 - View the receive stock action alongside the delivery address when viewing purchase orders.
@@ -25,7 +31,7 @@ All notable changes to this project will be documented in this file.
 - Escape cookie values used in login form
 - Only use valid columns for order-by when building SQL queries
 
-## [1.31.4]
+## [1.31.4] 2023-03-21
 
 ### Change
 - When viewing a stock item, show all related sales orders instead of using the default order search for new, open, etc.
