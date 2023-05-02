@@ -38,7 +38,7 @@ p.step {
 	.border-radius(10px);
 	.header {
 		.border-radius(10px 10px 0 0);
-		background-color: @orange;
+		background-color: var(--brand-color);
 		padding: 25px;
 		> div {
 			position: relative;
@@ -132,7 +132,7 @@ p.step {
 		cursor: pointer;
 		transition: background-color 0.3s;
 		&:hover {
-			background-color: darken(@orange, 12%);
+			background-color: var(--dark-brand-color);
 		}
 	}
 
@@ -145,7 +145,7 @@ p.step {
 		margin-left: 5px;
 		transition: background-color 0.3s;
 		&:hover {
-			background-color: darken(@orange, 12%);
+			background-color: var(--dark-brand-color);
 			color: #fff;
 		}
 	}
