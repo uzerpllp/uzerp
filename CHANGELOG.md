@@ -1,6 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.31.9] 2023-05-01
+
+### Fixed
+
+- Item cost sheet showing incorrect total cost.
+
+### Changed
+
+- user/theme.css must use CSS variables to change key colours. See assets/css/uzerp/preboot.less
+
 ## [1.31.8] 2023-04-24
 
 ### Fixed
@@ -1117,6 +1127,8 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.31.9]: https://github.com/uzerpllp/uzerp/compare/1.31.8...1.31.9
+[1.31.8]: https://github.com/uzerpllp/uzerp/compare/1.31.7...1.31.8
 [1.31.7]: https://github.com/uzerpllp/uzerp/compare/1.31.6...1.31.7
 [1.31.6]: https://github.com/uzerpllp/uzerp/compare/1.31.5...1.31.6
 [1.31.5]: https://github.com/uzerpllp/uzerp/compare/1.31.4...1.31.5
