@@ -3455,6 +3455,7 @@ class SordersController extends printController
             $sinvoiceheader['despatch_date'] = un_fix_date($latest_despatch_date);
             $sinvoiceheader['transaction_type'] = 'I';
             $sinvoiceheader['invoice_date'] = un_fix_date($latest_despatch_date);
+            $sinvoiceheader['despatch_action'] = $sorder->despatch_action;
 
             $sinvoice = SInvoice::Factory($sinvoiceheader, $errors);
 
