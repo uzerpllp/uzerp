@@ -594,6 +594,12 @@ class SinvoicesController extends printController
             $sinvoice->slmaster_id = $default_customer;
         }
 
+        if ($sinvoice->isLoaded()) {
+            $this->view->set('default_despatch_action', $sinvoice->despatch_action);
+        } else {
+            $this->view->set('default_despatch_action', $this->getDespatchAction($default_customer));
+        }
+
         $this->view->set('selected_customer', $default_customer);
         $customer = $this->getCustomer($default_customer);
         $this->view->set('company_id', $customer->company_id);
@@ -636,6 +642,10 @@ class SinvoicesController extends printController
 
         // get Sales Invoice Notes for default customer or first in customer
         $this->getNotes($default_person, $default_customer);
+
+        // Get despatch actions
+        $despatch_actions = WHAction::getDespatchActions();
+        $this->view->set('despatch_actions', $despatch_actions);
 
         // Get Projects and tasks
         $projects = $this->getProjects($default_customer);
@@ -946,6 +956,42 @@ class SinvoicesController extends printController
             $this->setTemplateName('select_options');
         } else {
             return $addesses;
+        }
+    }
+
+    /**
+     * Set or return the default despatch action for the selected customer
+     * 
+     * Used by Ajax after the user selects a Customer, etc.
+     *
+     * @param string $_slmaster_id  sales ledger master record id
+     * @return int || void
+     */
+    public function getDespatchAction($_slmaster_id = '')
+    {
+        if (isset($this->_data['ajax'])) {
+            if (! empty($this->_data['slmaster_id'])) {
+                $_slmaster_id = $this->_data['slmaster_id'];
+            }
+        }
+
+        $customer = $this->getCustomer($_slmaster_id);
+
+        $despatch_action = '';
+        if ($customer) {
+            $despatch_action = $customer->despatch_action;
+        }
+
+        if (empty($despatch_action)) {
+            $despatch_actions = WHAction::getDespatchActions();
+            $despatch_action = current(array_keys($despatch_actions));
+        }
+
+        if (isset($this->_data['ajax'])) {
+            $this->view->set('value', $despatch_action);
+            $this->setTemplateName('text_inner');
+        } else {
+            return $despatch_action;
         }
     }
 
