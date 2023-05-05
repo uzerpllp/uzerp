@@ -910,7 +910,7 @@ $(document).ready(function () {
 			$self.addClass('closed');
 		}
 	
-		$next.slideToggle( 500 );
+		$next.slideToggle( 100, 'linear' );
 		
 	});
 	
