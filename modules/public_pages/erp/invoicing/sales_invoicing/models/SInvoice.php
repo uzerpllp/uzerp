@@ -69,6 +69,7 @@ class SInvoice extends Invoice
         $this->hasOne('SOrder', 'sales_order_id', 'order');
         $this->hasOne('SystemCompany', 'usercompanyid', 'system_company');
         $this->hasOne('PaymentTerm', 'payment_term_id', 'payment_term');
+        $this->hasOne('WHAction', 'despatch_action', 'despatch_from');
 
         $this->belongsTo('SLCustomer', 'slmaster_id', 'customer');
         $this->belongsTo('SOrder', 'sales_order_id', 'sales_order_number');
@@ -80,6 +81,7 @@ class SInvoice extends Invoice
         $this->belongsTo('Project', 'project_id', 'project');
         $this->belongsTo('Task', 'task_id', 'task');
         $this->belongsTo('DeliveryTerm', 'delivery_term_id', 'delivery_term');
+        $this->belongsTo('WHAction', 'despatch_action');
 
         $this->setComposite('Address', 'inv_address_id', 'invoice_address', array(
             'street1',
@@ -150,7 +152,7 @@ class SInvoice extends Invoice
         $this->getField('twin_gross_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
     }
 
-    public static function Factory($header_data, &$errors)
+    public static function Factory($header_data, &$errors = [], $do_name = null)
     {
         $customer = DataObjectFactory::Factory('SLCustomer');
         $customer = $customer->load($header_data['slmaster_id']);
@@ -159,6 +161,11 @@ class SInvoice extends Invoice
             $header_data['currency_id'] = $customer->currency_id;
             $header_data['payment_term_id'] = $customer->payment_term_id;
             $header_data['tax_status_id'] = $customer->tax_status_id;
+        }
+
+        if (empty($header_data['despatch_action']))
+        {
+            $header_data['despatch_action'] = $customer->despatch_action;
         }
 
         $header = Invoice::makeHeader($header_data, 'SInvoice', $errors);
@@ -366,13 +373,13 @@ class SInvoice extends Invoice
                     $data['process_id'] = $this->id;
                     $data['stitem_id'] = $line->stitem_id;
 
-                    if (is_null($line->sales_order_id)) {
+                    if (!is_null($this->despatch_action)) {
+                        $data['whaction_id'] = $this->despatch_action;
+                    } elseif (is_null($line->sales_order_id)) {
                         $data['whaction_id'] = $customer->despatch_action;
                     } else {
-
                         $sorder = DataObjectFactory::Factory('SOrder');
                         $sorder->load($line->sales_order_id);
-
                         $data['whaction_id'] = $sorder->despatch_action;
                     }
 
@@ -417,7 +424,7 @@ class SInvoice extends Invoice
         return false;
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = [])
     {
         $si_line = DataObjectFactory::Factory('SInvoiceLine');
 
@@ -511,7 +518,7 @@ class SInvoice extends Invoice
         }
     }
 
-    public function getNextLineNumber()
+    public function getNextLineNumber($_invoiceline = null)
     {
         $sinvoiceline = DataObjectFactory::Factory('SInvoiceLine');
         return parent::getNextLineNumber($sinvoiceline);
