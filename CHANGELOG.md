@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- A despatch action can be set on sales invoices.
+
 ## [1.31.9] 2023-05-01
 
 ### Fixed
