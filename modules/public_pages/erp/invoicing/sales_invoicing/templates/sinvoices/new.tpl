@@ -31,6 +31,8 @@
 					<input type="hidden" id="input_inv_address_id" value="{$model->inv_address_id}" />
 					<input type="hidden" id="shipping_type" value="shipping" />
 					<input type="hidden" id="billing_type" value="billing" />
+					{select attribute='despatch_action' label='Despatch From' nonone=true options=$despatch_actions value=$default_despatch_action}
+
 					{input type="hidden" attribute="default_inv_address_id" value=$default_inv_address }
 					{select label='For Attn: of' attribute='person_id' nonone=true depends="slmaster_id"}
 					{select attribute='del_address_id' label='Delivery Address' nonone=true options=$deliveryAddresses}

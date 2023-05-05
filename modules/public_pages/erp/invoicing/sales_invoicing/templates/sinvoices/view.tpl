@@ -14,7 +14,6 @@
 						{view_data attribute="sales_order_number"}
 						{view_data attribute="customer" label='customer'}
 						{view_data attribute="ext_reference" label='customer reference'}
-						{view_data attribute="delivery_term_id" label='delivery term'}
 						{view_data attribute="status"}
 						{view_data attribute="date_printed"}
 						{view_data attribute="print_count"}
@@ -53,6 +52,10 @@
 					{with model=$SInvoice->inv_address}
 						{view_data attribute="fulladdress" label="invoice_address" label=''}
 					{/with}
+				{/view_section}
+				{view_section heading="Despatch Details" expand="closed"}
+					{view_data model=$SInvoice attribute="delivery_term_id" label='delivery term'}
+					{view_data model=$SInvoice attribute="despatch_action"}
 				{/view_section}
 				{view_section heading="Description" expand="open"}
 					{view_data model=$SInvoice attribute="description" tags=none label=' '}

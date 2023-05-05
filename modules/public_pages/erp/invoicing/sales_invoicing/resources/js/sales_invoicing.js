@@ -64,7 +64,7 @@ $(document).ready(function() {
 				{
 					element	:'#notes',
 					field	:"notes"
-				}
+				},
 			],
 			data:{
 				module		: 'sales_invoicing',
@@ -81,6 +81,20 @@ $(document).ready(function() {
 	});	
 	
 	$("#SInvoice_del_address_id","#sales_invoicing-sinvoices-new").live('change', function(){
+		$.uz_ajax({
+			target:{
+				element	: '#SInvoice_despatch_action',
+				action	: "selected"
+			},
+			data:{
+				asyn		: false,
+				module		: 'sales_invoicing',
+				controller	: 'sinvoices',
+				action		: 'getDespatchAction',
+				slmaster_id	: $('#SInvoice_slmaster_id').val(),
+				ajax		: ''
+			}
+		});
 		
 		if ($("#SInvoice_inv_address_id").find('option[value=' + $("#SInvoice_del_address_id").val() + ']').length > 0) {
 			$("#SInvoice_inv_address_id").val($("#SInvoice_del_address_id").val());
