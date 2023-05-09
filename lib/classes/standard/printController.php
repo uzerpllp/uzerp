@@ -858,67 +858,6 @@ class printController extends Controller
         }
     }
 
-    public function PrintDocument()
-    {
-        // this is where FOP will need to take place
-        // get the XML for the collection, pass it off to an XSLT, could easily use the dialog
-        if (! $this->loadData()) {
-            sendback();
-        }
-
-        $do = $this->_uses[$this->modeltype];
-
-        // set options
-        $options = array(
-            'type' => array(
-                'pdf' => '',
-                'xml' => ''
-            ),
-            // 'csv' => ''
-            'output' => array(
-                'print' => '',
-                'save' => '',
-                'email' => '',
-                'view' => ''
-            ),
-            'report' => 'Document',
-            'filename' => get_class($do) . '_' . $do->{$do->idField}
-        );
-
-        // we use status in other print functions, however here we base it on if ajax print is or isn't set
-        if (! $this->isPrinting()) {
-            return $options;
-        }
-
-        $form_data = $this->decode_original_form_data($this->_data['encoded_query_data']);
-
-        $data = array();
-        $tags = array();
-
-        if (isset($form_data['fields'])) {
-            $data[$do->idField] = $do->{$do->idField};
-
-            foreach ($form_data['fields'] as $fieldname => $tag) {
-                $data[$fieldname] = $do->getFormatted($fieldname);
-                $tags[$fieldname] = $tag;
-            }
-        }
-
-        // TODO: Loop round $do->getFields and add any fields not in $data?
-
-        $options['xslVars']['REPORT_TITLE'] = $do->getTitle();
-
-        $options['xslSource'] = ReportDefinition::getDefinition($this->_data['print']['report'])->definition;
-
-        $options['xmlSource'] = $this->build_custom_xml(array(
-            $data
-        ), $tags);
-
-        // fire the print output, echo the output JSON for jQuery to handle
-        echo $this->generate_output($this->_data['print'], $options);
-        exit();
-    }
-
     public function reportOptions()
     {
         $report = ReportDefinition::getDefinition('PrintCollection');
@@ -3285,24 +3224,6 @@ class printController extends Controller
         }
 
         return $output;
-    }
-
-    protected function output_details_sidebar($sidebar, $params = array())
-    {
-        $actions = array();
-
-        $actions['output_detail'] = array(
-            'link' => array_merge(array(
-                'modules' => $this->_modules,
-                'controller' => $this->name,
-                'action' => 'printDialog',
-                'printaction' => 'printDocument',
-                'data_object' => $this->modeltype
-            ), $params),
-            'tag' => 'output_detail'
-        );
-
-        $sidebar->addList('Reports', $actions);
     }
 
     // ****************
