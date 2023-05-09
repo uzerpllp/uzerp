@@ -838,11 +838,6 @@ class SordersController extends printController
                 'tag' => 'print Address Label'
             );
 
-            $this->output_details_sidebar($sidebar, array(
-                'filename' => 'SO_detail_' . $order->order_number,
-                'id' => $id
-            ));
-
             if ($order->someLinesNew($linestatus)) {
                 $actions['printPickList'] = array(
                     'link' => array(
