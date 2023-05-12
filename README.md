@@ -16,7 +16,7 @@ Find out more at [uzerp.com](http://www.uzerp.com)
 
 # Copyright and License
 
-uzERP is Copyright (C) 2007-2015 uzERP LLP
+uzERP is Copyright (C) 2007-2023 uzERP LLP
 
 uzERP is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
