@@ -378,6 +378,11 @@ class StitemsController extends printController
                                     $errors[] = 'Error getting identifier for new item';
                                 }
 
+                                // Move start date to today for some child objects
+                                if (in_array($do_name, ['MFStructure', 'MFOperation', 'MFOutsideOperation'])) {
+                                    $child->start_date = fix_date(date(DATE_FORMAT));
+                                }
+
                                 if ($do_name == 'SOProductLineHeader') {
                                     $child->start_date = $this->_data[$this->modeltype]['pstart_date'];
                                     $child->description = $this->_data[$this->modeltype]['item_code'] . ' - ' . $this->_data[$this->modeltype]['description'];
