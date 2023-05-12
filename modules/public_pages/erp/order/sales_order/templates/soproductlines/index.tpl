@@ -1,9 +1,3 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **}
-{* 	$Revision: 1.13 $ *}
 {content_wrapper}
 	{advanced_search}
 	{paging}
@@ -49,9 +43,6 @@
 				Price
 			{/heading_cell}
 			{heading_cell field="price" class='right'}
-				Product Group Discount
-			{/heading_cell}
-			{heading_cell field="price" class='right'}
 				Net Price
 			{/heading_cell}
 		{/heading_row}
@@ -95,9 +86,6 @@
 				{/grid_cell}
 				{grid_cell model=$model cell_num=10 field="price"}
 					{$model->getGrossPrice()|string_format:"%.2f"}
-				{/grid_cell}
-				{grid_cell model=$model cell_num=10 field="price"}
-					{$model->getPriceDiscount()}
 				{/grid_cell}
 				{grid_cell model=$model cell_num=10 field="price"}
 					{$model->getPrice()|string_format:"%.2f"}
