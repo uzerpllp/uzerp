@@ -895,7 +895,6 @@ $(document).ready(function () {
 	});
 
 	// View Section show-hide
-	
 	$('.expand.heading').live('click', function() {
 		
 		var $self	= $(this),
@@ -910,7 +909,17 @@ $(document).ready(function () {
 			$self.addClass('closed');
 		}
 	
-		$next.slideToggle( 100, 'linear' );
+		$next.slideToggle( 100, 'linear' , function () {
+			// If there is a scrollable table viewport on the page
+			// adjust its height to fill the available vertical space,
+			// but not on list views with search.
+			if ($('#included_file .tablescroll_wrapper').height()!==null && $('#data_grid_search').length == 0) {
+				var containerMargin = $('#main_with_sidebar').outerHeight() - $('#main_with_sidebar').height();
+				$('#included_file .tablescroll_wrapper').height(
+					$('#main_with_sidebar').height() - $('#view_page div:first-child').outerHeight(true) - $('h1.page_title').outerHeight(true) - $('.tablescroll_head').outerHeight(true) - containerMargin
+				);
+			}
+		});
 		
 	});
 	
