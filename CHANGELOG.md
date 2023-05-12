@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - A despatch action can be set on sales invoices.
+- Make more/less lines visible on long orders when collapsing/expanding items in the order header.
 
 ## [1.31.9] 2023-05-01
 
