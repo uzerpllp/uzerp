@@ -64,6 +64,7 @@ class STItem extends DataObject
 		$this->identifierField = array('item_code', 'description');
 		$this->orderby = 'item_code';
 		$this->validateUniquenessOf('item_code');
+		$this->addValidator(new STItemCodeValidator($this)); /** @phpstan-ignore-line */
 
 		// Define relationships
 		$pg_filter = new ConstraintChain();
