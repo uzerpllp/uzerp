@@ -1167,7 +1167,7 @@ class VatController extends printController
 		];
 
 		$extra['boxes'][]['line'][] = [
-			'title' => 'VAT due on acquisitions from other EC Member States.',
+			'title' => 'VAT due in the period on acquisitions of goods made in Northern Ireland from EU Member States.',
 			'box_num' => 'Box 2',
 			'value' => $return->vat_due_acquisitions,
 		];
@@ -1179,7 +1179,7 @@ class VatController extends printController
 		];
 
 		$extra['boxes'][]['line'][] = [
-			'title' => 'VAT reclaimed on purchases and other inputs (including acquisitions from the EC). ',
+			'title' => 'VAT reclaimed in the period on purchases and other inputs (including acquisitions in Northern Ireland from EU member states). ',
 			'box_num' => 'Box 4',
 			'value' => $return->vat_reclaimed_curr_period,
 		];
@@ -1197,19 +1197,19 @@ class VatController extends printController
 		];
 
 		$extra['boxes'][]['line'][] = [
-			'title' => 'Total value of purchases and all other inputs excluding any VAT (including exempt purchases)',
+			'title' => 'Total value of purchases and all other inputs excluding any VAT (including exempt purchases).',
 			'box_num' => 'Box 7',
 			'value' => round($return->total_value_purchase_ex_vat),
 		];
 
 		$extra['boxes'][]['line'][] = [
-			'title' => 'Total value of all supplies of goods and related costs, excluding any VAT, to other EC member states. ',
+			'title' => 'Total value of dispatches of goods and related costs (excluding VAT) from Northern Ireland to EU Member States.',
 			'box_num' => 'Box 8',
 			'value' => round($return->total_value_goods_supplied_ex_vat),
 		];
 
 		$extra['boxes'][]['line'][] = [
-			'title' => 'Total value of acquisitions of goods and related costs excluding any VAT, from other EC member states.',
+			'title' => 'Total value of acquisitions of goods and related costs (excluding VAT) made in Northern Ireland from EU Member States.',
 			'box_num' => 'Box 9',
 			'value' => round($return->total_acquisitions_ex_vat),
 		];
