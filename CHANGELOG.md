@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 - A despatch action can be set on sales invoices.
 - Make more/less lines visible on long orders when collapsing/expanding items in the order header.
 
+### Changed
+
+- When cloning a stock item, structures, operations and outside operations will start from today's date.
+
 ## [1.31.9] 2023-05-01
 
 ### Fixed
