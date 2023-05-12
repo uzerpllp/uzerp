@@ -54,7 +54,6 @@
 			{/view_section}
 			{view_section heading="access_details"}
 				{view_data attribute="created"}
-				{view_data attribute="last_paid"}
 				{view_data attribute="date_inactive"}
 			{/view_section}
 		{/with}
