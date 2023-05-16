@@ -13,6 +13,10 @@ All notable changes to this project will be documented in this file.
 - When cloning a stock item, structures, operations and outside operations will start from today's date.
 - Stock items cannot be saved if their code contains any spaces.
 
+### Fixed
+
+- Prevent duplicate sales prices (produclines) being created when amending prices of performing a bulk price change.
+
 ## [1.31.9] 2023-05-01
 
 ### Fixed
