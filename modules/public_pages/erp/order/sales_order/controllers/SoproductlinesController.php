@@ -21,7 +21,7 @@ class soproductlinesController extends printController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		$s_data=array();
@@ -533,7 +533,7 @@ class soproductlinesController extends printController
 		if (count($errors)==0) {
 			$count=0;
 
-			$this->setSearch('productlinesSearch', 'customerPriceUplift', $s_data);
+			$this->setSearch('productlinesSearch', 'customerPriceUplift');
 
 			$collection=new SOProductlineCollection();
 			$sh=$this->setSearchHandler($collection);
@@ -586,7 +586,7 @@ class soproductlinesController extends printController
 	{
 		$flash=Flash::Instance();
 
-		$this->setSearch('productlinesSearch', 'customerPriceUplift', $s_data);
+		$this->setSearch('productlinesSearch', 'customerPriceUplift');
 
 		$page=$this->_data['page'];
 
@@ -624,7 +624,7 @@ class soproductlinesController extends printController
 		exit;
 	}
 
-	public function end_price_uplift ()
+	public function end_price_uplift()
 	{
 
 		$db = DB::Instance();
@@ -647,11 +647,15 @@ class soproductlinesController extends printController
 
 			if ($count>0)
 			{
+				// Clear any messages left over from the previous uplift.
+				$flash->clear();
 				$text = ($count==1)?'price':'prices';
 				$flash->addMessage($count.' new '.$text.' saved OK');
 			}
 
 			$db->CompleteTrans();
+			unset($_SESSION['price_uplift']);
+			unset($_SESSION['price_uplift_params']);
 
 			sendTo($this->name, 'price_uplift', $this->_modules);
 		}
@@ -860,7 +864,7 @@ class soproductlinesController extends printController
 
 	}
 
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) :void
 	{
 		$flash=Flash::Instance();
 		$errors=array();
