@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Prevent duplicate sales prices (produclines) being created when amending prices of performing a bulk price change.
+- Leaver employee postal addresses not being removed when deleting personal data.
 
 ## [1.31.9] 2023-05-01
 
