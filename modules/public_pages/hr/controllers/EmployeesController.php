@@ -25,7 +25,7 @@ class EmployeesController extends Controller
 		
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		$errors = array();
@@ -90,7 +90,7 @@ class EmployeesController extends Controller
 		
 	}	
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		sendBack();
 	}
@@ -366,7 +366,7 @@ class EmployeesController extends Controller
 
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) :void
 	{
 		
 		if (!$this->checkParams($this->modeltype))
@@ -645,13 +645,14 @@ class EmployeesController extends Controller
 							,'employee_id'	=>$idvalue)
 			 );
 	
+			$expense = new Expense();
 			$sidebarlist['expenses_for_payment'] = array(
 				'tag'=>'Expenses Awaiting Authorisation',
 				'link'=>array('modules'		=>$this->_modules
 							 ,'controller'	=>'expenses'
 							 ,'action'		=>'viewemployee'
 							 ,'employee_id'	=>$idvalue
-							 ,'status'		=>Expense::statusAwaitingAuthorisation())
+							 ,'status'		=>$expense->statusAwaitingAuthorisation())
 			 );
 	
 			$sidebarlist['make_payment'] = array(
@@ -857,11 +858,7 @@ class EmployeesController extends Controller
 		$requests->load($sh);
 		
 		$this->view->set('related_collection',$requests);
-		
 		$this->_templateName = $this->getTemplateName('view_related');
-		
-		$request->clickcontroller='holidayrequests';
-		
 		$this->view->set('clickaction','view');
 		$this->view->set('clickcontroller','holidayrequests');
 	}
@@ -1513,15 +1510,13 @@ class EmployeesController extends Controller
 
 		$person->load($employee->person_id);
 		$methods = $person->getContactMethods();
-		if (count($methods) > 0){
-			$party->load($person->party_id);
+		$party->load($person->party_id);
 
-			$address_sh = new SearchHandler($addresses, false);
-			$cc = new ConstraintChain();
-			$cc->add(new Constraint('party_id', '=', $party->id));
-			$address_sh->addConstraintChain($cc);
-			$addresses->load($address_sh);
-		}
+		$address_sh = new SearchHandler($addresses, false);
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('party_id', '=', $party->id));
+		$address_sh->addConstraintChain($cc);
+		$addresses->load($address_sh);
 
 		$db = DB::Instance();
 		$db->StartTrans();
@@ -1688,6 +1683,7 @@ class EmployeesController extends Controller
 	
 	private function getWeekDates()
 	{
+		$errors = [];
 		$hr_params = DataObjectFactory::Factory('HRParameters');
 		
 		return $hr_params->get_week_dates($errors);
