@@ -1452,7 +1452,14 @@ class DataObject implements Iterator
         $this->addValidator(new EqualityValidator($fieldnames));
     }
 
-    protected function test(Array &$errors)
+    /**
+     * Test model is valid
+     * 
+     * @see \modelValidation
+     * @param Array $errors
+     * @return void
+     */
+    public function test(Array &$errors)
     {
         foreach ($this->getValidators() as $validator) {
             $validator->test($this, $errors);
@@ -1464,6 +1471,13 @@ class DataObject implements Iterator
         return $this->_loaded;
     }
 
+    /**
+     * Test field is valid
+     *
+     * @see \fieldValidation
+     * @param Array $errors
+     * @return boolean
+     */
     public function fieldTest(&$errors)
     {
         $myIdField = $this->{$this->idField};
