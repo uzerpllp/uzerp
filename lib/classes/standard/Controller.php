@@ -1325,6 +1325,13 @@ abstract class Controller
                 $sidebarlist[$name] = array_merge(array(
                     'tag' => (isset($hasmany['label']) ? $hasmany['label'] : 'Show ' . $name)
                 ), $link);
+
+                // If a tag is set, use that instead
+                if(isset($hasmany['tag'])) {
+                    $sidebarlist[$name] = array_merge(array(
+                        'tag' => $hasmany['tag']
+                    ), $link);
+                }
             }
         }
 
