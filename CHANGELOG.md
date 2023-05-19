@@ -5,18 +5,19 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- A despatch action can be set on sales invoices.
+- A despatch action can be selected on sales invoices. This allows control of the despatch action without having to add a sales order first.
 - Make more/less lines visible on long orders when collapsing/expanding items in the order header.
 
 ### Changed
 
 - When cloning a stock item, structures, operations and outside operations will start from today's date.
-- Stock items cannot be saved if their code contains any spaces.
+- New or amended stock items cannot be saved if their code contains any spaces.
+- Remember selected search options for purchase order list view.
 
 ### Fixed
 
-- Prevent duplicate sales prices (produclines) being created when amending prices of performing a bulk price change.
-- Leaver employee postal addresses not being removed when deleting personal data.
+- Prevent duplicate sales prices (produclines) from being created when amending prices or performing a bulk price change.
+- Leaver employee postal addresses were not being removed when deleting personal data.
 
 ## [1.31.9] 2023-05-01
 
