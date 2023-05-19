@@ -1,16 +1,11 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **}
-{* $Revision: 1.6 $ *}
 {content_wrapper}
 	{advanced_search}
 	<div id="view_page" class="clearfix">
 		<h3>Purchase Invoice Lines</h3>
 		<dt>Total Quantity</dt><dd>{$total_qty}</dt>
 		<dt>Total Value</dt><dd>{$total_value|string_format:'%.2f'}</dt>
-		<br>
+	</div>
+	<div id="view_page" class="clearfix">
 		{paging}
 		{data_table}
 			{heading_row}
