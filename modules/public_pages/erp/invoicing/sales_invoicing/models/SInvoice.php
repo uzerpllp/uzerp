@@ -128,6 +128,7 @@ class SInvoice extends Invoice
                 'rules' => array()
             ),
             'transactions' => array(
+                'tag' => 'show_ST_transactions',
                 'newtab' => array(
                     'new' => true
                 ),
