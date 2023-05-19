@@ -331,6 +331,9 @@ class StitemsController extends printController
             }
         }
 
+        // Run the model validator(s)
+        $stitem->test($errors);
+
         if (count($errors) == 0 && ! $stitem->save()) {
             $errors[] = 'Error saving cloned item ' . $db->ErrorMsg();
         } elseif (count($errors) == 0) {
