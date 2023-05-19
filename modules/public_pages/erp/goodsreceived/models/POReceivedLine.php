@@ -100,7 +100,7 @@ class POReceivedLine extends DataObject {
 		
 	}
 	
-	public function accrueLine($_ids = '', &$errors = array(), $_reverse_accrual = FALSE)
+	public static function accrueLine($_ids = '', &$errors = array(), $_reverse_accrual = FALSE)
 	{
 		if (empty($_ids) || !is_array($_ids))
 		{
