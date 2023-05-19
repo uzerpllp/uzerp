@@ -54,7 +54,7 @@ class PordersController extends printController
             'authorised_by' => $user->username
         );
 
-        $this->setSearch('pordersSearch', 'useDefault', $s_data);
+        $this->setSearch('pordersSearch', 'useDefault', $s_data, [], true);
 
         parent::index(new POrderCollection($this->_templateobject));
 
