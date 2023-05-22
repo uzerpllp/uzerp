@@ -10,7 +10,6 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- When cloning a stock item, structures, operations and outside operations will start from today's date.
 - New or amended stock items cannot be saved if their code contains any spaces.
 - Remember selected search options for purchase order list view.
 
@@ -70,7 +69,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Incorrect checking of circular reference when substituting item in structure.
 - Group permissions could not be saved.
-- Search input for text not escaped correctly, causing database error on searches containg '('.
+- Search input for text not escaped correctly, causing database error on searches containing '('.
 - Default date not set when stock item search is cleared, resulting in an error.
 - Stock items show related invoices did not use full width of screen.
 - Adding a new person (via dialog) during sales order entry did not work.
