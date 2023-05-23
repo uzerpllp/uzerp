@@ -14,7 +14,8 @@
         "ramsey/uuid": "^4.1",
         "vlucas/phpdotenv": "^5.4",
         "twilio/sdk": "^6.40",
-        "endroid/qr-code": "^3.9"
+        "endroid/qr-code": "^3.9",
+        "league/csv": "^9.7"
     },
 
     "autoload": {
