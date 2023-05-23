@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Correct ordering on sales order Item and Order Availability lists.
+
+## [1.32.0] 2023-05-22
+
 ### Added
 
 - A despatch action can be selected on sales invoices. This allows control of the despatch action without having to add a sales order first.
