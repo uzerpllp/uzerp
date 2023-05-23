@@ -293,7 +293,8 @@ class QueryBuilder {
 			//
 			// Note that postgres supports CASE statements in orderby, which we don't use and can
 			// be leveraged for SQL injection.
-			if (isset($this->model) && $this->model->getField($fieldname) === false) continue;
+			if (!isset($this->field_array[$fieldname])
+			&& (isset($this->model) && $this->model->getField($fieldname) === false)) continue;
 
 			if (is_array($this->field_array) && count($this->field_array) > 0)
 			{
