@@ -348,7 +348,8 @@ class DataObject implements Iterator
 
     private function debug($msg)
     {
-        if (get_class($this) != 'Debug' && get_class($this) != 'Debuglines') {
+        $db = DB::Instance();
+        if ($db->debug == true && get_class($this) != 'Debug' && get_class($this) != 'Debuglines') {
             debug($msg);
         }
     }
@@ -3404,6 +3405,7 @@ class DataObject implements Iterator
 
     protected function setDefaultFieldValues()
     {
+        if (get_class($this) == 'Debug') return;
         $modulecomponent = ModuleComponent::Instance($this, 'M');
 
         if ($modulecomponent && $modulecomponent->isLoaded()) {
