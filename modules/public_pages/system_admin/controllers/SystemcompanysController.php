@@ -76,7 +76,7 @@ class SystemcompanysController extends Controller
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		$this->view->set('clickaction', 'view');
@@ -103,46 +103,14 @@ class SystemcompanysController extends Controller
 		
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		$flash = Flash::Instance();
 		parent::delete($this->modeltype);
 		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : NULL);
 	}
 	
-	public function publish()
-	{
-		
-		if (!$this->loadData())
-		{
-			$this->dataError();
-			sendBack();
-		}
-		
-		$systemcompany = $this->_uses[$this->modeltype];
-		
-		$flash	= Flash::Instance();
-		$errors	= array();
-
-		if (Publish::systemCompany($systemcompany, $errors))
-		{
-			$flash->addMessage($systemcompany->company . ' successfully published');
-		}
-		else
-		{
-			$flash->addError('Failed to publish ' . $systemcompany->company);
-		}
-		
-		if (count($errors) > 0)
-		{
-			$flash->addErrors($errors);
-		}
-		
-		sendTo($this->name, 'index', $this->_modules);
-		
-	}
-	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) :void
 	{ 
 		
 		if (!$this->CheckParams($this->modeltype))
@@ -247,19 +215,6 @@ class SystemcompanysController extends Controller
 			if (!parent::save($this->modeltype, $data, $errors))
 			{
 				$errors[] = 'Failed to save System Company';
-				$db->FailTrans();
-			}
-			
-		}
-		
-		if (count($errors) == 0)
-		{
-			
-			$result = $this->saved_model->setPermissions($this->_data['Permission'], $errors);
-			
-			if ($result === FALSE)
-			{
-				$errors[] = 'Failed to save System Company Permissions';
 				$db->FailTrans();
 			}
 			

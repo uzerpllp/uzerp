@@ -37,13 +37,6 @@
 				{/with}
 			{/view_section}
 		</dl>
-		<dl class="float-right">
-			{view_section heading="System Company Permissions"}
-				{foreach item=permission from=$permissions}
-					{input model=$permission type='checkbox' class='checkbox' attribute='permissions' rowid=$permission->id number=$permission->id label=$permission->title}
-				{/foreach}
-			{/view_section}
-		</dl>
 		<div id="view_data_bottom" class="clearfix">
 			{submit}
 		</div>

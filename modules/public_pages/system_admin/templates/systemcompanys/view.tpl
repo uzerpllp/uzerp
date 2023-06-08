@@ -27,12 +27,6 @@
 							{view_data model=$role label='' attribute='name' link_to='"module":"admin","controller":"roles","action":"view","id":"'|cat:$role->id|cat:'"'}
 						{/foreach}
 					{/view_section}
-					{assign var=permissions_count value=$permissions->count()}
-					{view_section heading='Permissions ('|cat:$permissions_count|cat:')' expand='closed'}
-						{foreach item=permission from=$permissions}
-							{view_data label='' value=$permission->title}
-						{/foreach}
-					{/view_section}
 			</dl>
 		{/with}
 	</div>
