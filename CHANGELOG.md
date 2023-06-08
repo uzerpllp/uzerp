@@ -1,6 +1,20 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Removed
+
+- System company module permission settings
+
+### Added
+
+- CSV utility library for future use
+
+### Fixed
+
+- Setting user/company debug mode setting to on caused infinite loop and crashed PHP
+
 ## [1.32.1] 2023-05-24
 
 ### Fixed
