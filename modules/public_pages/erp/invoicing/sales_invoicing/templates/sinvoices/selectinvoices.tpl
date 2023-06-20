@@ -1,4 +1,5 @@
 {content_wrapper}
+	{assign printaction ''}
 	{advanced_search}
 	{paging}
 	{form controller=$self.controller action='batchprocess' notags=true}
