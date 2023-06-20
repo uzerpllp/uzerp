@@ -75,3 +75,44 @@ select.account_centre {
 	height:100px;
 	width:300px;
 }
+
+/* Print/post sales invoices */
+#invoice-actions dl {
+	display:grid;
+	grid-template-columns: 14% 10%;
+	grid-gap: 10px;
+	font-weight: bold;
+}
+
+#invoice-actions h2 {
+	font-size:16px;
+	border-bottom: 1px solid var(--border-1);
+	margin-top: 10px
+}
+
+#invoice-actions input[type=checkbox] {
+	top:0;
+}
+
+#invoice-actions dt {
+	text-align: right;
+}
+
+#invoice-actions .buttons {
+	grid-column: 2;
+	display: flex;
+	align-items: flex-start;
+	margin-top: 10px;
+}
+
+#invoice-actions dt.submit {
+	width:0;
+}
+
+#invoice-actions dd.submit {
+	border-top:0 !important;margin-right:20px;
+}
+
+#invoice-actions input[value=Submit] {
+	font-weight: 700;
+}

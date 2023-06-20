@@ -1,9 +1,3 @@
-{** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
- * 
- *	Released under GPLv3 license; see LICENSE. 
- **}
-{* $Revision: 1.14 $ *}
 {content_wrapper}
 	{advanced_search}
 	{paging}
@@ -86,32 +80,31 @@
 				</tr>
 			{/foreach}
 		{/data_table}
-			<dt><label for="printer">Printer</label>:</dt>
-				<dd>
-					<select name="printer">
-				</dd>
+		{paging}
+		</br>
+		<div id="invoice-actions">
+			<h2 style="">Actions</h2>
+			<br/>
+			<dl>
+				<dt><label for="post-invoices">Post Invoices</label></dt>
+				<dd><input type='checkbox' id="post-invoices" name='post-invoices' /></dd>
+				<dt><label for="print-invoices">Print Invoices</label></dt>
+				<dd><input type='checkbox' id="print-invoices" name='print-invoices' /></dd>
+				<dt><label for="printer">Printer</label></dt>
+				<dd><select name="printer">
 				{html_options options=$printers selected=$default_printer}
-			</select>
-		<input type=hidden name='printtype' value='pdf'>
-		<input type=hidden name='printaction' value='Print'>
-		<table class='gridform'>
-			<tr>
-				<td>
-					{submit value='Print Only' notags=true}
-				</td>
-				<td>
-					{submit value='Post Only' notags=true}
-				</td>
-				<td>
-					{submit value='Print and Post' notags=true}
-				</td>
-				<td>
+				</select></dd>
+				<dt><label for="process_matching">Apply actions to {$num_records} matching invoices</label></dt>
+				<dd><input type='checkbox' id="process_matching" name='process_matching' /></dd>
+				<div class="buttons">
+					{submit value="Submit" class="primary-action"}
 					{submit value='Cancel' name='cancel' another='false'}
-				</td>
-			</tr>
-		</table>
+				</div>
+			</dl>
+			<input type=hidden name='printtype' value='pdf'>
+			<input type=hidden name='printaction' value='Print'>
+		</div>
 	{/form}
-	{paging}
 	<div id="data_grid_footer" class="clearfix">
 		{include file='elements/data_table_actions.tpl'}
 	</div>
