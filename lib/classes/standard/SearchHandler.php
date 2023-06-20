@@ -223,11 +223,6 @@ class SearchHandler {
 		{
 			$this->constraints = new ConstraintChain();
 		}
-		if(isset($_POST['search'])) {
-			foreach($_POST['search'] as $fieldname=>$search) {
-				$this->constraints[$fieldname][]=ConstraintFactory::Factory($this->model->getField($fieldname),$search);
-			}
-		}
 		if(isset($_POST['quicksearch']) && isset($_POST['quicksearchfield']))
 		{
 			if($_POST['submit']=='Go')
@@ -341,6 +336,17 @@ class SearchHandler {
 	function setOrderby($orderby,$orderdir='ASC') {
 		$this->orderby=$orderby;
 		$this->orderdir=$orderdir;
+	}
+
+	/**
+	 * Set rows per page
+	 *
+	 * @param integer $perpage
+	 * @return void
+	 */
+	function setPerPage($perpage) {
+		$this->perpage=$perpage;
+		$this->extractPaging('', $this->perpage);
 	}
 
 	function setLimit($limit,$offset=0) {
