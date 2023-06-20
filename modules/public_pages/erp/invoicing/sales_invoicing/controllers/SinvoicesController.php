@@ -1016,9 +1016,10 @@ class SinvoicesController extends printController
 
         $collection = new SInvoiceCollection($this->_templateobject);
         $sh = $this->setSearchHandler($collection);
-
         $sh->addConstraint(new Constraint('line_count', '>', '0'));
         $sh->addConstraint(new Constraint('transaction_type', '!=', 'T'));
+        // Set per page limit to ensure that the action form has some room
+        $sh->setPerPage(12);
 
         parent::index($collection, $sh);
 
@@ -1055,7 +1056,7 @@ class SinvoicesController extends printController
         $this->view->set('sidebar', $sidebar);
         $this->view->set('printers', $this::selectPrinters());
         $this->view->set('default_printer', $this->getDefaultPrinter());
-        $this->view->set('page_title', $this->getPageName('', 'Print/Post'));
+        $this->view->set('page_title', 'Print/Post Sales Invoices');
 
         // get data from persistent selection session
         $key = 'sales_invoicing-sinvoices-selectinvoices';
@@ -1097,6 +1098,22 @@ class SinvoicesController extends printController
 
         $sinvoices = $_SESSION['persistent_selection']['sales_invoicing-sinvoices-selectinvoices'];
 
+        // Asked to process invoices matching the users search result
+        if ($this->_data['process_matching'] == 'on') {
+            $collection = new SInvoiceCollection($this->_templateobject);
+            $t = new SearchHandler($collection, true, true, $this->_data['search_id']);
+            $t->setLimit(0);
+            $t->addConstraint(new Constraint('line_count', '>', '0'));
+            $t->addConstraint(new Constraint('transaction_type', '!=', 'T'));
+            $collection->load($t);
+            $search_invoices = [];
+            foreach ($collection as $row) {
+                $search_invoices[$row->id] = 'N';
+            }
+            // Ignore any indivdually selected invoices
+            $sinvoices = $search_invoices;
+        }
+
         $errors = array();
         if (! empty($sinvoices)) {
 
@@ -1106,7 +1123,7 @@ class SinvoicesController extends printController
             foreach ($sinvoices as $key => $value) {
 
                 // if the button contains print...
-                if (strpos(strtolower($this->_data['saveform']), 'print') !== false) {
+                if ($this->_data['print-invoices'] == 'on') {
 
                     // shape the data array
                     $this->_data['filename'] = '';
@@ -1123,7 +1140,7 @@ class SinvoicesController extends printController
                 }
 
                 // if the button contains post...
-                if (strpos(strtolower($this->_data['saveform']), 'post') !== false) {
+                if ($this->_data['post-invoices'] == 'on') {
 
                     if ($value == 'N') {
                         $invoice = DataObjectFactory::Factory('SInvoice');
