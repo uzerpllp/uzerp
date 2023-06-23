@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Changed
+
+- Sales Invoicing, print/post Manual Invoices: updated interface for selecting actions. Adds an option to process all invoices matching the current search criteria.
+
 ## [1.32.2] 2023-06-08
 
 ### Removed
