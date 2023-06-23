@@ -1,5 +1,7 @@
 <?php
 
+use function PHPUnit\Framework\isEmpty;
+
 /**
  *	uzERP Sales Invoices Controller
  *
@@ -998,28 +1000,13 @@ class SinvoicesController extends printController
     public function selectinvoices()
     {
         $this->view->set('clickaction', 'view');
-        $errors = array();
 
-        $s_data = array();
-
-        // Set context from calling module
-        if (isset($this->_data['slmaster_id'])) {
-            $s_data['slmaster_id'] = $this->_data['slmaster_id'];
-        }
-        if (isset($this->_data['status'])) {
-            $s_data['status'] = $this->_data['status'];
-        } else {
-            $s_data['status'] = 'N';
-        }
-
-        $this->setSearch('sinvoicesSearch', 'useDefault', $s_data);
+        $this->setSearch('sinvoicesSearch', 'sinvoicePrintPost', ['status' => 'N']);
 
         $collection = new SInvoiceCollection($this->_templateobject);
         $sh = $this->setSearchHandler($collection);
         $sh->addConstraint(new Constraint('line_count', '>', '0'));
         $sh->addConstraint(new Constraint('transaction_type', '!=', 'T'));
-        // Set per page limit to ensure that the action form has some room
-        $sh->setPerPage(12);
 
         parent::index($collection, $sh);
 
@@ -1090,10 +1077,10 @@ class SinvoicesController extends printController
     public function batchprocess()
     {
         $flash = Flash::Instance();
-
-        if (isset($this->_data['cancel'])) {
-            $flash->addMessage('Print/Post Sales Invoices/Credit Notes Cancelled');
-            sendBack();
+        $ajaxed = false;
+        if (isset($this->_data['ajax'])) {
+            unset($this->_data['ajax']);
+            $ajaxed = true;
         }
 
         $sinvoices = $_SESSION['persistent_selection']['sales_invoicing-sinvoices-selectinvoices'];
@@ -1108,21 +1095,26 @@ class SinvoicesController extends printController
             $collection->load($t);
             $search_invoices = [];
             foreach ($collection as $row) {
-                $search_invoices[$row->id] = 'N';
+                $search_invoices[$row->id] = $row->status;
             }
             // Ignore any indivdually selected invoices
             $sinvoices = $search_invoices;
         }
 
         $errors = array();
-        if (! empty($sinvoices)) {
+
+        if (!(isset($this->_data['print-invoices']) || isset($this->_data['post-invoices']))) {
+            $errors[] = 'Please select one or more actions to perform.';
+        }
+
+        if (! empty($sinvoices && count($errors) == 0)) {
 
             // key = id
             // value = status
 
             foreach ($sinvoices as $key => $value) {
 
-                // if the button contains print...
+                // if print action selected
                 if ($this->_data['print-invoices'] == 'on') {
 
                     // shape the data array
@@ -1139,7 +1131,7 @@ class SinvoicesController extends printController
                     unset($this->_data['print']);
                 }
 
-                // if the button contains post...
+                // if post action selected
                 if ($this->_data['post-invoices'] == 'on') {
 
                     if ($value == 'N') {
@@ -1148,11 +1140,13 @@ class SinvoicesController extends printController
                         if ($invoice) {
                             $invoice->post($errors);
                         }
+                    } else {
+                        $errors['skipped'] = 'Posted invoices selected but ignored.';
                     }
                 }
             }
         } else {
-            $errors[] = 'No invoices selected for posting';
+            $errors[] = 'No invoices selected for print/post';
         }
 
         if (count($errors) > 0) {
@@ -1162,7 +1156,11 @@ class SinvoicesController extends printController
             $flash->addMessage('Print/Post Sales Invoices/Credit Notes Completed');
         }
 
+        if ($ajaxed) {
+            sendback();
+        }
         sendTo($this->name, 'index', $this->_modules);
+        
     }
 
     public function printaction()

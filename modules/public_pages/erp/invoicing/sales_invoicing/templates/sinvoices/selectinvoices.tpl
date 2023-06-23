@@ -1,8 +1,8 @@
-{content_wrapper}
+{content_wrapper class="ajax_related"}
 	{assign printaction ''}
 	{advanced_search}
 	{paging}
-	{form controller=$self.controller action='batchprocess' notags=true}
+	{form controller=$self.controller action='batchprocess' notags=true class="action-form"}
 		{data_table}
 			{heading_row}
 				{heading_cell field="customer"}
@@ -81,7 +81,6 @@
 				</tr>
 			{/foreach}
 		{/data_table}
-		{paging}
 		</br>
 		<div id="invoice-actions">
 			<h2 style="">Actions</h2>
@@ -96,10 +95,9 @@
 				{html_options options=$printers selected=$default_printer}
 				</select></dd>
 				<dt><label for="process_matching">Apply actions to {$num_records} matching invoices</label></dt>
-				<dd><input type='checkbox' id="process_matching" name='process_matching' /></dd>
+				<dd><input type='checkbox' id="process_matching" name='process_matching' data-count="{$num_records}"/></dd>
 				<div class="buttons">
-					{submit value="Submit" class="primary-action"}
-					{submit value='Cancel' name='cancel' another='false'}
+					{submit value="Process Invoices" name="primary-action"}
 				</div>
 			</dl>
 			<input type=hidden name='printtype' value='pdf'>

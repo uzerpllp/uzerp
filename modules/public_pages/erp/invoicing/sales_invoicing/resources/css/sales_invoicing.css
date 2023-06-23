@@ -102,7 +102,6 @@ select.account_centre {
 	grid-column: 2;
 	display: flex;
 	align-items: flex-start;
-	margin-top: 10px;
 }
 
 #invoice-actions dt.submit {
@@ -113,6 +112,6 @@ select.account_centre {
 	border-top:0 !important;margin-right:20px;
 }
 
-#invoice-actions input[value=Submit] {
+#invoice-actions input[type=Submit] {
 	font-weight: 700;
 }

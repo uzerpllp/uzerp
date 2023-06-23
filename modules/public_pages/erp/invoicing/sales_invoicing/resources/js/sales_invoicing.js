@@ -1,17 +1,69 @@
-/**
- *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved.
- *
- *	Released under GPLv3 license; see LICENSE.
- **/
-
 /*
  * sales_invoicing.js
  * 
- * $Revision: 1.23 $
- * 
  */
 
+// Prompt to the user that they are about to print/post
+// all invoices matching the current search
+
+$(document).on('click', 'input[type=checkbox]#process_matching', function(event){
+	const pmCheckbox = document.getElementById('process_matching');
+	if (pmCheckbox.checked == false) {
+		return;
+	}
+	event.preventDefault();
+	var invCount = $( this ).data('count');
+	var message = 'Apply actions to all <strong>' + invCount + '</strong> invoices?<br/><br/>Any selections will be ignored.';
+	
+	$( '<div id="#confirm-dialog" title="Confirm Action"><p>' + message + '</p></div>'
+		).dialog({
+			resizable: false,
+			modal: true,
+			buttons: {
+				"Yes": function() {
+					$( this ).dialog( "close" );
+					pmCheckbox.checked = true;
+				},
+				"No": function() {
+					$( this ).dialog( "close" );
+					pmCheckbox.checked = false;
+				}
+			}
+		});
+});
+
+
 $(document).ready(function() {
+
+	/* Ajax form post on print/post invoices form */
+
+	$('#included_file').on('click', 'input[type=submit][name=primary-action]', function (event) {
+		event.preventDefault();
+		var form = $(event.currentTarget).parents('form');
+		
+		$('#included_file').uz_ajax({
+			type		: 'POST',
+			url			: form.attr('action') + "&ajax=",
+			data		: form.serialize(),
+			highlight	: false,
+			block: function() {
+				// block the UI
+				$.blockUI({
+					message:'<h1><img src="/assets/graphics/spinner.gif" /> Processing invoices...</h1>'
+				});
+				
+			},
+			complete: function() {
+				$.unblockUI;
+				check_if_table_needs_scroll_bar();
+				document.querySelector("#title-section").scrollIntoView(true);
+				$('#flash #messages')
+				.delay(3000)
+				.hide("blind", {}, 800);
+			},
+		});
+
+	});
 	
 	/* sales_invoicing -> sinvoices -> new */
 

@@ -131,6 +131,112 @@ class sinvoicesSearch extends BaseSearch
 		$search->setSearchData($search_data, $errors);
 		return $search;
 	}
+
+	public static function sinvoicePrintPost($search_data = null, &$errors = array(), $defaults = null)
+	{
+		$search = new sinvoicesSearch($defaults);
+		
+		$invoice = DataObjectFactory::Factory('SInvoice');
+
+		// Search by Status
+		$search->addSearchField(
+			'status',
+			'status',
+			'select',
+			'N',
+			'basic'
+			);
+		$options = $invoice->getEnumOptions('status');
+		$search->setOptions('status', $options);
+	
+		// Search by Printed
+		$search->addSearchField(
+			'date_printed',
+			'printed',
+			'null',
+			'',
+			'basic'
+		);
+		$options = array(''			=> 'All'
+						,'Null'		=> 'Not Printed'
+						,'Not Null'	=> 'Printed');
+		$search->setOptions('date_printed', $options);	
+			
+		// Search by Invoice Date
+		$search->addSearchField(
+			'invoice_date',
+			'invoice_date_between',
+			'between',
+			'',
+			'basic'
+		);
+		
+		// Search by Customer
+		$search->addSearchField(
+			'slmaster_id',
+			'Customer',
+			'select',
+			0,
+			'basic'
+			);
+		$customer = DataObjectFactory::Factory('SLCustomer');
+		$options = array('0'=>'All');
+		$customers = $customer->getAll(null, false, true, '', '');
+		$options += $customers;
+		$search->setOptions('slmaster_id', $options);
+
+		// Search by Person
+		$search->addSearchField(
+			'person',
+			'person',
+			'contains',
+			'',
+			'basic'
+		);
+
+		// Search by Invoice Number
+		$search->addSearchField(
+			'invoice_number',
+			'invoice_number',
+			'equal-integer',
+			'',
+			'advanced'
+		);
+
+		// Search by Sales Order Number
+		$search->addSearchField(
+			'sales_order_number',
+			'sales_order_number',
+			'equal-integer',
+			'',
+			'advanced'
+		);
+
+		// Search by Customer Reference
+		$search->addSearchField(
+			'ext_reference',
+			'customer reference begins',
+			'begins',
+			'',
+			'advanced'
+		);
+			
+		// Search by Transaction Type
+		$search->addSearchField(
+			'transaction_type',
+			'transaction_type',
+			'select',
+			'',
+			'advanced'
+			);
+		$options = array_merge(array(''=>'All')
+					  		,$invoice->getEnumOptions('transaction_type'));
+		unset($options['T']);
+		$search->setOptions('transaction_type', $options);
+
+		$search->setSearchData($search_data, $errors);
+		return $search;
+	}
 		
 	public static function invoices($search_data = null, &$errors = array(), $defaults = null)
 	{
