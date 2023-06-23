@@ -338,17 +338,6 @@ class SearchHandler {
 		$this->orderdir=$orderdir;
 	}
 
-	/**
-	 * Set rows per page
-	 *
-	 * @param integer $perpage
-	 * @return void
-	 */
-	function setPerPage($perpage) {
-		$this->perpage=$perpage;
-		$this->extractPaging('', $this->perpage);
-	}
-
 	function setLimit($limit,$offset=0) {
 		$this->perpage=$limit;
 		$this->offset=$offset;
