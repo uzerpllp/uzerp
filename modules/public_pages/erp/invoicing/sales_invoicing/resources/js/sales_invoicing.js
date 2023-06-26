@@ -5,7 +5,6 @@
 
 // Prompt to the user that they are about to print/post
 // all invoices matching the current search
-
 $(document).on('click', 'input[type=checkbox]#process_matching', function(event){
 	const pmCheckbox = document.getElementById('process_matching');
 	if (pmCheckbox.checked == false) {
@@ -32,11 +31,10 @@ $(document).on('click', 'input[type=checkbox]#process_matching', function(event)
 		});
 });
 
-
 $(document).ready(function() {
+	var blockNotify = new delayBlockUI('<h1><img src="/assets/graphics/spinner.gif" /> Processing invoices...</h1>');
 
 	/* Ajax form post on print/post invoices form */
-
 	$('#included_file').on('click', 'input[type=submit][name=primary-action]', function (event) {
 		event.preventDefault();
 		var form = $(event.currentTarget).parents('form');
@@ -47,14 +45,10 @@ $(document).ready(function() {
 			data		: form.serialize(),
 			highlight	: false,
 			block: function() {
-				// block the UI
-				$.blockUI({
-					message:'<h1><img src="/assets/graphics/spinner.gif" /> Processing invoices...</h1>'
-				});
-				
+				blockNotify.show();
 			},
 			complete: function() {
-				$.unblockUI;
+				blockNotify.cancel();
 				check_if_table_needs_scroll_bar();
 				document.querySelector("#title-section").scrollIntoView(true);
 				$('#flash #messages')
