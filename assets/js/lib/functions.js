@@ -1044,3 +1044,28 @@ function oc(a) {
 	}
 	return o;
 }
+
+// Block the UI and then show a message after a delay
+// E.g. start an ajax request, wait 2 seconds and then show a message.
+// Run the cancel method in the success handler to avoid showing a message
+// within the 2 second window.
+class delayBlockUI {
+	constructor(message='Please wait...', delay=2000) {
+		this.message = message;
+		this.delay = delay;
+	}
+
+	show () {
+		this.timeout = setTimeout( () => {
+			$.blockUI({
+				message: this.message
+			});
+		}, this.delay);
+		return this.timeout;
+	}
+
+	cancel () {
+		clearTimeout(this.timeout);
+		$.unblockUI();
+	}
+};
