@@ -43,7 +43,7 @@ class PLPayment extends DataObject
  		$this->getField('status')->setDefault('N');
 	}
 
-	public static function Factory ($data, &$errors)
+	public static function Factory ($data, &$errors = [], $do_name = null)
 	{
 
 		$hash =$data['cb_account_id'];
@@ -54,7 +54,7 @@ class PLPayment extends DataObject
 		$hash.=$data['number_transactions'];
 		$hash.=$data['payment_total'];
 
-		$progressbar = new progressBar('create_security_key');
+		$progressbar = new Progressbar('create_security_key');
 		
 		$callback = function($pl_data, $key) use (&$hash, &$errors)
 		{
@@ -64,18 +64,18 @@ class PLPayment extends DataObject
 						
 		$progressbar->process($data['PLTransaction'], $callback);
 		
-		$data['hash_key']=self::generateHashcode($hash);
+		$data['hash_key'] = self::generateHashcode($hash);
 		
 		return parent::Factory($data, $errors, 'PLPayment');
 		
 	}
 
-	public function generateHashcode($hash)
+	public static function generateHashcode($hash)
 	{
-		 return base64_encode(mhash(MHASH_SHA1, $hash));
+		 return base64_encode(hash('sha1', $hash, false));
 	}
 	
-	public function save ($pay_data, &$errors)
+	public function savePLPayment ($pay_data, &$errors) 
 	{
 		$db = DB::Instance();
 		$db->StartTrans();
@@ -92,7 +92,7 @@ class PLPayment extends DataObject
 		
 //		Validate and write purchase ledger, cashbook and general ledger transactions
 
-		$progressbar = new progressBar('creating_pl_transactions');
+		$progressbar = new Progressbar('creating_pl_transactions');
 		
 		$payment_id = $this->id;
 		
@@ -131,7 +131,7 @@ class PLPayment extends DataObject
 //		Match and update purchase ledger payments
 		$payment_total = 0;
 				
-		$progressbar = new progressBar('allocate_payments');
+		$progressbar = new Progressbar('allocate_payments');
 		
 		$callback = function($data, $key) use (&$pay_data, &$errors, $payment_id, &$payment_total)
 		{
