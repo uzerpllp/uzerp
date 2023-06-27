@@ -21,7 +21,7 @@ class PlpaymentsController extends printController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$this->view->set('clickaction', 'view');
 		
@@ -587,7 +587,7 @@ class PlpaymentsController extends printController
 			
 		}
 		
-		if (count($errors)==0 && $payment && $payment->save($this->_data, $errors))
+		if (count($errors)==0 && $payment && $payment->savePLPayment($this->_data, $errors))
 		{
 			sendTo($this->name
 				,'index'
@@ -677,7 +677,7 @@ class PlpaymentsController extends printController
 					$pltransactions->paidList($plpayment->id);
 					$ext_ref=$this->_data['start_reference'];
 
-					$progressbar = new progressBar('update_payment_reference');
+					$progressbar = new Progressbar('update_payment_reference');
 		
 					$callback = function($pl_data, $key) use (&$ext_ref, &$errors, $db)
 					{
