@@ -294,6 +294,16 @@ class PLPayment extends DataObject
 		}
 		return null;
 	}
+
+	public function outputPaymentFile()
+	{
+		$iclass_name = $this->paymentClass();
+		$c = new $iclass_name($this);
+		if (isset($c->noFile)) {
+			return false;
+		}
+		return true;
+	}
 	
 	public function isNewStatus()
 	{
