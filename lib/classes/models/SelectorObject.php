@@ -10,7 +10,7 @@ class SelectorObject extends DataObject {
 
 	protected $version='$Revision: 1.3 $';
 	
-	function __construct($tablename) {
+	function __construct($tablename = null) {
 		
 		// Register non-persistent attributes
 		
