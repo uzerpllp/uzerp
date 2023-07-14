@@ -67,7 +67,7 @@ class SoproductselectorsController extends SelectorController
         }
 
         // Delete child selectors (component links removed on cascade)
-        if (isset($result_ids)) {
+        if (!empty($result_ids)) {
             $selectors = new DataObjectCollection(new SelectorObject('so_product_selector'));
             $selector_filter = new SearchHandler($selectors, false);
             $selector_filter->addConstraint(new Constraint('id', 'IN', '(' . implode(',', $result_ids) . ')'));
