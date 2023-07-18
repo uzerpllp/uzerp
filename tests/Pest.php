@@ -10,6 +10,15 @@ $system->load_essential(true);
 define('EGS_COMPANY_ID', 1);
 define('EGS_USERNAME', 'admin');
 
+// Stop calls to controller methods trying to send HTML responses
+class RedirectHandler
+{
+    public static function Redirect()
+    {
+        return;
+    }
+}
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -34,9 +43,9 @@ define('EGS_USERNAME', 'admin');
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
+//expect()->extend('toBeOne', function () {
+//    return $this->toBe(1);
+//});
 
 /*
 |--------------------------------------------------------------------------
@@ -49,9 +58,9 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
-{
-    // ..
-}
+//function something()
+//{
+//    // ..
+//}
 
 
