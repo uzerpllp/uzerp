@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.32.3] 2023-07-19
 
 ### Changed
 
@@ -1170,6 +1170,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.32.3]: https://github.com/uzerpllp/uzerp/compare/1.32.2...1.32.3
 [1.32.2]: https://github.com/uzerpllp/uzerp/compare/1.32.1...1.32.2
 [1.32.1]: https://github.com/uzerpllp/uzerp/compare/1.32.0...1.32.1
 [1.32.0]: https://github.com/uzerpllp/uzerp/compare/1.31.9...1.32.0
