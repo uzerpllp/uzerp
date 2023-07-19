@@ -108,14 +108,17 @@
 		{/data_table}
 		<input type="hidden" id="link" value="{$link}">
 		{paging}
-		Select count <input type='text' readonly id=selected_count name=selected_count value="{$count_selected}" class='numeric'>
-		{submit tags='none' name='save' value='Save Selection'}
-	{/form}
-	{form controller=$self.controller action='select_all' notags=true}
-		<input type='hidden' name='type' value={$type}>
-		<input type='hidden' name='id' value={$type_id}>
-		{submit tags='none' name='save' value='Select All'}
-	{/form}
+		<div class="form-actions">
+			<label for="selected_count">Select count</label> <input type='text' readonly id=selected_count name=selected_count value="{$count_selected}" class='numeric'>
+			{submit tags='none' name='save' value='Save Selection'}
+			</div>
+			{/form}
+			{form controller=$self.controller action='select_all' notags=true class='select-all'}
+				<input type='hidden' name='type' value={$type}>
+				<input type='hidden' name='id' value={$type_id}>
+				{submit tags='none' name='save' value='Select All'}
+			{/form}
+
 	<script type="text/javascript">
 		$(document).ready(function() {
 			legacyForceChange('#printtype');

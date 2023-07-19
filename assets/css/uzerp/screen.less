@@ -1296,6 +1296,23 @@
 			font-size: 7px;
 		}
 	}
+
+	/* modules/common/templates/elements/select_for_output.tpl */
+	div[data-action=select_for_output] {
+		.form-actions {
+			display: flex;
+			column-gap: 10px;
+			align-items: center;
+
+			.select-all {
+				order: 2;
+			}
+
+			input[name=save] {
+				order: 3;
+			}
+		}
+	}
 	
 	/* we could use attribute selectors here, however we might not want to apply these styles everywhere */
 	

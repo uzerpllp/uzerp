@@ -9,6 +9,9 @@
 	{paging}
 	{data_table}
 		{heading_row}
+			{heading_cell field="created"}
+			Created
+			{/heading_cell}
 			{heading_cell field="payment_date"}
 				Payment Date
 			{/heading_cell}
@@ -39,8 +42,9 @@
 		{foreach name=transactions item=transaction from=$plpayments}
 			<tr>
 				<td align=left>
-					{link_to module=$module controller=$controller action='view' id=$transaction->id value=$transaction->payment_date|un_fix_date}
+					{link_to module=$module controller=$controller action='view' id=$transaction->id value=$transaction->created|un_fix_date}
 				</td>
+				<td align=left>{$transaction->payment_date|un_fix_date}</td>
 				<td align=left>{$transaction->getFormatted('status')}</td>
 				<td align=left>{$transaction->reference}</td>
 				<td align=center>{$transaction->number_transactions}</td>
@@ -49,7 +53,7 @@
 				<td align=left>{$transaction->currency}</td>
 				<td align=right>{$transaction->payment_total|string_format:"%.2f"}</td>
 				<td align=right>
-					{if $transaction->status=='N'}
+					{if $transaction->status=='N' && $transaction->getNoOutput() !== 't'}
 						{link_to module=$module controller=$controller action='printDialog' printaction='make_batch_payment' id=$transaction->id value='Process'}
 					{/if}
 				</td>

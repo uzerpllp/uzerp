@@ -295,14 +295,24 @@ class PLPayment extends DataObject
 		return null;
 	}
 
-	public function outputPaymentFile()
+	/**
+	 * Get no_output value
+	 * 
+	 * no_output is not in the collection DB view.
+	 * Not likely needed elsewhere and I'm too lazy
+	 * to do a migration to add it in so that it
+	 * appears in collections :-)
+	 *
+	 * @return bool
+	 */
+	public function getNoOutput()
 	{
-		$iclass_name = $this->paymentClass();
-		$c = new $iclass_name($this);
-		if (isset($c->noFile)) {
-			return false;
+		if (!isset($this->no_output)) {
+			$plpayment = new PLPayment();
+			$plpayment->load($this->id);
+			return $plpayment->no_output;
 		}
-		return true;
+		return $this->no_output;
 	}
 	
 	public function isNewStatus()
@@ -313,6 +323,25 @@ class PLPayment extends DataObject
 	public function isProcessed()
 	{
 		return ($this->status == 'P');
+	}
+
+	public function getRemittanceOutputHeaders()
+	{
+		// SQL to get the output header ids related to
+		// this PLPayment via the associated PLTransactions.
+		// Match the PLTransaction.ext_reference to the PLPayment.id
+		$SQL = "select distinct od.output_header_id, oh.created
+		from pltransactions as plt
+		join output_details od on od.select_id = plt.id
+		left join output_header as oh on oh.id = od.output_header_id
+		where plt.ext_reference = ? and oh.type = 'remittance'
+		order by oh.created";
+
+		$db = DB::Instance();
+		$query = $db->prepare($SQL);
+		$values = [$this->id];
+		$result = $db->execute($query, $values);
+		return $result;
 	}
 	
 }

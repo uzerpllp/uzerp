@@ -20,8 +20,17 @@
 				{view_data attribute='currency_id'}
 				{view_data attribute='payment_type_id'}
 				{view_data attribute='payment_total'}
-				{view_data attribute='remittance_printed'}
-				{view_data attribute='remittance_date'}
+				<dt>Remmitances printed</dt>
+				<dd><ul>
+				{foreach name=output item=output from=$outputs}
+					{assign d $output.created|un_fix_date}
+					{assign t $output.created|date_format:'%H:%M'}
+					{assign l  $d|cat: ' - '|cat: $t}
+					<li>{link_to module=$module controller='pltransactions' action='output_detail' id=$output.output_header_id value=$l}</li>
+				{foreachelse}
+					None
+				{/foreach}
+				</dd></ul>
 			</dl>
 		{/with}
 	</div>

@@ -84,13 +84,17 @@ class PLTransactionCollection extends DataObjectCollection
 		$this->load($sh);		
 	}
 
-	function paidList($payment_id)
+	function paidList($payment_id, $requires_remittance_advice=false)
 	{
 		$sh = new SearchHandler($this, false);
 		
 		$sh->addConstraint(new Constraint('status', '=', 'P'));
 		$sh->addConstraint(new Constraint('transaction_type', '=', 'P'));
 		$sh->addConstraint(new Constraint('cross_ref', '=', $payment_id));
+
+		if ($requires_remittance_advice) {
+			$sh->addConstraint(new Constraint('remittance_advice', 'IS', true));
+		}
 		
 		$sh->setOrderby(array('supplier', 'ext_reference'));
 		
