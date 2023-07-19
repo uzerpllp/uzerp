@@ -38,7 +38,7 @@ class PltransactionsController extends printController
 	
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$this->view->set('clickaction', 'view');
 		
@@ -152,7 +152,8 @@ class PltransactionsController extends printController
 			{
 				$pltransactions = new PLTransactionCollection();
 				
-				$pltransactions->paidList($plpayment->id);
+				// Get payments for suppliers that require a remittance advice
+				$pltransactions->paidList($plpayment->id, true);
 				
 				foreach ($pltransactions as $pltransaction) {
 					$pltransaction->gross_value = bcmul($pltransaction->gross_value,-1);
@@ -185,7 +186,7 @@ class PltransactionsController extends printController
 			{
 				if (isset($output_details['identifier']))
 				{
-					$new_selection[$detail->id]['description'] = prettify($output_details['identifier']).' : '.$detail->$output_details['identifier'];
+					$new_selection[$detail->id]['description'] = prettify($output_details['identifier']).' : '.$detail->{$output_details['identifier']};
 				}
 				else
 				{

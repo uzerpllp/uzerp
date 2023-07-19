@@ -30,9 +30,9 @@ class PlpaymentsController extends printController
 // Set context from calling module
 
 		$this->setSearch('pltransactionsSearch', 'payments', $s_data);
-				
+	    $this->_templateobject->orderby = ['created'];
 		parent::index(new PLPaymentCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
 		
 		$sidebarlist=array();
@@ -81,15 +81,17 @@ class PlpaymentsController extends printController
 										 )
 				);
 			
-			$sidebarlist['process_payment'] = array(
-							'tag'=>'Process Payment',
-							'link'=>array('modules'				=> $this->_modules
-										 ,'controller'			=> $this->name
-										 ,'action'				=> 'printDialog'
-										 ,'printaction'			=> 'make_batch_payment'
-										 ,$plpayment->idField	=> $plpayment->{$plpayment->idField}
-										 )
-				);
+			if ($plpayment->getNoOutput() !== 't') {
+				$sidebarlist['process_payment'] = array(
+								'tag'=>'Process Payment',
+								'link'=>array('modules'				=> $this->_modules
+											,'controller'			=> $this->name
+											,'action'				=> 'printDialog'
+											,'printaction'			=> 'make_batch_payment'
+											,$plpayment->idField	=> $plpayment->{$plpayment->idField}
+											)
+					);
+			}
 		}
 		
 		if ($plpayment->isProcessed())
@@ -109,6 +111,9 @@ class PlpaymentsController extends printController
 		$this->view->register('sidebar',$sidebar);
 		
 		$this->view->set('sidebar',$sidebar);
+
+		$r = $plpayment->getRemittanceOutputHeaders();
+		$this->view->set('outputs', $r);
 	}
 
 	public function process_override()
@@ -583,12 +588,48 @@ class PlpaymentsController extends printController
 			{
 				$payclass = new $paytype->payment_class->class_name($this);
 				$payclass->validate($this->_data, $errors);
+				if (isset($payclass->no_output)) {
+					$payment->no_output = 't';
+				}
 			}
 			
 		}
 		
 		if (count($errors)==0 && $payment && $payment->savePLPayment($this->_data, $errors))
 		{
+			if (isset($payclass->no_output)) {
+				$paid_suppliers = array_keys($this->_data['PLTransaction']);
+				$supplier_has_remittance = new PLSupplierCollection();
+				$sh = new SearchHandler($supplier_has_remittance, false);
+				$cc = new ConstraintChain();
+				$cc->add(new Constraint('remittance_advice', 'IS', true));
+				if (count($paid_suppliers) > 1) {
+					$cc->add(new Constraint('id', 'in', '(' . implode(',', $paid_suppliers) . ')'));
+				} else {
+					$cc->add(new Constraint('id', '=', $paid_suppliers[0]));
+				}
+				$sh->addConstraintChain($cc);
+				$supplier_has_remittance->load($sh);
+
+				$payment->status = 'P';
+				$payment->save();
+				$flash->addMessage('Payment processed.');
+				
+				if (count($supplier_has_remittance) > 0) {
+					// Allow the user to output a remittance advice
+					// for suppliers that need it
+					sendTo(
+						'pltransactions',
+						'select_remittances',
+						$this->_modules,
+						array('id'=>$payment->id)
+					);
+				}
+			}
+
+			// Not outputting remittance advice at this point.
+			// Return to the payment list where the user can
+			// select 'Proccess' to continue to the next stage.
 			sendTo($this->name
 				,'index'
 				,$this->_modules);
@@ -611,8 +652,28 @@ class PlpaymentsController extends printController
 			{
 				$params['payment_type_id']=$this->_data['payment_type_id'];
 			}
+
+			$callback = function($errors) {
+				if (count($errors > 0)) {
+					return false;
+				}
+			};
+			
+			// Kill off the progress bars
+			$progressNames = [
+				'checking_supplier_details',
+				'creating_pl_transactions',
+				'allocate_payments'
+			];
+			foreach($progressNames as $name) {
+				$progressbar = new Progressbar($name);
+				$progressbar->process([], $callback);
+			}
 		
 			$flash->addErrors($errors);
+			if (isset($payclass->no_output)) {
+				sendBack();
+			}
 			$this->refresh();
 		}
 	}
