@@ -1,6 +1,19 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Changed
+
+- Update PLPayments to use DummyPayment class with no payment file output.
+  - Payments are created in purchase ledger for the selected purchase invoices.
+  - Remittance documents can be sent via email, printed, etc. for each supplier.
+  - Note that no payment file is created for upload to your bank when using the DummyPayment injector class. You must process payments manually at your bank. If you need bank integration, please raise it at https://github.com/uzerpllp/uzerp/discussions.
+
+### Added
+
+- Customer account field to purchase ledger suppliers (local_account_code) in database.
+
 ## [1.32.3] 2023-07-19
 
 ### Changed
