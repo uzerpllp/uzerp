@@ -26,6 +26,7 @@
 					{select attribute="company_id" class="required" options=$company_list label='Supplier'}
 				{/if}
 				{input attribute='payee_name' value=$payee}
+				{input attribute='local_account_number' label='Customer Code'}
 				{input type='checkbox'  attribute='remittance_advice' }
 				{select attribute='payment_address_id' options=$payment_addresses}
 				{if $action=='new' || $transaction_count == 0}
