@@ -14,6 +14,7 @@
 				{view_data attribute="date_inactive"}
 			{/if}
 			{view_data attribute="payee_name"}
+			{view_data attribute='local_account_number' label='Customer Code'}
 			{view_data attribute="currency"}
 			{view_data attribute="remittance_advice"}
 			{view_data attribute="bank_account"}
