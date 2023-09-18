@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Customer account field to purchase ledger suppliers (local_account_code) in database.
+- New customer account field added to purchase ledger suppliers (local_account_code in database).
 
 ## [1.32.3] 2023-07-19
 
