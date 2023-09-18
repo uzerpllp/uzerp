@@ -22,7 +22,7 @@
 				<li style="background:yellow;">{$config.SYSTEM_MESSAGE}</li>
 			{/if}
 			{if $help_link !== '' }
-				<li><a href="{$help_link}" target="_new"><img id="image_help" src="assets/graphics/help.png"></a></li>
+				<li class="help_link"><a href="{$help_link}" target="_new"><img id="image_help" src="assets/graphics/help.png">Help <span>Opens new window</span></a></li>
 			{/if}
 			{if $config.SYSTEM_STATUS !== '' }
 				<li>{$config.SYSTEM_STATUS}</li>

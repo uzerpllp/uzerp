@@ -427,11 +427,11 @@
 		a {
 			color: #333;
 			font-weight: bold;
-			text-decoration: none;
+			text-decoration: underline;
+			padding: 1px;
 		}
 		a:hover {
-			color: #FFF;
-			background-color: #FF0000;
+			color: var(--brand-color);
 		}
 		ul {
 			float: right;
@@ -454,6 +454,34 @@
 			display: none;
 			background: url(/assets/graphics/spinner.gif) left 50% no-repeat;
 			padding-left: 20px;
+		}
+
+		.help_link a img {
+			vertical-align: top;
+		}
+
+		.help_link a span {
+			position: absolute;
+			left: -9000px;
+			width: 0;
+			overflow: hidden;
+			opacity: 0;
+		}
+
+		.help_link a:hover span {
+			display: block;
+			position: absolute;
+			top: 1.4em;
+			left: auto;
+			width: 10em;
+			color: #000;
+			font-weight: normal;
+			text-align: center;
+			border: 1px solid var(--border-1);
+			background-color: var(--header-1);
+			margin-left: 2.5em;
+			opacity: 1;
+			transition: opacity 0.25s ease-in-out;
 		}
 	}
 	
