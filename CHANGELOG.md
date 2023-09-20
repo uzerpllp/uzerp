@@ -1,6 +1,8 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] None
+
 ## [1.32.4] 2023-09-20
 
 ### Changed
