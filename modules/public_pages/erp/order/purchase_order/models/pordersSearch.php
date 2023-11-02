@@ -34,6 +34,13 @@ class pordersSearch extends BaseSearch
                 'Raised by me'
             ));
         }
+        
+        // Search by Supplier
+        $search->addSearchField('plmaster_id', 'Supplier', 'select', 0, 'basic');
+        $supplier = DataObjectFactory::Factory('PLSupplier');
+        $options = array(
+            '0' => 'All'
+        );
 
         // Search by Order Number
         $search->addSearchField('order_number', 'order_number', 'equal', '', 'basic');
@@ -41,12 +48,6 @@ class pordersSearch extends BaseSearch
         // Search by Order Number
         $search->addSearchField('lines', 'Show Lines', 'show', '', 'basic', false);
 
-        // Search by Supplier
-        $search->addSearchField('plmaster_id', 'Supplier', 'select', 0, 'advanced');
-        $supplier = DataObjectFactory::Factory('PLSupplier');
-        $options = array(
-            '0' => 'All'
-        );
         $suppliers = $supplier->getAll(null, false, true, '', '');
         $options += $suppliers;
         $search->setOptions('plmaster_id', $options);
