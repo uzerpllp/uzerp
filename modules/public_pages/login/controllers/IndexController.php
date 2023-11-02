@@ -273,8 +273,8 @@ class IndexController extends Controller
             $flash->addError('Incorrect username or password');
             $this->logger->warning('FAILED LOGIN, Incorrect username or password, or user access disabled', array('username' => $this->username));
         }
-        $this->index();
-        $this->_templateName = $this->getTemplateName('index');
+        sendTo('index');
+        exit();
     }
 
     /**
@@ -458,11 +458,6 @@ class IndexController extends Controller
         }
     }
 
-    function __call($func, $args)
-    {
-        $this->_templateName = $this->getTemplateName('index');
-        return $this->index();
-    }
 
     function logout()
     {
@@ -478,14 +473,6 @@ class IndexController extends Controller
 
         //remove session cookie
         addCookie(session_name(), '', 0);
-
-        // don't go to login form for non-interactive logins
-        $injector = $this->_injector;
-        $authentication = $injector->Instantiate('LoginHandler');
-        if (! $authentication->interactive()) {
-            $this->_templateName = $this->getTemplateName('logout');
-            return $this->index();
-        }
 
         header("Location: /");
         exit();
