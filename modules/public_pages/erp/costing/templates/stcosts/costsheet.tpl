@@ -4,6 +4,7 @@
  *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.7 $ *}
+{debug}
 {content_wrapper}
 {if $stitem->comp_class !='B'}
 {advanced_search}
@@ -111,6 +112,7 @@
 					{assign var=total_lab value=$total_lab+$model->std_lab}
 					{assign var=total_osc value=$total_osc+$model->std_osc}
 					{assign var=total_ohd value=$total_ohd+$model->std_ohd}
+					{assign var=std_cost value=$model->std_mat+$model->std_lab+$model->std_osc+$model->std_ohd}
 					{grid_cell model=$model cell_num=5 field="std_mat"}
 						{$model->std_mat|string_format:$string_format}
 					{/grid_cell}
@@ -124,13 +126,14 @@
 						{$model->std_ohd|string_format:$string_format}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=9 field="std_cost" class='numeric'}
-						{$model->std_cost|string_format:$string_format}
+						{$std_cost|string_format:$string_format}
 					{/grid_cell}
 				{else}
 					{assign var=total_mat value=$total_mat+$model->latest_mat}
 					{assign var=total_lab value=$total_lab+$model->latest_lab}
 					{assign var=total_osc value=$total_osc+$model->latest_osc}
 					{assign var=total_ohd value=$total_ohd+$model->latest_ohd}
+					{assign var=latest_cost value=$model->latest_mat+$model->latest_lab+$model->latest_osc+$model->latest_ohd}
 					{grid_cell model=$model cell_num=5 field="latest_mat"}
 						{$model->latest_mat|string_format:$string_format}
 					{/grid_cell}
@@ -144,7 +147,7 @@
 						{$model->latest_ohd|string_format:$string_format}
 					{/grid_cell}
 					{grid_cell model=$model cell_num=9 field="latest_cost" class='numeric'}
-						{$model->latest_cost|string_format:$string_format}
+						{$latest_cost|string_format:$string_format}
 					{/grid_cell}
 				{/if}
 			{/grid_row}

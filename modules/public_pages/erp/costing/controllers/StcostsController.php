@@ -380,6 +380,11 @@ class StcostsController extends printController {
 					$totals[$field->name]+=$field->value;
 				}
 			}
+			$mfstructure->{$type.'_cost'} = 0;
+			$mfstructure->{$type.'_cost'} += $mfstructure->{$type.'_mat'};
+			$mfstructure->{$type.'_cost'} += $mfstructure->{$type.'_lab'};
+			$mfstructure->{$type.'_cost'} += $mfstructure->{$type.'_osc'};
+			$mfstructure->{$type.'_cost'} += $mfstructure->{$type.'_ohd'};
 		}
 
 		foreach ($mfoperations as $mfoperation)
