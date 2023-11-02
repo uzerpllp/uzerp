@@ -1,7 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] None
+## [1.32.5] 2023-11-02
+
+### Fixed
+
+- Viewing a suppliers POs from the purchase ledger now shows only that suppliers POs.
+- Logging out when using REMOTE_USER authentication doesn't cause a redirect loop.
+- Login failing because of an incorrect, remembered user name.
+- Correct row totals in the Structures (Materials) section of the cost sheet.
 
 ## [1.32.4] 2023-09-20
 
@@ -1185,6 +1192,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.32.5]: https://github.com/uzerpllp/uzerp/compare/1.32.4...1.32.5
 [1.32.4]: https://github.com/uzerpllp/uzerp/compare/1.32.3...1.32.4
 [1.32.3]: https://github.com/uzerpllp/uzerp/compare/1.32.2...1.32.3
 [1.32.2]: https://github.com/uzerpllp/uzerp/compare/1.32.1...1.32.2
