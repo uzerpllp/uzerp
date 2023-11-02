@@ -25,7 +25,7 @@ class PlsuppliersController extends LedgerController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		// Search
 		$errors=array();
@@ -755,7 +755,7 @@ class PlsuppliersController extends LedgerController
 		$this->_templateName=$this->getTemplateName('view_ledger_trans');
 	}
 
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) :void
 	{
 
 		$errors=array();
@@ -1078,7 +1078,8 @@ class PlsuppliersController extends LedgerController
 					'link'	=> array('module'		=> 'purchase_order'
 									,'controller'	=> 'porders'
 									,'action'		=> 'index'
-									,'plmaster_id'	=> $idValue
+									,'plmaster_id'	=> $idValue,
+									'status' => 'all'
 									),
 					'new'	=> array('module'		=> 'purchase_order'
 									,'controller'	=> 'porders'
@@ -1218,7 +1219,7 @@ class PlsuppliersController extends LedgerController
 		sendBack();
 	}
 
-	public function delete() {
+	public function delete($modelName = null) {
         $this->checkRequest(['post'], true);
         parent::delete();
     }
