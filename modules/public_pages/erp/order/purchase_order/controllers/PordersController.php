@@ -38,13 +38,33 @@ class PordersController extends printController
 
         $s_data = array();
 
-        // Set context from calling module
-        if (isset($this->_data['plmaster_id'])) {
-            $s_data['plmaster_id'] = $this->_data['plmaster_id'];
+        // This view is called from several places and we need to manage the applied search.
+        // If the user has opted to clear the search, the default search is applied.
+        if (!isset($this->_data['Search']['clear'])) {
+            // Get the params from the current, active search
+            $s_data = $_SESSION['searches']['pordersSearch']["default{$this->_data['search_id']}"];
+
+            // Set the supplier ID if present in the request params
+            if (isset($this->_data['plmaster_id'])) {
+                $s_data['plmaster_id'] = $this->_data['plmaster_id'];
+            }
+
+            // Search on all order statuses if 'status' is in the request params
+            if (isset($this->_data['status']) && $this->_data['status'] == 'all') {
+                $s_data['status'] = array_keys($this->_templateobject->getEnumOptions('status'));
+            }
         }
 
-        if (isset($this->_data['status'])) {
-            $s_data['status'] = $this->_data['status'];
+        // If there is no status filter, set the default.
+        if (!isset($s_data['status'])) {
+            $s_data['status'] = [
+                $this->_templateobject->newStatus(),
+                $this->_templateobject->orderSentStatus(),
+                $this->_templateobject->acknowledgedStatus(),
+                'H',
+                $this->_templateobject->receivedStatus(),
+                $this->_templateobject->partReceivedStatus()
+            ];
         }
 
         $user = getCurrentUser();
@@ -54,8 +74,10 @@ class PordersController extends printController
             'authorised_by' => $user->username
         );
 
-        $this->setSearch('pordersSearch', 'useDefault', $s_data, [], true);
+        // Apply the search
+        $this->setSearch('pordersSearch', 'useDefault', $s_data, null );
 
+        // Load the collection
         parent::index(new POrderCollection($this->_templateobject));
 
         $today = fix_date(date(DATE_FORMAT));
