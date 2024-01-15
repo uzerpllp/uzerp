@@ -54,44 +54,42 @@
 			if ( 'true' === button.getAttribute( 'aria-expanded' ) ) {
 	
 				button.setAttribute( 'aria-expanded', false );
-				//button.parentElement.setAttribute( 'aria-expanded', false );
 				submenu.setAttribute( 'aria-hidden', true );
 				currentMenuItem = false;
 	
 			} else {
 	
 				button.setAttribute( 'aria-expanded', true );
-				//button.parentElement.setAttribute( 'aria-expanded', true );
 				submenu.setAttribute( 'aria-hidden', false );
-				preventOffScreenSubmenu( submenu );
+				// Wait until the CSS animation starts to avoid offsetWidth
+				// and friends returning zero for the hidden submenu.
+				submenu.addEventListener('animationstart', function (event) {
+					if (event.animationName =='reveal-panel') preventOffScreenSubmenu( submenu );
+				});
 				currentMenuItem = button;
-	
 			}
 	
 		};
-	
+		
 		function preventOffScreenSubmenu( submenu ) {
-			const screenWidth =	window.innerWidth ||
-			document.documentElement.clientWidth ||
-			document.body.clientWidth;
+			const	screenWidth =	window.innerWidth ||
+					document.documentElement.clientWidth ||
+					document.body.clientWidth;
 
+			const	parent = submenu.closest('li.nav'),
+					menuLeftEdge = parent.getBoundingClientRect().left,
+					menuRightEdge = menuLeftEdge + submenu.offsetWidth;
+
+			// Slim down fat menus by removing a column
 			if (submenu.getBoundingClientRect().width > screenWidth) {
 				submenu.classList.remove('c-4');
 				submenu.classList.add('c-3');
 			}
-
-			const 	parent = submenu.offsetParent,
-					menuLeftEdge = parent.getBoundingClientRect().left,
-					menuRightEdge = menuLeftEdge + submenu.offsetWidth;
 	
-
-
+			// Move the menu left if it is off-screen
 			if ( menuRightEdge + 32 > screenWidth ) { // adding 32 so it's not too close
-				submenu.setAttribute('style', 'transform: translateX(' + (window.outerWidth-menuRightEdge-20) + 'px)');
+				submenu.setAttribute('style', 'transform: translateX(' + ( screenWidth-menuRightEdge - 20 ) + 'px)');
 			}
-
-
-	
 		}
 	
 		function closeOnEscKey(e) {
