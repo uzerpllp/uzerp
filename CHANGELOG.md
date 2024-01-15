@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.32.6] 2024-01-15
+
+### Fixed
+
+- Alternative menu works consistently in Chrome browsers.
+
 ## [1.32.5] 2023-11-02
 
 ### Fixed
@@ -1192,6 +1198,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.32.6]: https://github.com/uzerpllp/uzerp/compare/1.32.5...1.32.6
 [1.32.5]: https://github.com/uzerpllp/uzerp/compare/1.32.4...1.32.5
 [1.32.4]: https://github.com/uzerpllp/uzerp/compare/1.32.3...1.32.4
 [1.32.3]: https://github.com/uzerpllp/uzerp/compare/1.32.2...1.32.3
