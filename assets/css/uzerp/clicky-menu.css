@@ -174,7 +174,6 @@ svg[hidden] {
 /* Submenu Styles */
 .clicky-menu ul {
   min-width: 100%;
-  width: 12em;
   padding: 0;
   list-style: none;
   background-color: var(--background-1);
@@ -189,12 +188,15 @@ svg[hidden] {
   opacity: 1;
 }
 
-
 .clicky-menu ul {
   -webkit-animation: reveal-panel 0.25s ease-in-out;
           animation: reveal-panel 0.25s ease-in-out;
 }
 
+/*
+Note that the JS checks for this animation name with an event listener.
+If you change the name or refactor, please update the JS.
+*/
 @keyframes reveal-panel {
   0% {
     display: none;
@@ -253,7 +255,7 @@ svg[hidden] {
 }
 
 ul.panel {
-  /*columns: 4;*/
+  column-gap: 20px;
   margin-left: 0.25em;
   padding: 20px;
   z-index: 999;
