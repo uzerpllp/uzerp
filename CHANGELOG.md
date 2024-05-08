@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.32.7] 2024-05-08
+
+### Fixed
+
+- Prevent GRNs from multiple suppliers being selected when creating an invoice.
+
 ## [1.32.6] 2024-01-15
 
 ### Fixed
@@ -1198,6 +1204,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.32.7]: https://github.com/uzerpllp/uzerp/compare/1.32.6...1.32.7
 [1.32.6]: https://github.com/uzerpllp/uzerp/compare/1.32.5...1.32.6
 [1.32.5]: https://github.com/uzerpllp/uzerp/compare/1.32.4...1.32.5
 [1.32.4]: https://github.com/uzerpllp/uzerp/compare/1.32.3...1.32.4
