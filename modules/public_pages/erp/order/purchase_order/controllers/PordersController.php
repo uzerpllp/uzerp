@@ -1827,8 +1827,13 @@ class PordersController extends printController
         $this->view->set('invoicedate', date(DATE_FORMAT));
 
         // get data from persistent selection session
-
         $key = 'purchase_order-porders-createinvoice';
+
+        // Clear any existing selections if the user is coming directly
+        // from the purchase order sidebar.
+        if (isset($this->_data['order_number'])) {
+            unset($_SESSION['persistent_selection'][$key]);
+        }
 
         $selected_rows = array();
         $net_total = 0; // this should be a number... not a string
@@ -1892,11 +1897,19 @@ class PordersController extends printController
 
             $rows = $poreceivedlines->load($sh, null, RETURN_ROWS);
 
+            $order_supplier = $this->_data['plmaster_id'];
+
             if ($rows) {
 
                 foreach ($rows as $received_line) {
                     // Create an invoice line for each selected GRN line
                     $supplier = $received_line['plmaster_id'];
+
+                    // Guard against UI bugs that result in GRNs from multiple suppliers being selected
+                    if ($supplier !== $order_supplier) {
+                        $errors[] = "GRN {$received_line['gr_number']} does not belong to this supplier";
+                    }
+
                     $porderline = DataObjectFactory::Factory('POrderLine');
                     $porderline->load($received_line['orderline_id']);
 
