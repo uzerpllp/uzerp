@@ -70,7 +70,7 @@ class Company extends Party {
 		$system_prefs = SystemPreferences::instance();
 		$autoGenerate = $system_prefs->getPreferenceValue('auto-account-numbering', 'contacts');
 		
-		if(!(empty($autoGenerate) && $autoGenerate === 'on'))
+		if(!empty($autoGenerate) || $autoGenerate === 'on')
 		{
 			//$this->getField('accountnumber')->not_null=false;
 			$this->_autohandlers['accountnumber'] = new AccountNumberHandler();
@@ -227,57 +227,6 @@ class Company extends Party {
 		$this->date_inactive = '';
 		$result = $this->save();
 		return $result;
-	}
-
-	/*
-	 * Static Functions
-	 */
-	public static function makeCompany()
-	{
-		
-		if (defined('PRODUCTION') && PRODUCTION) 
-		{
-			
-			$company = FALSE;
-			
-			if (MEMCACHED_ENABLED)
-			{
-
-				$cache		= Cache::Instance();
-				$company	= $cache->get(array('company_blank', $tablename));
-			
-			}
-			
-			if (FALSE === $company)
-			{
-				
-				$company = DataObjectFactory::Factory('Company');
-				
-				if (MEMCACHED_ENABLED)
-				{
-
-					$cache->add(
-						array('company_blank', $tablename),
-						serialize($company),
-						28800
-					);
-				
-				}
-				
-			}
-			else
-			{
-				$company = unserialize($company);
-			}	
-			
-			return $company;
-			
-		}
-		
-		$company = DataObjectFactory::Factory('Company');
-		
-		return $company;
-		
 	}
 
 	/*

@@ -17,7 +17,7 @@ class AccountNumberHandler extends AutoHandler
 		$system_prefs = SystemPreferences::instance();
 		$autoGenerate = $system_prefs->getPreferenceValue('auto-account-numbering', 'contacts');
 		
-		if(!(empty($autoGenerate) || $autoGenerate === 'off'))
+		if(empty($autoGenerate) || $autoGenerate === 'off')
 		{
 			// Obviously not.
 			return false;
