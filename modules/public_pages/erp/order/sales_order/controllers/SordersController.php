@@ -3755,7 +3755,9 @@ class SordersController extends printController
                 'view' => ''
             ),
             'filename' => $document_name . $order->order_number,
-            'report' => $report_definition
+            'report' => $report_definition,
+            'email' => $order->getEmail(),
+            'email_subject' => '"Sales Order: ' . $order->order_number . '"'
         );
 
         if (strtolower($status) == 'dialog') {
@@ -3923,7 +3925,9 @@ class SordersController extends printController
                 'view' => ''
             ),
             'filename' => 'SoProForma' . $order->order_number,
-            'report' => 'SOProFormaInvoice'
+            'report' => 'SOProFormaInvoice',
+            'email' => $order->getEmail(),
+            'email_subject' => '"Pro-forma: ' . $order->order_number . '"'
         );
 
         if (strtolower($status) == "dialog") {
