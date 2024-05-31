@@ -70,14 +70,13 @@ class Company extends Party {
 		$system_prefs = SystemPreferences::instance();
 		$autoGenerate = $system_prefs->getPreferenceValue('auto-account-numbering', 'contacts');
 		
-		if(!empty($autoGenerate) || $autoGenerate === 'on')
+		if(!empty($autoGenerate) && $autoGenerate === 'on')
 		{
-			//$this->getField('accountnumber')->not_null=false;
 			$this->_autohandlers['accountnumber'] = new AccountNumberHandler();
 		}
 		else
 		{
-			$this->getField('accountnumber')->setnotnull();
+			$this->getField('accountnumber')->dropnotnull();
 		}
 
 	}

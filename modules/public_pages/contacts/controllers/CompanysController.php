@@ -442,7 +442,7 @@ class CompanysController extends printController
 		$system_prefs = SystemPreferences::instance();
 		$autoGenerate = $system_prefs->getPreferenceValue('auto-account-numbering', 'contacts');
 		if (($this->_data[$modelname]['accountnumber'] == "")
-		&& (!empty($autoGenerate) || $autoGenerate === 'on')) {
+		&& (!empty($autoGenerate) && $autoGenerate === 'on')) {
 			$this->_data[$modelname]['accountnumber'] = $company->createAccountNumber($companydata['name']);
 		}
 		
