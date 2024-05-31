@@ -45,6 +45,10 @@ class CompanysController extends printController
 		)
 		);
 
+	public static $related = array();
+	public static $idField;
+	public static $company_id;
+
 	public function __construct($module=null,$action=null)
 	{
 		parent::__construct($module, $action);
@@ -89,7 +93,7 @@ class CompanysController extends printController
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$this->view->set('clickaction', 'view');
 
@@ -322,7 +326,7 @@ class CompanysController extends printController
 		
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		$this->checkRequest(['post'], true);
 		
@@ -404,7 +408,7 @@ class CompanysController extends printController
 		parent::_new();
 	}
 
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) :void
 	{
 		
 		$flash=Flash::Instance();
@@ -431,6 +435,15 @@ class CompanysController extends printController
 				$flash->addError('Could not load Company for id='.$companyid.' - Abandoned');
 				sendBack();
 			}
+		}
+
+		// We need to generate the account number here, if enabled.
+		// When a new Company is saved, the model passed to the Autohandler is empty.
+		$system_prefs = SystemPreferences::instance();
+		$autoGenerate = $system_prefs->getPreferenceValue('auto-account-numbering', 'contacts');
+		if (($this->_data[$modelname]['accountnumber'] == "")
+		&& (!empty($autoGenerate) || $autoGenerate === 'on')) {
+			$this->_data[$modelname]['accountnumber'] = $company->createAccountNumber($companydata['name']);
 		}
 		
 		$db=&DB::Instance();
