@@ -3757,7 +3757,7 @@ class SordersController extends printController
             'filename' => $document_name . $order->order_number,
             'report' => $report_definition,
             'email' => $order->getEmail(),
-            'email_subject' => '"Sales Order: ' . $order->order_number . '"'
+            'email_subject' => '"'. $document_type .': ' . $order->order_number . '"'
         );
 
         if (strtolower($status) == 'dialog') {
