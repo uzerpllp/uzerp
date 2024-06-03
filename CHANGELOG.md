@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.33.1] 2024-06-03
+
+### Fixed
+
+- Use correct document type in email subject line to sales order acknowledgement/quote.
+
 ## [1.33] 2024-05-31
 
 ### Fixed
@@ -13,7 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Allow unlimited text to be entered in Sales Order header Text1 field
+- Allow unlimited text to be entered in Sales Order header Text1 field.
 
 ## [1.32.7] 2024-05-08
 
