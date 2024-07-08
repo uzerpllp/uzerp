@@ -1,29 +1,34 @@
 <?php
-
-declare(strict_types=1);
+declare (strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictConstructorRector;
 use Rector\Set\ValueObject\LevelSetList;
-use Rector\Php54\Rector\Array_\LongArrayToShortArrayRector;
+use Rector\ValueObject\PhpVersion;
 
-return static function (RectorConfig $rectorConfig): void {
+return RectorConfig::configure()
 
-    $rectorConfig->paths([
+    ->withPaths([
         __DIR__ . '/lib',
+        __DIR__ . '/lib/classes/standard',
         __DIR__ . '/modules',
         __DIR__ . '/plugins',
-    ]);
+    ])
 
     //define sets of rules
-    $rectorConfig->sets([
-        LevelSetList::UP_TO_PHP_81
-    ]);
+    //->withPhpSets()
 
-    $rectorConfig->skip([
-        LongArrayToShortArrayRector::class,
-    ]);
+    ->withPhpVersion(PhpVersion::PHP_83)
 
-    $rectorConfig->bootstrapFiles([
+    ->withSets([
+	LevelSetList::UP_TO_PHP_83
+    ])
+
+
+    ->withSkip([
+        Rector\Php54\Rector\Array_\LongArrayToShortArrayRector::class,
+    ])
+
+    ->withBootstrapFiles([
         __DIR__ . '/utils/dev/loader.php',
     ]);
-};
