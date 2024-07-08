@@ -41,7 +41,7 @@ abstract class Controller
      *            action name
      * @todo shouldn't need $module *and* $modules
      */
-    public function __construct($module = null, $view)
+    public function __construct($module = null, $view = null)
     {
         if (isset($_POST['submit_token']) && ! isset($_POST['search_id'])) {
             // This is a form submission - check for double click!
