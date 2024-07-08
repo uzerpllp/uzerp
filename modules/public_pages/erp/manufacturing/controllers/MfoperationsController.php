@@ -85,7 +85,7 @@ class MfoperationsController extends ManufacturingController {
 	 *
 	 * @return void
 	 */
-	public function delete()
+	public function delete($modelName = null)
 	{
 		$db = DB::Instance();
 		$flash = Flash::Instance();
@@ -194,7 +194,7 @@ class MfoperationsController extends ManufacturingController {
 
 	}
 
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 
 		$flash=Flash::Instance();
 

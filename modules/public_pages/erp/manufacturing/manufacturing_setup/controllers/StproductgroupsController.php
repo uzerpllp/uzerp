@@ -17,7 +17,7 @@ class StproductgroupsController extends ManufacturingController {
 	
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$s_data = [];
 
 		$this->setSearch('productgroupsSearch', 'useDefault', $s_data);

@@ -19,7 +19,7 @@ class EquipmentController extends Controller {
 		
 	}
 	
-	public function index() {
+	public function index($collection = null, $sh = '', &$c_query = null) {
 		$this->view->set('clickaction', 'view');
 		
 		parent::index(new ProjectEquipmentCollection($this->_templateobject));
@@ -44,7 +44,7 @@ class EquipmentController extends Controller {
 		parent::_new();
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		if(parent::save($this->modeltype))
 			sendTo($this->name, 'view', $this->_modules, array('id'=>$this->_data['id']));

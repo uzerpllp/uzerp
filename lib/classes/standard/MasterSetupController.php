@@ -24,7 +24,7 @@ class MasterSetupController extends Controller
 		$this->setup_module = $module;
 	}
 	
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		// Get any System Preferences for the module
 		

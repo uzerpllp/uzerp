@@ -18,7 +18,7 @@ class ReportPartsController extends PrintController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$errors=array();
 
 //		$s_data=array();
@@ -67,7 +67,7 @@ class ReportPartsController extends PrintController {
 				
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		$errors=array();
 		

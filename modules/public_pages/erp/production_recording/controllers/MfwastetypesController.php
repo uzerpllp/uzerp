@@ -24,7 +24,7 @@ class MfwastetypesController extends ProductionRecordingController
 		
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		$this->view->set('clickaction', 'view');
@@ -70,7 +70,7 @@ class MfwastetypesController extends ProductionRecordingController
 		$this->view->set('mfcentrewastetype', DataObjectFactory::Factory('MFCentreWasteType'));
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		if (!$this->CheckParams($this->modeltype))

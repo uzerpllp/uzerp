@@ -30,7 +30,7 @@ class StuomconversionsController extends Controller
 		
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		parent::index(new STuomconversionCollection($this->_templateobject));
@@ -58,7 +58,7 @@ class StuomconversionsController extends Controller
 		
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		
 		$flash = Flash::Instance();
@@ -113,7 +113,7 @@ class StuomconversionsController extends Controller
 		
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		$flash=Flash::Instance();

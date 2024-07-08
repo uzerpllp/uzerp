@@ -18,7 +18,7 @@ class DatadefinitiondetailsController extends EdiController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 
 		if (isset($this->_data['data_definition_id'])) {
 			$other=array('id'=>$this->_data['data_definition_id']);
@@ -29,7 +29,7 @@ class DatadefinitiondetailsController extends EdiController {
 			
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		
 		if (!$this->CheckParams($this->_templateobject->idField)) {
 			sendBack();

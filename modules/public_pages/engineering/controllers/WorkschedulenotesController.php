@@ -24,7 +24,7 @@ class WorkschedulenotesController extends Controller
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		$this->view->set('clickaction', 'edit');
@@ -69,7 +69,7 @@ class WorkschedulenotesController extends Controller
 		$this->view->set('no_delete',true);
 	}
 	
-	public function delete()
+	public function delete($modelName = null)
 	{
 		
 		if (!$this->loadData())
@@ -88,7 +88,7 @@ class WorkschedulenotesController extends Controller
 			
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		$flash = Flash::Instance();

@@ -18,7 +18,7 @@ class PaymenttypesController extends LedgerController {
 		
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		parent::index(new PaymentTypeCollection($this->_templateobject));
 		

@@ -31,7 +31,7 @@ class ModuleobjectsController extends Controller {
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$errors = array();
 
@@ -65,7 +65,7 @@ class ModuleobjectsController extends Controller {
 
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 
 		if (!$this->loadData())
@@ -153,7 +153,7 @@ class ModuleobjectsController extends Controller {
 
 	}
 
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 
 		if (!$this->checkParams($this->modeltype))

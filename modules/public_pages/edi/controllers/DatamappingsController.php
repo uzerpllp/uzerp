@@ -18,7 +18,7 @@ class DatamappingsController extends EdiController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		
 		$s_data=array();

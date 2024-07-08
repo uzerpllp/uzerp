@@ -17,7 +17,7 @@ class StuomsController extends ManufacturingController {
 	
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'edit');
 		$this->view->set('orderby', 'uom_name');
 		parent::index(new STuomCollection($this->_templateobject));

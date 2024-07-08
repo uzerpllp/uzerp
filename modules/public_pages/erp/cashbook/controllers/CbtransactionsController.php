@@ -20,7 +20,7 @@ class CbtransactionsController extends printController
         $this->uses($this->_templateobject);
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $defaults = array();
 
@@ -189,7 +189,7 @@ class CbtransactionsController extends printController
         $this->payments(__FUNCTION__);
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) : void
     {
         $flash = Flash::Instance();
         $errors = array();

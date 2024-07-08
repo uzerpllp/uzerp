@@ -11,7 +11,7 @@ class ComplaintsController extends printController
 	
 	protected $version = '$Revision: 1.5 $';
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		$flash = Flash::Instance();

@@ -26,7 +26,7 @@ class EmployeepayhistorysController extends printController
 	/*
 	 * Standard index listing of Employee Pay History
 	 */
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		$errors = array();
@@ -65,7 +65,7 @@ class EmployeepayhistorysController extends printController
 	/*
 	 * Delete of Employee Pay History is not allowed
 	 */
-	public function delete()
+	public function delete($modelName = null)
 	{
 		// Deletion is not allowed
 		sendBack();
@@ -174,7 +174,7 @@ class EmployeepayhistorysController extends printController
 	/*
 	 * Save the Employee Pay History
 	 */
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		if (!$this->checkParams($this->modeltype))

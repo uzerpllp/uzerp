@@ -20,7 +20,7 @@ class WhlocationsController extends ManufacturingController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$errors=array();
 		$s_data=array();
 // Set context from calling module

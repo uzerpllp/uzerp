@@ -19,7 +19,7 @@ class ProjectissuelinesController extends Controller {
 		$this->uses($this->_templateobject);
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		parent::delete('ProjectIssueLine');
 		sendBack();
@@ -76,7 +76,7 @@ class ProjectissuelinesController extends Controller {
 		
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		if (parent::save('ProjectIssueLine'))

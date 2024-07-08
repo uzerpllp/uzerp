@@ -16,7 +16,7 @@ class ResourcetemplateController extends Controller {
 		$this->uses($this->_templateobject);
 	}
 	
-	public function index() {
+	public function index($collection = null, $sh = '', &$c_query = null) {
 		parent::index(new ResourcetemplateCollection($this->_templateobject));
 		
 		$sidebar = new SidebarController($this->view);
@@ -40,7 +40,7 @@ class ResourcetemplateController extends Controller {
 		parent::_new();
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		if(parent::save('Resourcetemplate')) {
 			sendBack();
@@ -92,7 +92,7 @@ class ResourcetemplateController extends Controller {
 		$this->view->set('sidebar', $sidebar);
 	}
 	
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		if (!isModuleAdmin()) {
 			$flash->addError('Sorry, must be a module admin to delete resource templates.');

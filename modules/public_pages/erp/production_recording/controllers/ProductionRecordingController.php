@@ -11,7 +11,7 @@ class ProductionRecordingController extends printController
 
 	protected $version = '$Revision: 1.3 $';
 	
-	public function delete()
+	public function delete($modelName = null)
 	{
 		
 		if (!$this->CheckParams($this->_templateobject->idField))
@@ -39,7 +39,7 @@ class ProductionRecordingController extends printController
 	
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		if (!$this->CheckParams($this->modeltype))

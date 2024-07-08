@@ -17,7 +17,7 @@ class ObjectrolesController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		global $smarty;
 		
 		$s_data=array();
@@ -36,7 +36,7 @@ class ObjectrolesController extends Controller {
 		
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('ObjectRole');
 		sendTo('ObjectRole','index',array('admin'));
@@ -49,7 +49,7 @@ class ObjectrolesController extends Controller {
 		$this->view->set('clickaction', 'viewuser');
 	}
 
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		if(parent::save('ObjectRole')) {
 			sendTo('ObjectRole','index', array('admin'));

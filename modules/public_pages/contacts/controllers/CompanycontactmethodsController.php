@@ -25,14 +25,14 @@ class CompanycontactmethodsController extends Controller
 		
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$this->view->set('clickaction', 'edit');
 		
 		parent::index(new CompanycontactmethodCollection($this->_templateobject));
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		$flash = Flash::Instance();
 		
@@ -44,7 +44,7 @@ class CompanycontactmethodsController extends Controller
 			  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		$flash=Flash::Instance();
 		

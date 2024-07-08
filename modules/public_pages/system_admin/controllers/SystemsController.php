@@ -17,7 +17,7 @@ class SystemsController extends Controller {
 		parent::__construct($module, $action);
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		global $smarty;
@@ -37,7 +37,7 @@ class SystemsController extends Controller {
 		
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		
 		$flash = Flash::Instance();
@@ -48,7 +48,7 @@ class SystemsController extends Controller {
 		
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		$flash = Flash::Instance();

@@ -112,7 +112,7 @@ class AttachmentsController extends Controller {
 		parent::__call($method,$args);
 	}
 	
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$this->setAttributes();
 		
@@ -293,7 +293,7 @@ class AttachmentsController extends Controller {
 		exit(0);
 	}
 	
-	public function delete()
+	public function delete($modelName = null)
 	{
 		if (!$this->loadData())
 		{
@@ -393,7 +393,7 @@ class AttachmentsController extends Controller {
 		
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		$errors = array();

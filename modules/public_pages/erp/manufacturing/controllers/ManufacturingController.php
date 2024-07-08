@@ -10,7 +10,7 @@ class ManufacturingController extends printController {
 
 	protected $version='$Revision: 1.8 $';
 
-	public function delete(){
+	public function delete($modelName = null){
 
 		if (!$this->CheckParams($this->_templateobject->idField)) {
 			sendBack();
@@ -23,7 +23,7 @@ class ManufacturingController extends printController {
 
 	}
 
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 
 		if (!$this->CheckParams($this->modeltype)) {
 			sendBack();

@@ -20,7 +20,7 @@ class MfcentresController extends ManufacturingController
 		$this->uses($this->_templateobject);
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		if (!$this->CheckParams('mfdept_id'))
@@ -67,7 +67,7 @@ class MfcentresController extends ManufacturingController
 	
 	}
 
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		if (!$this->CheckParams($this->modeltype)) {
 			sendBack();
 		}

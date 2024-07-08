@@ -143,7 +143,7 @@ class ProjectnotesController extends Controller {
 		
 	}
 
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		if (parent::save('ProjectNote'))
@@ -165,7 +165,7 @@ class ProjectnotesController extends Controller {
 		
 	}
 	
-	public function delete()
+	public function delete($modelName = null)
 	{
 		
 		parent::delete('ProjectNote');

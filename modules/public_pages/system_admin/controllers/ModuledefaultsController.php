@@ -17,7 +17,7 @@ class ModuledefaultsController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		
 		// Search
 		$errors=array();
@@ -48,7 +48,7 @@ class ModuledefaultsController extends Controller {
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete() {
+	public function delete($modelName = null) {
 
 		if (!$this->CheckParams($this->_templateobject->idField)) {
 			sendBack();
@@ -59,7 +59,7 @@ class ModuledefaultsController extends Controller {
 		sendTo('modulecomponents','view',$this->_modules, array('id'=>$this->_data['module_components_id']));
 	}
 
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 
 		if(!$this->checkParams($this->modeltype)) {
 			sendBack();

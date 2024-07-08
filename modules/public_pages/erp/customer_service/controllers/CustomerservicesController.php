@@ -19,7 +19,7 @@ class CustomerServicesController extends PrintController
         $this->uses($this->_templateobject);
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $errors = array();
         $s_data = $this->setSearch();
@@ -69,14 +69,14 @@ class CustomerServicesController extends PrintController
         $this->view->set('page_title', $this->getPageName('', 'Summary for'));
     }
 
-    public function delete()
+    public function delete($modelName = null)
     {
         $flash = Flash::Instance();
         $flash->addError('Action not allowed here');
         sendTo($this->name, 'index', $this->_modules);
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) : void
     {
         $flash = Flash::Instance();
         $flash->addError('Action not allowed here');

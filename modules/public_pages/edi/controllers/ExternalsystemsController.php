@@ -18,7 +18,7 @@ class ExternalsystemsController extends EdiController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		parent::index(new ExternalSystemCollection($this->_templateobject));
 		$sidebar = new SidebarController($this->view);

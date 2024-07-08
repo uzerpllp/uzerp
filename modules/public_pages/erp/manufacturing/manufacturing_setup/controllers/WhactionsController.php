@@ -37,7 +37,7 @@ class WhactionsController extends ManufacturingController {
 		
 	}
 	
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		$this->view->set('clickcontroller', $this->name);
 		parent::index(new WHActionCollection($this->_templateobject));

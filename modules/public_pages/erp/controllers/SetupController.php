@@ -13,7 +13,7 @@ class SetupController extends Controller {
 		$this->sidebar();
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		sendTo('','index',$this->_modules);
 	}
 	

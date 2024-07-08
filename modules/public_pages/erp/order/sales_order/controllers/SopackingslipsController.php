@@ -17,7 +17,7 @@ class SopackingslipsController extends printController {
 		$this->uses($this->_templateobject);
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		if (!$this->checkParams('order_id'))
@@ -113,7 +113,7 @@ class SopackingslipsController extends printController {
 		
 	}
 	
-	public function delete()
+	public function delete($modelName = null)
 	{
 		
 		if (!$this->checkParams($this->modeltype))
@@ -133,7 +133,7 @@ class SopackingslipsController extends printController {
 		
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		if (!$this->checkParams($this->modeltype)) {

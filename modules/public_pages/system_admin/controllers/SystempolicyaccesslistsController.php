@@ -19,7 +19,7 @@ class SystempolicyaccesslistsController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		
 		// Search
 		$errors=array();
@@ -74,7 +74,7 @@ class SystempolicyaccesslistsController extends Controller {
 		
 	}
 
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 
 		if(!$this->checkParams($this->modeltype)) {
 			sendBack();

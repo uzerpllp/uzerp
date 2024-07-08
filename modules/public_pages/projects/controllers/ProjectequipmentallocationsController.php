@@ -18,7 +18,7 @@ class ProjectequipmentallocationsController extends Controller {
 		$this->uses($this->_templateobject);
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 
 		parent::index($pi=new ProjectEquipmentAllocationCollection($this->_templateobject));
 
@@ -36,7 +36,7 @@ class ProjectequipmentallocationsController extends Controller {
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete($this->modeltype);
 		sendBack();
@@ -135,7 +135,7 @@ class ProjectequipmentallocationsController extends Controller {
 		$this->getEquipmentAllocation($default_equipment, $dates['start_date'], $dates['end_date']);
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		
 		$flash=Flash::Instance();
 		if(parent::save($this->modeltype))

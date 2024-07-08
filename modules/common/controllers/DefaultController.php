@@ -12,7 +12,7 @@ class DefaultController extends Controller {
 	
 	protected $version='$Revision: 1.2 $';
 	
-	public function index() {
+	public function index($collection = null, $sh = '', &$c_query = null) {
 		global $smarty;
 		
 		echo "default";		

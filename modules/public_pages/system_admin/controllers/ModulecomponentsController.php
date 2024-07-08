@@ -25,7 +25,7 @@ class ModulecomponentsController extends Controller
 		
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$moduleobjects = new ModuleObjectCollection($this->_templateobject);
 		
@@ -50,7 +50,7 @@ class ModulecomponentsController extends Controller
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		
 		if (!$this->CheckParams($this->_templateobject->idField)) {
 			sendBack();
@@ -130,7 +130,7 @@ class ModulecomponentsController extends Controller
 		
 	}
 
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		
 		if(!$this->checkParams($this->modeltype)) {
 			sendBack();

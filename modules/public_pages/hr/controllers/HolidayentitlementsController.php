@@ -23,14 +23,14 @@ class HolidayentitlementsController extends Controller
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$this->view->set('clickaction', 'edit');
 		
 		parent::index(new HolidayentitlementCollection($this->_templateobject));
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		$flash = Flash::Instance();
 		
@@ -42,7 +42,7 @@ class HolidayentitlementsController extends Controller
 			  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		$flash = Flash::Instance();
 		

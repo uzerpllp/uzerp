@@ -9,14 +9,14 @@ class TicketingController extends Controller {
 
 	protected $version='$Revision: 1.1 $';
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		if (parent::save($this->modeltype)) {
 			sendTo($this->name, 'view', $this->_modules, array('id'=>$this->saved_model->id));
 		}
 		$this->refresh();
 	}
 	
-	public function delete () {
+	public function delete($modelName = null) {
 		// Set some defaults
 		parent::delete($this->modeltype);
 		sendTo($this->name, 'index', $this->_modules);

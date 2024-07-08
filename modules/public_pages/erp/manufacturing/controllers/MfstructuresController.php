@@ -23,7 +23,7 @@ class MfstructuresController extends PrintController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$errors = array();
 
@@ -115,7 +115,7 @@ class MfstructuresController extends PrintController
 		$this->view->set('no_ordering', true);
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 
 		$flash = Flash::Instance();
@@ -409,7 +409,7 @@ class MfstructuresController extends PrintController
 		return $found_ref;
 	}
 
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 
 		$flash = Flash::Instance();

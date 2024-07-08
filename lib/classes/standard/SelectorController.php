@@ -69,7 +69,7 @@ class SelectorController extends PrintController
     /*
      * extendable functions
      */
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $this->view->set('clickaction', 'view');
 
@@ -400,7 +400,7 @@ class SelectorController extends PrintController
         $this->setTemplateName('selector_new');
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) : void
     {
         $flash = Flash::Instance();
 

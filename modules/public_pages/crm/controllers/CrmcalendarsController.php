@@ -23,7 +23,7 @@ class CrmcalendarsController extends printController {
 	}
 	
 	// calendar view, not calendar index
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		// build a list of calendars for the sidebar
@@ -231,7 +231,7 @@ class CrmcalendarsController extends printController {
 	}
 	
 	// save calendar
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 	
 		$flash	= Flash::Instance();

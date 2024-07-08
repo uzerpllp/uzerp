@@ -22,7 +22,7 @@ class TicketsController extends PrintController {
 		$this->view->set('controller', 'Tickets');
 	}
 	
-	public function index() {
+	public function index($collection = null, $sh = '', &$c_query = null) {
 		$errors=array();
 	
 		$this->setSearch('TicketsSearch', 'useDefault');
@@ -326,7 +326,7 @@ class TicketsController extends PrintController {
 
 	}
 	
-	public function save () {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		// Set some defaults
 		$errors = array();
 		$flash=Flash::Instance();
@@ -675,7 +675,7 @@ class TicketsController extends PrintController {
 		
 	}
 	
-	public function delete () {
+	public function delete($modelName = null) {
 	}
 
 	public function getEmail($_person_id='', $_company_id='') {

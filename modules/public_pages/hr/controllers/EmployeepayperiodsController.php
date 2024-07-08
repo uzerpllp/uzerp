@@ -26,7 +26,7 @@ class EmployeepayperiodsController extends Controller {
 	/*
 	 * Standard index listing of Employee Pay Period
 	 */
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		
@@ -68,7 +68,7 @@ class EmployeepayperiodsController extends Controller {
 	/*
 	 * Delete of Employee Pay Period is not allowed
 	 */
-	public function delete()
+	public function delete($modelName = null)
 	{
 		// Deletion is not allowed
 		sendBack();
@@ -160,7 +160,7 @@ class EmployeepayperiodsController extends Controller {
 		/*
 	 * Save the Employee Pay Period
 	 */
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		if (!$this->checkParams($this->modeltype))

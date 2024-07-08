@@ -18,7 +18,7 @@ class SinvoicelinesController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'edit');
 		parent::index(new SInvoiceLineCollection($this->_templateobject));
 		
@@ -40,7 +40,7 @@ class SinvoicelinesController extends Controller {
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		if (empty($this->_data['SInvoiceLine']['id'])) {
 			$this->dataError();
 			sendBack();
@@ -139,7 +139,7 @@ class SinvoicelinesController extends Controller {
 		
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		$errors=array();
 		

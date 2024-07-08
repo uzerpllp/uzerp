@@ -23,7 +23,7 @@ class SystemobjectpolicysController extends Controller
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		// Search
@@ -62,7 +62,7 @@ class SystemobjectpolicysController extends Controller
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 
 		$result = parent::delete($this->modeltype);
@@ -154,7 +154,7 @@ class SystemobjectpolicysController extends Controller
 		
 	}
 
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 
 		if(!$this->checkParams($this->modeltype))

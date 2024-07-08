@@ -19,7 +19,7 @@ class WHtransferrulesController extends ManufacturingController {
 	
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'edit');
 		parent::index(new WHTransferruleCollection($this->_templateobject));
 		
@@ -40,7 +40,7 @@ class WHtransferrulesController extends ManufacturingController {
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		Controller::delete($this->modeltype);
 		sendTo($_SESSION['refererPage']['controller']

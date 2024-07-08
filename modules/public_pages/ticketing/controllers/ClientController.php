@@ -20,7 +20,7 @@ class ClientController extends Controller {
 		$this->view->set('controller', 'ticket');
 	}
 	
-	public function index() {
+	public function index($collection = null, $sh = '', &$c_query = null) {
 		$collection = new TicketCollection($this->_templateobject);
 		$sh = new SearchHandler($collection, false);
 		$sh->extract();
@@ -69,7 +69,7 @@ class ClientController extends Controller {
 		return $options[0];
 	}
 	
-	public function save () {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		// Fill client hidden sections
 		$user = new User();
 		$person = new Person();

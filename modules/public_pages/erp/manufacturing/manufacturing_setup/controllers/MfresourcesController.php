@@ -18,7 +18,7 @@ class MfresourcesController extends ManufacturingController {
 		$this->uses($this->_templateobject);
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		parent::index(new MFResourceCollection($this->_templateobject));
 		
@@ -39,7 +39,7 @@ class MfresourcesController extends ManufacturingController {
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		$db = DB::Instance();
 		$db->StartTrans();

@@ -18,7 +18,7 @@ class DatamappingrulesController extends EdiController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		parent::index(new DataMappingRuleCollection($this->_templateobject));
 		$sidebar = new SidebarController($this->view);

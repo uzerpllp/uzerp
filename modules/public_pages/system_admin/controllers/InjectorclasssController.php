@@ -17,7 +17,7 @@ class InjectorclasssController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		
 		// Search
 		$errors=array();
@@ -48,13 +48,13 @@ class InjectorclasssController extends Controller {
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete() {
+	public function delete($modelName = null) {
 
 		parent::delete('InjectorClass');
 		sendTo('Injectorclasss','index',array('system_admin'));
 	}
 
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 
 		parent::save('InjectorClass');
 		sendTo('Injectorclasss','index',array('system_admin'));

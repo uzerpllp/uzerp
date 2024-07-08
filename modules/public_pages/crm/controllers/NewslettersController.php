@@ -19,7 +19,7 @@ class NewslettersController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		parent::index(new NewsletterCollection($this->_templateobject));
 		
@@ -103,13 +103,13 @@ class NewslettersController extends Controller {
 	}
 	
 	
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('Newsletter');
 		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 	$flash=Flash::Instance();
 	if(parent::save('Newsletter'))
 		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);

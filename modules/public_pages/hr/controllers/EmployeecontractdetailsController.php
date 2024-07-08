@@ -26,7 +26,7 @@ class EmployeecontractdetailsController extends Controller
 	/*
 	 * Standard index listing of Employee Contract Details
 	 */
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		$this->view->set('clickaction', 'edit');
@@ -38,7 +38,7 @@ class EmployeecontractdetailsController extends Controller
 	/*
 	 * Delete of Employee Contract Details is not allowed
 	 */
-	public function delete()
+	public function delete($modelName = null)
 	{
 		sendBack();
 	}
@@ -131,7 +131,7 @@ class EmployeecontractdetailsController extends Controller
 	/*
 	 * Save the Employee Contract Detail
 	 */
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 			if (!$this->checkParams($this->modeltype))

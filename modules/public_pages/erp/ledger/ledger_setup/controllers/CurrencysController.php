@@ -20,7 +20,7 @@ class CurrencysController extends LedgerController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$this->view->set('clickaction', 'edit');
 		parent::index(new CurrencyCollection($this->_templateobject));

@@ -17,7 +17,7 @@ class WHtransferlinesController extends Controller {
 	
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$flash=Flash::Instance();
 
 // Preserve any search criteria selection so that the context is maintained

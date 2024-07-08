@@ -19,7 +19,7 @@ class BankaccountsController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		parent::index(new CBAccountCollection($this->_templateobject));
 		$sidebar = new SidebarController($this->view);
@@ -361,7 +361,7 @@ class BankaccountsController extends Controller {
 		
 	}
 	
-	public function delete() {
+	public function delete($modelName = null) {
 		return false;
 	}
 	
@@ -369,7 +369,7 @@ class BankaccountsController extends Controller {
 		return false;
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		return false;
 		
 	}

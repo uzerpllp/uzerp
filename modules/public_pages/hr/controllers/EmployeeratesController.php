@@ -36,7 +36,7 @@ class EmployeeratesController extends Controller
 	/*
 	 * Standard index listing of Employee Rates
 	 */
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		$this->view->set('clickaction', 'none');
@@ -48,7 +48,7 @@ class EmployeeratesController extends Controller
 	/*
 	 * Delete of Employee Rates is not allowed
 	 */
-	public function delete()
+	public function delete($modelName = null)
 	{
 		// Deletion is not allowed
 		sendBack();
@@ -133,7 +133,7 @@ class EmployeeratesController extends Controller
 	/*
 	 * Save the Employee Rate
 	 */
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		if (!$this->checkParams($this->modeltype))

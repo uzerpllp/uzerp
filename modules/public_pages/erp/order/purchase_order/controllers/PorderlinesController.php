@@ -19,7 +19,7 @@ class PorderlinesController extends Controller {
 		$this->uses($this->_templateobject);
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$this->view->set('clickaction', 'edit');
 		
@@ -43,7 +43,7 @@ class PorderlinesController extends Controller {
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		if (empty($this->_data[$this->modeltype]['id']))
 		{
@@ -357,7 +357,7 @@ class PorderlinesController extends Controller {
 		
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		$db = DB::Instance();
 		

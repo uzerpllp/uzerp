@@ -20,7 +20,7 @@ class WhstoresController extends printController
 		$this->uses($this->_templateobject);
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$this->view->set('clickaction', 'view');
 		

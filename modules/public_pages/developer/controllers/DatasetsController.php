@@ -27,7 +27,7 @@ class DatasetsController extends printController
 	
 	}
 	
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		$this->view->set('clickaction', 'view');
@@ -58,7 +58,7 @@ class DatasetsController extends printController
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		$flash = Flash::Instance();
 		
@@ -67,7 +67,7 @@ class DatasetsController extends printController
 		sendTo($this->name,'index',$this->_modules);
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		$flash=Flash::Instance();

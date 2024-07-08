@@ -19,7 +19,7 @@ class AttachmentsController extends Controller {
 		$this->view->set('controller', 'Attachments');
 	}
 	
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		parent::index(new TicketAttachmentCollection($this->_templateobject));
 		
@@ -78,7 +78,7 @@ class AttachmentsController extends Controller {
 	    $this->view->set('ticket_id', $this->_data['ticket_id']);
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$errors = array();
 		$file = File::Factory($_FILES['file'],$errors, new File());
 		$file->save();

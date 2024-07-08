@@ -18,7 +18,7 @@ class GlperiodsController extends LedgerController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'edit');
 		parent::index(new GLPeriodCollection($this->_templateobject));
 		
@@ -101,7 +101,7 @@ class GlperiodsController extends LedgerController {
 		return parent::getPageName((empty($base)?'GL Periods':$base), $action);
 	}
 
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		$vat_return = new VatReturn();
 		$period_data = $this->_data['GLPeriod'];

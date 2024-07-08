@@ -43,7 +43,7 @@ class UsercompanyaccesssController extends Controller {
 		$this->view->set('edit',true);
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		global $smarty;
 		$this->view->set('clickaction', 'edit');
 		parent::index(new UsercompanyaccessCollection($this->_templateobject));
@@ -62,13 +62,13 @@ class UsercompanyaccesssController extends Controller {
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('Usercompanyaccess');
 		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		if(parent::save('Usercompanyaccess')) {
 			sendBack();

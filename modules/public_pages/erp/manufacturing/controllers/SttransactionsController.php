@@ -17,7 +17,7 @@ class SttransactionsController extends ManufacturingController {
 		$this->uses($this->_templateobject);
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$errors = array();
 		$s_data = array();
 		
@@ -118,7 +118,7 @@ class SttransactionsController extends ManufacturingController {
 
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		
 		parent::save_transactions();
          

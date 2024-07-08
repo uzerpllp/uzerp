@@ -19,7 +19,7 @@ class ActivitynotesController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		global $smarty;
 		$this->view->set('clickaction', 'edit');
 		parent::index(new ActivityNoteCollection($this->_templateobject));
@@ -38,13 +38,13 @@ class ActivitynotesController extends Controller {
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('ActivityNote');
 		sendBack();
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		if(parent::save('ActivityNote'))
 			sendBack();

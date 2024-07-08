@@ -18,7 +18,7 @@ class SocostsController extends printController{
 
     }
 
-    public function index(){
+    public function index($collection = null, $sh = '', &$c_query = null){
         
         $errors=array();
 
@@ -50,14 +50,14 @@ class SocostsController extends printController{
 
     }
 
-    public function delete(){
+    public function delete($modelName = null){
         $flash = Flash::Instance();
         parent::delete($this->modeltype);
         sendTo($this->name, 'index', $this->_modules);
 
     }
 
-    public function save(){
+    public function save($modelName = null, $dataIn = [], &$errors = []) : void{
         $flash = Flash::Instance();
         //totals cost = sum of material,labour, outside contract and overhead
         $this->_data[$this->modeltype]['cost']=$this->_data[$this->modeltype]['mat']

@@ -19,7 +19,7 @@ class poproductlineheadersController extends printController
         $this->uses($this->_templateobject);
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $this->view->set('clickaction', 'view');
 
@@ -165,7 +165,7 @@ class poproductlineheadersController extends printController
         $this->view->set('tax_rates', $tax_rates);
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) : void
     {
         $flash = Flash::Instance();
 

@@ -26,7 +26,7 @@ class WorkschedulesController extends printController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		$this->view->set('clickaction', 'view');
@@ -97,7 +97,7 @@ class WorkschedulesController extends printController
 		
 	}
 	
-	public function delete()
+	public function delete($modelName = null)
 	{
 		
 		$flash = Flash::Instance();
@@ -126,7 +126,7 @@ class WorkschedulesController extends printController
 		
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		$flash = Flash::Instance();
 		$errors = array();

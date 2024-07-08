@@ -17,7 +17,7 @@ class PinvoicelinesController extends printController {
 		$this->uses($this->_templateobject);
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'edit');
 		parent::index(new PInvoiceLineCollection($this->_templateobject));
 		
@@ -39,7 +39,7 @@ class PinvoicelinesController extends printController {
 		$this->view->set('sidebar',$sidebar);
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		if (empty($this->_data['PInvoiceLine']['id'])) {
 			$this->dataError();
 			sendBack();
@@ -108,7 +108,7 @@ class PinvoicelinesController extends printController {
 		
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		$errors=array();
 		

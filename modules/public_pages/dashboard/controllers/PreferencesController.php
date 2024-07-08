@@ -32,7 +32,7 @@ class PreferencesController extends Controller
 		return new $classname();
 	}
 	
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		// Cater for no module to edit.
 		if (empty($this->_data['for_module']))
@@ -103,7 +103,7 @@ class PreferencesController extends Controller
 		
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		$module = $this->getPreferenceClass($this->_data['__moduleName']);
 		

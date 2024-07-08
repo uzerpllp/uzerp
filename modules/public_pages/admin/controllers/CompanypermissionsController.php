@@ -19,19 +19,19 @@ class CompanypermissionsController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		global $smarty;
 		$this->view->set('clickaction', 'edit');
 		parent::index(new CompanyPermissionCollection($this->_templateobject));
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('CompanyPermission');
 		sendTo('CompanyPermissions','index',array('admin'));
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 	$flash=Flash::Instance();
 	if(parent::save('CompanyPermission'))
 			sendTo('CompanyPermissions','index', array('admin'));

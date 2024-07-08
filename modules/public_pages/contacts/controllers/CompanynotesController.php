@@ -23,7 +23,7 @@ class CompanynotesController extends Controller
 		
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		global $smarty;
 		
@@ -32,7 +32,7 @@ class CompanynotesController extends Controller
 		parent::index(new CompanyNoteCollection($this->_templateobject));
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		
 		parent::delete('CompanyNote');
@@ -43,7 +43,7 @@ class CompanynotesController extends Controller
 			  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
 	}
 
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		$flash=Flash::Instance();
 		

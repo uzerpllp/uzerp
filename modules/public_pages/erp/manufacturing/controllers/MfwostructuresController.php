@@ -62,7 +62,7 @@ class MfwostructuresController extends Controller {
 		$this->view->set('uom_list',$uom_list);
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		if(parent::save('MFWOStructure')) {
 			sendTo('Mfworkorders'

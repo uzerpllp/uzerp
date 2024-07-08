@@ -21,7 +21,7 @@ class PoproductlinesController extends printController {
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		$s_data = array();
@@ -169,7 +169,7 @@ class PoproductlinesController extends printController {
 
 	}
 
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 
 		$flash=Flash::Instance();

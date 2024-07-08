@@ -15,7 +15,7 @@ class CacheController extends Controller {
 		parent::__construct($module, $action);
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		$flash	= Flash::Instance();
@@ -151,7 +151,7 @@ class CacheController extends Controller {
 		
 	}
 	
-	public function delete()
+	public function delete($modelName = null)
 	{
 		
 		$flash = Flash::Instance();

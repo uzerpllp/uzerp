@@ -23,7 +23,7 @@ class ProjectsController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		$s_data = null;
 		$errors=array();
@@ -474,13 +474,13 @@ class ProjectsController extends Controller {
 			
 	}
 	
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('Project');
 		sendTo('Projects','index',array('projects'));
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		$errors=array();
 		if(parent::save('Project', '', $errors)) {

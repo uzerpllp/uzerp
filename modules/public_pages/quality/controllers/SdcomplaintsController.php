@@ -24,7 +24,7 @@ class SdcomplaintsController extends ComplaintsController
 	
 	}
 	
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		$s_data = array('type' => 'SD');

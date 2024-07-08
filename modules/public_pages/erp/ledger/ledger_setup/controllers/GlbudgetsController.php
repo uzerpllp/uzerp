@@ -18,7 +18,7 @@ class GlbudgetsController extends LedgerController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 
 		$errors=array();
 		$s_data=array();

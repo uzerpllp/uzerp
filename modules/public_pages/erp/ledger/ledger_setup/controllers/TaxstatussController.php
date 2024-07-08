@@ -18,7 +18,7 @@ class TaxstatussController extends LedgerController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'edit');
 		parent::index(new TaxStatusCollection($this->_templateobject));
 		$sidebar = new SidebarController($this->view);

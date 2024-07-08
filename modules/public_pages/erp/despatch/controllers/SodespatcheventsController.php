@@ -19,7 +19,7 @@ class SodespatcheventsController extends printController {
 
 	}
 
-	public function index() {
+	public function index($collection = null, $sh = '', &$c_query = null) {
 		$status_enums=$this->_templateobject->getEnumOptions('status');
 		$this->view->set('status_enums',$status_enums);
 		$legend=array($status_enums['TC']=>'fc_red',
@@ -77,7 +77,7 @@ class SodespatcheventsController extends printController {
 		$this->view->set('model',$event);
 	}
 	
-	public function delete() {
+	public function delete($modelName = null) {
 		
 		$accessobject=AccessObject::Instance();
 		$editable=$accessobject->hasPermission('despatch','sodespatchevents','edit');
@@ -104,7 +104,7 @@ class SodespatcheventsController extends printController {
 		
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		
 		if(isset($this->_data['SODespatchEvent']['start_time'])) {
 			$this->_data['SODespatchEvent']['start_time'].=(!empty($this->_data['SODespatchEvent']['start_time_hours'])?' '.$this->_data['SODespatchEvent']['start_time_hours']:' 00');

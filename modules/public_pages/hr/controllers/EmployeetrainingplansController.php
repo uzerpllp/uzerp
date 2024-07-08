@@ -22,7 +22,7 @@ class EmployeetrainingplansController extends Controller {
 		$this->uses($this->_templateobject);
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		$this->view->set('clickaction', 'edit');
@@ -31,12 +31,12 @@ class EmployeetrainingplansController extends Controller {
 
 	}	
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		sendBack();
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		if(parent::save('EmployeeTrainingPlan'))

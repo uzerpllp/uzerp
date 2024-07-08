@@ -17,7 +17,7 @@ class WHtransfersController extends Controller {
 	
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickcontroller', 'whtransferlines');
 		$this->view->set('clickaction', 'index');
 		parent::index(new WHTransferCollection($this->_templateobject));
@@ -88,7 +88,7 @@ class WHtransfersController extends Controller {
   		parent::_new();
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		
 		if (strtolower($this->_data['saveform'])=='cancel') {

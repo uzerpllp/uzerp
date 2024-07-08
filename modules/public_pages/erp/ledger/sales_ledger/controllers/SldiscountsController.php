@@ -17,7 +17,7 @@ class SldiscountsController extends LedgerController {
 		$this->uses($this->_templateobject);
 	}
 	
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		
 // Search
 		$errors=array();
@@ -66,7 +66,7 @@ class SldiscountsController extends LedgerController {
 		$this->view->set('prod_groups', $this->getProductGroups($sldiscount->slmaster_id));
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 
 // set context for 'Save and Add Another'
 		if (isset($this->_data[$this->modeltype]['slmaster_id']))

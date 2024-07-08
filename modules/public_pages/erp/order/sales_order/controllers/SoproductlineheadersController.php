@@ -19,7 +19,7 @@ class soproductlineheadersController extends printController
         $this->uses($this->_templateobject);
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $this->view->set('clickaction', 'view');
 
@@ -158,7 +158,7 @@ class soproductlineheadersController extends printController
         $this->view->set('country', $this->country);
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) : void
     {
         $flash = Flash::Instance();
         $errors = array();

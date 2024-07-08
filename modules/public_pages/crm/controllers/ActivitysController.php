@@ -24,7 +24,7 @@ class ActivitysController extends printController
         $this->uses($this->_templateobject);
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $this->setSearch('ActivitySearch', 'useDefault');
         $this->view->set('clickaction', 'view');
@@ -47,7 +47,7 @@ class ActivitysController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 
-    public function delete()
+    public function delete($modelName = null)
     {
         $flash = Flash::Instance();
 
@@ -144,7 +144,7 @@ class ActivitysController extends printController
         //sendBack();
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) : void
     {
         $flash = Flash::Instance();
 

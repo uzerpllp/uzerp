@@ -27,7 +27,7 @@ class PoplannedController extends PrintController
     /**
      * Display a list view of planned orders
      */
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $s_data = array();
         $this->setSearch('poplannedSearch', 'useDefault', $s_data);

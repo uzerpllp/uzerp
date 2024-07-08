@@ -18,7 +18,7 @@ class CurrencyratesController extends LedgerController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'edit');
 		parent::index(new CurrencyRateCollection($this->_templateobject));
 		$sidebar = new SidebarController($this->view);

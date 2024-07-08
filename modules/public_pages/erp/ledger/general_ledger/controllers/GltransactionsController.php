@@ -25,7 +25,7 @@ class GltransactionsController extends printController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		$id = (isset($this->_data['id']))?$this->_data['id']:0;
@@ -117,7 +117,7 @@ class GltransactionsController extends printController
 
 	}
 	
-	public function delete()
+	public function delete($modelName = null)
 	{
 		$glheader = DataObjectFactory::Factory($this->_header_model);
 		
@@ -246,7 +246,7 @@ class GltransactionsController extends printController
      * 	Altered save method to allow for unposted journal transactions to be saved.
      *  
 	 */
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		$glheader = DataObjectFactory::Factory($this->_header_model);
 		

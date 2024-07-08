@@ -66,7 +66,7 @@ class SlcustomersController extends LedgerController
         $this->view->set('module_prefs', $module_prefs);
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
 
         // Search
@@ -601,7 +601,7 @@ class SlcustomersController extends LedgerController
         sendBack();
     }
 
-    public function delete() {
+    public function delete($modelName = null) {
         $this->checkRequest(['post'], true);
         parent::delete();
     }
@@ -1245,7 +1245,7 @@ class SlcustomersController extends LedgerController
         $this->view->set('despatch_actions', WHAction::getDespatchActions());
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) : void
     {
         $errors = array();
 

@@ -23,7 +23,7 @@ class PeriodicpaymentsController extends LedgerController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		$errors = array();
@@ -166,7 +166,7 @@ class PeriodicpaymentsController extends LedgerController
 
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
 		if (!$this->CheckParams($this->modeltype))

@@ -59,7 +59,7 @@ class LoggedcallsController extends Controller {
 		$this->setTemplateName('calls_new');
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 /*
 		$this->view->set('clickaction', 'view');
 		parent::index(new LoggedCallCollection($this->_templateobject));
@@ -84,13 +84,13 @@ class LoggedcallsController extends Controller {
 		
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('LoggedCall');
 		sendBack();
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$call_data=&$this->_data['LoggedCall'];
 		if(isset($call_data['start_time'])) {
 			$call_data['start_time'].=' '.$call_data['start_time_hours'].':'.$call_data['start_time_minutes'];

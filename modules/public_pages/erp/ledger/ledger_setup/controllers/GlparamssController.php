@@ -18,7 +18,7 @@ class GlparamssController extends LedgerController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'edit');
 		parent::index(new GLParamsCollection($this->_templateobject));
 

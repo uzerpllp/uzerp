@@ -19,7 +19,7 @@ class HasrolesController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		global $smarty;
 		
 		$s_data=array();
@@ -38,7 +38,7 @@ class HasrolesController extends Controller {
 		
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('HasRole');
 		sendTo('HasRoles','index',array('admin'));
@@ -59,7 +59,7 @@ class HasrolesController extends Controller {
 		$this->view->set('cur_page',$collection->cur_page);
 	}
 
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 	$flash=Flash::Instance();
 	if(parent::save('HasRole'))
 			sendTo('HasRoles','index', array('admin'));

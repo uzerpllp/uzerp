@@ -18,7 +18,7 @@ class GlcentresController extends printController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$errors=array();
 
 		$this->setSearch('glcentresSearch', 'useDefault');

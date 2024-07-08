@@ -11,7 +11,7 @@ class IndexController extends DashboardController
 
 	protected $version='$Revision: 1.6 $';
 	
-	public function index ()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		
 		$glparams = DataObjectFactory::Factory('GLParams');

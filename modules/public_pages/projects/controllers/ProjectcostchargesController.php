@@ -19,7 +19,7 @@ class ProjectcostchargesController extends Controller {
 		
 	}
 	
-	public function index() {
+	public function index($collection = null, $sh = '', &$c_query = null) {
 		$this->view->set('clickaction', 'view');
 		
 		parent::index(new ProjectCostChargeCollection($this->_templateobject));
@@ -316,7 +316,7 @@ class ProjectcostchargesController extends Controller {
 		
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		if(parent::save($this->modeltype))
 		{

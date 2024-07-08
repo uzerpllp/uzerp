@@ -17,7 +17,7 @@ class SttypecodesController extends ManufacturingController {
 	
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		// Set search defaults and class
 		$s_data = ['active' => 'T'];
 		$this->setSearch('STTypecodeSearch', 'useDefault', $s_data);
@@ -72,7 +72,7 @@ class SttypecodesController extends ManufacturingController {
 		$this->view->set('comp_class',$stitem->getEnumOptions('comp_class'));
 	}
 
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		$flash = Flash::Instance();
 		$form_data = $this->_data['STTypecode'];

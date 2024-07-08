@@ -18,7 +18,7 @@ class DatamappingdetailsController extends EdiController {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 
 		$mapdetails=new DataMappingDetailCollection($this->_templateobject);
 		
@@ -271,7 +271,7 @@ class DatamappingdetailsController extends EdiController {
 		$this->view->set('page_title',$this->getPageName());
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 
 		if (!$this->CheckParams($this->modeltype)) {
 			sendBack();

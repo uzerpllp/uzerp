@@ -28,7 +28,7 @@ class ExpensesController extends HrController
         $this->view->set('controller', 'Expenses');
     }
 
-    public function index()
+    public function index($collection = null, $sh = '', &$c_query = null)
     {
         $errors = array();
 
@@ -111,7 +111,7 @@ class ExpensesController extends HrController
         sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
     }
 
-    public function delete()
+    public function delete($modelName = null)
     {
         $this->checkRequest(['post'], true);
         $flash = Flash::Instance();
@@ -269,7 +269,7 @@ class ExpensesController extends HrController
         }
     }
 
-    public function save()
+    public function save($modelName = null, $dataIn = [], &$errors = []) : void
     {
         $this->checkRequest(['post']);
         $flash = Flash::Instance();

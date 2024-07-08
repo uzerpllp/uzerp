@@ -18,7 +18,7 @@ class TicketreleaseversionsController extends Controller {
 		
 	}
 	
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		parent::index(new TicketReleaseVersionCollection($this->_templateobject));
 		
@@ -44,7 +44,7 @@ class TicketreleaseversionsController extends Controller {
 		$this->view->set('sidebar',$sidebar);
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		
 		if (!$this->CheckParams($this->modeltype)) {
 			sendBack();

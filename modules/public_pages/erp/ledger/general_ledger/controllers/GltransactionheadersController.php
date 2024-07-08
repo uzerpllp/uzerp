@@ -23,7 +23,7 @@ class GltransactionheadersController extends printController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		$id = (isset($this->_data['id']))?$this->_data['id']:0;
@@ -65,7 +65,7 @@ class GltransactionheadersController extends printController
 
 	}
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		if (!$this->loadData())
 		{
@@ -169,7 +169,7 @@ class GltransactionheadersController extends printController
      * Save header and transactions.
      *
 	 */
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		if (!$this->checkParams($this->modeltype))
 		{

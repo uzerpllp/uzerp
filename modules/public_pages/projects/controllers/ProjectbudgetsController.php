@@ -19,7 +19,7 @@ class ProjectbudgetsController extends Controller {
 		
 	}
 	
-	public function index() {
+	public function index($collection = null, $sh = '', &$c_query = null) {
 		$this->view->set('clickaction', 'view');
 		
 		parent::index(new ProjectBudgetCollection($this->_templateobject));
@@ -72,7 +72,7 @@ class ProjectbudgetsController extends Controller {
 		$this->view->set('items', $this->getBudgetItemList($budget->budget_item_type));
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		$errors=array();
 		

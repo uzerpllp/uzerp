@@ -17,7 +17,7 @@ class HaspermissionsController extends Controller {
 
 	}
 
-	public function index(){
+	public function index($collection = null, $sh = '', &$c_query = null){
 		global $smarty;
 		
 		$s_data=array();
@@ -36,13 +36,13 @@ class HaspermissionsController extends Controller {
 		
 	}
 
-	public function delete(){
+	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('HasPermission');
 		sendTo('HasPermissions','index',array('admin'));
 	}
 	
-	public function save() {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 	$flash=Flash::Instance();
 	if(parent::save('HasPermission'))
 			sendTo('HasPermissions','index', array('admin'));

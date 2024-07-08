@@ -24,7 +24,7 @@ class HolidayrequestsController extends HrController
 
 	}
 
-	public function index()
+	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$status_enums=$this->_templateobject->getEnumOptions('status');
 		$this->view->set('status_enums',$status_enums);
@@ -256,7 +256,7 @@ class HolidayrequestsController extends HrController
 		
 	}		
 
-	public function delete()
+	public function delete($modelName = null)
 	{
 		$flash = Flash::Instance();
 		
@@ -286,7 +286,7 @@ class HolidayrequestsController extends HrController
 		
 	}
 	
-	public function save()
+	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		$flash=Flash::Instance();
 		
