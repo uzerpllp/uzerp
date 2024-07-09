@@ -13,7 +13,7 @@ abstract class SPOrder extends DataObject
 	
 	private $unsaved_lines = array();
 
-	public static function makeHeader($data, $do, &$errors)
+	public static function makeHeader($data, $do, &$errors = [])
 	{
 		
 		if (strtotime(fix_date($data['order_date']))>strtotime(fix_date(date(DATE_FORMAT))))

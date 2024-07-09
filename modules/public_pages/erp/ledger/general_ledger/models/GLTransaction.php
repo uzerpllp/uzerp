@@ -1296,7 +1296,7 @@ class GLTransaction extends DataObject
     /*
      * Private Functions
      */
-    private function getControlAccount($source, &$errors)
+    private function getControlAccount($source, &$errors = [])
     {
         $gl_params = DataObjectFactory::Factory('GLParams');
 

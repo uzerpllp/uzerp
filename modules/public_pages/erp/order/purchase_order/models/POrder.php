@@ -110,7 +110,7 @@ class POrder extends SPOrder {
 		
 	}
 	
-	public static function Factory($header_data, &$errors)
+	public static function Factory($header_data, &$errors = [])
 	{
 		
 		if (empty($header_data['order_date']))
@@ -402,7 +402,7 @@ class POrder extends SPOrder {
 		return EGS_USERNAME;
 	}
 	
-	private function saveAuthList($porderlines_summary, &$errors)
+	private function saveAuthList($porderlines_summary, &$errors = [])
 	{
 // Find the users that have budget authorisation on all Account/Centres
 // $authlimits is an array of [centre][account]=order value

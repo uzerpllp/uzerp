@@ -119,7 +119,7 @@ class DateSearchField extends SearchField {
 		
 	}
 
-	public function isValid($value, &$errors)
+	public function isValid($value, &$errors = [])
 	{
 		
 		if (!empty($value))

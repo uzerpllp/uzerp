@@ -44,7 +44,7 @@ class TWValidator implements MFAValidator
      * @param User $user
      * @return array
      */
-    public function Enroll(User $user, &$errors)
+    public function Enroll(User $user, &$errors = [])
     {
         try {
             $new_factor = $this->twilio->verify->v2->services($_ENV["TWILIO_SERVICE_SID"])
@@ -75,7 +75,7 @@ class TWValidator implements MFAValidator
      * @param string $payload
      * @return void
      */
-    public function VerifyEnroll(User $user, array $params, string $payload, &$errors)
+    public function VerifyEnroll(User $user, array $params, string $payload, &$errors = [])
     {
         try {
             $factor = $this->twilio->verify->v2->services($_ENV["TWILIO_SERVICE_SID"])
@@ -104,7 +104,7 @@ class TWValidator implements MFAValidator
      * @param String $payload
      * @return void
      */
-    public function ValidateToken(User $user, string $payload, &$errors)
+    public function ValidateToken(User $user, string $payload, &$errors = [])
     {
         try {
             $challenge = $this->twilio->verify->v2->services($_ENV["TWILIO_SERVICE_SID"])
@@ -128,7 +128,7 @@ class TWValidator implements MFAValidator
      * @param [type] $errors
      * @return void
      */
-    public function ResetEnrollment(User $user, &$errors)
+    public function ResetEnrollment(User $user, &$errors = [])
     {
         try {
             $factors = $this->twilio->verify->v2->services($_ENV["TWILIO_SERVICE_SID"])

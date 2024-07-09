@@ -3303,7 +3303,7 @@ class SordersController extends printController
     /*
      * Private Functions
      */
-    private function createPostInvoice($sorder, &$errors)
+    private function createPostInvoice($sorder, &$errors = [])
     {
         if ($sorder->customerdetails->accountStopped()) {
             $errors[] = 'Cannot create invoice, customer account stopped';

@@ -17,7 +17,7 @@ class IntegerSearchField extends NumericSearchField
 
 	protected $version	='$Revision: 1.1 $';
 	
-	public function isValid($value, &$errors)
+	public function isValid($value, &$errors = [])
 	{
 		
 		if (!empty($value)

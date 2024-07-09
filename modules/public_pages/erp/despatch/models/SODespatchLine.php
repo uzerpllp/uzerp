@@ -156,7 +156,7 @@ class SODespatchLine extends DataObject
 	 * Build the line
 	 *
 	 */
-	public static function makeLine($order, $orderline, &$errors)
+	public static function makeLine($order, $orderline, &$errors = [])
 	{
 
 		$despatchline=array();

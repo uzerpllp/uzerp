@@ -89,7 +89,7 @@ class ELTransaction extends LedgerTransaction {
 		return $employee;
 	}
 	
-	public static function currencyAdjustment (&$data, &$errors)
+	public static function currencyAdjustment (&$data, &$errors = [])
 	{
 		$data['original_source'] = 'E';
 		$data['reference']		 = '';

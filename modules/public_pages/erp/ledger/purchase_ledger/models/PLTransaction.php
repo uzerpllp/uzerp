@@ -169,7 +169,7 @@ class PLTransaction extends LedgerTransaction
 		return str_replace(array('&','(',')','#','"',"'",'.',',','!','*','+','-','/'), '', $this->payee_name);	
 	}
 	
-	static function allocatePayment ($transactions, $supplier_id, &$errors)
+	static function allocatePayment ($transactions, $supplier_id, &$errors = [])
 	{
 		$db=DB::Instance();
 		$db->StartTrans();

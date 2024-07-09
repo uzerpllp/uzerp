@@ -102,7 +102,7 @@ class PInvoice extends Invoice
 		
 	}
 
-	public static function Factory($header_data, &$errors)
+	public static function Factory($header_data, &$errors = [])
 	{
 		
 		$supplier = DataObjectFactory::Factory('PLSupplier');

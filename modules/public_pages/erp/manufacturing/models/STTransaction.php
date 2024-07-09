@@ -141,7 +141,7 @@ class STTransaction extends DataObject
 		
 	}
 	
-	static function getTransferLocations(&$data, &$errors)
+	static function getTransferLocations(&$data, &$errors = [])
 	{
 		if (!isset($data['whaction_id']) || empty($data['whaction_id']))
 		{
@@ -177,7 +177,7 @@ class STTransaction extends DataObject
 		return true;
 	}
 	
-	static function prepareMove($data, &$errors)
+	static function prepareMove($data, &$errors = [])
 	{
 
 		$item = DataObjectFactory::Factory('STItem');

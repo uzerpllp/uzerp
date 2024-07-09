@@ -19,7 +19,7 @@ abstract class Invoice extends DataObject {
 	 *  Build the invoice header, as if from a submitted form
 	 *
 	 */
-	public static function makeHeader($data,$do,&$errors) {
+	public static function makeHeader($data,$do, &$errors = []) {
 
 		if (!isset($data['id']) || $data['id']=='') {
 

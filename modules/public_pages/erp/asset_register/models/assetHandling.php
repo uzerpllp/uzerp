@@ -48,7 +48,7 @@ class assetHandling
 		
 	}
 
-	static function depreciateOne($assetid, &$errors)
+	static function depreciateOne($assetid, &$errors = [])
 	{
 		
 		$asset = DataObjectFactory::Factory('Asset');
@@ -64,7 +64,7 @@ class assetHandling
 		
 	}
 
-	static function depreciateAsset($asset, &$errors)
+	static function depreciateAsset($asset, &$errors = [])
 	{
 		
 		$depn_td = $asset->depreciation($errors);
@@ -100,7 +100,7 @@ class assetHandling
 		
 	}
 
-	static function disposal($assetid, $data, &$errors)
+	static function disposal($assetid, $data, &$errors = [])
 	 {
 		
 	 	$asset = DataObjectFactory::Factory('Asset');
@@ -165,7 +165,7 @@ class assetHandling
 		}
 	}
 
-	static function save($data, &$errors)
+	static function save($data, &$errors = [])
 	{
 		$period = DataObjectFactory::Factory('GLPeriod');
 		

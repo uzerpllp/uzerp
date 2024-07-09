@@ -172,7 +172,7 @@ class MatrixSearchField extends SearchField
 		$this->options = $options;
 	}
 	
-	public function isValid($val, &$errors)
+	public function isValid($val, &$errors = [])
 	{
 		return TRUE;
 	}

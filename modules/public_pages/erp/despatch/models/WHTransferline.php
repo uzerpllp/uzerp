@@ -27,7 +27,7 @@ class WHTransferline extends DataObject {
 				
 	}
 
-	function moveStock ($whtransfer, &$errors) {
+	function moveStock ($whtransfer, &$errors = []) {
 		$data=array();
 		$data['stitem_id']=$this->stitem_id;
 		$data['whaction_id']=$whtransfer->transfer_action;

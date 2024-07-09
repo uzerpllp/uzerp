@@ -85,7 +85,7 @@ class MFWOStructure extends DataObject {
 	 * @param mixed $errors
 	 * @return Array array of MFWOStructure objects
 	 */
-	public static function copyStructure($data, &$errors) {
+	public static function copyStructure($data, &$errors = []) {
 		$mfstructures =  MFStructureCollection::getCurrent($data->stitem_id);;
 		$wo_structure = [];
 		$wo_structures = [];

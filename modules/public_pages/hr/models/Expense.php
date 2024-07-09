@@ -200,7 +200,7 @@ class Expense extends DataObject
         return $header;
     }
 
-    static function updateStatus($data, &$errors)
+    static function updateStatus($data, &$errors = [])
     {
         $db = DB::Instance();
         $db->StartTrans();

@@ -66,7 +66,7 @@ class WHTransfer extends DataObject {
 		return parent::save();
 	}
 	
-	public static function Factory($header_data, $lines_data, &$errors) {
+	public static function Factory($header_data, $lines_data, &$errors = []) {
 
 		if (!isset($header_data['transfer_number'])) {
 			$gen_id=new WarehouseTransferNumberHandler();

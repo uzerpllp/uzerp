@@ -122,7 +122,7 @@ class Asset extends DataObject
 		
 	}
 	
-	protected function straightLine($group, $currentperiod, $purchaseperiod, &$errors)
+	protected function straightLine($group, $currentperiod, $purchaseperiod, &$errors = [])
 	{
 		
 		//		if ($group->depn_first_year=='t' || ($currentperiod->year>$purchaseperiod->year)) {
@@ -172,7 +172,7 @@ class Asset extends DataObject
 		
 	}
 	
-	protected function reducingBalance($group, $currentperiod, $purchaseperiod, &$errors)
+	protected function reducingBalance($group, $currentperiod, $purchaseperiod, &$errors = [])
 	{
 		
 		$depnperiod = $currentperiod->period;
@@ -219,7 +219,7 @@ class Asset extends DataObject
 
 	}
 	
-	protected function percentage($group, $currentperiod, $purchaseperiod, &$errors)
+	protected function percentage($group, $currentperiod, $purchaseperiod, &$errors = [])
 	{
 
 		$depnperiod = $currentperiod->period;
@@ -266,7 +266,7 @@ class Asset extends DataObject
 
 	}
 	
-	protected function economicLife($group, $currentperiod, $purchaseperiod, &$errors)
+	protected function economicLife($group, $currentperiod, $purchaseperiod, &$errors = [])
 	{
 		
 	}

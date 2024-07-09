@@ -130,7 +130,7 @@ class TwoDateSearchField extends SearchField {
 		
 	}
 
-	public function isValid($value, &$errors)
+	public function isValid($value, &$errors = [])
 	{
 		
 		if (!is_array($value))

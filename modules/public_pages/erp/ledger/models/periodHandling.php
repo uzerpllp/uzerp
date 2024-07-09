@@ -10,7 +10,7 @@ class periodHandling {
 
 	protected $version='$Revision: 1.11 $';
 	
-	static function close ($periodid, &$errors)
+	static function close ($periodid, &$errors = [])
 	{
 		$result = false;
 		
@@ -150,7 +150,7 @@ class periodHandling {
 		
 	}
 
-	static function createNew ($period, &$errors)
+	static function createNew ($period, &$errors = [])
 	{
 		$data = array();
 		

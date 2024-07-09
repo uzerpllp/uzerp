@@ -121,7 +121,7 @@ class MFStructure extends DataObject
 		return ($db->Execute($query) !== false);
 	}
 
-	static function backflush($data, $elements, &$errors)
+	static function backflush($data, $elements, &$errors = [])
 	{
 
 		$db = DB::Instance();

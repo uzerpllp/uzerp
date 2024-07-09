@@ -14,7 +14,7 @@ class DummyPayment
 		return true;
 	}
 
-    function validate($data, &$errors)
+    function validate($data, &$errors = [])
 	{
 		
 		$return			= true;

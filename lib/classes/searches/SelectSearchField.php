@@ -100,7 +100,7 @@ class SelectSearchField extends SearchField {
 		$this->options = $options;
 	}
 	
-	public function isValid($val, &$errors)
+	public function isValid($val, &$errors = [])
 	{
 		
 		if (!isset($this->options[$val]))

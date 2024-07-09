@@ -126,7 +126,7 @@ class LedgerTransaction extends DataObject
 
 	}
 	
-	public static function saveTransaction(&$data, &$errors)
+	public static function saveTransaction(&$data, &$errors = [])
 	{
 		$db=DB::Instance();
 		$db->StartTrans();
@@ -148,7 +148,7 @@ class LedgerTransaction extends DataObject
 		return $db->CompleteTrans();
 	}
 	
-	public function saveCBTransaction(&$data, &$errors)
+	public function saveCBTransaction(&$data, &$errors = [])
 	{
 		//	Need to write cash transactions to cashbook
 		if ($data['transaction_type']=='P'
@@ -193,7 +193,7 @@ class LedgerTransaction extends DataObject
 		return true;
 	}
 		
-	public function saveGLTransaction(&$data, &$errors)
+	public function saveGLTransaction(&$data, &$errors = [])
 	{
 
 		$db=DB::Instance();

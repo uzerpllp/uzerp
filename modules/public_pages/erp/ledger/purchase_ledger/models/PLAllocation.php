@@ -51,7 +51,7 @@ class PLAllocation extends DataObject
 		
 	}
 
-	static function saveAllocation ($transactions, $payment_id, &$errors)
+	static function saveAllocation ($transactions, $payment_id, &$errors = [])
 	{
 		$db=DB::Instance();
 		

@@ -70,7 +70,7 @@ class ARTransaction extends DataObject
  		
 	}
 
-	function add($data, $type, &$errors)
+	function add($data, $type, &$errors = [])
 	{
 		$data['transaction_type'] = $type;
 		return DataObject::Factory($data, $errors, 'ARTransaction');

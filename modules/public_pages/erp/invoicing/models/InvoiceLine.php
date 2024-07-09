@@ -11,7 +11,7 @@ class InvoiceLine extends DataObject
 	
 	protected $version = '$Revision: 1.9 $';
 	
-	public static function makeLine($data, $do, &$errors)
+	public static function makeLine($data, $do, &$errors = [])
 	{
 		
 		

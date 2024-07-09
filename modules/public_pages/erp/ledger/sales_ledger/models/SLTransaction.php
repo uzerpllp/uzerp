@@ -78,7 +78,7 @@ class SLTransaction extends LedgerTransaction
 		return $customer;
 	}
 	
-	static function allocatePayment ($transactions, $customer_id, &$errors)
+	static function allocatePayment ($transactions, $customer_id, &$errors = [])
 	{
 		$db=DB::Instance();
 		$db->StartTrans();

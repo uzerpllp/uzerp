@@ -1635,7 +1635,7 @@ class STItem extends DataObject
 	 * @param array $errors
 	 * @return boolean
 	 */
-	public function produceKit($qty = 0, &$errors) {
+	public function produceKit($qty = 0, &$errors = []) {
 		if ($this->comp_class !== 'K') {
 			$errors[] = 'Item is not a kit';
 			return false;

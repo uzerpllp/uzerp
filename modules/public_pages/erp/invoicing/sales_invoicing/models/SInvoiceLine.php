@@ -127,7 +127,7 @@ class SInvoiceLine extends InvoiceLine {
 		
 	}
 	
-	public static function Factory(SInvoice $header, $line_data, &$errors)
+	public static function Factory(SInvoice $header, $line_data, &$errors = [])
 	{
 		
 		if (empty($line_data['invoice_id']))

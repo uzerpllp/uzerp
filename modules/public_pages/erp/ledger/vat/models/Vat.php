@@ -144,7 +144,7 @@ class Vat extends GLTransaction
 		return $gltransactions;
 	}
 
-	function closePeriod($tax_period, $year, &$errors)
+	function closePeriod($tax_period, $year, &$errors = [])
 	
 	{
 		$db=DB::Instance();

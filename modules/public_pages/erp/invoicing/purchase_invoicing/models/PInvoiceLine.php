@@ -130,7 +130,7 @@ class PInvoiceLine extends InvoiceLine {
 		
 	}
 	
-	public static function Factory(PInvoice $header, $line_data, &$errors)
+	public static function Factory(PInvoice $header, $line_data, &$errors = [])
 	{
 		
 		if (empty($line_data['invoice_id']))

@@ -36,7 +36,7 @@ class SLAllocation extends DataObject {
 		
 	}
 
-	static function saveAllocation ($transactions, &$errors) {
+	static function saveAllocation ($transactions, &$errors = []) {
 		$db=DB::Instance();
 		$db->StartTrans();
 		$alloc_id=$db->GenID('sl_allocation_id_seq');

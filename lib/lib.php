@@ -124,7 +124,7 @@ function debug($msg)
 	
 }
 
-function system_email($subject, $body, &$errors)
+function system_email($subject, $body, &$errors = [])
 {
 	$email = get_config('ADMIN_EMAIL');
 	$from = get_config('ADMIN_FROM_EMAIL');

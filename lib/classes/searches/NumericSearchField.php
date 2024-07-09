@@ -66,7 +66,7 @@ class NumericSearchField extends TextSearchField
 		
 	}
 	
-	public function isValid($value, &$errors)
+	public function isValid($value, &$errors = [])
 	{
 		
 		if (!empty($value) && !is_numeric($value))

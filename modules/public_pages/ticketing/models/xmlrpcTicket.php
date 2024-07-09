@@ -353,7 +353,7 @@ class xmlrpcTicket {
 		
 	}
 
-	private function saveResponse($data, &$errors)
+	private function saveResponse($data, &$errors = [])
 	{
 		
 		$ticketResponse=DataObject::Factory($data['TicketResponse'], $errors, 'TicketResponse');
@@ -369,7 +369,7 @@ class xmlrpcTicket {
 		
 	}
 	
-	private function saveAttachments($data, $db, &$errors)
+	private function saveAttachments($data, $db, &$errors = [])
 	{
 
 		$attachment_errors=array();

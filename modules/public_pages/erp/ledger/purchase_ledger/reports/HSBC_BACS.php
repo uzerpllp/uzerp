@@ -42,7 +42,7 @@ class HSBC_BACS
 		
 	}
 	
-	function validate($data, &$errors)
+	function validate($data, &$errors = [])
 	{
 		
 		$return			= TRUE;

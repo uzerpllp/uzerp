@@ -56,7 +56,7 @@ class PLPayment extends DataObject
 
 		$progressbar = new Progressbar('create_security_key');
 		
-		$callback = function($pl_data, $key) use (&$hash, &$errors)
+		$callback = function($pl_data, $key) use (&$hash, &$errors = [])
 		{
 			$hash.=$pl_data['plmaster_id'];
 			$hash.=bcadd($pl_data['net_value'],0);
@@ -75,7 +75,7 @@ class PLPayment extends DataObject
 		 return base64_encode(hash('sha1', $hash, false));
 	}
 	
-	public function savePLPayment ($pay_data, &$errors) 
+	public function savePLPayment ($pay_data, &$errors = []) 
 	{
 		$db = DB::Instance();
 		$db->StartTrans();

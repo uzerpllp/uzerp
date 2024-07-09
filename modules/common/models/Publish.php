@@ -9,7 +9,7 @@ class Publish {
 
 	protected $version='$Revision: 1.2 $';
 	
-	public function systemCompany (&$do, &$errors) {
+	public function systemCompany (&$do, &$errors = []) {
 
 		$user=getCurrentUser();
 		$person=new Person();
@@ -41,7 +41,7 @@ class Publish {
 		return true;	
 	}
 	
-	public function addUser (&$do, &$errors) {
+	public function addUser (&$do, &$errors = []) {
 		$systemcompany=new Systemcompany();
 		$systemcompany->load($do->usercompanyid);
 		if (!is_null($systemcompany->published_username)) {

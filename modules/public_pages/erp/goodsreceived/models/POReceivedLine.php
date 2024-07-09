@@ -62,7 +62,7 @@ class POReceivedLine extends DataObject {
 	 * Build the line
 	 *
 	 */
-	public static function makeLine($data,&$errors)
+	public static function makeLine($data, &$errors = [])
 	{
 		$line = DataObjectFactory::Factory('POrderLine');
 		

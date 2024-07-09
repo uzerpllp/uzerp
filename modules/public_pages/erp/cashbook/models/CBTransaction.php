@@ -123,7 +123,7 @@ class CBTransaction extends DataObject
     /*
      * Public Static Functions
      */
-    public static function saveCashPayment($data, &$errors)
+    public static function saveCashPayment($data, &$errors = [])
     {
         $db = DB::Instance();
         $db->StartTrans();
@@ -147,7 +147,7 @@ class CBTransaction extends DataObject
         return $cb_trans;
     }
 
-    public static function moveMoney($data, &$errors)
+    public static function moveMoney($data, &$errors = [])
     {
         $db = DB::Instance();
         $db->StartTrans();
@@ -286,7 +286,7 @@ class CBTransaction extends DataObject
         return $db->CompleteTrans();
     }
 
-    public static function saveTransaction(&$data, &$errors)
+    public static function saveTransaction(&$data, &$errors = [])
     {
         if (! isset($data['source'])) {
             $data['source'] = 'C';
@@ -324,7 +324,7 @@ class CBTransaction extends DataObject
         return $trans;
     }
 
-    public static function savePayment(&$data, &$errors)
+    public static function savePayment(&$data, &$errors = [])
     {
         $account = DataObjectFactory::Factory('CBAccount');
 
@@ -382,7 +382,7 @@ class CBTransaction extends DataObject
         return self::saveTransaction($data, $errors);
     }
 
-    public static function saveGLtransaction($cb_trans, $data, &$errors)
+    public static function saveGLtransaction($cb_trans, $data, &$errors = [])
     {
         $desc = $cb_trans->description;
         $gl_data = $data;

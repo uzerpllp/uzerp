@@ -229,7 +229,7 @@ abstract class SearchField {
 	 *
 	 * Some fields need to be able to error if the value given isn't appropriate (e.g. numeric fields), this provides a mechanism for doing that
 	 */
-	public function isValid($value, &$errors)
+	public function isValid($value, &$errors = [])
 	{
 		return true;
 	}
