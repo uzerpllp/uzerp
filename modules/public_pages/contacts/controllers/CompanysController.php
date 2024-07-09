@@ -126,6 +126,7 @@ class CompanysController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 
+    #[\Override]
     public function index($collection = null, $sh = '', &$c_query = null)
     {
         $this->view->set('clickaction', 'view');
@@ -156,6 +157,7 @@ class CompanysController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 
+    #[\Override]
     public function view()
     {
         $company = $this->_templateobject;
@@ -525,6 +527,7 @@ class CompanysController extends printController
         $this->view->set('page_title', $this->getPageName('Company'));
     }
 
+    #[\Override]
     public function delete($modelName = null)
     {
         $this->checkRequest(['post'], true);
@@ -563,6 +566,7 @@ class CompanysController extends printController
         sendTo($this->name, 'index', $this->_modules);
     }
 
+    #[\Override]
     public function edit()
     {
         $company = $this->_templateobject;
@@ -593,6 +597,7 @@ class CompanysController extends printController
         parent::edit();
     }
 
+    #[\Override]
     public function _new()
     {
         $ao = &AccessObject::Instance(EGS_USERNAME);
@@ -607,6 +612,7 @@ class CompanysController extends printController
         parent::_new();
     }
 
+    #[\Override]
     public function save($modelName = null, $dataIn = [], &$errors = []): void
     {
         $flash = Flash::Instance();
@@ -792,6 +798,7 @@ class CompanysController extends printController
         }
     }
 
+    #[\Override]
     protected function getPageName($base = null, $type = null)
     {
         return parent::getPageName((empty($base) ? 'company' : $base), $type);

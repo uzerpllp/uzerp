@@ -9,8 +9,9 @@
 class LeadsController extends printController
 {
     protected $version = '$Revision: 1.21 $';
-
     protected $_templateobject;
+    protected $related = null;
+    protected $company_id;
 
     public function __construct($module = null, $action = null)
     {
@@ -24,6 +25,7 @@ class LeadsController extends printController
         ];
     }
 
+    #[\Override]
     public function index($collection = null, $sh = '', &$c_query = null)
     {
         $this->view->set('clickaction', 'view');
@@ -42,6 +44,7 @@ class LeadsController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 
+    #[\Override]
     public function _new()
     {
         $ao = &AccessObject::Instance(EGS_USERNAME);
@@ -56,6 +59,7 @@ class LeadsController extends printController
         parent::_new();
     }
 
+    #[\Override]
     public function delete($modelName = null)
     {
         $this->checkRequest(['post'], true);
@@ -87,6 +91,7 @@ class LeadsController extends printController
         sendTo('Leads', 'index', ['contacts']);
     }
 
+    #[\Override]
     public function edit()
     {
         $company = $this->_uses['Lead'];
@@ -122,6 +127,7 @@ class LeadsController extends printController
         parent::edit();
     }
 
+    #[\Override]
     public function view()
     {
         $company = $this->_uses['Lead'];
@@ -437,6 +443,7 @@ class LeadsController extends printController
         }
     }
 
+    #[\Override]
     public function save($modelName = null, $dataIn = [], &$errors = []): void
     {
         $flash = Flash::Instance();
@@ -449,7 +456,7 @@ class LeadsController extends printController
             $company->load($this->_data['Lead'][$company->idField]);
 
             if ($company === false) {
-                echo 'Could not load Company for id=' . $this->_data['Lead'][$person->idField] . ' - Abandoned<br>';
+                echo 'Could not load Company for id=' . $this->_data['Lead'][$company->idField] . ' - Abandoned<br>';
                 sendBack();
             }
         }
@@ -494,8 +501,6 @@ class LeadsController extends printController
             $category = DataObjectFactory::Factory('CompanyInCategories');
             $current_categories = $category->getCategoryID($company->{$company->idField});
 
-            $check_categories = [];
-
             if (isset($this->_data['ContactCategories'])) {
                 $delete_categories = array_diff($current_categories, $this->_data['ContactCategories']['category_id']);
                 $insert_categories = array_diff($this->_data['ContactCategories']['category_id'], $current_categories);
@@ -529,6 +534,7 @@ class LeadsController extends printController
         $this->refresh();
     }
 
+    #[\Override]
     protected function getPageName($base = null, $type = null)
     {
         return parent::getPageName((empty($base) ? 'lead' : $base), $type);

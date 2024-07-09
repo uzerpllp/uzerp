@@ -22,6 +22,7 @@ class PartyattachmentsController extends AttachmentsController
         $this->setModel('party');
     }
 
+    #[\Override]
     protected function getPageName($base = null, $type = null)
     {
         return parent::getPageName((empty($base) ? 'attachment' : $base), $type);

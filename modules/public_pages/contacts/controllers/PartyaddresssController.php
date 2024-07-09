@@ -9,8 +9,8 @@
 class PartyaddresssController extends Controller
 {
     protected $version = '$Revision: 1.8 $';
-
     protected $_templateobject;
+    protected $related = null;
 
     public function __construct($module = null, $action = null)
     {
@@ -29,6 +29,7 @@ class PartyaddresssController extends Controller
         ];
     }
 
+    #[\Override]
     public function index($collection = null, $sh = '', &$c_query = null)
     {
         $this->view->set('clickaction', 'edit');
@@ -36,6 +37,7 @@ class PartyaddresssController extends Controller
         parent::index(new PartyAddressCollection($this->_templateobject));
     }
 
+    #[\Override]
     public function delete($modelName = null)
     {
         $flash = Flash::Instance();
@@ -45,9 +47,11 @@ class PartyaddresssController extends Controller
         sendBack();
     }
 
+    #[\Override]
     public function save($modelName = null, $dataIn = [], &$errors = []): void
     {
         $flash = Flash::Instance();
+        $db = &DB::Instance();
         $errors = [];
 
         $partyaddress = $this->_uses[$this->modeltype];
@@ -79,13 +83,14 @@ class PartyaddresssController extends Controller
         }
 
         if (count($errors) == 0 && parent::save($this->modeltype)) {
-            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
         } else {
             $flash->addErrors($errors);
             $this->refresh();
         }
     }
 
+    #[\Override]
     protected function getPageName($base = null, $type = null)
     {
         return parent::getPageName((empty($base) ? 'Addresss' : $base), $type);

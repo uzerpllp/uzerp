@@ -9,8 +9,8 @@
 class PersonaddresssController extends Controller
 {
     protected $version = '$Revision: 1.5 $';
-
     protected $_templateobject;
+    protected $related = null;
 
     public function __construct($module = null, $action = null)
     {
@@ -25,6 +25,7 @@ class PersonaddresssController extends Controller
         ];
     }
 
+    #[\Override]
     public function index($collection = null, $sh = '', &$c_query = null)
     {
         global $smarty;
@@ -34,21 +35,23 @@ class PersonaddresssController extends Controller
         parent::index(new PersonaddressCollection($this->_templateobject));
     }
 
+    #[\Override]
     public function delete($modelName = null)
     {
         $flash = Flash::Instance();
 
         parent::delete('Personaddress');
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
     }
 
+    #[\Override]
     public function save($modelName = null, $dataIn = [], &$errors = []): void
     {
         $flash = Flash::Instance();
 
         if (parent::save('Personaddress')) {
-            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
         } else {
             $this->refresh();
         }

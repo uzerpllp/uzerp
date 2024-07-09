@@ -9,6 +9,7 @@
 class SetupController extends MasterSetupController
 {
     protected $version = '$Revision: 1.8 $';
+    protected $preferences;
 
     protected $setup_preferences = [
         'auto-account-numbering' => 'Auto-Create Account Numbers',
@@ -22,9 +23,9 @@ class SetupController extends MasterSetupController
         'company_sources' => 'CompanySource',
         'company_statuses' => 'CompanyStatus',
         'company_types' => 'CompanyType',
-        'company_types' => 'CompanyType',
     ];
-
+    
+    #[\Override]
     protected function registerPreference()
     {
         parent::registerPreference();

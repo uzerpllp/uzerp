@@ -23,6 +23,7 @@ class PartysController extends Controller
         //		$this->related['company']=array('clickaction'=>'edit');
     }
 
+    #[\Override]
     public function index($collection = null, $sh = '', &$c_query = null)
     {
         global $smarty;
@@ -32,20 +33,22 @@ class PartysController extends Controller
         parent::index(new PartyCollection($this->_templateobject));
     }
 
+    #[\Override]
     public function delete($modelName = null)
     {
         $flash = Flash::Instance();
 
         parent::delete('Party');
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
     }
 
+    #[\Override]
     public function save($modelName = null, $dataIn = [], &$errors = []): void
     {
         $flash = Flash::Instance();
         if (parent::save('Party')) {
-            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
         } else {
             $this->refresh();
         }

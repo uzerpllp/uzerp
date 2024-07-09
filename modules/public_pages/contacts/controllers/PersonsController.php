@@ -28,6 +28,7 @@ class PersonsController extends printController
         $this->uses($this->_templateobject);
     }
 
+    #[\Override]
     public function index($collection = null, $sh = '', &$c_query = null)
     {
         $s_data = [];
@@ -62,6 +63,7 @@ class PersonsController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 
+    #[\Override]
     public function _new()
     {
         parent::_new();
@@ -152,6 +154,7 @@ class PersonsController extends printController
         }
     }
 
+    #[\Override]
     public function view()
     {
         if (! $this->loadData()) {
@@ -559,6 +562,7 @@ class PersonsController extends printController
         parent::index($people, $sh);
     }
 
+    #[\Override]
     public function delete($modelName = null)
     {
         $this->checkRequest(['post'], true);
@@ -607,7 +611,8 @@ class PersonsController extends printController
      * @param array $dataIn
      * @param array $errors
      */
-    public function save($modelName = null, $dataIn = [], &$errors = [])
+    #[\Override]
+    public function save($modelName = null, $dataIn = [], &$errors = []) :void
     {
         $errors = [];
 
@@ -934,7 +939,7 @@ EOF;
         return $this->getOptions($this->_templateobject, 'reports_to', 'getAllByCompany', 'getOptions', $smarty_params, $depends);
     }
 
-    public function getallids()
+    public function getallids(): never
     {
         $personoverview = new PersonCollection($this->_templateobject);
 
@@ -951,7 +956,7 @@ EOF;
         exit();
     }
 
-    public function getinformationbyid()
+    public function getinformationbyid(): never
     {
         $person = $this->_templateobject;
         $person->load($this->_data['id']);
@@ -1033,6 +1038,7 @@ EOF;
     /*
      * Protected Functions
      */
+    #[\Override]
     protected function getPageName($base = null, $type = null)
     {
         return parent::getPageName((empty($base) ? 'person' : $base), $type);

@@ -31,6 +31,7 @@ class PartycontactmethodsController extends Controller
         ];
     }
 
+    #[\Override]
     public function index($collection = null, $sh = '', &$c_query = null)
     {
         $this->view->set('clickaction', 'edit');
@@ -38,6 +39,7 @@ class PartycontactmethodsController extends Controller
         parent::index(new PartyContactMethodCollection($this->_templateobject));
     }
 
+    #[\Override]
     public function delete($modelName = null)
     {
         $flash = Flash::Instance();
@@ -47,6 +49,7 @@ class PartycontactmethodsController extends Controller
         sendBack();
     }
 
+    #[\Override]
     public function save($modelName = null, $dataIn = [], &$errors = []): void
     {
         $flash = Flash::Instance();
@@ -94,7 +97,7 @@ class PartycontactmethodsController extends Controller
 
         if (count($errors) == 0 && parent::save($this->modeltype)) {
             $db->CompleteTrans();
-            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
         }
 
         $db->FailTrans();
@@ -104,6 +107,7 @@ class PartycontactmethodsController extends Controller
         $this->refresh();
     }
 
+    #[\Override]
     protected function getPageName($base = null, $type = null)
     {
         if (isset($this->_data['type']) && empty($base)) {

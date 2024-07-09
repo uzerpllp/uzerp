@@ -11,8 +11,8 @@
 class PartynotesController extends Controller
 {
     protected $version = '$Revision: 1.6 $';
-
     protected $_templateobject;
+    protected $related = null;
 
     public function __construct($module = null, $action = null)
     {
@@ -31,6 +31,7 @@ class PartynotesController extends Controller
         ];
     }
 
+    #[\Override]
     public function index($collection = null, $sh = '', &$c_query = null)
     {
         $this->view->set('allow_delete', true);
@@ -40,7 +41,7 @@ class PartynotesController extends Controller
 
         $s_data = [];
 
-        
+
         if (isset($this->_data['party_id'])) {
             $s_data['party_id'] = $this->_data['party_id'];
         } elseif (isset($this->_data['Search'])) {
@@ -54,6 +55,7 @@ class PartynotesController extends Controller
         parent::index(new PartyNoteCollection($this->_templateobject));
     }
 
+    #[\Override]
     public function _new()
     {
         // Set title when showing form after customer account stopped
@@ -63,6 +65,7 @@ class PartynotesController extends Controller
         parent::_new();
     }
 
+    #[\Override]
     public function delete($modelName = null)
     {
         $flash = Flash::Instance();
@@ -72,17 +75,19 @@ class PartynotesController extends Controller
         sendBack();
     }
 
+    #[\Override]
     public function save($modelName = null, $dataIn = [], &$errors = []): void
     {
         $flash = Flash::Instance();
 
         if (parent::save('PartyNote')) {
-            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
         } else {
             $this->refresh();
         }
     }
 
+    #[\Override]
     public function viewRelated($name)
     {
         $this->index();
@@ -90,6 +95,7 @@ class PartynotesController extends Controller
         $this->setTemplateName('index');
     }
 
+    #[\Override]
     protected function getPageName($base = null, $type = null)
     {
         return parent::getPageName((empty($base) ? 'note' : $base), $type);
