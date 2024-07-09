@@ -7,6 +7,7 @@
  **/
 class RecentlyAddedCompaniesEGlet extends SimpleListEGlet
 {
+    #[\Override]
     public function populate()
     {
         if (! $this->isCached()) {

@@ -7,6 +7,7 @@
  **/
 class CompaniesAddedTodayEGlet extends SimpleListEGlet
 {
+    #[\Override]
     public function populate()
     {
         $pl = new PageList('companies_added_today');

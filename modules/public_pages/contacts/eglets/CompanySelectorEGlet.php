@@ -9,6 +9,7 @@ class CompanySelectorEGLet extends SimpleEGlet
 {
     protected $template = 'company_selector.tpl';
 
+    #[\Override]
     public function populate()
     {
         $db = DB::Instance();

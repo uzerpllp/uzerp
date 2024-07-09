@@ -7,6 +7,7 @@
  **/
 class RecentlyViewedPeopleEGlet extends SimpleListEGlet
 {
+    #[\Override]
     public function populate()
     {
         $pl = new PreferencePageList('recently_viewed_people' . EGS_COMPANY_ID);
