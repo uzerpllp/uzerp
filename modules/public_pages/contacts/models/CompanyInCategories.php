@@ -44,7 +44,7 @@ class CompanyInCategories extends DataObject
 		
 	}
 
-	function delete($ids = null, &$errors = array())
+	function delete($ids = null, &$errors = [], $archive = false, $archive_table = null, $archive_schema = null)
 	{
 		if (!empty($ids))
 		{

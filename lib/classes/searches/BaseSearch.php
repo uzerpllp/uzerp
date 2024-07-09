@@ -45,7 +45,7 @@ class BaseSearch
      * @param $search_data array
      * @return void Takes an array representing (typically) $_POST['Search'] and assigns the values to te appropriate fields
      */
-    public function setSearchData(&$search_data = null, &$errors, $search_name = 'default')
+    public function setSearchData(&$search_data = null, &$errors = [], $search_name = 'default')
     {
 
         // Set the Search Id Field

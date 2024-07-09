@@ -7,7 +7,7 @@ class CompanyCategorySearch extends BaseSearch
     
     protected $fields = array();
         
-    public static function useDefault($search_data = null, &$errors, $defaults = null)
+    public static function useDefault($search_data = null, &$errors = [], $defaults = null)
     {
         
         $search = new CompanyCategorySearch($defaults);
@@ -43,7 +43,7 @@ class CompanyCategorySearch extends BaseSearch
 					'null' => 'Active'];
 		$search->setOptions('date_inactive', $options);
 
-        $search->setSearchData($search_data,$errors);
+        $search->setSearchData($search_data, $errors = []);
         
         return $search;
     }

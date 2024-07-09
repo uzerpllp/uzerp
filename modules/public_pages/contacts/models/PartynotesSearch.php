@@ -13,7 +13,7 @@ class PartynotesSearch extends BaseSearch
 	
 	protected $fields = array();
 		
-	public static function useDefault($search_data = null, &$errors, $defaults = null)
+	public static function useDefault($search_data = null, &$errors = [], $defaults = null)
 	{
 		$search = new PartynotesSearch($defaults);
 		

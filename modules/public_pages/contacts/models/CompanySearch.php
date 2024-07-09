@@ -13,7 +13,7 @@ class CompanySearch extends BaseSearch
 	
 	protected $fields = array();
 		
-	public static function useDefault($search_data = null, &$errors, $defaults = null)
+	public static function useDefault($search_data = null, &$errors = [], $defaults = null)
 	{
 		
 		$search = new CompanySearch($defaults);
@@ -208,7 +208,7 @@ class CompanySearch extends BaseSearch
 		return $search;
 	}
 	
-	public static function leads($search_data = null, &$errors, $defaults = null)
+	public static function leads($search_data = null, &$errors = [], $defaults = null)
 	{
 		$search = self::useDefault($search_data, $errors, $defaults);
 		

@@ -13,7 +13,7 @@ class PeopleSearch extends BaseSearch
 	
 	protected $fields = array();
 		
-	public static function useDefault($search_data=null, &$errors, $defaults=null)
+	public static function useDefault($search_data=null, &$errors = [], $defaults=null)
 	{
 		
 		$search = new PeopleSearch($defaults);
@@ -109,7 +109,7 @@ class PeopleSearch extends BaseSearch
 			'advanced'
 		);
 
-		$search->setSearchData($search_data,$errors);
+		$search->setSearchData($search_data, $errors);
 		return $search;
 	}
 	
