@@ -27,6 +27,7 @@ return RectorConfig::configure()
 
     ->withSkip([
         Rector\Php54\Rector\Array_\LongArrayToShortArrayRector::class,
+	Rector\Php80\Rector\FuncCall\ClassOnObjectRector::class,
     ])
 
     ->withBootstrapFiles([
