@@ -9,6 +9,7 @@
 class PartycontactmethodsController extends Controller
 {
     protected $version = '$Revision: 1.9 $';
+    protected $related = null;
 
     protected $_templateobject;
 
@@ -50,6 +51,7 @@ class PartycontactmethodsController extends Controller
     {
         $flash = Flash::Instance();
         $errors = [];
+        $db = DB::Instance();
 
         $partycontactmethod = $this->_uses[$this->modeltype];
         $pcm_idfield = $partycontactmethod->idField;
@@ -69,7 +71,6 @@ class PartycontactmethodsController extends Controller
             }
         }
 
-        $db = DB::Instance();
         $db->StartTrans();
 
         if (! empty($cm_data['contact'])) {
@@ -82,7 +83,7 @@ class PartycontactmethodsController extends Controller
             if ($contactmethod->isLoaded()) {
                 unset($this->_data['Contactmethod']);
 
-                $this->_data[PartyContactMethod]['contactmethod_id'] = $contactmethod->{$contactmethod->idField};
+                $this->_data['PartyContactMethod']['contactmethod_id'] = $contactmethod->{$contactmethod->idField};
             }
         } else {
             // Blanking out (deleting) current details
