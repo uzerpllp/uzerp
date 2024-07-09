@@ -26,8 +26,12 @@ return RectorConfig::configure()
 
 
     ->withSkip([
+	// this is fixed in code formatting before applying rector
         Rector\Php54\Rector\Array_\LongArrayToShortArrayRector::class,
+	// drop this for php 7.4+
 	Rector\Php80\Rector\FuncCall\ClassOnObjectRector::class,
+	// drop this for PHP 7.4
+	Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
     ])
 
     ->withBootstrapFiles([
