@@ -34,11 +34,7 @@ class CompanyParams
 
     public function getParam($name)
     {
-        if (isset($this->_params[$name])) {
-            return $this->_params[$name];
-        }
-
-        return false;
+        return $this->_params[$name] ?? false;
     }
 
     public function editParam($name, $value)

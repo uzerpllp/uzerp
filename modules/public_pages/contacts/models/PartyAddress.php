@@ -42,6 +42,7 @@ class PartyAddress extends DataObject
         return $this->fulladdress;
     }
 
+    #[\Override]
     public function delete($id = null, &$errors = [], $archive = false, $archive_table = null, $archive_schema = null)
     {
         if (empty($id)) {
@@ -75,6 +76,7 @@ class PartyAddress extends DataObject
         return $db->CompleteTrans();
     }
 
+    #[\Override]
     public function save($debug = false)
     {
         $partyaddress = DataObjectFactory::Factory('PartyAddress');

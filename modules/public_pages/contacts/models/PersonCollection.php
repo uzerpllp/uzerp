@@ -9,8 +9,9 @@
 class PersonCollection extends PartyCollection
 {
     protected $version = '$Revision: 1.8 $';
-
     public $field;
+    protected $identifier;
+    protected $identifierField;
 
     public function __construct($do = 'Person', $tablename = 'personoverview')
     {
@@ -20,7 +21,8 @@ class PersonCollection extends PartyCollection
         $this->identifierField = 'name';
     }
 
-    public function load($sh, $c_query = null)
+    #[\Override]
+    public function load($sh, $c_query = null, $return_type = \RETURN_OBJECTS)
     {
         $db = DB::Instance();
 

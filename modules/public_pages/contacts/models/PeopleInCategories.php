@@ -21,6 +21,7 @@ class PeopleInCategories extends DataObject
         $this->hasMany('ContactCategories', 'id', 'contactcategories');
     }
 
+    #[\Override]
     public function delete($ids = null, &$errors = [], $archive = false, $archive_table = null, $archive_schema = null)
     {
         if (! empty($ids)) {

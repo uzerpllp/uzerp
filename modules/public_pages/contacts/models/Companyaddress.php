@@ -49,6 +49,7 @@ class Companyaddress extends PartyAddress
         return $this->getAll($cc, true, true);
     }
 
+    #[\Override]
     public function getAll(ConstraintChain $cc = null, $ignore_tree = false, $use_collection = false, $limit = '')
     {
         return parent::getAll($cc, $ignore_tree, true, $limit);

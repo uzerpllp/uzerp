@@ -44,7 +44,7 @@ class Address extends DataObject
                 //escape special characters on varchar fields, especially parentheses, to avoid invalid SQL in the contraint chain.
                 $fields = $this->_fields;
                 if ($fields[$field]->type = 'varchar') {
-                    $cc->add(new Constraint($field, '=', preg_quote($data[$field])));
+                    $cc->add(new Constraint($field, '=', preg_quote((string) $data[$field])));
                 } else {
                     $cc->add(new Constraint($field, '=', $data[$field]));
                 }
@@ -56,6 +56,7 @@ class Address extends DataObject
         $this->loadBy($cc);
     }
 
+    #[\Override]
     public function delete($id = '', &$errors = [], $archive = false, $archive_table = null, $archive_schema = null)
     {
         if (! $this->isLoaded()) {
@@ -83,11 +84,13 @@ class Address extends DataObject
         return true;
     }
 
+    #[\Override]
     public function getAll(ConstraintChain $cc = null, $ignore_tree = false, $use_collection = false, $limit = '')
     {
         return parent::getAll($cc, $ignore_tree, true, $limit);
     }
 
+    #[\Override]
     public static function Factory($data, &$errors = [], $do_name = null)
     {
         $address = DataObjectFactory::Factory($do_name);

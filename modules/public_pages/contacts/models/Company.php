@@ -93,7 +93,7 @@ class Company extends Party
             array_push($letters, $word);
         }
 
-        $accnum = strtoupper(implode($letters));
+        $accnum = strtoupper(implode('', $letters));
 
         // Now add a number to the end until an untaken one is found
         $i = 1;

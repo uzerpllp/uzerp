@@ -40,6 +40,7 @@ class PartyContactMethod extends DataObject
         $this->getField('name')->setDefault('MAIN');
     }
 
+    #[\Override]
     public function delete($id = null, &$errors = [], $archive = false, $archive_table = null, $archive_schema = null)
     {
         if (empty($id)) {
@@ -73,6 +74,7 @@ class PartyContactMethod extends DataObject
         return $db->CompleteTrans();
     }
 
+    #[\Override]
     public function save($debug = false)
     {
         if ($this->contactmethod_id != '') {

@@ -6,7 +6,7 @@
  *	Released under GPLv3 license; see LICENSE.
  **/
 
-class Personcontactmethod extends DataObject
+class Personcontactmethod extends DataObject implements \Stringable
 {
     protected $version = '$Revision: 1.5 $';
 
@@ -30,7 +30,7 @@ class Personcontactmethod extends DataObject
         $this->belongsTo('Person', 'person_id', 'person');
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $value = $this->_fields['contact']->value;
 
@@ -38,7 +38,7 @@ class Personcontactmethod extends DataObject
             $value = '';
         }
 
-        return $value;
+        return (string) $value;
     }
 }
 

@@ -44,10 +44,10 @@ class Party extends DataObject
         $this->setAlias('email', 'PartyContactMethod', $cc, 'contact', [], 'party_id');
     }
 
-    public static function mappings()
+    public function mappings()
     {
         return [
-            'model' => self::get_name(),
+            'model' => $this->get_name(),
             'tablename' => 'party',
         ];
     }
@@ -186,6 +186,7 @@ class Party extends DataObject
         return $party->getIdentifierValue();
     }
 
+    #[\Override]
     public function delete($id = null, &$errors = [], $archive = false, $archive_table = null, $archive_schema = null)
     {
         $db = DB::Instance();

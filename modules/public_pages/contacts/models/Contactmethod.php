@@ -6,7 +6,7 @@
  *	Released under GPLv3 license; see LICENSE.
  **/
 
-class Contactmethod extends DataObject
+class Contactmethod extends DataObject implements \Stringable
 {
     protected $version = '$Revision: 1.10 $';
 
@@ -26,7 +26,7 @@ class Contactmethod extends DataObject
         $this->hasMany('PartyContactMethod', 'parties', 'contactmethod_id');
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $value = $this->_fields['contact']->value;
 
@@ -34,7 +34,7 @@ class Contactmethod extends DataObject
             $value = '';
         }
 
-        return $value;
+        return (string) $value;
     }
 
     public function check_exists($data = [])
@@ -51,6 +51,7 @@ class Contactmethod extends DataObject
         $this->loadBy($cc);
     }
 
+    #[\Override]
     public function delete($id = null, &$errors = [], $archive = false, $archive_table = null, $archive_schema = null)
     {
         if (! $this->isLoaded()) {
@@ -76,6 +77,7 @@ class Contactmethod extends DataObject
         return true;
     }
 
+    #[\Override]
     public static function Factory($data, &$errors = [], $do_name = null)
     {
         $cm = DataObjectFactory::Factory($do_name);

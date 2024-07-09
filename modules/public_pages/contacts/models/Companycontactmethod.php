@@ -6,7 +6,7 @@
  *	Released under GPLv3 license; see LICENSE.
  **/
 
-class Companycontactmethod extends DataObject
+class Companycontactmethod extends DataObject implements \Stringable
 {
     protected $version = '$Revision: 1.5 $';
 
@@ -29,11 +29,11 @@ class Companycontactmethod extends DataObject
         $this->belongsTo('Company', 'company_id', 'company');
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $value = $this->contact;
 
-        return (! empty($value) ? $value : '');
+        return ((string) (! empty($value) ? $value : ''));
     }
 }
 

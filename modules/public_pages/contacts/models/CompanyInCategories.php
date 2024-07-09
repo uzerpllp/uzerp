@@ -42,6 +42,7 @@ class CompanyInCategories extends DataObject
         // Define enumerated types
     }
 
+    #[\Override]
     public function delete($ids = null, &$errors = [], $archive = false, $archive_table = null, $archive_schema = null)
     {
         if (! empty($ids)) {

@@ -46,8 +46,8 @@ class Person extends Party
         $this->identifierFieldJoin = ' ';
 
         // Define relationships
-        $this->hasMany('PartyContactMethod', 'contactmethods', 'party_id', 'party_id', null, true);
-        $this->hasMany('PartyAddress', 'addresses', 'party_id', 'party_id', null, true);
+        $this->hasMany('PartyContactMethod', 'contactmethods', 'party_id', 'party_id', null);
+        $this->hasMany('PartyAddress', 'addresses', 'party_id', 'party_id', null);
         $this->hasMany('PartyAddress', 'mainaddress', 'party_id', 'party_id');
 
         $this->belongsTo('Company', 'company_id', 'company');
