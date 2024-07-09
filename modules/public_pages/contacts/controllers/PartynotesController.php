@@ -10,7 +10,6 @@
  **/
 class PartynotesController extends Controller
 {
-
     protected $version = '$Revision: 1.6 $';
 
     protected $_templateobject;
@@ -23,25 +22,25 @@ class PartynotesController extends Controller
 
         $this->uses($this->_templateobject);
 
-        $this->related['company'] = array(
-            'clickaction' => 'edit'
-        );
+        $this->related['company'] = [
+            'clickaction' => 'edit',
+        ];
 
-        $this->related['person'] = array(
-            'clickaction' => 'edit'
-        );
+        $this->related['person'] = [
+            'clickaction' => 'edit',
+        ];
     }
 
     public function index($collection = null, $sh = '', &$c_query = null)
     {
-        $this->view->set('allow_delete',true);
+        $this->view->set('allow_delete', true);
 
         // Search
-        $errors = array();
+        $errors = [];
 
-        $s_data = array();
+        $s_data = [];
 
-        // Set context
+        
         if (isset($this->_data['party_id'])) {
             $s_data['party_id'] = $this->_data['party_id'];
         } elseif (isset($this->_data['Search'])) {
@@ -55,7 +54,6 @@ class PartynotesController extends Controller
         parent::index(new PartyNoteCollection($this->_templateobject));
     }
 
-
     public function _new()
     {
         // Set title when showing form after customer account stopped
@@ -64,7 +62,6 @@ class PartynotesController extends Controller
         }
         parent::_new();
     }
-
 
     public function delete($modelName = null)
     {
@@ -75,7 +72,7 @@ class PartynotesController extends Controller
         sendBack();
     }
 
-    public function save($modelName = null, $dataIn = [], &$errors = []) : void
+    public function save($modelName = null, $dataIn = [], &$errors = []): void
     {
         $flash = Flash::Instance();
 

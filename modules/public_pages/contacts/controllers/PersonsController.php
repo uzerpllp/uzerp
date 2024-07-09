@@ -15,7 +15,6 @@
  */
 class PersonsController extends printController
 {
-
     protected $version = '$Revision: 1.43 $';
 
     protected $_templateobject;
@@ -31,7 +30,7 @@ class PersonsController extends printController
 
     public function index($collection = null, $sh = '', &$c_query = null)
     {
-        $s_data = array();
+        $s_data = [];
 
         $this->setSearch('PeopleSearch', 'useDefault', $s_data);
 
@@ -44,9 +43,9 @@ class PersonsController extends printController
         $systemCompany = DataObjectFactory::Factory('Company');
         $systemCompany->load(COMPANY_ID);
 
-        $_company_ids = $systemCompany->getSystemRelatedCompanies(array(
-            $systemCompany->id => $systemCompany->getIdentifierValue()
-        ));
+        $_company_ids = $systemCompany->getSystemRelatedCompanies([
+            $systemCompany->id => $systemCompany->getIdentifierValue(),
+        ]);
 
         // Exclude people attached to system Company accounts but include people with no company
         $cc = new ConstraintChain();
@@ -73,9 +72,9 @@ class PersonsController extends printController
         // get the default/current selected company
         $company_id = '';
 
-        $addresses = array(
-            '' => 'Enter new address'
-        );
+        $addresses = [
+            '' => 'Enter new address',
+        ];
 
         $_person_id = '';
 
@@ -186,289 +185,306 @@ class PersonsController extends printController
         $employee->loadBy('person_id', $person_id);
 
         if ($employee->isLoaded()) {
-            $sidebar->addList('currently_viewing', array(
-                'view' => array(
+            $sidebar->addList('currently_viewing', [
+                'view' => [
                     'tag' => 'view ' . $person->fullname,
-                    'link' => array(
+                    'link' => [
                         'modules' => $this->_modules,
                         'controller' => $this->name,
                         'action' => 'view',
-                        'id' => $person_id
-                    )
-                )
-            ));
+                        'id' => $person_id,
+                    ],
+                ],
+            ]);
         } else {
             $sidebar->addList(
                 'currently_viewing',
-                array(
-                    $person->fullname => array(
+                [
+                    $person->fullname => [
                         'tag' => $person->fullname,
-                        'link' => array('module'=>'contacts','controller'=>'persons','action'=>'view','id'=>$person_id)
-                    ),
-                    'edit' => array(
+                        'link' => [
+                            'module' => 'contacts',
+                            'controller' => 'persons',
+                            'action' => 'view',
+                            'id' => $person_id,
+                        ],
+                    ],
+                    'edit' => [
                         'tag' => 'Edit',
-                        'link' => array('module'=>'contacts','controller'=>'persons','action'=>'edit','id'=>$person_id)
-                    ),
-                    'delete' => array(
+                        'link' => [
+                            'module' => 'contacts',
+                            'controller' => 'persons',
+                            'action' => 'edit',
+                            'id' => $person_id,
+                        ],
+                    ],
+                    'delete' => [
                         'tag' => 'Delete',
-                        'link' => array('module'=>'contacts','controller'=>'persons','action'=>'delete','id'=>$person_id),
+                        'link' => [
+                            'module' => 'contacts',
+                            'controller' => 'persons',
+                            'action' => 'delete',
+                            'id' => $person_id,
+                        ],
                         'class' => 'confirm',
-                        'data_attr' => ['data_uz-confirm-message' => "Delete {$person->fullname}?|This will also delete associated contact and CRM records. It cannot be undone.",
-                                        'data_uz-action-id' => $person_id]
-                    )
-                )
+                        'data_attr' => [
+                            'data_uz-confirm-message' => "Delete {$person->fullname}?|This will also delete associated contact and CRM records. It cannot be undone.",
+                            'data_uz-action-id' => $person_id,
+                        ],
+                    ],
+                ]
             );
         }
 
-        $items = array();
+        $items = [];
         $ao = AccessObject::Instance();
 
         if ($ao->hasPermission('crm')) {
-            $items += array(
-                'opportunities' => array(
+            $items += [
+                'opportunities' => [
                     'tag' => 'Opportunities',
-                    'link' => array(
+                    'link' => [
                         'module' => 'crm',
                         'controller' => 'opportunitys',
                         'action' => 'viewperson',
-                        'person_id' => $person_id
-                    ),
-                    'new' => array(
+                        'person_id' => $person_id,
+                    ],
+                    'new' => [
                         'module' => 'crm',
                         'controller' => 'opportunitys',
                         'action' => 'new',
-                        'person_id' => $person_id
-                    )
-                ),
-                'activities' => array(
+                        'person_id' => $person_id,
+                    ],
+                ],
+                'activities' => [
                     'tag' => 'Activities',
-                    'link' => array(
+                    'link' => [
                         'module' => 'crm',
                         'controller' => 'activitys',
                         'action' => 'viewperson',
-                        'person_id' => $person_id
-                    ),
-                    'new' => array(
+                        'person_id' => $person_id,
+                    ],
+                    'new' => [
                         'module' => 'crm',
                         'controller' => 'activitys',
                         'action' => 'new',
-                        'person_id' => $person_id
-                    )
-                )
-            );
+                        'person_id' => $person_id,
+                    ],
+                ],
+            ];
         }
 
         if ($ao->hasPermission('ticketing')) {
-            $items += array(
-                'tickets' => array(
+            $items += [
+                'tickets' => [
                     'tag' => 'Tickets',
-                    'link' => array(
+                    'link' => [
                         'module' => 'ticketing',
                         'controller' => 'tickets',
                         'action' => 'viewcompany',
-                        'originator_person_id' => $person_id
-                    ),
-                    'new' => array(
+                        'originator_person_id' => $person_id,
+                    ],
+                    'new' => [
                         'module' => 'ticketing',
                         'controller' => 'tickets',
                         'action' => 'new',
-                        'originator_person_id' => $person_id
-                    )
-                )
-            );
+                        'originator_person_id' => $person_id,
+                    ],
+                ],
+            ];
         }
 
         if (isModuleAdmin('projects')) {
-            $items += array(
-                'resource_template' => array(
+            $items += [
+                'resource_template' => [
                     'tag' => 'Resource Template',
-                    'link' => array(
+                    'link' => [
                         'module' => 'projects',
                         'controller' => 'resourcetemplate',
                         'action' => 'viewperson',
-                        'person_id' => $person_id
-                    ),
-                    'new' => array(
+                        'person_id' => $person_id,
+                    ],
+                    'new' => [
                         'module' => 'projects',
                         'controller' => 'resourcetemplate',
                         'action' => 'new',
-                        'person_id' => $person_id
-                    )
-                )
-            );
+                        'person_id' => $person_id,
+                    ],
+                ],
+            ];
         }
 
-        $items += array(
+        $items += [
             'spacer',
-            'notes' => array(
+            'notes' => [
                 'tag' => 'Notes',
-                'link' => array(
+                'link' => [
                     'module' => 'contacts',
                     'controller' => 'partynotes',
                     'action' => 'viewperson',
-                    'party_id' => $party_id
-                ),
-                'new' => array(
+                    'party_id' => $party_id,
+                ],
+                'new' => [
                     'module' => 'contacts',
                     'controller' => 'partynotes',
                     'action' => 'new',
-                    'party_id' => $party_id
-                )
-            ),
+                    'party_id' => $party_id,
+                ],
+            ],
             'spacer',
-            'attachments' => array(
+            'attachments' => [
                 'tag' => 'Attachments',
-                'link' => array(
+                'link' => [
                     'module' => 'contacts',
                     'controller' => 'personattachments',
                     'action' => 'index',
-                    'person_id' => $person_id
-                ),
-                'new' => array(
+                    'person_id' => $person_id,
+                ],
+                'new' => [
                     'module' => 'contacts',
                     'controller' => 'personattachments',
                     'action' => 'new',
                     'data_model' => 'person',
-                    'entity_id' => $person_id
-                )
-            ),
+                    'entity_id' => $person_id,
+                ],
+            ],
             'spacer',
-            'addresses' => array(
+            'addresses' => [
                 'tag' => 'Addresses',
-                'link' => array(
+                'link' => [
                     'module' => 'contacts',
                     'controller' => 'partyaddresss',
                     'action' => 'viewperson',
-                    'party_id' => $party_id
-                ),
-                'new' => array(
+                    'party_id' => $party_id,
+                ],
+                'new' => [
                     'module' => 'contacts',
                     'controller' => 'partyaddresss',
                     'action' => 'new',
-                    'party_id' => $party_id
-                )
-            ),
+                    'party_id' => $party_id,
+                ],
+            ],
             'spacer',
-            'phone' => array(
+            'phone' => [
                 'tag' => 'Phone',
-                'link' => array(
+                'link' => [
                     'module' => 'contacts',
                     'controller' => 'partycontactmethods',
                     'action' => 'viewperson',
                     'party_id' => $party_id,
-                    'type' => 'T'
-                ),
-                'new' => array(
+                    'type' => 'T',
+                ],
+                'new' => [
                     'module' => 'contacts',
                     'controller' => 'partycontactmethods',
                     'action' => 'new',
                     'party_id' => $party_id,
-                    'type' => 'T'
-                )
-            ),
-            'mobile' => array(
+                    'type' => 'T',
+                ],
+            ],
+            'mobile' => [
                 'tag' => 'Mobile',
-                'link' => array(
+                'link' => [
                     'module' => 'contacts',
                     'controller' => 'partycontactmethods',
                     'action' => 'viewperson',
                     'party_id' => $party_id,
-                    'type' => 'M'
-                ),
-                'new' => array(
+                    'type' => 'M',
+                ],
+                'new' => [
                     'module' => 'contacts',
                     'controller' => 'partycontactmethods',
                     'action' => 'new',
                     'party_id' => $party_id,
-                    'type' => 'M'
-                )
-            ),
-            'fax' => array(
+                    'type' => 'M',
+                ],
+            ],
+            'fax' => [
                 'tag' => 'Fax',
-                'link' => array(
+                'link' => [
                     'module' => 'contacts',
                     'controller' => 'partycontactmethods',
                     'action' => 'viewperson',
                     'party_id' => $party_id,
-                    'type' => 'F'
-                ),
-                'new' => array(
+                    'type' => 'F',
+                ],
+                'new' => [
                     'module' => 'contacts',
                     'controller' => 'partycontactmethods',
                     'action' => 'new',
                     'party_id' => $party_id,
-                    'type' => 'F'
-                )
-            ),
-            'email' => array(
+                    'type' => 'F',
+                ],
+            ],
+            'email' => [
                 'tag' => 'Email',
-                'link' => array(
+                'link' => [
                     'module' => 'contacts',
                     'controller' => 'partycontactmethods',
                     'action' => 'viewperson',
                     'party_id' => $party_id,
-                    'type' => 'E'
-                ),
-                'new' => array(
+                    'type' => 'E',
+                ],
+                'new' => [
                     'module' => 'contacts',
                     'controller' => 'partycontactmethods',
                     'action' => 'new',
                     'party_id' => $party_id,
-                    'type' => 'E'
-                )
-            ),
+                    'type' => 'E',
+                ],
+            ],
             'spacer',
-            'meetings' => array(
+            'meetings' => [
                 'tag' => 'Meetings',
-                'link' => array(
+                'link' => [
                     'module' => 'calendar',
                     'controller' => 'calendarevents',
                     'action' => 'viewperson',
-                    'person_id' => $person_id
-                ),
-                'new' => array(
+                    'person_id' => $person_id,
+                ],
+                'new' => [
                     'module' => 'calendar',
                     'controller' => 'calendarevents',
                     'action' => 'new',
-                    'person_id' => $person_id
-                )
-            ),
-            'calls' => array(
+                    'person_id' => $person_id,
+                ],
+            ],
+            'calls' => [
                 'tag' => 'Calls',
-                'link' => array(
+                'link' => [
                     'module' => 'contacts',
                     'controller' => 'loggedcalls',
                     'action' => 'viewperson',
-                    'person_id' => $person_id
-                ),
-                'new' => array(
+                    'person_id' => $person_id,
+                ],
+                'new' => [
                     'module' => 'contacts',
                     'controller' => 'loggedcalls',
                     'action' => 'new',
-                    'person_id' => $person_id
-                )
-            )
-        );
+                    'person_id' => $person_id,
+                ],
+            ],
+        ];
 
         if ($slcustomer->isLoaded()) {
-            $items += array(
-                'sorders' => array(
+            $items += [
+                'sorders' => [
                     'tag' => 'Sales Orders/Quotes',
-                    'link' => array(
+                    'link' => [
                         'module' => 'sales_order',
                         'controller' => 'sorders',
                         'action' => 'viewperson',
-                        'person_id' => $person_id
-                    ),
-                    'new' => array(
+                        'person_id' => $person_id,
+                    ],
+                    'new' => [
                         'module' => 'sales_order',
                         'controller' => 'sorders',
                         'action' => 'new',
                         'person_id' => $person_id,
-                        'slmaster_id' => $slcustomer->id
-                    )
-                )
-            );
+                        'slmaster_id' => $slcustomer->id,
+                    ],
+                ],
+            ];
         }
 
         $sidebar->addList('related_items', $items);
@@ -484,22 +500,20 @@ class PersonsController extends printController
 
         if ($person instanceof Person) {
             $pl = new PreferencePageList('recently_viewed_people' . EGS_COMPANY_ID);
-            $pl->addPage(new Page(array(
+            $pl->addPage(new Page([
                 'module' => 'contacts',
                 'controller' => 'persons',
                 'action' => 'view',
-                'id' => $person_id
-            ), 'person', $person->firstname . ' ' . $person->surname));
+                'id' => $person_id,
+            ], 'person', $person->firstname . ' ' . $person->surname));
             $pl->save();
         }
     }
 
     /**
      * View and search company related people
-     * 
-     * Called from the related items sidebar when viewing a company
      *
-     * @return void
+     * Called from the related items sidebar when viewing a company
      */
     public function viewcompany()
     {
@@ -515,12 +529,14 @@ class PersonsController extends printController
         $this->view->set('clickaction', 'view');
 
         $this->_templateobject->setDefaultDisplayFields(
-            ['name' => 'Name',
-            'end_date',
-             'jobtitle' => 'Job Title',
-             'phone' => 'Phone',
-             'mobile' => 'Mobile',
-             'email' => 'Email']
+            [
+                'name' => 'Name',
+                'end_date',
+                'jobtitle' => 'Job Title',
+                'phone' => 'Phone',
+                'mobile' => 'Mobile',
+                'email' => 'Email',
+            ]
         );
         $people = new PersonCollection($this->_templateobject);
         $sh = $this->setSearchHandler($people);
@@ -528,23 +544,18 @@ class PersonsController extends printController
         $cc->add(new Constraint('company_id', '=', $this->_data['company_id']));
         $sh->addConstraint($cc);
 
-        
-        if (isset($this->search))
-        {
-            if ($this->isPrintDialog())
-            {
-                $_SESSION['printing'][$this->_data['index_key']]['search_id']=$sh->search_id;
+        if (isset($this->search)) {
+            if ($this->isPrintDialog()) {
+                $_SESSION['printing'][$this->_data['index_key']]['search_id'] = $sh->search_id;
                 return $this->printCollection();
-            }
-            elseif ($this->isPrinting())
-            {
-                $_SESSION['printing'][$this->_data['index_key']]['search_id']=$sh->search_id;
+            } elseif ($this->isPrinting()) {
+                $_SESSION['printing'][$this->_data['index_key']]['search_id'] = $sh->search_id;
                 $sh->setLimit(0);
                 $people->load($sh);
                 $this->printCollection($people);
                 exit;
             }
-        } 
+        }
         parent::index($people, $sh);
     }
 
@@ -559,7 +570,6 @@ class PersonsController extends printController
         $person_idfield = $person->idField;
 
         if (isset($this->_data[$person_idfield]) && ! empty($this->_data[$person_idfield])) {
-
             $person->load($this->_data[$person->idField]);
 
             if (! $person->isLoaded()) {
@@ -576,17 +586,17 @@ class PersonsController extends printController
 
             if (parent::delete($person)) {
                 if ($company->isLoaded()) {
-                    sendTo('Companys', 'view', $this->_modules, array(
-                        $company_idfield => $company_id
-                    ));
+                    sendTo('Companys', 'view', $this->_modules, [
+                        $company_idfield => $company_id,
+                    ]);
                 } else {
                     sendTo($this->name, 'index', $this->_modules);
                 }
             }
 
-            sendTo($this->name, 'view', $this->_modules, array(
-                $person_idfield => $this->_data[$person_idfield]
-            ));
+            sendTo($this->name, 'view', $this->_modules, [
+                $person_idfield => $this->_data[$person_idfield],
+            ]);
         }
     }
 
@@ -596,11 +606,10 @@ class PersonsController extends printController
      * @param string $modelName
      * @param array $dataIn
      * @param array $errors
-     * @return void
      */
     public function save($modelName = null, $dataIn = [], &$errors = [])
     {
-        $errors = array();
+        $errors = [];
 
         $person = $this->_templateobject;
 
@@ -621,7 +630,6 @@ class PersonsController extends printController
         }
 
         if (! empty($personid)) {
-
             $person->load($personid);
 
             if (! $person->isLoaded()) {
@@ -674,10 +682,10 @@ class PersonsController extends printController
             $people_category = DataObjectFactory::Factory('PeopleInCategories');
             $current_categories = $people_category->getCategoryID($person_id);
 
-            $check_categories = array();
-            $delete_categories = array();
-            $insert_categories = array();
-            $new_categories = array();
+            $check_categories = [];
+            $delete_categories = [];
+            $insert_categories = [];
+            $new_categories = [];
 
             if (isset($this->_data['ContactCategories'])) {
                 $delete_categories = array_diff($current_categories, $this->_data['ContactCategories']['category_id']);
@@ -719,10 +727,10 @@ class PersonsController extends printController
                 $db->CompleteTrans();
                 $slmaster = new SLCustomer();
                 $slmaster->loadBy('company_id', $this->_data['Person']['company_id']);
-                sendTo($this->name, 'view', $this->_modules, array(
+                sendTo($this->name, 'view', $this->_modules, [
                     $personidfield => $person_id,
-                    'slmaster_id' => $slmaster->id
-                ));
+                    'slmaster_id' => $slmaster->id,
+                ]);
             }
         }
 
@@ -733,10 +741,10 @@ class PersonsController extends printController
         $this->refresh();
     }
 
-    function import()
+    public function import()
     {
         $this->view->set('what', 'people');
-        $valid_fields = array(
+        $valid_fields = [
             'title',
             'firstname',
             'surname',
@@ -751,31 +759,31 @@ class PersonsController extends printController
             'street3',
             'town',
             'county',
-            'postcode'
-        );
+            'postcode',
+        ];
         $this->view->set('fields', $valid_fields);
         // $this->view->set('callback','custom_setup');
         $this->view->set('js_extension', $this->custom_setup(true));
     }
 
-    function do_import()
+    public function do_import()
     {
         $filename = $_FILES['file']['tmp_name'];
-        $address_fields = array(
+        $address_fields = [
             'street1',
             'street2',
             'street3',
             'town',
             'county',
-            'postcode'
-        );
+            'postcode',
+        ];
 
-        $req_address_fields = array(
+        $req_address_fields = [
             'street1',
             'town',
             'county',
-            'postcode'
-        );
+            'postcode',
+        ];
 
         $db = &DB::Instance();
 
@@ -787,16 +795,15 @@ class PersonsController extends printController
 
         if (isset($this->_data['contains_headings'])) {
             $columnheadings = true;
-        } else
-            if (count($this->_data['headings']) > 0) {
-                $columnheadings = $this->_data['headings'];
+        } elseif (count($this->_data['headings']) > 0) {
+            $columnheadings = $this->_data['headings'];
         }
 
         $data = parse_csv_file($filename, $columnheadings);
 
         $co_loaded = false;
 
-        $errors = array();
+        $errors = [];
 
         $try_address = false;
 
@@ -813,9 +820,9 @@ class PersonsController extends printController
                 }
 
                 if ($co_loaded === false) {
-                    $co_data = array(
-                        'name' => $person_data['company']
-                    );
+                    $co_data = [
+                        'name' => $person_data['company'],
+                    ];
 
                     $company = DataObject::Factory($co_data, $errors, 'Company');
 
@@ -832,7 +839,7 @@ class PersonsController extends printController
             parent::save('Person', $person_data);
 
             if ($try_address && in_array_all($req_address_fields, array_keys($person_data))) {
-                $address_data = array();
+                $address_data = [];
 
                 foreach ($address_fields as $fieldname) {
                     if (isset($person_data[$fieldname])) {
@@ -867,7 +874,7 @@ class PersonsController extends printController
         }
     }
 
-    function custom_setup($return = false)
+    public function custom_setup($return = false)
     {
         $output = <<<EOF
 		Object.extend(ImportWizard.prototype, {
@@ -881,8 +888,9 @@ class PersonsController extends printController
 			}
 		});
 EOF;
-        if ($return)
+        if ($return) {
             return $output;
+        }
         header("Content-type: text/javascript");
         echo $output;
         exit();
@@ -892,7 +900,7 @@ EOF;
      * Ajax Functions
      */
     /* not sure if there is a method to achieve this already */
-    function getAllByCompany($_company_id = '', $_exclude_id = '', $_none = false)
+    public function getAllByCompany($_company_id = '', $_exclude_id = '', $_none = false)
     {
         if (isset($this->_data['ajax'])) {
             if (! empty($this->_data['company_id'])) {
@@ -915,18 +923,18 @@ EOF;
         $this->_templateobject->belongsTo('Person', 'reports_to', 'person_reports_to', $cc, "surname || ', ' || firstname");
 
         if (! $_none) {
-            $smarty_params = array(
-                'nonone' => 'true'
-            );
+            $smarty_params = [
+                'nonone' => 'true',
+            ];
         }
-        $depends = array(
-            'company_id' => $_company_id
-        );
+        $depends = [
+            'company_id' => $_company_id,
+        ];
 
         return $this->getOptions($this->_templateobject, 'reports_to', 'getAllByCompany', 'getOptions', $smarty_params, $depends);
     }
 
-    function getallids()
+    public function getallids()
     {
         $personoverview = new PersonCollection($this->_templateobject);
 
@@ -943,11 +951,11 @@ EOF;
         exit();
     }
 
-    function getinformationbyid()
+    public function getinformationbyid()
     {
         $person = $this->_templateobject;
         $person->load($this->_data['id']);
-        $data = array();
+        $data = [];
         $data['firstname'] = $person->firstname;
         $data['lastname'] = $person->surname;
         $data['company'] = $person->company;
@@ -968,7 +976,7 @@ EOF;
         exit();
     }
 
-    function getAddresses($_company_id = '', $_person_id = '')
+    public function getAddresses($_company_id = '', $_person_id = '')
     {
         if (isset($this->_data['ajax'])) {
             if (! empty($this->_data['company_id'])) {
@@ -989,9 +997,9 @@ EOF;
         }
 
         if (isset($this->_data['ajax'])) {
-            $addresses = array(
-                '' => 'Enter new address'
-            ) + $addresses;
+            $addresses = [
+                '' => 'Enter new address',
+            ] + $addresses;
             if (! empty($_fulladdress)) {
                 $this->view->set('value', $_fulladdress);
             }
@@ -1002,7 +1010,7 @@ EOF;
         }
     }
 
-    function getAddress($_address_id = '')
+    public function getAddress($_address_id = '')
     {
         if (isset($this->_data['ajax'])) {
             if (! empty($this->_data['address_id'])) {
@@ -1052,10 +1060,10 @@ function parse_csv_file($file, &$columnheadings = false, $delimiter = ',', $encl
 {
     $row = 1;
     $row_count = 0;
-    $rows = array();
+    $rows = [];
     $handle = fopen($file, 'r') or die("couldn't open $file");
 
-    while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+    while (($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
         if ($columnheadings === true && $row == 1) {
             $columnheadings = $data;
         } elseif ($columnheadings === true) {
@@ -1063,17 +1071,16 @@ function parse_csv_file($file, &$columnheadings = false, $delimiter = ',', $encl
                 unset($data[$key]);
                 $rows[$row_count][$columnheadings[$key]] = $value;
             }
-            $row_count ++;
-        } else
-            if (is_array($columnheadings)) {
-                foreach ($data as $key => $value) {
-                    $rows[$row_count][$columnheadings[$key]] = $value;
-                }
-                $row_count ++;
-            } else {
-                $rows[] = $data;
+            $row_count++;
+        } elseif (is_array($columnheadings)) {
+            foreach ($data as $key => $value) {
+                $rows[$row_count][$columnheadings[$key]] = $value;
             }
-        $row ++;
+            $row_count++;
+        } else {
+            $rows[] = $data;
+        }
+        $row++;
     }
     fclose($handle);
     return $rows;
