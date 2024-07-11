@@ -22,6 +22,7 @@ class SearchHandler {
 	public $maxlimit;
 	public $lastpage = 1;
 	public $collection;
+	public $tablename;
 	private $page;
 	private $use_session;
 	private $use_system_company;	
