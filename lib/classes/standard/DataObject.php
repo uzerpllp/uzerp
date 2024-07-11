@@ -27,6 +27,7 @@ class DataObject implements Iterator
     protected $_classname;
     protected $_classnames = array();
     protected $_select;
+    protected $module_defaults;
 
     // string: false if any errors found during construct allows graceful trap of errors during construct
     protected $_valid;
@@ -709,7 +710,7 @@ class DataObject implements Iterator
                 $query .= ' AND ' . $this->getAccessConstraint('read')->__toString();
             }
 
-            if ($this->_policyConstraint['constraint'] instanceof ConstraintChain && $this->_policyConstraint['constraint']->count() > 0) {
+            if (isset($this->_policyConstraint) && $this->_policyConstraint['constraint'] instanceof ConstraintChain && $this->_policyConstraint['constraint']->count() > 0) {
                 $query .= ' AND ' . $this->_policyConstraint['constraint']->__toString();
             }
 
@@ -735,7 +736,7 @@ class DataObject implements Iterator
 
         foreach ($row as $key => $val) {
 
-            $this->$key = stripslashes($val);
+            $this->$key = stripslashes((string) $val);
 
             if (! isset($this->_fields[$key])) {
                 $this->_fields[$key] = stripslashes($val);
