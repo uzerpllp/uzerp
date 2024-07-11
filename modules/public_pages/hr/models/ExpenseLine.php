@@ -138,7 +138,7 @@ class ExpenseLine extends DataObject
 	}
 	
 
-	public function delete () {
+	public function delete ($id = \null, &$errors = array(), $archive = \FALSE, $archive_table = \null, $archive_schema = \null) {
 
 		$flash = Flash::Instance();
 		

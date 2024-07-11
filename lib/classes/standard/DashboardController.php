@@ -154,7 +154,7 @@ class DashboardController extends Controller
 		
 	}
 	
-	function save()
+	function save($modelName = null, $dataIn = [], &$errors = []) :void
 	{
 		
 		if (isset($this->_data['eglets'])&&count($this->_data['eglets'])>0)

@@ -149,7 +149,7 @@ class CheckboxSearchField extends SearchField {
 	 * Set the value of the searchfield. This will typically be 'on', unless setOnValue() is used
 	 * A $value that is (===) null will be ignored
 	 */
-	public function setValue($value)
+	public function setValue($value = '')
 	{
 		
 		if ($value == 'on')
@@ -173,7 +173,7 @@ class CheckboxSearchField extends SearchField {
 	 *
 	 * Set the default value of the checkbox. Anything other than 'checked' is assumed to be false
 	 */
-	public function setDefault($value)
+	public function setDefault($value = '')
 	{
 		
 		if ($value == 'checked')

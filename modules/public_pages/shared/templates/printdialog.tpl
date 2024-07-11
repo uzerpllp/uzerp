@@ -31,7 +31,7 @@
 						</li>
 					{/if}
 					{if empty($options.report_name) && !empty($options.report)}
-						<input type='hidden' name='print['report'] value=$options.report>
+						<input type='hidden' name=print[report] value={$options.report}>
 					{else}
 						<li class="pdf pdf_options output_options">
 							<label for="report_name">Report Name:</label>

@@ -302,7 +302,7 @@ class STTransaction extends DataObject
 
 	}
 
-	public function save(&$errors)
+	public function save($debug = false)
 	{
 // Save the transaction record
 // and insert/balances associated with the location

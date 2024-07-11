@@ -439,7 +439,7 @@ class PorderlinesController extends Controller {
 					||$data['status']==$this->_templateobject->partReceivedStatus()
 					||$data['status']==$this->_templateobject->receivedStatus())
 			{
-				$porderline = POrderLine::Factory($porder, $data, $errors);
+				$porderline = POrderLine::porderlineFactory($porder, $data, $errors);
 				
 				if ($porderline && count($errors)==0)
 				{

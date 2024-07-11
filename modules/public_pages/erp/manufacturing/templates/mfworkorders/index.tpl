@@ -43,7 +43,9 @@
 					{/foreach}
 					<td>
 						{assign var=mtl_status value=$model->materialStatus()}
-						{if $mtl_status['issued'] >= $mtl_status['required']}
+						{if $mtl_status['issued'] == 0}
+							No
+						{elseif $mtl_status['issued'] >= $mtl_status['required']}
 							Yes
 						{elseif ($mtl_status['issued'] < $mtl_status['required']) and $mtl_status['issued'] > 0}
 						    In Part

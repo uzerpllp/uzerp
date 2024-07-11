@@ -1043,7 +1043,7 @@ class GLTransaction extends DataObject
      * @param $transaction
      * @param $type  'RC' = Reverse Charge, 'PVA' = Postponed VAT Accounting
      * @param array $errors
-     * @return void
+     * @return array
      */
     public static function makeTaxRC($transaction,  &$errors = array())
     {
@@ -1194,7 +1194,7 @@ class GLTransaction extends DataObject
         return $db->CompleteTrans();
     }
 
-    public function save()
+    public function save($debug = \FALSE)
     {
         $db = DB::Instance();
         $db->StartTrans();

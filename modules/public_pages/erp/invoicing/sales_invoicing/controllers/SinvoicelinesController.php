@@ -157,7 +157,7 @@ class SinvoicelinesController extends Controller {
 			}
 			elseif ($sinvoice->isLatest($this->_data['SInvoice'], $errors))
 			{
-				$sinvoiceline=SInvoiceLine::Factory($sinvoice, $data, $errors);
+				$sinvoiceline=SInvoiceLine::SInvoiceLineFactory($sinvoice, $data, $errors);
 				if ($sinvoiceline && count($errors)==0)
 				{
 					if (!$sinvoiceline->save($sinvoice))

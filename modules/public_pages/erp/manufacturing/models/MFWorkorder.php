@@ -89,7 +89,7 @@ class MFWorkorder extends DataObject
 									 
 	}
 	
-	static function Factory($data, &$errors, $do)
+	static function Factory($data, &$errors = [], $do = null)
 	{
 		if (!isset($data['id']) || $data['id']=='')
 		{
@@ -211,7 +211,8 @@ class MFWorkorder extends DataObject
 			}
 		}
 
-		return ['issued' => $issued, 'required' => count($mtl)];
+		$count = (is_countable($mtl)) ? count($mtl) : 0;
+		return ['issued' => $issued, 'required' => $count];
 	}
 
 }

@@ -15,13 +15,13 @@ class MultiSelectSearchField extends SearchField {
 	{
 		
 		$html .= '<select multiple size="5" id="search_' . $this->fieldname . '" class="multiselect" name="Search[' . $this->fieldname . '][]">';
-		$value = array();
+		$value = [];
 		
-		if (count($this->value) > 0)
+		if (is_countable($this->value) && count($this->value) > 0)
 		{
 			$value = $this->value;
 		}
-		elseif (count($this->default) > 0)
+		elseif (is_countable($this->value) && count($this->default) > 0)
 		{
 			$value = $this->default;
 		}

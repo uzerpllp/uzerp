@@ -81,7 +81,7 @@ class SOProductline extends DataObject
         $this->getField('price')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
     }
 
-    function delete($id = null, &$errors = array())
+    function delete($id = null, &$errors = array(), $archive = \FALSE, $archive_table = \null, $archive_schema = \null)
     {
         return parent::delete($id, $errors, TRUE);
     }

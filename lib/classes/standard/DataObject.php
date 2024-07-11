@@ -301,7 +301,7 @@ class DataObject implements Iterator
                 }
             }
             foreach ($click_info['methods'] as $method => $label) {
-                if (method_exists($this, $method)) {
+                if (method_exists(get_class($this), $method)) {
                     $click_info_data['methods'][$method] = $label;
                 }
             }
@@ -2057,8 +2057,9 @@ class DataObject implements Iterator
                 $field = $model->getField($model->getIdentifier());
 
                 // $this->_fields[$var] = clone $field;
-
+                if ($field->tag) {
                 $field->tag = prettify($var);
+                }
                 $value = $field->value;
 
                 if (empty($value)) {
@@ -2878,8 +2879,10 @@ class DataObject implements Iterator
 
         $uc->add($cc);
 
+        if (!empty($this->_policyConstraint)) {
         if ($this->_policyConstraint['constraint'] instanceof ConstraintChain) {
             $uc->add($this->_policyConstraint['constraint']);
+        }
         }
 
         if (! $ignore_tree && $this->acts_as_tree) {
@@ -4118,9 +4121,11 @@ class DataObject implements Iterator
             }
         }
 
+        if (!empty($this->_policyConstraint['constraint'])) {
         if ($this->_policyConstraint['constraint'] instanceof ConstraintChain) {
             $this->_policyConstraint['constraint'] = clone $this->_policyConstraint['constraint'];
         }
+    }
     }
 
     // *******************

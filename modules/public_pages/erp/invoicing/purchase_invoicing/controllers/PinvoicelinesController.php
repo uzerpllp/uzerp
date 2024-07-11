@@ -127,7 +127,7 @@ class PinvoicelinesController extends printController {
 			}
 			elseif ($pinvoice->isLatest($this->_data['PInvoice'], $errors))
 			{
-				$pinvoiceline=PInvoiceLine::Factory($pinvoice, $data, $errors);
+				$pinvoiceline=PInvoiceLine::PInvoiceLineFactory($pinvoice, $data, $errors);
 				if ($pinvoiceline && count($errors)==0)
 				{
 					if (!$pinvoiceline->save($pinvoice))

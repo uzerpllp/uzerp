@@ -12,7 +12,7 @@ class AdminController extends Controller {
 		parent::__construct($action);
 	}
 
-	function index() {
+	function index(\DataObjectCollection $collection, $sh = '', &$c_query = \null) {
 		static $menuaction='User Overview';
 		global $smarty;
 		$users=new UserCollection(new User);

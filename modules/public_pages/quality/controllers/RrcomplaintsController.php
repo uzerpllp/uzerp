@@ -133,7 +133,7 @@ class RrcomplaintsController extends ComplaintsController
 
 	/* output functions */
 	
-	public function printComplaint($_status = 'generate')
+	public function printComplaint($_status = 'generate', $_filename)
 	{
 		
 		$filename = (!empty($this->_data['filename']))?$this->_data['filename']:'RR_complaint_' . date('d-m-Y');

@@ -56,51 +56,53 @@ class LedgerTransaction extends DataObject
  		
 	}
 	
-	public static function Factory(&$data, &$errors, $do)
-	{
+	// Appears not to be used
 	
-		$data['due_date'] = $data['transaction_date'];
+	// public static function Factory(&$data, &$errors, $do)
+	// {
 	
-		if(isset($data['ext_reference']) && !isset($data['our_reference']))
-		{
-			$data['our_reference'] = $data['ext_reference'];
-		}
-		elseif(isset($data['reference']) && !isset($data['our_reference']))
-		{
-			$data['our_reference'] = $data['reference'];
-		}
+	// 	$data['due_date'] = $data['transaction_date'];
 		
-		if(isset($data['description']) && !isset($data['comment']))
-		{
-			$data['comment'] = $data['description'];
-		}
+	// 	if(isset($data['ext_reference']) && !isset($data['our_reference']))
+	// 	{
+	// 		$data['our_reference'] = $data['ext_reference'];
+	// 	}
+	// 	elseif(isset($data['reference']) && !isset($data['our_reference']))
+	// 	{
+	// 		$data['our_reference'] = $data['reference'];
+	// 	}
 	
-		if(isset($data['comment']) && !isset($data['description']))
-		{
-			$data['description'] = $data['comment'];
-		}
+	// 	if(isset($data['description']) && !isset($data['comment']))
+	// 	{
+	// 		$data['comment'] = $data['description'];
+	// 	}
 		
-		$mult				= static::$multipliers[$data['source']][$data['transaction_type']];
-		$data['net_value']	= $data['net_value']*$mult;
+	// 	if(isset($data['comment']) && !isset($data['description']))
+	// 	{
+	// 		$data['description'] = $data['comment'];
+	// 	}
 	
-		self::setCurrency($data);
+	// 	$mult				= static::$multipliers[$data['source']][$data['transaction_type']];
+	// 	$data['net_value']	= $data['net_value']*$mult;
 	
-		//the outstanding (os) values are the gross values to begin with
-		$prefixes = array('','base_','twin_');
+	// 	self::setCurrency($data);
 	
-		foreach($prefixes as $prefix)
-		{
-			$data[$prefix.'os_value'] = $data[$prefix.'gross_value'];
-		}
+	// 	//the outstanding (os) values are the gross values to begin with
+	// 	$prefixes = array('','base_','twin_');
 	
-		// Validate the Ledger Transactions
-		if (empty($data['status']))
-		{
-			$data['status'] = 'O';
-		}
+	// 	foreach($prefixes as $prefix)
+	// 	{
+	// 		$data[$prefix.'os_value'] = $data[$prefix.'gross_value'];
+	// 	}
 		
-		return parent::Factory($data, $errors, $do);
-	}
+	// 	// Validate the Ledger Transactions
+	// 	if (empty($data['status']))
+	// 	{
+	// 		$data['status'] = 'O';
+	// 	}
+
+	// 	return parent::Factory($data, $errors, $do);
+	// }
 	
 	public function saveForPayment(&$errors = array())
 	{
@@ -114,7 +116,7 @@ class LedgerTransaction extends DataObject
 		return $this->update_owner_balance($errors);
 	}
 	
-	public function save($source, &$errors=array())
+	public function save($debug = false)
 	{
 		
 		if (!parent::save())
@@ -122,7 +124,7 @@ class LedgerTransaction extends DataObject
 			return false;
 		}
 		
-		return $this->update_owner_balance($errors);	
+		return $this->update_owner_balance();	
 
 	}
 	

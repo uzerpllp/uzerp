@@ -43,7 +43,7 @@ class CompanyCategorySearch extends BaseSearch
         ];
         $search->setOptions('date_inactive', $options);
 
-        $search->setSearchData($search_data, $errors = []);
+        $search->setSearchData($search_data, $errors);
 
         return $search;
     }

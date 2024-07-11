@@ -123,7 +123,7 @@ class POrderLine extends SPOrderLine
  		
 	}
 
-	public function delete ()
+	public function delete ($id = \null, &$errors = array(), $archive = \FALSE, $archive_table = \null, $archive_schema = \null)
 	{
 
 		$flash = Flash::Instance();
@@ -166,7 +166,7 @@ class POrderLine extends SPOrderLine
 		
 	}
 	
-	public static function Factory (POrder $header, $line_data, &$errors = array())
+	public static function porderlineFactory (POrder $header, $line_data, &$errors = array())
 	{
 				
 		if (empty($line_data['order_id']))

@@ -6,7 +6,7 @@
  *	Released under GPLv3 license; see LICENSE. 
  **/
 
-class CrmcalendareventsController extends printController {
+class CrmcalendarEventsController extends printController {
 
 	protected $version = '$Revision: 1.1 $';
 	

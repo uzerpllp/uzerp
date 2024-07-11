@@ -986,7 +986,7 @@ abstract class Controller
                 $property = $inflector->pluralize(strtolower(substr($method, 3)));
                 // $model = new $this->modeltype;
                 $model = DataObjectFactory::Factory($this->modeltype);
-                if (method_exists($model, $method)) {
+                if (method_exists(get_class($model), $method)) {
                     // Use by:-
                     // 1) ajax calls passing in the id of the selected object
                     // which may not be the id of controllers model
@@ -1268,15 +1268,15 @@ abstract class Controller
         );
 
         foreach ($model->getLinkRules() as $name => $hasmany) {
-            if (method_exists($this, $name)) {
+            if (method_exists(get_class($this), $name)) {
                 $controller_name = $this->name;
                 $action_name['link'] = $name;
                 $field = $hasmany['field'];
-            } elseif (method_exists($this, 'view' . $name)) {
+            } elseif (method_exists(get_class($this), 'view' . $name)) {
                 $controller_name = $this->name;
                 $action_name['link'] = 'view' . $name;
                 $field = $hasmany['field'];
-            } elseif (method_exists($this, 'view_' . $name)) {
+            } elseif (method_exists(get_class($this), 'view_' . $name)) {
                 $controller_name = $this->name;
                 $action_name['link'] = 'view_' . $name;
                 $field = $hasmany['field'];

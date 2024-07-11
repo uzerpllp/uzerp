@@ -73,14 +73,14 @@ function smarty_function_view_data($params, &$smarty) {
 			$value = $model->$attribute;
 		}
 		
-		if (substr($attribute, -2) == '()')
+		if (isset($field->is_safe) && substr($attribute, -2) == '()')
 		{
 			$attribute		= substr($attribute, 0, -2);
 			$field->is_safe	= TRUE;
 			$value			= call_user_func(array($model, $attribute));
 		}
 		
-		if (!is_string($value) && method_exists($value, '__toString'))
+		if (!empty($value) && !is_string($value) && method_exists($value, '__toString'))
 		{
 			$value = $value->__toString();
 		}

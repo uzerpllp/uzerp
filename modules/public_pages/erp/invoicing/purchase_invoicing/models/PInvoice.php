@@ -102,7 +102,7 @@ class PInvoice extends Invoice
 		
 	}
 
-	public static function Factory($header_data, &$errors = [])
+	public static function Factory($header_data, &$errors = [], $do_name = \null)
 	{
 		
 		$supplier = DataObjectFactory::Factory('PLSupplier');
@@ -141,7 +141,7 @@ class PInvoice extends Invoice
 		
 	}
 	
-	public function getNextLineNumber()
+	public function getNextLineNumber($_invoiceline)
 	{
 		$pinvoiceline = DataObjectFactory::Factory('PInvoiceLine');
 		return parent::getNextLineNumber($pinvoiceline);
@@ -216,7 +216,7 @@ class PInvoice extends Invoice
 		return $result;
 	}
 	
-	public function save ()
+	public function save ($debug = \false)
 	{
 
 		$pi_line = DataObjectFactory::Factory('PInvoiceLine');
@@ -298,7 +298,7 @@ class PInvoice extends Invoice
 			{
 				$line['invoice_id'] = $invoice->{$invoice->idField};
 				
-				$invoiceline = PInvoiceLine::Factory($invoice, $line, $errors);
+				$invoiceline = PInvoiceLine::PInvoiceLineFactory($invoice, $line, $errors);
 				
 				if (!$invoiceline || count($errors)>0)
 				{

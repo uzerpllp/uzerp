@@ -44,7 +44,7 @@ class STBalance extends DataObject
 		return $balance->getSum('balance', $field, 'st_balancesoverview');
 	}
 
-	public function save(&$errors)
+	public function save($debug = false)
 	{
 		if ($this->balance < 0)
 		{

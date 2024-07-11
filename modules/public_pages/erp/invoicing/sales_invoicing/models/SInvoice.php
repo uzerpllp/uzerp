@@ -559,7 +559,7 @@ class SInvoice extends Invoice
         if ($invoice) {
             foreach ($lines_data as $line) {
                 $line['invoice_id'] = $invoice->{$invoice->idField};
-                $invoiceline = SInvoiceLine::Factory($invoice, $line, $errors);
+                $invoiceline = SInvoiceLine::SInvoiceLineFactory($invoice, $line, $errors);
                 if (! $invoiceline || count($errors) > 0) {
                     $errors[] = 'Invoice Line validation failed for line ' . $line['line_number'];
                 } elseif (! $invoiceline->save()) {

@@ -466,7 +466,7 @@ class CustomerServicesController extends PrintController
     /*
      * Protected Functions
      */
-    protected function setSearch()
+    protected function setSearch($do = null, $method = null, $defaults = array(), $params = array(), $use_saved_search = \false)
     {
         $s_data = array();
 

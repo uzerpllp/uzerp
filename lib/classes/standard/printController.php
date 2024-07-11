@@ -1957,7 +1957,7 @@ class printController extends Controller
                         $rowData[$key] = $data->getField($key);
                     }
                 }
-            } elseif ($data instanceof DataObject && method_exists($data, $key)) {
+            } elseif ($data instanceof DataObject && method_exists(get_class($data), $key)) {
 
                 // the field name in $key is a class method in the $data object
                 if (isset($value['value'])) {

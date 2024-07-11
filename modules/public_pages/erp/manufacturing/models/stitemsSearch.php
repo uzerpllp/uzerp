@@ -301,7 +301,7 @@ class stitemsSearch extends BaseSearch {
 // Search by Works Order
 		$search->addSearchField(
 			'order_number',
-			'Order Numer',
+			'Order Number',
 			'is',
 			'',
 			'advanced'
@@ -430,7 +430,7 @@ class stitemsSearch extends BaseSearch {
 // Search by Works Order
 		$search->addSearchField(
 			'order_number',
-			'Order Numer',
+			'Order Number',
 			'is',
 			'',
 			'advanced'

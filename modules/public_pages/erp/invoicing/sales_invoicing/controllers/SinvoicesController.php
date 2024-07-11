@@ -1,7 +1,5 @@
 <?php
 
-use function PHPUnit\Framework\isEmpty;
-
 /**
  *	uzERP Sales Invoices Controller
  *

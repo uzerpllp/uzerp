@@ -369,9 +369,8 @@ class BankaccountsController extends Controller {
 		return false;
 	}
 	
-	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
+	public function save($modelName = null, $dataIn = [], &$errors = []) {
 		return false;
-		
 	}
 
 	public function getCurrencyId($_id='') {

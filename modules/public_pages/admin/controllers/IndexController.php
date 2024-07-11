@@ -9,7 +9,7 @@
 class IndexController extends Controller {
 
 
-	public function Index() {
+	public function Index(\DataObjectCollection $collection, $sh = '', &$c_query = \null) {
 		$dashboard = new Dashboard();
 		$quick_links=new StaticContentEGlet(new SimpleRenderer());
 		$quick_links->setTemplate('eglets/admin_quick_links.tpl');

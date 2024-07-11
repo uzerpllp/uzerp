@@ -263,8 +263,10 @@ class SearchHandler {
 		if($this->use_session&&isset($_POST['savesearch'])) {
 			$_SESSION['preferences']['savedsearches'][$this->tablename]=$this->constraints;
 		}
+		if(is_countable($this->constraints)) {
 		if($this->use_session&&count($this->constraints)==0&&isset($_SESSION['preferences']['savedsearches'][$this->tablename]))
 			$this->constraints=$_SESSION['preferences']['savedsearches'][$this->tablename];
+		}
 		//if usercompanyid is a field, then it's always a constraint
 		$model=$this->collection->getModel();
 		if($model->isField('usercompanyid') && $this->use_system_company) {

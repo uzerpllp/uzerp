@@ -58,7 +58,7 @@ class HRParameters extends DataObject
 		
 	}
 
-	public function load()
+	public function load($clause, $override = \FALSE, $return = \FALSE)
 	{
 		
 		$cc = new ConstraintChain();

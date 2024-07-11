@@ -98,7 +98,7 @@ class ProjectissuelinesController extends Controller {
 		
 	}
 	
-	protected function getPageName()
+	protected function getPageName($base = \null, $action = \null)
 	{
 		return parent::getPageName('project_issues');
 	}

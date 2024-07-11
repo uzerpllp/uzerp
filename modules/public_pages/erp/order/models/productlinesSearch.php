@@ -347,7 +347,7 @@ class productlinesSearch extends BaseSearch
 		return $search;
 	}
 
-	public function poheaderLines($search_data = null, &$errors = array(), $defaults = null)
+	public static function poheaderLines($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = productlinesSearch::useDefault($search_data, $errors, 'PLSupplier', $defaults);
 
@@ -379,7 +379,7 @@ class productlinesSearch extends BaseSearch
 		
 	}
 
-	public function soheaderLines($search_data = null, &$errors = array(), $defaults = null)
+	public static function soheaderLines($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = productlinesSearch::useDefault($search_data, $errors, 'SLCustomer', $defaults);
 
@@ -411,7 +411,7 @@ class productlinesSearch extends BaseSearch
 		
 	}
 
-	public function customerInvoices($search_data = null, &$errors = array(), $defaults = null)
+	public static function customerInvoices($search_data = null, &$errors = array(), $defaults = null)
 	{
 		
 		$search = productlinesSearch::invoices($search_data, $errors, 'SLCustomer', $defaults);
@@ -421,7 +421,7 @@ class productlinesSearch extends BaseSearch
 		
 	}
 	
-	public function supplierInvoices($search_data = null, &$errors = array(), $defaults = null)
+	public static function supplierInvoices($search_data = null, &$errors = array(), $defaults = null)
 	{
 		
 		$search = productlinesSearch::invoices($search_data, $errors, 'PLSupplier', $defaults);
@@ -492,7 +492,7 @@ class productlinesSearch extends BaseSearch
 	
 	}
 
-	public function customerOrders($search_data = null, &$errors = array(), $defaults = null)
+	public static function customerOrders($search_data = null, &$errors = array(), $defaults = null)
 	{
 		
 		$search = productlinesSearch::orders($search_data, $errors, 'SLCustomer', $defaults);
@@ -502,7 +502,7 @@ class productlinesSearch extends BaseSearch
 		
 	}
 	
-	public function supplierOrders($search_data = null, &$errors = array(), $defaults = null)
+	public static function supplierOrders($search_data = null, &$errors = array(), $defaults = null)
 	{
 		
 		$search = productlinesSearch::orders($search_data, $errors, 'PLSupplier', $defaults);

@@ -17,7 +17,7 @@ class DetailsController extends PersonsController {
 		$this->uses(new Person);
 	}
 
-	function index() {
+	function index($collection = \null, $sh = '', &$c_query = \null) {
 		$user=$this->_uses['User'];
 		$user->load(EGS_USERNAME);
 		$sidebarlist=array();
@@ -51,7 +51,7 @@ class DetailsController extends PersonsController {
 		$this->_templateName=$this->getTemplateName('new');
 	}
 
-	function save() {
+	function save($modelName = \null, $dataIn = [], &$errors = []) {
 		$user=$this->_uses['User'];
 		$user->load(EGS_USERNAME);
 		if($this->_data['Person']['id']==$user->person_id) {

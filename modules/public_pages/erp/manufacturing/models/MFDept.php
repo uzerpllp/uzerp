@@ -31,7 +31,7 @@ class MFDept extends DataObject {
  		
 	}
 	
-	public function save() {
+	public function save($debug = \FALSE) {
 		$db=DB::Instance();
 		$db->StartTrans();
 		$result=parent::save();

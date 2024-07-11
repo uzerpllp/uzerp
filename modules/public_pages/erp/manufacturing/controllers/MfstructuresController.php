@@ -598,6 +598,7 @@ class MfstructuresController extends PrintController
 
 	public function preorder ()
 	{
+		$errors = [];
 		if (isset($this->_data['stitem_id']) || isset($this->_data['id']))
 		{
 			$id = $this->_data['stitem_id'];

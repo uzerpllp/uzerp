@@ -3471,7 +3471,7 @@ class SordersController extends printController
 
             foreach ($sinvoicelines as $line_data) {
 
-                $sinvoiceline = SInvoiceLine::Factory($sinvoice, $line_data, $errors);
+                $sinvoiceline = SInvoiceLine::SInvoiceLineFactory($sinvoice, $line_data, $errors);
 
                 if ($sinvoiceline) {
                     $result = $sinvoiceline->save();

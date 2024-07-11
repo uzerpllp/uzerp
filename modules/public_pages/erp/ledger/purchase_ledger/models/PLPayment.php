@@ -56,7 +56,7 @@ class PLPayment extends DataObject
 
 		$progressbar = new Progressbar('create_security_key');
 		
-		$callback = function($pl_data, $key) use (&$hash, &$errors = [])
+		$callback = function($pl_data, $key) use (&$hash, &$errors)
 		{
 			$hash.=$pl_data['plmaster_id'];
 			$hash.=bcadd($pl_data['net_value'],0);

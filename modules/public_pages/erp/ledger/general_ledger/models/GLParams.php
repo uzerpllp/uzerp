@@ -92,36 +92,36 @@ class GLParams extends DataObject {
 		$control_account = new ConstraintChain();
 		$control_account->add(new Constraint('control', 'is', TRUE));
 		
-		$this->hasMany('Currency', $this->base_currency, 'currency');
-		$this->hasMany('Currency', $this->twin_currency, 'currency');
-		$this->hasMany('GLCentre', $this->balance_sheet_cost_centre, 'cost_centre');
-		$this->hasMany('GLAccount', $this->contras_control_account, 'account', $control_account);
-		$this->hasMany('GLCentre', $this->pl_account_centre, 'cost_centre');
-		$this->hasMany('GLAccount', $this->accruals_control_account, 'account', $control_account);
-		$this->hasMany('GLAccount', $this->purchase_ledger_control_account, 'account', $control_account);
-		$this->hasMany('GLAccount', $this->retained_profits_account, 'account');
-		$this->hasMany('GLAccount', $this->sales_ledger_control_account, 'account', $control_account);
-		$this->hasMany('GLAccount', $this->vat_input, 'account', $control_account);
-		$this->hasMany('GLAccount', $this->vat_output, 'account', $control_account);
-		$this->hasMany('GLAccount', $this->vat_control_account, 'account', $control_account);
-		$this->hasMany('GLAccount', $this->vat_eu_acquisitions, 'account', $control_account);
-		$this->hasMany('GLAccount', $this->vat_postponed, 'account', $control_account);
-		$this->hasMany('GLAccount', $this->vat_reverse_charge, 'account', $control_account);
-		$this->hasMany('Company', $this->vat_payee_company, 'name');
-		$this->hasMany('GLAccount', $this->product_account, 'account');
-		$this->hasMany('GLCentre', $this->product_centre, 'cost_centre');
-		$this->hasMany('GLAccount', $this->ar_pl_suspense_account, 'account');
-		$this->hasMany('GLCentre', $this->ar_pl_suspense_centre, 'cost_centre');
-		$this->hasMany('GLAccount', $this->ar_disposals_proceeds_account, 'account');
-		$this->hasMany('GLCentre', $this->ar_disposals_proceeds_centre, 'cost_centre');
-		$this->hasMany('GLAccount', $this->expenses_control_account, 'account', $control_account);
-		$this->hasMany('STuom', $this->intrastat_net_mass, 'uom_name');
+		$this->GLParamsHasMany('Currency', $this->base_currency, 'currency');
+		$this->GLParamsHasMany('Currency', $this->twin_currency, 'currency');
+		$this->GLParamsHasMany('GLCentre', $this->balance_sheet_cost_centre, 'cost_centre');
+		$this->GLParamsHasMany('GLAccount', $this->contras_control_account, 'account', $control_account);
+		$this->GLParamsHasMany('GLCentre', $this->pl_account_centre, 'cost_centre');
+		$this->GLParamsHasMany('GLAccount', $this->accruals_control_account, 'account', $control_account);
+		$this->GLParamsHasMany('GLAccount', $this->purchase_ledger_control_account, 'account', $control_account);
+		$this->GLParamsHasMany('GLAccount', $this->retained_profits_account, 'account');
+		$this->GLParamsHasMany('GLAccount', $this->sales_ledger_control_account, 'account', $control_account);
+		$this->GLParamsHasMany('GLAccount', $this->vat_input, 'account', $control_account);
+		$this->GLParamsHasMany('GLAccount', $this->vat_output, 'account', $control_account);
+		$this->GLParamsHasMany('GLAccount', $this->vat_control_account, 'account', $control_account);
+		$this->GLParamsHasMany('GLAccount', $this->vat_eu_acquisitions, 'account', $control_account);
+		$this->GLParamsHasMany('GLAccount', $this->vat_postponed, 'account', $control_account);
+		$this->GLParamsHasMany('GLAccount', $this->vat_reverse_charge, 'account', $control_account);
+		$this->GLParamsHasMany('Company', $this->vat_payee_company, 'name');
+		$this->GLParamsHasMany('GLAccount', $this->product_account, 'account');
+		$this->GLParamsHasMany('GLCentre', $this->product_centre, 'cost_centre');
+		$this->GLParamsHasMany('GLAccount', $this->ar_pl_suspense_account, 'account');
+		$this->GLParamsHasMany('GLCentre', $this->ar_pl_suspense_centre, 'cost_centre');
+		$this->GLParamsHasMany('GLAccount', $this->ar_disposals_proceeds_account, 'account');
+		$this->GLParamsHasMany('GLCentre', $this->ar_disposals_proceeds_centre, 'cost_centre');
+		$this->GLParamsHasMany('GLAccount', $this->expenses_control_account, 'account', $control_account);
+		$this->GLParamsHasMany('STuom', $this->intrastat_net_mass, 'uom_name');
 		
 		if(!defined('EGS_COMPANY_ID'))
 			return false;
  	}
 
-  	public function hasMany($do, $name, $fkfield, $cc = null)
+  	public function GLParamsHasMany($do, $name, $fkfield, $cc = null, $cascade = \NULL)
   	{
 // Overrides the DataObject::hasMany to support 'soft' fk links for GL parameters
 		$this->_dataSources[$name]['model'] = $do;
@@ -228,7 +228,7 @@ class GLParams extends DataObject {
 		return false;
 	}
 	
-	public function load($clause,$override=false)
+	public function load($clause,$override=false, $return = \FALSE)
 	{
 		parent::load($clause,$override=false);
 		

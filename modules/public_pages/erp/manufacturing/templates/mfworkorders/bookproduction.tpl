@@ -16,24 +16,24 @@
 			{view_data attribute='made_qty' }
 			{input type='text'  attribute='book_qty' label="Book Qty" }
 			{input type='text'  attribute='remarks' label="Remarks" }
-			{if count($from_locations)==1 }
+			{if is_countable($from_locations) && count($from_locations)==1 }
 				{input type="hidden" attribute="from_whlocation_id" value=$from_whlocation_id}
 				{view_data attribute='from_whlocation_id' value=$from_whlocation label='From Location'}
 			{else}
 				{select attribute="from_whlocation_id" options=$from_locations value=$from_whlocation_id label='From Location'}
 			{/if}
-			{if count($from_bins)==0 }
+			{if is_countable($from_bins) && count($from_bins)==0 }
 				{input type="hidden" attribute="from_whbin_id" value=""}
 			{else}
 				{select attribute="from_whbin_id" options=$from_bins value=$from_whbin_id label='From Bin'}
 			{/if}
-			{if count($to_locations)==1 }
+			{if is_countable($to_locations) && count($to_locations)==1 }
 				{input type="hidden" attribute="to_whlocation_id" value=$to_whlocation_id}
 				{view_data attribute='to_whlocation_id' value=$to_whlocation label='To Location'}
 			{else}
 				{select attribute="to_whlocation_id" options=$to_locations value=$to_whlocation_id label='To Location'}
 			{/if}
-			{if count($to_bins)==0 }
+			{if is_countable($to_bins) && count($to_bins)==0 }
 				{input type="hidden" attribute="to_whbin_id" value=""}
 			{else}
 				{select attribute="to_whbin_id" options=$to_bins value=$to_whbin_id label='To Bin'}

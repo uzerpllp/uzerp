@@ -106,7 +106,7 @@ class BaseSearch
                 }
             }
 
-            if (count($errors) == 0 && $save_search) {
+            if ($errors !== null && count($errors) == 0 && $save_search) {
 
                 debug('BaseSearch::setSearchData ' . get_class($this) . ' ' . $search_name . ':saving search in session ' . print_r($search_data, TRUE));
 

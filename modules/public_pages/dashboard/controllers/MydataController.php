@@ -19,7 +19,7 @@ class MydataController extends Controller {
 		$this->MyDataURL	= DATA_USERS_URL . EGS_USERNAME . DIRECTORY_SEPARATOR;
 	}
 
-	function index()
+	function index(\DataObjectCollection $collection, $sh = '', &$c_query = \null)
 	{
 		$dir_tree = array();
 		
@@ -54,7 +54,7 @@ class MydataController extends Controller {
 		$this->view->set('component_id', ModuleComponent::getComponentId($this->_modules['module'], strtolower(get_class($this))));
 	}
 
-	function delete()
+	function delete($modelName)
 	{
 		
 		$flash=Flash::Instance();

@@ -131,7 +131,7 @@ class SdcomplaintsController extends ComplaintsController
 		return parent::getPageName((empty($base) ? 'SD Complaints' : $base), $action);
 	}
 	
-	public function printComplaint($_status = 'generate')
+	public function printComplaint($_status = 'generate', $_filename)
 	{
 		
 		$filename = (!empty($this->_data['filename']))?$this->_data['filename']:'SD_complaint_' . date('d-m-Y');

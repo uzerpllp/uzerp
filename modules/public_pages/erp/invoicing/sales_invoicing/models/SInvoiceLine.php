@@ -81,7 +81,7 @@ class SInvoiceLine extends InvoiceLine {
 		
 	}
 	
-	public function delete()
+	public function delete($id = \null, &$errors = array(), $archive = \FALSE, $archive_table = \null, $archive_schema = \null)
 	{
 
 		$flash = Flash::Instance();
@@ -127,7 +127,7 @@ class SInvoiceLine extends InvoiceLine {
 		
 	}
 	
-	public static function Factory(SInvoice $header, $line_data, &$errors = [])
+	public static function SInvoiceLineFactory(SInvoice $header, $line_data, &$errors = [])
 	{
 		
 		if (empty($line_data['invoice_id']))

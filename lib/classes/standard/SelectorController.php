@@ -78,7 +78,7 @@ class SelectorController extends PrintController
         // Clear any previous searches
         $s_data['clear'] = 'Clear';
 
-        $this->setSearch($this->_templateobject, 'selectorSearch', 'itemSearch', $s_data);
+        $this->selectorSetSearch($this->_templateobject, 'selectorSearch', 'itemSearch', $s_data);
         $collection = new SelectorCollection($this->_templateobject, $this->itemOverviewName);
         $sh = $this->setSearchHandler($collection);
         $sh->setFields(array(
@@ -150,7 +150,7 @@ class SelectorController extends PrintController
             $s_data['parent_id'] = $this->_data['id'];
         }
 
-        $this->setSearch($this->_templateobject, 'selectorSearch', 'itemSearch', $s_data);
+        $this->selectorSetSearch($this->_templateobject, 'selectorSearch', 'itemSearch', $s_data);
 
         $collection = new SelectorCollection($this->_templateobject, $this->itemOverviewName);
         $sh = $this->setSearchHandler($collection);
@@ -1253,7 +1253,7 @@ class SelectorController extends PrintController
         return $collection;
     }
 
-    protected function setSearch($do, $search, $method, $defaults = array(), $params = array())
+    protected function selectorSetSearch($do, $search, $method, $defaults = array(), $params = array())
     {
         $errors = array();
         $s_data = array();

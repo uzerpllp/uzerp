@@ -110,7 +110,7 @@ class POrder extends SPOrder {
 		
 	}
 	
-	public static function Factory($header_data, &$errors = [])
+	public static function Factory($header_data, &$errors = [], $do_name = \null)
 	{
 		
 		if (empty($header_data['order_date']))
@@ -263,7 +263,7 @@ class POrder extends SPOrder {
 				$this->lines->count()==($linestatus['I']+$linestatus['R']+$linestatus['X']));
 	}
 	
-	public function save (&$errors=array())
+	public function save ($debug = false)
 	{
 	    // use_sorder_delivery == true makes no sense if a sales order link is not selected
 	    if (!$this->sales_order_id) {
@@ -485,7 +485,7 @@ class POrder extends SPOrder {
 		
 	}
 	
-	public function getLineStatuses()
+	public function getLineStatuses($_orderline = null, $_orderlines = null)
 	{
 		$porderline = DataObjectFactory::Factory('POrderLine');
 		
@@ -494,7 +494,7 @@ class POrder extends SPOrder {
 		return parent::getLineStatuses($porderline, $porderlines);
 	}
 	
-	public function getNextLineNumber ()
+	public function getNextLineNumber ($_orderline = null)
 	{
 		
 		$porderline=DataObjectFactory::Factory('POrderLine');

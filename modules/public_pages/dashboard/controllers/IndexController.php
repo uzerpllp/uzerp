@@ -8,7 +8,8 @@
 
 class IndexController extends DashboardController {
 
-	public function Index() {
+	#[\Override]
+	public function Index($collection = \null, $sh = '', &$c_query = \null) {
 		$userPreferences = UserPreferences::instance(EGS_USERNAME);
 		if(!$userPreferences->userHasPreferences()) {
 			$message = "<strong>Welcome to uzERP. It looks like this is your first time using the system, 

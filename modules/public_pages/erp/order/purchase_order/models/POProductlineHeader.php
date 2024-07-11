@@ -263,7 +263,7 @@ class POProductlineHeader extends DataObject
         return $productlines->update('end_date', $this->end_date, $sh);
     }
 
-    public function save()
+    public function save($debug = \FALSE)
     {
         $db = DB::Instance();
         $flash = Flash::Instance();

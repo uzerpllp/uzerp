@@ -2011,7 +2011,7 @@ class PordersController extends printController
                     // Link each invoice line to the header and save
                     foreach ($pinvoicelines as $line_data) {
 
-                        $pinvoiceline = PInvoiceLine::Factory($pinvoice, $line_data, $errors);
+                        $pinvoiceline = PInvoiceLine::PInvoiceLineFactory($pinvoice, $line_data, $errors);
 
                         if ($pinvoiceline) {
 

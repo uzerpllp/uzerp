@@ -16,7 +16,7 @@ class TreeSearchField extends SearchField {
 		
 		$html .= '<ul class="uz_breadcrumbs">';
 			
-		if (count($this->breadcrumbs) > 0)
+		if (isset($this->breadrcrumbs) && count($this->breadcrumbs) > 0)
 		{
 			
 			$system	= system::Instance();
