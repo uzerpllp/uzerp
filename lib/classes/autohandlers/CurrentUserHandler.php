@@ -7,7 +7,9 @@
  **/
 class CurrentUserHandler extends AutoHandler {
 	protected $default_username;
-	public function __construct($onupdate=false,$username_constant) {
+	protected $constant;
+
+	public function __construct($onupdate=false, $username_constant=null) {
 		parent::__construct($onupdate);
 		$this->constant=$username_constant;
 	}
