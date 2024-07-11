@@ -260,15 +260,15 @@ class CustomerServiceCollection extends DataObjectCollection
 		}
 
 		$this->customerorders[$previous_group]['total']['customer']			= 'Total';
-		$this->customerorders[$previous_group]['total']['ontime_c']			= bcadd(round($group_ontime_c*100/$group_count, 2), 0);
-		$this->customerorders[$previous_group]['total']['infull_c']			= bcadd(round($group_infull_c*100/$group_count, 2), 0);
-		$this->customerorders[$previous_group]['total']['ontime_infull_c']	= bcadd(round($group_ontime_infull_c*100/$group_count, 2), 0);
+		$this->customerorders[$previous_group]['total']['ontime_c']			= bcadd(round($group_ontime_c*100 / ($group_count ?: 1), 2), 0);
+		$this->customerorders[$previous_group]['total']['infull_c']			= bcadd(round($group_infull_c*100/ ($group_count ?: 1), 2), 0);
+		$this->customerorders[$previous_group]['total']['ontime_infull_c']	= bcadd(round($group_ontime_infull_c*100/ ($group_count ?: 1), 2), 0);
 		$this->customerorders[$previous_group]['total']['count']			= $group_count;
 		
 		$this->customerorders['Grand Total']['total']['customer']			= '';
-		$this->customerorders['Grand Total']['total']['ontime_c']			= bcadd(round($total_ontime_c*100/$total_count, 2), 0);
-		$this->customerorders['Grand Total']['total']['infull_c']			= bcadd(round($total_infull_c*100/$total_count, 2), 0);
-		$this->customerorders['Grand Total']['total']['ontime_infull_c']	= bcadd(round($total_ontime_infull_c*100/$total_count, 2), 0);
+		$this->customerorders['Grand Total']['total']['ontime_c']			= bcadd(round($total_ontime_c*100/ ($total_count ?: 1), 2), 0);
+		$this->customerorders['Grand Total']['total']['infull_c']			= bcadd(round($total_infull_c*100/($total_count ?: 1), 2), 0);
+		$this->customerorders['Grand Total']['total']['ontime_infull_c']	= bcadd(round($total_ontime_infull_c*100/($total_count ?: 1), 2), 0);
 		$this->customerorders['Grand Total']['total']['count']				= $total_count;
 		
 		return $this->customerorders;
