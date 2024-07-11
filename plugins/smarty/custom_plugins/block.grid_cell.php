@@ -192,7 +192,7 @@ function smarty_block_grid_cell($params, $content, &$smarty, $repeat)
 			{
 				$belongs_model = $params['field'];
 			}
-			if (isset($temp_lookups[$params['field']]) || isset($temp_lookups[$params['fk']]))
+			if (isset($temp_lookups[$params['field']]) || (array_key_exists('fk', $params) && isset($temp_lookups[$params['fk']])))
 			{
 
 				if (isset($params['fk_field']))
