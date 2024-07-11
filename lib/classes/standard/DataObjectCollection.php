@@ -1035,7 +1035,7 @@ class DataObjectCollection implements Iterator, Countable {
 	 //*******************
 	// ITERATOR FUNCTIONS
 	
-	public function current(): mixed
+	public function current(): object
 	{
 		return $this->_dataobjects[$this->_pointer];
 	}
