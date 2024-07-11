@@ -217,7 +217,7 @@ class SidebarController {
 			// remove any adjacent 'spacer' elements
 			for ( $i = 0; $i < $count; $i++)
 			{
-				if (!is_array($this->components[$name]['data'][$i])
+				if (array_key_exists($i, $this->components[$name]['data']) && !is_array($this->components[$name]['data'][$i])
 					&& $this->components[$name]['data'][$i] == 'spacer'
 					&& !is_array($this->components[$name]['data'][$i+1])
 					&& $this->components[$name]['data'][$i+1] == 'spacer')
