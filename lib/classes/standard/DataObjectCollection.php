@@ -1,5 +1,7 @@
 <?php
 
+use Ramsey\Uuid\Type\Integer;
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -39,6 +41,12 @@ class DataObjectCollection implements Iterator, Countable {
 	public $sh					= null;
 	public $query				= '';
 	public $title;
+	public $total_records;
+	public $num_records;
+	public $num_pages;
+	public $cur_page;
+	public $usercontrolled;
+	public $idField;
 	
 	private $load_options = array('RETURN_QUERY'	=> 1
 								 ,'RETURN_COUNTS'	=> 2
@@ -624,7 +632,7 @@ class DataObjectCollection implements Iterator, Countable {
      *
      * @todo Change the name of this function
 	 */
-	static function Factory($post, &$errors = array(), $modelName)
+	static function Factory($post = null, &$errors = array(), $modelName = null)
 	{
 
 		$collection = new $modelName();
@@ -1027,7 +1035,7 @@ class DataObjectCollection implements Iterator, Countable {
 	 //*******************
 	// ITERATOR FUNCTIONS
 	
-	public function current()
+	public function current(): mixed
 	{
 		return $this->_dataobjects[$this->_pointer];
 	}
