@@ -1,6 +1,9 @@
 <?php
 
 test('Test model methods', function () {
+    // Remove PHPUnit's error handler
+    restore_error_handler();
+
     $model = new HasRole;
     $roles = $model->getRoleID(EGS_USERNAME);
     $roles_empty = $model->getRoleID(null);
