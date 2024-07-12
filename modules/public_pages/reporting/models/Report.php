@@ -23,7 +23,7 @@ class Report extends DataObject {
             $this->orderby = 'description';
       }
 
-      function createDataObject ($fields, &$idField='', $columns) {
+      function createDataObject ($fields = [], &$idField='', $columns = []) {
             // we cannot use '*' for all datatypes in the coalesce function, so
             // preset the value before we start. This may need ammending depending
             // on the datatype
@@ -217,7 +217,6 @@ class Report extends DataObject {
                               'beforeornull'      => 'beforeornull',
                               'after'                  => 'after',
                               'afterornull'      => 'afterornull',
-                              'betweenfields'      => 'betweenfields',
                               'betweenfields'      => 'betweenfields',
                               'to'                  => 'to',
                               'between'            => 'between'

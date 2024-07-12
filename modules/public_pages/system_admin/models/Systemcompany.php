@@ -37,32 +37,7 @@ class Systemcompany extends DataObject {
 		$this->getField('access_enabled')->setDefault('FULL');
 	}
 
-	public function publish (&$errors = [])
-	{
-		$name = "abc";
-		
-		$format = new xmlrpcmsg('elgg.user.newUser',array(new xmlrpcval($name, "string")));
-		
-		$client = new xmlrpc_client("_rpc/RPC2.php", "tech2.severndelta.co.uk", 8091);
-		
-		$request = $client->send($format);
-		
-		$value = $request->value();
-		
-		if (!$request->faultCode())
-		{
-			$this->published=true;
-			$this->admin_owner=$request->serialize();
-		}
-		else
-		{
-			$errors[]="Code: ".$request->faultCode()." Reason '".$request->faultString();
-			return false;	
-		}
-		
-		return true;	
-	}
-	
+
 	/**
 	 * @param $permissions array
 	 * @return boolean
@@ -256,7 +231,7 @@ class Systemcompany extends DataObject {
 
 	public function getVRN()
 	{
-		$vrn = preg_replace("/[^0-9]/", "", $this->systemcompany->vatnumber);
+		$vrn = preg_replace("/[^0-9]/", "", (string) $this->systemcompany->vatnumber);
 		return $vrn;
 	}
 

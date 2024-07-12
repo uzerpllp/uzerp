@@ -89,7 +89,7 @@ class Permission extends DataObject {
 	}
 
 	
-	function getPermissionsAsTree($id = NULL, $parent, $sitetree, $types = NULL, $name = NULL)
+	function getPermissionsAsTree($id = NULL, $parent = null, $sitetree = null, $types = NULL, $name = NULL)
 	{
 		
 		$db = DB::Instance();
