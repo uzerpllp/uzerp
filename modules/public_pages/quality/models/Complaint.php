@@ -52,17 +52,17 @@ class Complaint extends DataObject
 // Define system defaults
 	}
 	
-	static function Factory($data, &$errors, $do)
+	static function Factory($data, &$errors = [], $do_name = null)
 	{
 		if (!isset($data['id']) || $data['id']=='')
 		{
 		
 			$generator = new ComplaintNumberHandler();
-			$data['complaint_number'] = $generator->handle(new $do);
+			$data['complaint_number'] = $generator->handle(new $do_name);
 		
 		}
 		
-		return parent::Factory($data, $errors, $do);
+		return parent::Factory($data, $errors, $do_name);
 
 	}
 
