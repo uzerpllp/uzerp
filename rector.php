@@ -20,10 +20,13 @@ return RectorConfig::configure()
 
     ->withPhpVersion(PhpVersion::PHP_83)
 
-    ->withSets([
-	LevelSetList::UP_TO_PHP_83
-    ])
+    //->withSets([
+//	LevelSetList::UP_TO_PHP_83
+  //  ])
 
+    ->withRules([
+	Rector\Php80\Rector\ClassMethod\AddParamBasedOnParentClassMethodRector::class
+    ])
 
     ->withSkip([
 	// this is fixed in code formatting before applying rector
