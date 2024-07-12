@@ -98,7 +98,7 @@ function smarty_block_form($params, $content, &$smarty, $repeat)
 		}
 
 		// there are some instances where we don't want the submit token
-		if (strtoupper($params['submit_token']) !== 'FALSE') 
+		if (strtoupper((string) $params['submit_token']) !== 'FALSE') 
 		{
 			$data['submit_token_id'] = uniqid();
 			$_SESSION['submit_token'][$data['submit_token_id']] = TRUE;
