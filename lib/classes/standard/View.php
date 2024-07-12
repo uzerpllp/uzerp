@@ -1,5 +1,7 @@
 <?php
- 
+
+use Smarty as Smarty;
+
 /** 
  *	View base class
  *
@@ -25,7 +27,7 @@ class View implements Iterator, Countable {
 	function __construct()
 	{
 		$config = Config::Instance();
-		$this->smarty = new Smarty;
+		$this->smarty = new Smarty();
 		
 		if ($config->get('SMARTY_DEBUG')) {
 			$this->smarty->setDebugging(true);
@@ -136,35 +138,35 @@ class View implements Iterator, Countable {
 	}
 	
 	/** to implement Iterator**/
-	public function current()
+	public function current(): mixed
 	{
 		$vals = array_values($this->data);
 		return $vals[$this->pointer];
 	}
 	
-	public function next()
+	public function next() :void
 	{
 		$this->pointer++;
 	}
 	
-	public function key()
+	public function key(): mixed
 	{
 		$keys = array_keys($this->data);
 		return $keys[$this->pointer];
 	}
 	
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->pointer = 0;
 	}
 	
-	public function valid()
+	public function valid(): bool
 	{
 		return ($this->pointer < count($this));
 	}
 	
 	/** to implement countable **/
-	function count()
+	function count(): int
 	{
 		return count($this->data);
 	}
