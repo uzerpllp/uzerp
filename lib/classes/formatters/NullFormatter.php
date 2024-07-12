@@ -11,6 +11,7 @@ class NullFormatter implements FieldFormatter {
 	protected $version = '$Revision: 1.4 $';
 	
 	public $is_safe = true;
+	public $is_html = false;
 	
 	function __construct($is_safe = true)
 	{

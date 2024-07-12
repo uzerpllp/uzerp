@@ -24,7 +24,7 @@ class OauthStorage extends DataObject
      * @param string $yaml_file
      *            File name to load
      */
-    private function loadConfig($yaml_file = null, $target_key)
+    private function loadConfig($yaml_file = null, $target_key = null)
     {
         if (is_null($yaml_file)) {
             return;

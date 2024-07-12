@@ -11,7 +11,7 @@ class Cache {
 	protected $version = '$Revision: 1.14 $';
 		
 	// memcache server handle
-	protected $memcached;
+	protected $memcache;
 	
 	// an array to keep track of the keys in use
 	protected $keys_table = array();

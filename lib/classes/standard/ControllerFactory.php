@@ -18,7 +18,7 @@ class ControllerFactory {
 	 * Uses global information ($_GET probably) to determine the Controller to instantiate and return
 	 * @return string	A (probably) extended form of the Controller class
 	 **/
-	public static function Factory($requireLogin = true, $modulecomponents)
+	public static function Factory($requireLogin = true, $modulecomponents = null)
 	{
 		$router = RouteParser::Instance();
 		

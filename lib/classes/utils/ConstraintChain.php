@@ -130,7 +130,7 @@ class ConstraintChain implements Iterator{
 		return count($this->_constraints);
 	}
 	
-	function current() {
+	function current(): mixed {
 		return $this->_constraints[$this->_pointer];
 	}
 	

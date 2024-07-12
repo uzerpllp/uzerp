@@ -3031,7 +3031,7 @@ class DataObject implements Iterator
         return $orderstring;
     }
 
-    private function getAllAsTree($cc = null, $tablename)
+    private function getAllAsTree($cc = null, $tablename = null)
     {
         $items = array();
         $this->tree($items, $cc, $tablename);
@@ -3039,7 +3039,7 @@ class DataObject implements Iterator
         return $items;
     }
 
-    private function tree(&$items = array(), $cc = null, $tablename, $parent_id = null, $spacer = '-', $indent = 0)
+    private function tree(&$items = array(), $cc = null, $tablename = null, $parent_id = null, $spacer = '-', $indent = 0)
     {
         $db = DB::Instance();
 
@@ -3525,7 +3525,7 @@ class DataObject implements Iterator
      * @todo Change name!
      *
      */
-    public function current()
+    public function current(): mixed
     {
         $field = array_values($this->getDisplayFields());
         $name = $field[$this->_pointer]->name;
