@@ -48,3 +48,4 @@ apc.php
 
 # Pest/php-unit
 .phpunit.result.cache
+.phpunit.cache
