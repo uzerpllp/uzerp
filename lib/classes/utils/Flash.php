@@ -84,14 +84,6 @@ class Flash {
 		if (in_array($type, array('errors', 'messages', 'warnings')))
 		{
 			$return = $this->{'_' . $type . '_show'};
-
-			// If we have errors, send them to Sentry.
-			// It's done here, when the errors for display so we don't have to add this for all module actions.
-			if ($type == 'errors' and defined('SENTRY_DSN'))
-			{
-				$this->sentrySend($return);
-			}
-
 			return $return;
 		}
 
@@ -229,50 +221,6 @@ class Flash {
 	{
 		return count($this->_errors_store) != 0;
 	}
-
-	/**
-	 * Send errors to a remote Sentry server with level = warning
-	 *
-	 * @param array $ferrors
-	 *
-	 * @return void
-	 */
-	private function sentrySend($ferrors)
-	{
-		// ignore access denied
-		if (in_array('You do not have access to the requested action.', $ferrors ))
-		{
-			return;
-		}
-		// ignore if no username or nagios request
-		if(EGS_USERNAME or strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'nagios') !== false) {
-			try
-			{
-				$client = new Raven_Client(SENTRY_DSN, unserialize(SENTRY_CONFIG));
-
-				// Capture the flash errors and send to Sentry
-				$client->user_context(array('username' => EGS_USERNAME));
-				$client->tags_context(array('source' => 'flash'));
-
-				$cc = 0;
-				foreach ($ferrors as $ferror)
-				{
-					$cc++;
-					$client->extra_context(array('error ' . $cc => $ferror));
-				}
-
-				if ($cc != 0)
-				{
-					$event_id = $client->getIdent($client->captureMessage($ferrors[0], array(), 'warning'));
-				}
-			}
-			catch (Exception $e)
-			{
-				//If something went wrong, just continue.
-			}
-		}
-	}
-
 }
 
 // end of Flash.php

@@ -90,15 +90,6 @@ $conf['TICKET_USER'] = '';
  * Logging, debug and development settings
  */
 
-// Sentry configuration
-// If the following constants are defined, uzERP will send
-// flash errors and warnings, and uncaught PHP exceptions to Sentry
-
-//if (!defined('SENTRY_DSN') && !defined('SENTRY_CONFIG')) {
-//    define('SENTRY_DSN', 'https://sdkjfhsjkdhf:2398623986429834@sentry.io/1234567');
-//    define('SENTRY_CONFIG', serialize(array('curl_method' => 'async', 'release' => '1.6.2')));
-//}
-
 // Log/audit login attempts
 // Default: true
 $conf['AUDIT_LOGIN'] = false;

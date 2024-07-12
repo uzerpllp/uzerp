@@ -24,7 +24,8 @@
  *	You should have received a copy of the GNU General Public License
  *	along with uzERP.  If not, see <http://www.gnu.org/licenses/>.
  **/
-session_start();
+
+ session_start();
 if (!isset($_SESSION['started'])) {
     $_SESSION['started'] = $_SERVER['REQUEST_TIME'];
 }
@@ -45,56 +46,9 @@ $system->load_essential();
 
 // **************************
 // ERROR REPORTING & LOGGING
-if (defined('SENTRY_DSN')) {
-    // custom exception handler, sends to sentry
-    set_exception_handler('sentry_exception_handler');
-
-    // send fatals to sentry
-    try {
-        $client = new Raven_Client(SENTRY_DSN, unserialize(SENTRY_CONFIG));
-        $client->tags_context(array(
-            'source' => 'fatal'
-        ));
-        $error_handler = new Raven_ErrorHandler($client);
-        $error_handler->registerShutdownFunction();
-    } catch (Exception $e) {
-        // If something went wrong, just continue.
-    }
-} else {
-    // custom exception handler, show error to user
+$config = Config::Instance();
+if ($config->get('ENVIRONMENT') !== 'development') {
     set_exception_handler('uzerp_exception_handler');
-}
-
-function sentry_exception_handler($exception)
-{
-    error_log($exception);
-    try {
-        $client = new Raven_Client(SENTRY_DSN, unserialize(SENTRY_CONFIG));
-        $client->tags_context(array(
-            'source' => 'exception'
-        ));
-        $config = Config::Instance();
-        $event_id = $client->getIdent($client->captureException($exception, array(
-            'extra' => array(
-                'uzerp_version' => $config->get('SYSTEM_VERSION')
-            )
-        )));
-
-        $smarty = new Smarty();
-        $smarty->assign('config', $config->get_all());
-        $smarty->compile_dir = DATA_ROOT . 'templates_c';
-        $smarty->assign('event_id', $event_id);
-        $smarty->assign('support_email', SUPPORT_EMAIL);
-        $email_body = "uzERP Exception logged to sentry with ID: " . $event_id;
-        $smarty->assign('email_body', rawurlencode($email_body));
-        $smarty->assign('xhr', false);
-        if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-            $smarty->assign('xhr', true);
-        }
-        $smarty->display(STANDARD_TPL_ROOT . 'error.tpl');
-    } catch (Exception $e) {
-        // If something went wrong, just continue.
-    }
 }
 
 function uzerp_exception_handler($exception)
