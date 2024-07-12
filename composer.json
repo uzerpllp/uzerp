@@ -1,12 +1,11 @@
 {
     "require": {
         "robmorgan/phinx": "^0.12",
-        "smarty/smarty": "^3.1.48",
+        "smarty/smarty": "^4.5.1",
         "riimu/kit-csrf": "^2.4",
-        "symfony/http-foundation": "^3.4",
-        "symfony/yaml": "^3.4",
+        "symfony/http-foundation": "7.1.*",
+        "symfony/yaml": "7.1.*",
         "ircmaxell/random-lib": "^1.2",
-        "sentry/sentry": "^1.9.1",
         "phpmailer/phpmailer": "~6.1",
         "league/oauth2-client": "^2.4",
         "adodb/adodb-php": "^5.20",
@@ -15,7 +14,8 @@
         "vlucas/phpdotenv": "^5.4",
         "twilio/sdk": "^6.40",
         "endroid/qr-code": "^3.9",
-        "league/csv": "^9.7"
+        "league/csv": "^9.7",
+        "pestphp/pest": "2.*"
     },
 
     "autoload": {
@@ -28,7 +28,7 @@
     },
     "config": {
         "platform": {
-            "php": "7.3"
+            "php": "8.3"
         },
         "allow-plugins": {
             "pestphp/pest-plugin": true
@@ -36,7 +36,6 @@
     },
     "require-dev": {
         "rector/rector": "^1.2.0",
-        "symplify/easy-coding-standard": "^11.2",
-        "pestphp/pest": "^1.22"
+        "symplify/easy-coding-standard": "^11.2"
     }
 }
