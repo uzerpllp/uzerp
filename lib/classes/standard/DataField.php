@@ -248,29 +248,7 @@ class DataField {
 
 				// Need to move this out to a configuration record
 				$this->has_default = true;
-
-				if (defined('EGS_USERNAME'))
-				{
-					$query = 'SELECT countrycode FROM personaddress pa JOIN users u ON (pa.person_id=u.person_id)'.
-							 'WHERE u.username='.$db->qstr(EGS_USERNAME).' ORDER BY main DESC';
-
-					$country = $db->GetOne($query);
-
-					if ($country === false)
-					{
-						$query = 'SELECT countrycode FROM users u JOIN person p ON (p.id=u.person_id) JOIN companyaddress ca ON (p.company_id=ca.company_id) '.
-							'WHERE u.username=' . $db->qstr(EGS_USERNAME) . ' ORDER BY main DESC';
-						$country = $db->GetOne($query);
-					}
-
-				}
-
-				if (!isset($country))
-				{
-					$country = 'GB';
-				}
-
-				$this->default_value = $country;
+				$this->default_value = 'GB';
 
 				break;
 
