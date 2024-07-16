@@ -377,7 +377,7 @@ class WhlocationsController extends printController
 		{
 			$errors[] = 'Location is a required field';
 		}		
-		if (!isset($this->_data['WHBin_bins']) || empty($this->_data['WHBin_bins']))
+		if (!isset($this->_data['WHBin_bins']) || empty($this->_data['WHBin_bins']) || $this->_data['WHBin_bins'][0] == "")
 		{
 			$errors[] = 'Bin is a required field';
 		}
