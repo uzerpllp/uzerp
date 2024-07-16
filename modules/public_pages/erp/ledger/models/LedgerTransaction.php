@@ -111,7 +111,8 @@ class LedgerTransaction extends DataObject
 			return FALSE;
 		}
 		
-		return $this->update_owner_balance($errors);
+		//return $this->update_owner_balance($errors);
+		return true;
 	}
 	
 	public function save($debug = false)
@@ -122,7 +123,8 @@ class LedgerTransaction extends DataObject
 			return false;
 		}
 		
-		return $this->update_owner_balance();	
+		//return $this->update_owner_balance();	
+		return true;
 
 	}
 	
@@ -375,27 +377,26 @@ class LedgerTransaction extends DataObject
 	 */
 
 	 // Still used?
-	private function update_owner_balance(&$errors = array())
-	{
+	// private function update_owner_balance(&$errors = array())
+	// {
 		
-		//$owner = $this->getOwner();
-		$owner = null;
+	// 	$owner = $this->getOwner();
 		
-		if (!$owner->isLoaded())
-		{
-			$errors[] = 'Error loading '.get_class($owner).' to update balance';
-			return FALSE;
-		}
+	// 	if (!$owner->isLoaded())
+	// 	{
+	// 		$errors[] = 'Error loading '.get_class($owner).' to update balance';
+	// 		return FALSE;
+	// 	}
 		
-		if (!$owner->updateBalance($this))
-		{
-			$db = DB::Instance();
-			$errors[] = 'Error updating '.get_class($owner).' balance : '.$db->ErrorMsg();
-			return FALSE;
-		}
+	// 	if (!$owner->updateBalance($this))
+	// 	{
+	// 		$db = DB::Instance();
+	// 		$errors[] = 'Error updating '.get_class($owner).' balance : '.$db->ErrorMsg();
+	// 		return FALSE;
+	// 	}
 		
-		return TRUE;
-	}
+	// 	return TRUE;
+	// }
 }
 
 // End of LedgerTransaction

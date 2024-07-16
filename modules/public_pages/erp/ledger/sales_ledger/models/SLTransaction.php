@@ -25,7 +25,7 @@ class SLTransaction extends LedgerTransaction
 											,'slmaster_id'
 											,'person_id');
 	
-	protected static $multipliers = array(
+	public static $multipliers = array(
 		'S'=>array(
 			'I'=>1,
 			'C'=>-1,
