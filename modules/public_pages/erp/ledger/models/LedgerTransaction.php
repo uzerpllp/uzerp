@@ -11,7 +11,7 @@ class LedgerTransaction extends DataObject
 
 	protected $version='$Revision: 1.33 $';
 	
-//	public static $multipliers;
+	public static $multipliers;
 
 	public $base_currency_id;
 	public $base_currency_name;
@@ -56,7 +56,7 @@ class LedgerTransaction extends DataObject
  		
 	}
 	
-	public static function Factory(&$data, &$errors = [], $do = null)
+	public static function Factory($data, &$errors = [], $do_name = null)
 	{
 	
 		$data['due_date'] = $data['transaction_date'];
@@ -99,7 +99,7 @@ class LedgerTransaction extends DataObject
 			$data['status'] = 'O';
 		}
 
-		return parent::Factory($data, $errors, $do);
+		return parent::Factory($data, $errors, $do_name);
 	}
 	
 	public function saveForPayment(&$errors = array())
@@ -148,6 +148,7 @@ class LedgerTransaction extends DataObject
 		return $db->CompleteTrans();
 	}
 	
+	// Still used?
 	public function saveCBTransaction(&$data, &$errors = [])
 	{
 		//	Need to write cash transactions to cashbook
@@ -160,7 +161,7 @@ class LedgerTransaction extends DataObject
 			$db=DB::Instance();
 			$db->StartTrans();
 			
-			$data['company_id'] = $this->getOwner()->company_id;
+			//$data['company_id'] = $this->getOwner()->company_id;
 			
 			if(isset($data['cb_account_id']))
 			{
@@ -262,7 +263,7 @@ class LedgerTransaction extends DataObject
 			$data['twin_tax_value']		= $data['tax_value'];
 			$data['twin_net_value']		= $data['net_value'];
 		}
-		elseif ($twin_currency->id == $base_currency->id)
+		elseif ($twin_currency->id == $glparams->base_currency()->id)
 		{
 			$data['twin_gross_value']	= $data['base_gross_value'];
 			$data['twin_tax_value']		= $data['base_tax_value'];
@@ -372,10 +373,13 @@ class LedgerTransaction extends DataObject
 	/*
 	 * Private Functions
 	 */
+
+	 // Still used?
 	private function update_owner_balance(&$errors = array())
 	{
 		
-		$owner = $this->getOwner();
+		//$owner = $this->getOwner();
+		$owner = null;
 		
 		if (!$owner->isLoaded())
 		{
