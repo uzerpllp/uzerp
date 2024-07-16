@@ -43,26 +43,28 @@
 		{/foreach}
 	</table>
 	<p>
-		{if $currentpage>1}
-			<a class="ajax eglet_paging" href="{$content.url}&page=1">
-				<img src="/assets/graphics/resultset_first.png" />
-			</a>
-		{/if}
-		{if $currentpage>2}
-			<a class="ajax eglet_paging" href="{$content.url}&page={$currentpage-1}">
-				<img src="/assets/graphics/resultset_previous.png" />
-			</a>
-		{/if}
-		<strong>{$currentpage} of {$num_pages}</strong>
-		{if $currentpage+1<$num_pages}
-			<a class="ajax eglet_paging" href="{$content.url}&page={$currentpage+1}">
-				<img src="/assets/graphics/resultset_next.png" />
-			</a>
-		{/if}
-		{if $currentpage<$num_pages}
-			<a class="ajax eglet_paging" href="{$content.url}&page={$num_pages}">
-				<img src="/assets/graphics/resultset_last.png" />
-			</a>
+		{if $currentpage !== ""} {* $current page is an empty string if there are no items *}
+			{if $currentpage>1}
+				<a class="ajax eglet_paging" href="{$content.url}&page=1">
+					<img src="/assets/graphics/resultset_first.png" />
+				</a>
+			{/if}
+			{if $currentpage>2}
+				<a class="ajax eglet_paging" href="{$content.url}&page={$currentpage-1}">
+					<img src="/assets/graphics/resultset_previous.png" />
+				</a>
+			{/if}
+			<strong>{$currentpage} of {$num_pages}</strong>
+			{if $currentpage+1<$num_pages}
+				<a class="ajax eglet_paging" href="{$content.url}&page={$currentpage+1}">
+					<img src="/assets/graphics/resultset_next.png" />
+				</a>
+			{/if}
+			{if $currentpage<$num_pages}
+				<a class="ajax eglet_paging" href="{$content.url}&page={$num_pages}">
+					<img src="/assets/graphics/resultset_last.png" />
+				</a>
+			{/if}
 		{/if}
 	</p>
 </div>
