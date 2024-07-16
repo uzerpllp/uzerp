@@ -42,7 +42,7 @@ $(document).ready(function () {
 	document.title = "uzERP";
 	
 	// set the title to the main .page_title element
-	$('.page_title').live('change', function () {
+	$(document).on('change', '.page_title', function () {
 		
 		var $self		= $(this),
 			$ajax_title	= $('#ajax_title'),
@@ -80,7 +80,7 @@ $(document).ready(function () {
 		.delay(3000)
 		.hide("blind", {}, 800);
 	
-	$('#errors_button, #warnings_button, #messages_button').live('click', function (event) {
+	$('#errors_button, #warnings_button, #messages_button').on('click', function (event) {
 		
 		var link = $('#'+$(this).data('id'));
 		
@@ -118,7 +118,7 @@ $(document).ready(function () {
 	});
 
 	// confirm action on delete links
-	$('li.delete a').live('click', function (event) {
+	$('li.delete a').on('click', function (event) {
 		
 		if (!(confirm("Are you sure you wish to delete this record?"))) {
 			event.preventDefault();
@@ -223,7 +223,7 @@ $(document).ready(function () {
 
 	/* related items, order by, sorting, paging... */
 	
-	$('#sidebar_open_close').live('click', function (event) {
+	$('#sidebar_open_close').on('click', function (event) {
 		
 		$("#sidebar").toggle('slide', {}, 500 );
 		
@@ -239,7 +239,7 @@ $(document).ready(function () {
 	});
 	
 	// need a description as to what this does... as it can prevent binding of new events
-	$('#sidebar_related_items a').live('click', function (event) {
+	$('#sidebar_related_items a').on('click', function (event) {
 		
 		if (!$(this).hasClass('new_link')) {
 			event.preventDefault();
@@ -248,9 +248,7 @@ $(document).ready(function () {
 		
 	});
 
-	//$('#sidebar_related_items a, .paging a, thead a, a.related_link').live('click', function (event) {
-	//	if (!$(this).hasClass('newtab')) {
-	$('#sidebar_related_items a, .paging a, thead a,').live('click', function (event) {
+	$('#sidebar_related_items a, .paging a, thead a,').on('click', function (event) {
 		
 		if (!$(this).hasClass('newtab') && !$(this).hasClass('new_link') && !$(this).hasClass('dont-sort')) {
 			
@@ -283,7 +281,7 @@ $(document).ready(function () {
 		}
 	}, false);
 	
-	$('#data_grid_search .uz_breadcrumbs a').live('click', function (event) {
+	$('#data_grid_search .uz_breadcrumbs a').on('click', function (event) {
 		
 		if (!$(this).hasClass('newtab') && !$(this).hasClass('new_link') && !$(this).hasClass('dont-sort')) {
 			
@@ -294,7 +292,6 @@ $(document).ready(function () {
 				var $self = $(this);
 				
 				update_page($self.attr('href') + '&ajax=');
-				
 			}
 			
 		}
@@ -327,7 +324,8 @@ $(document).ready(function () {
 		
 	});
 	
-	$('.paging input').live('change', function (event) {
+	// This doesn't seem to be used anywhere?
+	$('.paging input').on('change', function (event) {
 		
 		event.preventDefault();
 		
@@ -359,8 +357,9 @@ $(document).ready(function () {
 		
 	});
 
+	// This doesn't seem to be used anywhere?
 	// cancel button on ajaxed page
-	$('.ajax_cancel').live('click', function (event) {
+	$('.ajax_cancel').on('click', function (event) {
 		
 		event.preventDefault();
 		
@@ -377,8 +376,8 @@ $(document).ready(function () {
 	//**********************
 	//  popup dialog for fk
 
-	
-	$('.dialog').live('click', function (event) {
+	// This doesn't seem to be used anywhere?
+	$('.dialog').on('click', function (event) {
 		
 		event.preventDefault();
 		
@@ -430,21 +429,21 @@ $(document).ready(function () {
 	 */
 	
 	// original print action
-	$('#printtype', '#print_action').live('change', function () {
+	$(document).on('change', '#print_action #printtype', function () {
 		toggle_print_elements(this, ["csv"]);
 	});
 	
-	$('#printaction', '#print_action').live('change', function () {
+	$(document).on('change', '#print_action #printaction', function () {
 		toggle_print_elements(this, ["Print", "Save", "Email"]);
 	});
 	
 	// new print dialog
-	$('#printtype', '#print_dialog').live('change', function () {
+	$(document).on('change', '#print_dialog #printtype', function () {
 		$('.output_options').hide();
 		$('.' + $(this).val() + '_options').show();
 	});
 	
-	$('#printaction', '#print_dialog').live('change', function () {
+	$(document).on('change', '#print_dialog #printaction', function () {
 		$('.action_options').hide();
 		$('.' + $(this).val() + '_options').show();
 	});
@@ -454,7 +453,7 @@ $(document).ready(function () {
 	//  SEARCH
 
 	// advanced search
-	$('#show_advanced_search').live('click', function () {
+	$('#show_advanced_search').on('click', function () {
 		
 		var $self				= $(this),
 			$advanced_search	= $('#advanced_search');
@@ -471,7 +470,7 @@ $(document).ready(function () {
 	});
 	
 	// AJAXed search button
-	$('#submit_holder #search_submit, #submit_holder #search_clear, .ajax_related_item form input[type=submit][name=saveform]').live('click', function (event) {
+	$(document).on('click', '#submit_holder #search_submit, #submit_holder #search_clear, .ajax_related_item form input[type=submit][name=saveform]', function (event) {
 		
 		event.preventDefault();
 		
@@ -508,12 +507,12 @@ $(document).ready(function () {
 	drag_drop_fields();
 		
 	// breadcrumb automatic search
-	$('.uz_breadcrumbs select').live('change', function () {
+	$('.uz_breadcrumbs select').on('change', function () {
 		$(this).parents('form').find('#search_submit').click();
 	});
 	
 	// PRINT BUTTON IN SEARCH BOX
-	$('#search_print').live('click', function (event) {
+	$(document).on('click', '#search_print', function (event) {
 				
 		event.preventDefault();
 		
@@ -606,15 +605,16 @@ $(document).ready(function () {
 		
 	});	
 	
+	// Some of these eglet functions don't seem to be needed?
 	// we could use CSS for this, just base it on class:hover
-	$('.eglet img.eglet_open').live('click', function (event) {
+	$('.eglet img.eglet_open').on('click', function (event) {
 		var element = $(event.target);
 		element.parents('div.eglet').find('.eglet_body').hide('blind', {}, '300');
 		var img_src = element.attr('src').replace('open', 'closed');
 		element.removeClass('eglet_open').addClass('eglet_closed').attr('src', img_src);
 	});
 	
-	$('.eglet img.eglet_closed').live('click', function (event) {
+	$('.eglet img.eglet_closed').on('click', function (event) {
 		var element = $(event.target);
 		element.parents('div.eglet').find('.eglet_body').show('blind', {}, '300');
 		var img_src = element.attr('src').replace('closed', 'open');
@@ -622,20 +622,20 @@ $(document).ready(function () {
 	});
 	
 	// we cannot use CSS to hover, because CSS cannot handle img src... we also won't have any control over the theme
-	$('.eglet h2 img').live('mouseover', function (event) {
+	$('.eglet h2 img').on('mouseover', function (event) {
 		var element = $(event.target);
 		var img_src = element.attr('src').replace('nofocus', 'focus');
 		element.attr('src', img_src);
 	});
 	
-	$('.eglet h2 img').live('mouseout', function (event) {
+	$('.eglet h2 img').on('mouseout', function (event) {
 		var element = $(event.target);
 		var img_src = element.attr('src').replace('focus', 'nofocus');
 		element.attr('src', img_src);
 	});
 	
 	// eglet a.ajax
-	$('.eglet a.ajax').live('click', function (event) {
+	$('.eglet a.ajax').on('click', function (event) {
 		event.preventDefault();
 		
 		var $self = $(this),
@@ -655,7 +655,7 @@ $(document).ready(function () {
 	});
 	
 	// eglet orders_type
-	$('.eglet #orders_summary #orders_type').live('change', function (event) {
+	$(document).on('change', '.eglet #orders_summary #orders_type', function (event) {
 		
 		var $self = $(this);
 		
@@ -672,7 +672,7 @@ $(document).ready(function () {
 	});
 	
 	// eglet invoice_type
-	$('.eglet #invoices_summary #invoices_type').live('change', function (event) {
+	$(document).on('change', '.eglet #invoices_summary #invoices_type', function (event) {
 		
 		var $self = $(this);
 		
@@ -689,16 +689,18 @@ $(document).ready(function () {
 	});
 
 	
-	 //***************
+	//***************
 	//  SEARCH MATRIX
+	//   This relates to lib/classes/searches/MatrixSearchField.php,
+	//   which does not seem to be used anywhere in uzERP.
 
-	$('a.clone_matrix').live('click', function () {
+	$('a.clone_matrix').on('click', function () {
 		$('.matrix_field:last', '#matrix_parent_id').clone().appendTo('#matrix_parent_id');
 		$('input,select,textarea', '.matrix_field:last').val('');
 		
 	});
 
-	$('a.remove_matrix').live('click', function (event) {
+	$('a.remove_matrix').on('click', function (event) {
 		event.preventDefault();
 		if ($(this).parents('#matrix_parent_id').children('.matrix_field').length > 1) {
 			$(this).parents('p').remove();
@@ -706,11 +708,12 @@ $(document).ready(function () {
 	});	
 	
 	
-	 //**************
+	//**************
 	//  SELECT ITEMS
+	//  Related to product selector. Do we want to maintain it?
 
 	// select all items, common-select_items
-	$('a.select_all', '.common-select_items').live('click', function (event) {
+	$(document).on('click', '.common-select_items a.select_all', function (event) {
 		event.preventDefault();
 		// set default value for hidden field
 		$('#targets_text').val('');
@@ -728,12 +731,12 @@ $(document).ready(function () {
 	});
 	
 	// remove all items, common-select_items
-	$('a.remove_all', '.common-select_items').live('click', function (event) {
+	$(document).on('click', '.common-select_items a.remove_all', function (event) {
 		event.preventDefault();
 		// set default value for hidden field
 		$('#targets_text').val('');
 		// loop through remove buttons
-		$('button.item_remove', '.common-select_items').each(function () {
+		$('button.item_remove').each(function () {
 			// deselect checkbox if it exists
 			$('#checkbox_' + $(this).attr('rel')).removeAttr('checked');
 			// append the id and false to the targets field
@@ -744,24 +747,25 @@ $(document).ready(function () {
 	});
 	
 	// select single item, common-select_items
-	$('input.item_select', '.common-select_items').live('change', function (event) {
+	$(document).on('click', '.common-select_items input.item_select', function (event) {
 		var line_data = $(this).parents('tr').children('input.item_data').val();
 		$('#targets_text').val(line_data.replace("__REPLACE__", $(this).prop('checked'))).trigger('change');
 	});
 	
 	// remove single item, common-select_items
-	$('button.item_remove', '.common-select_items').live('click', function (event) {
+	$(document).on('click', '.common-select_items button.item_remove', function (event) {
 		event.preventDefault();
 		$('#checkbox_' + $(this).attr('rel')).removeAttr('checked');
 		$('#targets_text').val($(this).attr('rel') + '=false').trigger("change");
 	});
 
 	
-	 //***************
+	//***************
 	//  SELECT TARGET
+	//  Related to product selector. Do we want to maintain it?
 
 	// select all items, common-selector_list_target
-	$('a.select_all', '.common-selector_list_target').live('click', function (event) {
+	$(document).on('click', '.common-selector_list_target a.select_all', function (event) {
 		event.preventDefault();
 		// set default value for hidden field
 		$('#targets_text').val('');
@@ -779,7 +783,7 @@ $(document).ready(function () {
 	});
 	
 	// remove all items, common-selector_list_target
-	$('a.remove_all', '.common-selector_list_target').live('click', function (event) {
+	$(document).on('click', '.common-selector_list_target a.remove_all', function (event) {
 		event.preventDefault();
 		// set default value for hidden field
 		$('#targets_text').val('');
@@ -795,19 +799,19 @@ $(document).ready(function () {
 	});
 	
 	// select single item, common-selector_list_target
-	$('input.target_select', '.common-selector_list_target').live('change', function (event) {
+	$(document).on('change','.common-selector_list_target input.target_select', function (event) {
 		var line_data = $(this).parents('tr').children('input.item_data').val();
 		$('#targets_text').val(line_data.replace("__REPLACE__", $(this).prop('checked'))).trigger('change');
 	});
 	
-	$('button.remove_target', '.common-selector_list_target').live('click', function (event) {
+	$(document).on('click', '.common-selector_list_target button.remove_target', function (event) {
 		event.preventDefault();
 		$('#checkbox_' + $(this).attr('rel')).removeAttr('checked');
 		$('#targets_text').val($(this).attr('rel') + '=false').trigger("change");
 	});
 	
 	// item selector generic
-	$('.common-select_items #targets_text, .common-selector_list_target #targets_text').live('change', function () {
+	$(document).on('change', '.common-select_items #targets_text, .common-selector_list_target #targets_text', function () {
 		
 		var $self = $(this);
 		
@@ -822,12 +826,13 @@ $(document).ready(function () {
 	});
 	
 	
-	 //************************
+	//************************
 	//  SELECT FOR OUTPUT RULE
+	//  Used in modules/public_pages/erp/ledger/sales_ledger/controllers/SlcustomersController.php, for example.
 
 	// set bind for elements 
 	// cannot use context here, as ajax is fired in places where it shouldn't :: 
-	$('.select-for-output input, .select-for-output select').live('change', function () {
+	$(document).on('change', '.select-for-output input, .select-for-output select', function () {
 		
 		var $self	= $(this),
 			value	= $self.val(),
@@ -859,7 +864,7 @@ $(document).ready(function () {
 	 //************************
 	//  PAGING SELECT RULE
 
-	$('.paging-select input').live('change', function () {
+	$(document).on('change', '.paging-select input', function () {
 		
 		var $self	= $(this),
 			total = isNaN(parseFloat($('#selected_count').val()))?0:parseFloat($('#selected_count').val());;
@@ -880,12 +885,12 @@ $(document).ready(function () {
 	 //********
 	//  OTHERS
 	
-	$('#company_selector #company').live('change', function () {
+	$('#company_selector #company').on('change', function () {
 		$(this).parents('form').submit();
 	});
 	
 	// get user confirmation before deleting
-	$('a[href*="action=delete"]').not('a.confirm').live('click', function (event) {
+	$('a[href*="action=delete"]').not('a.confirm').on('click', function (event) {
 
 		var answer = confirm("Are you sure you want to delete this item?");
 		if (!answer) {
@@ -895,7 +900,7 @@ $(document).ready(function () {
 	});
 
 	// View Section show-hide
-	$('.expand.heading').live('click', function() {
+	$('.expand.heading').on('click', function() {
 		
 		var $self	= $(this),
 		$next	= $self.next();
@@ -926,7 +931,7 @@ $(document).ready(function () {
 	 //********
 	// SORTING
 	
-	$('.ul-sort').live('click', function(event) {
+	$('.ul-sort').on('click', function(event) {
 		
 		event.preventDefault();
 
@@ -948,7 +953,7 @@ $(document).ready(function () {
 		return this.animate({opacity: '1', marginTop: '0'}, speed, easing, callback);
 	};
 	
-	$('ul.collapsible > li div:first-of-type span').live('click',function() {
+	$('ul.collapsible > li div:first-of-type span').on('click',function() {
 		
 		var $collapsible	= $(this).parents('li'),
 			$last_div		= $collapsible.find('div:last-of-type');

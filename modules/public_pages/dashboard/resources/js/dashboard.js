@@ -10,7 +10,7 @@ $(document).ready(function() {
 	
 	/* dashboard -> mydata -> index */
 	
-	$('#folders .heading','#dashboard-mydata-index').live('click',function() {
+	$(document).on('click', '#folders .heading','#dashboard-mydata-index', function() {
 		
 		if ($(this).hasClass('open')) {
 			$('#'+$(this).data('type')).show();
