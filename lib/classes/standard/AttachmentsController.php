@@ -510,7 +510,7 @@ class AttachmentsController extends Controller {
 			$outputs_remove = $outputs->delete($sh);
 		}
 
-		if (count($this->_data['tag']) > 0 && $attachment->id > 0) {
+		if (is_countable($this->_data['tag']) && count($this->_data['tag']) > 0 && $attachment->id > 0) {
 			foreach($this->_data['tag'] as $tag) {
 				$output = DataObjectFactory::Factory('EntityAttachmentOutput');
 				$output->id = 'NULL';
@@ -522,7 +522,7 @@ class AttachmentsController extends Controller {
 		}
 
 		// Now check and tidy up
-		if (!$file_save || !$attachment_save || !$outputs_remove || !$outputs_save)
+		if (!$file_save || !$attachment_save || $outputs_remove === false || !$outputs_save)
 		{
 			$errors[] = 'Error loading file';
 		}
