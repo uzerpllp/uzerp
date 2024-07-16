@@ -1065,7 +1065,10 @@ class DataObjectCollection implements Iterator, Countable {
 	// to implement countable
 	public function count(): int
 	{
-		return count($this->_dataobjects);
+		if (is_countable($this->_dataobjects)) {
+			return count($this->_dataobjects);
+		}
+		return 0;
 	}
 	
 	function remove($index)

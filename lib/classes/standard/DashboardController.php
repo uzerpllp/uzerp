@@ -13,7 +13,7 @@ class DashboardController extends Controller
 	
 	protected $dashboard_module;
 	
-	function __construct($module=null,$view)
+	function __construct($module = null, $view = null)
 	{
 		
 		parent::__construct($module, $view);
@@ -33,7 +33,7 @@ class DashboardController extends Controller
 		
 		// dynamically generate the quick links from the permissions for the selected module 
 		$eglet = new SimpleMenuEGlet(new SimpleRenderer);
-		$eglet->setMenuData($this->dashboard_module, $system->pid);
+		$eglet->setMenuData($this->dashboard_module);
 		$eglet->setSmarty($this->view);
 		
 		if (count($eglet->getContents()) > 0)
@@ -141,10 +141,15 @@ class DashboardController extends Controller
 		$prefs = UserPreferences::getPreferencesClass($username);
 		
 		$uzlets = $prefs->getDashboardContents($username, $this->dashboard_module, $this->_data['pid']);
-		$selected = $uzlets['selected'][$this->dashboard_module];
+		$selected = $uzlets['selected'][$this->dashboard_module] ?? [];
 		ksort($selected);
-				
-		$this->view->set('module_count', count($uzlets['available'][$this->dashboard_module]));
+		
+		if (is_countable($uzlets['available'][$this->dashboard_module])) {
+			$this->view->set('module_count',  count($uzlets['available'][$this->dashboard_module]));
+		} else {
+			$this->view->set('module_count',  0);
+		}
+		
 		$this->view->set('selected', $selected);
 		$this->view->set('available', $uzlets['available'][$this->dashboard_module]);
 		$this->view->set('username', $username);

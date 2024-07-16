@@ -407,12 +407,12 @@ class AccessObject {
 		
 		$controller = str_replace('controller', '', strtolower($controller));
 		
-		if ($modules['module'] =='dashboard' && (empty($controller) || $controller == 'index'))
+		if (array_key_exists('module', $modules) && $modules['module'] =='dashboard' && (empty($controller) || $controller == 'index'))
 		{
 			return true;
 		}
 		
-		if ($modules['module'] =='login' || trim($modules['module']) == '')
+		if ((array_key_exists('module', $modules) && (($modules['module'] =='login') || trim((string) $modules['module']) == '')))
 		{
 			return true;
 		}

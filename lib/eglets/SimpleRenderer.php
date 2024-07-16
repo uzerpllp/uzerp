@@ -8,8 +8,7 @@
 
 class SimpleRenderer implements Renderer
 {
-
-	protected $version = '$Revision: 1.6 $';
+	protected $cache_lifetime;
 
 	public function render(EGlet &$eglet, &$smarty)
 	{

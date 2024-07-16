@@ -19,7 +19,7 @@ class SimpleMenuEGlet extends SimpleListEGlet
 	}
 
 
-	function setMenuData($module, $pid)
+	function setMenuData($module, $pid = null)
 	{
 		
 		$ao = AccessObject::instance();

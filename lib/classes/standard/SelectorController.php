@@ -11,7 +11,7 @@
  *	the Free Software Foundation, either version 3 of the License, or
  *	any later version.
  */
-class SelectorController extends PrintController
+class SelectorController extends printController
 {
 
     protected $version = '$Revision: 1.32 $';
@@ -111,7 +111,7 @@ class SelectorController extends PrintController
                 'modules' => $this->_modules,
                 'controller' => $this->name,
                 'action' => 'select_item_component_output',
-                'id' => $current->id
+                //'id' => $current->id
             ),
             'tag' => 'Output Item Component List'
         );
@@ -320,7 +320,7 @@ class SelectorController extends PrintController
         $this->view->register('sidebar', $sidebar);
         $this->view->set('sidebar', $sidebar);
 
-        $this->view->set('view_title', 'view ' . $this->description . ' ' . $this->name);
+        $this->view->set('view_title', 'view ' . $this->name);
 
         $this->setTemplateName('selector_view');
     }
@@ -356,7 +356,7 @@ class SelectorController extends PrintController
             $s_data['parent_id'] = '-1';
         }
 
-        $this->setSearch($this->_templateobject, 'selectorSearch', 'itemSearch', $s_data);
+        $this->selectorSetSearch($this->_templateobject, 'selectorSearch', 'itemSearch', $s_data);
 
         $collection = new SelectorCollection($this->_templateobject, $this->itemOverviewName);
         $sh = $this->setSearchHandler($collection);
@@ -1066,7 +1066,7 @@ class SelectorController extends PrintController
                 $params = explode(',', $value);
                 // open up the first record
                 $first_value = explode('=', $params[0]);
-                $linkdata = SESSION::Instance();
+                $linkdata = Session::Instance();
                 $selected_items = empty($_SESSION['selected_items']['data']) ? array() : $_SESSION['selected_items']['data'];
                 $deleted_items = empty($_SESSION['selected_items']['delete']) ? array() : $_SESSION['selected_items']['delete'];
                 if (isset($selected_items[$first_value[0]])) {
@@ -1104,7 +1104,7 @@ class SelectorController extends PrintController
                 $params = explode(',', $value);
                 // open up the first record
                 $first_value = explode('=', $params[0]);
-                $linkdata = SESSION::Instance();
+                $linkdata = Session::Instance();
                 $selected_targets = empty($_SESSION['selected_targets']['data']) ? array() : $_SESSION['selected_targets']['data'];
                 $deleted_targets = empty($_SESSION['selected_targets']['delete']) ? array() : $_SESSION['selected_targets']['delete'];
                 if (isset($selected_targets[$first_value[0]])) {
@@ -1238,7 +1238,7 @@ class SelectorController extends PrintController
 
         // $sh = new SearchHandler($collection, FALSE);
         $sh = $this->setSearchHandler($collection, 'selector_components');
-        $sh->addConstraint(new constraint('id', 'in', '(' . implode(',', $_selected_ids) . ')'));
+        $sh->addConstraint(new Constraint('id', 'in', '(' . implode(',', $_selected_ids) . ')'));
 
         // $sh->extractFields();
 
@@ -1386,7 +1386,6 @@ class SelectorController extends PrintController
 
         $options['xmlSource'] = $this->generate_xml(array(
             'model' => $selectorobjects,
-            'extra' => $extra,
             'load_relationships' => FALSE
         ));
 
