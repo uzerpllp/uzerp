@@ -8,7 +8,8 @@
 
 class MydataController extends Controller {
 
-	protected $version = '$Revision: 1.12 $';
+	protected $MyDataPath;
+	protected $MyDataURL;
 	
 	function __construct($module = NULL, $action = NULL)
 	{
@@ -19,7 +20,7 @@ class MydataController extends Controller {
 		$this->MyDataURL	= DATA_USERS_URL . EGS_USERNAME . DIRECTORY_SEPARATOR;
 	}
 
-	function index(\DataObjectCollection $collection, $sh = '', &$c_query = \null)
+	function index(\DataObjectCollection $collection = null, $sh = '', &$c_query = \null)
 	{
 		$dir_tree = array();
 		
@@ -209,7 +210,7 @@ class MydataController extends Controller {
 				$link = '/?'.setParamsString(array('modules'	=> $this->_modules
 												  ,'controller'	=> 'attachments'
 												  ,'action'		=> 'view_file'
-												  ,'other'		=> array(file_id => $attachment['file_id'])));
+												  ,'other'		=> array('file_id' => $attachment['file_id'])));
 				
 				$details = array(
 						'name'		=> $attachment['file'],
