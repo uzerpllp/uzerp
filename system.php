@@ -358,7 +358,10 @@ class system
             $this->view->set('login_css', $logincss[0]);
         }
 
-        $jsdir = self::findModulePath(PUBLIC_MODULES, $this->modules['module'], FALSE);
+        $jsdir = '';
+        if (array_key_exists('module', $this->modules)) {
+            $jsdir = self::findModulePath(PUBLIC_MODULES, $this->modules['module'], FALSE);
+        }
         $jsdir .= DIRECTORY_SEPARATOR . 'resources/js';
         if (!strpos($jsdir, 'user/modules')) {
             $jsdir = str_replace(FILE_ROOT . 'modules/public_pages' , 'dist/js/modules', $jsdir);
@@ -378,7 +381,9 @@ class system
             $this->view->set('user_css', $user_css[0]);
         }
         $this->view->set('main_js', $js[0]);
-        $this->view->set('module_js', $modulejs[0]);
+        if (count($modulejs) == 1) {
+            $this->view->set('module_js', $modulejs[0]);
+        }
 
         $action = $this->action;
         $controller = $this->controller;
@@ -547,7 +552,7 @@ class system
         // Session timed out on input form so save the form data while the user logs back in
         // See system::setController for where the form data is read after logging back in
 
-        if ($this->modules['module'] == 'login' && ! empty($_POST)) {
+        if (array_key_exists('module', $this->modules) && $this->modules['module'] == 'login' && ! empty($_POST)) {
             $_SESSION['data'] = $_POST;
         }
 
@@ -556,7 +561,7 @@ class system
         if (($this->ajax || $this->json) && $echo !== FALSE) {
             echo $controller->view->get('echo');
             exit();
-        } elseif ($this->modules['module'] == 'login') {
+        } elseif (array_key_exists('module', $this->modules) && $this->modules['module'] == 'login') {
 
             $current = getParamsArray($_SERVER['QUERY_STRING']);
             $referer['modules'] = $current['modules'];
@@ -808,7 +813,7 @@ class system
 
             $this->action = ActionFactory::Factory($this->controller);
 
-            if ($this->modules['module'] == 'login') {
+            if (array_key_exists('module', $this->modules) && $this->modules['module'] == 'login') {
 
                 $actions = array(
                     'index',
