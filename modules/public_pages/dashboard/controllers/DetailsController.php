@@ -6,7 +6,7 @@
  *	Released under GPLv3 license; see LICENSE. 
  **/
 
-System::references('contacts');
+system::references('contacts');
 
 class DetailsController extends PersonsController {
 
@@ -25,7 +25,7 @@ class DetailsController extends PersonsController {
 			$this->_data['id']=$user->person_id;
 			parent::view();
 			$person=$this->_uses['Person'];
-			System::references('contacts', 'template', 'persons');
+			system::references('contacts', 'template', 'persons');
 			$this->_templateName=$this->getTemplateName('view');
 			$sidebarlist[$person->fullname]=array('tag'=>$person->fullname
 												 ,'link'=>array('module'=>'dashboard','controller'=>'details')
@@ -47,11 +47,11 @@ class DetailsController extends PersonsController {
 		$user->load(EGS_USERNAME);
 		$this->_data['id']=$user->person_id;
 		parent::edit();
-		System::references('contacts', 'template', 'persons');
+		system::references('contacts', 'template', 'persons');
 		$this->_templateName=$this->getTemplateName('new');
 	}
 
-	function save($modelName = \null, $dataIn = [], &$errors = []) {
+	function save($modelName = \null, $dataIn = [], &$errors = []): void {
 		$user=$this->_uses['User'];
 		$user->load(EGS_USERNAME);
 		if($this->_data['Person']['id']==$user->person_id) {
