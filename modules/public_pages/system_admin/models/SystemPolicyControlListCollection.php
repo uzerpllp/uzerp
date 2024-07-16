@@ -27,7 +27,7 @@ class SystemPolicyControlListCollection extends DataObjectCollection
 			return array();
 		}
 		
-		$system = System::Instance();
+		$system = system::Instance();
 		
 		$module_component = strtolower($module_component);
 		
@@ -44,7 +44,7 @@ class SystemPolicyControlListCollection extends DataObjectCollection
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('module', '=', $db->qstr($system->controller->module)));
 		
-		$system = System::Instance();
+		$system = system::Instance();
 		
 		$cc = new ConstraintChain();
 		
@@ -88,7 +88,7 @@ class SystemPolicyControlListCollection extends DataObjectCollection
 		
 		$sh->addConstraint(new Constraint('module_component', '=', $module_component));
 		
-		$system = System::Instance();
+		$system = system::Instance();
 		
 		$cc = new ConstraintChain();
 		
@@ -96,7 +96,7 @@ class SystemPolicyControlListCollection extends DataObjectCollection
 		
 		$cc1->add(new Constraint('access_type', '=', 'Role'));
 		
-		$roles = $system->access->roles;
+		$roles = $system->access->roles ?? null;
 		
 		if ($roles != null && count($roles) > 0)
 		{

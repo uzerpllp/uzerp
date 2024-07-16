@@ -323,7 +323,7 @@ class SOrder extends SPOrder {
 
 	}
 
-	public function getPersonAddresses ($id='', $data)
+	public function getPersonAddresses ($id='', $data=[])
 	{
 
 		$addresslist=array();

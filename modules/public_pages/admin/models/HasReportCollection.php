@@ -6,8 +6,8 @@
  *	Released under GPLv3 license; see LICENSE. 
  **/
 class HasReportCollection extends DataObjectCollection {
-	
-	protected $version='$Revision: 1.1 $';
+
+	protected $identifierField;
 	
 	public $field;
 		

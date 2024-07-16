@@ -11,6 +11,7 @@ class SOrderCollection extends DataObjectCollection {
 	protected $version = '$Revision: 1.15 $';
 	
 	public $field;
+	protected $view;
 
 	function __construct($do = 'SOrder', $tablename = 'so_headeroverview')
 	{

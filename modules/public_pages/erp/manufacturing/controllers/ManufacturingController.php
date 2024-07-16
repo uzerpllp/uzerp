@@ -56,7 +56,7 @@ class ManufacturingController extends printController {
 		$data=$this->_data['STTransaction'];
 		$stitem=new STItem();
 		$stitem->load($data['stitem_id']);
-		$converted=round($data['qty'],$stitem->qty_decimals);
+		$converted=round((float) $data['qty'],$stitem->qty_decimals);
 		if ($converted<>$data['qty']) {
 			$errors[]='Quantity can only have '.$stitem->qty_decimals.' decimal places';
 		} elseif ($data['qty']<=0) {
