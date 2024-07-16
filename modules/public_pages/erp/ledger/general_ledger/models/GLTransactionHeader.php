@@ -55,7 +55,7 @@ class GLTransactionHeader extends DataObject
 								'T' => 'Template']);
 	}
 
-	function delete(&$errors = array())
+	function delete($id = null, &$errors = array(), $archive = FALSE, $archive_table = null, $archive_schema = null)
 	{
 		$db = DB::Instance();
 
@@ -110,7 +110,7 @@ class GLTransactionHeader extends DataObject
 
 	}
 
-	static function Factory($data, &$errors, $do_name = __CLASS__)
+	static function Factory($data, &$errors = [], $do_name = __CLASS__)
 	{
 		$do = DataObjectFactory::Factory($do_name);
 

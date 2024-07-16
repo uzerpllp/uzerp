@@ -62,7 +62,7 @@ class ExpenseLine extends DataObject
 		
 	}
 	
-	static function Factory($data, &$errors, $do)
+	static function Factory($data, &$errors = [], $do = null)
 	{
 
 		if (!isset($data['expenses_header_id']))

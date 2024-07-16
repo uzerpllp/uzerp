@@ -56,53 +56,51 @@ class LedgerTransaction extends DataObject
  		
 	}
 	
-	// Appears not to be used
+	public static function Factory(&$data, &$errors = [], $do = null)
+	{
 	
-	// public static function Factory(&$data, &$errors, $do)
-	// {
-	
-	// 	$data['due_date'] = $data['transaction_date'];
+		$data['due_date'] = $data['transaction_date'];
 		
-	// 	if(isset($data['ext_reference']) && !isset($data['our_reference']))
-	// 	{
-	// 		$data['our_reference'] = $data['ext_reference'];
-	// 	}
-	// 	elseif(isset($data['reference']) && !isset($data['our_reference']))
-	// 	{
-	// 		$data['our_reference'] = $data['reference'];
-	// 	}
+		if(isset($data['ext_reference']) && !isset($data['our_reference']))
+		{
+			$data['our_reference'] = $data['ext_reference'];
+		}
+		elseif(isset($data['reference']) && !isset($data['our_reference']))
+		{
+			$data['our_reference'] = $data['reference'];
+		}
 	
-	// 	if(isset($data['description']) && !isset($data['comment']))
-	// 	{
-	// 		$data['comment'] = $data['description'];
-	// 	}
+		if(isset($data['description']) && !isset($data['comment']))
+		{
+			$data['comment'] = $data['description'];
+		}
 		
-	// 	if(isset($data['comment']) && !isset($data['description']))
-	// 	{
-	// 		$data['description'] = $data['comment'];
-	// 	}
+		if(isset($data['comment']) && !isset($data['description']))
+		{
+			$data['description'] = $data['comment'];
+		}
 	
-	// 	$mult				= static::$multipliers[$data['source']][$data['transaction_type']];
-	// 	$data['net_value']	= $data['net_value']*$mult;
+		$mult				= static::$multipliers[$data['source']][$data['transaction_type']];
+		$data['net_value']	= $data['net_value']*$mult;
 	
-	// 	self::setCurrency($data);
+		self::setCurrency($data);
 	
-	// 	//the outstanding (os) values are the gross values to begin with
-	// 	$prefixes = array('','base_','twin_');
+		//the outstanding (os) values are the gross values to begin with
+		$prefixes = array('','base_','twin_');
 	
-	// 	foreach($prefixes as $prefix)
-	// 	{
-	// 		$data[$prefix.'os_value'] = $data[$prefix.'gross_value'];
-	// 	}
+		foreach($prefixes as $prefix)
+		{
+			$data[$prefix.'os_value'] = $data[$prefix.'gross_value'];
+		}
 		
-	// 	// Validate the Ledger Transactions
-	// 	if (empty($data['status']))
-	// 	{
-	// 		$data['status'] = 'O';
-	// 	}
+		// Validate the Ledger Transactions
+		if (empty($data['status']))
+		{
+			$data['status'] = 'O';
+		}
 
-	// 	return parent::Factory($data, $errors, $do);
-	// }
+		return parent::Factory($data, $errors, $do);
+	}
 	
 	public function saveForPayment(&$errors = array())
 	{
