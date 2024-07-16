@@ -100,7 +100,8 @@ class ExpensesController extends HrController
 
         $errors = array();
         $this->_data[$this->modeltype]['authorised_date'] = date(DATE_FORMAT);
-        $this->_data[$this->modeltype]['status'] = Expense::statusAuthorised();
+        $expenseObj = new Expense();
+        $this->_data[$this->modeltype]['status'] = $expenseObj->statusAuthorised();
 
         if (! Expense::updateStatus($this->_data[$this->modeltype], $errors)) {
             $flash->addErrors($errors);
@@ -114,7 +115,7 @@ class ExpensesController extends HrController
     public function delete($modelName = null)
     {
         $this->checkRequest(['post'], true);
-        $flash = Flash::Instance();
+        
         if (! $this->checkParams('id')) {
             sendBack();
         }
@@ -562,6 +563,8 @@ class ExpensesController extends HrController
 
     public function view()
     {
+        $flash = Flash::Instance();
+        
         if (! $this->loadData() && ! isset($this->_data['expense_number'])) {
             $this->dataError();
             sendBack();
