@@ -26,7 +26,7 @@ class File extends DataObject
 		$this->getField('size')->setFormatter(new FilesizeFormatter());
 	}
 	
-	public function delete($id = null, $errors = array(), $archive = FALSE, $archive_table = null, $archive_schema = null)
+	public function fileDelete($id = null, $errors = array(), $archive = FALSE, $archive_table = null, $archive_schema = null)
 	{
 		if (!$this->isLoaded())
 		{
@@ -166,7 +166,7 @@ class File extends DataObject
 	/*
 	 * Static Functions
 	 */
-	public static function Factory(Array $data, Array &$errors,$do_name=null)
+	public static function Factory($data, &$errors=[], $do_name=null)
 	{
 		if(empty($data['name']))
 		{
