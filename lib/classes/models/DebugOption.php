@@ -53,7 +53,7 @@ class DebugOption extends DataObject {
 		return $debugoption;
 	}
 	
-	function getOptions() {
+	function getOptions($_field = null, $depth = 5) {
 		if ($this->isLoaded()) {
 			return unserialize($this->options);
 		} else {
@@ -61,7 +61,7 @@ class DebugOption extends DataObject {
 		}
 	}
 	
-	function setOptions($options=array()) {
+	function setOptions($field = null, $options= []) {
 		return serialize($options);
 	}
 	
