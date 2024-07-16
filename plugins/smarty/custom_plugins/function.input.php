@@ -29,7 +29,7 @@ function smarty_function_input($params, &$smarty)
 	// If there was en error or failed validation, add a class and message to the input.
 	$flash = Flash::Instance();
 	$errors = $flash->getMessages('errors');
-	if (array_key_exists($attribute, $errors) || (!empty($with) && isset($with) && array_key_exists(strtolower(get_class($with['model'])).'_'.$attribute, $errors))) {
+	if (array_key_exists($attribute, $errors) || (!empty($with) && isset($with) && $with->model !== null && array_key_exists(strtolower(get_class($with['model'])).'_'.$attribute, $errors))) {
 		$data['attrs']['class'][]	= 'field-error';
 		$data['attrs']['data-field-error'] = $errors[$attribute];
 	}
