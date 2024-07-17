@@ -24,7 +24,7 @@ class PLTransaction extends LedgerTransaction
 											,'for_payment'
 											,'plmaster_id');
 	
-	protected static $multipliers = array(
+	public static $multipliers = array(
 		'P'=>array(
 			'I'=>1,
 			'C'=>-1,
