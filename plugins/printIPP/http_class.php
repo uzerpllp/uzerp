@@ -1,6 +1,4 @@
 <?php
-/* @(#) $Header: /export/shared/ITSupport/Projects/CVS/egs3/plugins/printIPP/http_class.php,v 1.3 2011-12-02 15:32:32 deaseman Exp $ */
-/* vim: set expandtab tabstop=2 shiftwidth=2 foldmethod=marker: */
 /* ====================================================================
  * GNU Lesser General Public License
  * Version 2.1, February 1999
@@ -25,8 +23,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * $Id: http_class.php,v 1.3 2011-12-02 15:32:32 deaseman Exp $
+ *
+ * 2024-07-17 [uzERP] - Updated to run under PHP8.3
  */
+
 /**
  *  This class is intended to implement a subset of Hyper Text Transfer Protocol
  *  (HTTP/1.1) on client side  (currently: POST operation), with file streaming
@@ -59,18 +59,17 @@
  * - httpException extends Exception
  * - http_class
  */
-/***********************
+
+ /***********************
  *
  * httpException class
  *
  ************************/
 class httpException extends Exception
 {
- protected $errno;
- public function __construct ($msg, $errno = null)
+ public function __construct ($msg, protected $errno = null)
  {
   parent::__construct ($msg);
-  $this->errno = $errno;
  }
  public function getErrorFormatted ()
  {
@@ -133,6 +132,7 @@ class http_class
  public $with_exceptions = 0; // compatibility mode for old scripts
  public $port;
  public $host;
+ public $user;
  private $default_port = 631;
  private $headers;
  private $reply_headers = array ();
@@ -176,7 +176,7 @@ class http_class
   $url = $arguments["URL"];
   $port = $this->default_port;
   #$url = split (':', $url, 2);
-  $url = preg_split ('#:#', $url, 2);
+  $url = preg_split ('#:#', (string) $url, 2);
   $transport_type = $url[0];
   $unix = false;
   switch ($transport_type)
@@ -203,7 +203,7 @@ class http_class
   if (!$unix)
   {
    #$url = split ("/", preg_replace ("#^/{1,}#", '', $url), 2);
-   $url = preg_split ("#/#", preg_replace ("#^/{1,}#", '', $url), 2);
+   $url = preg_split ("#/#", (string) preg_replace ("#^/{1,}#", '', $url), 2);
    $url = $url[0];
    $port = $this->port;
    $error = sprintf (_("Cannot resolve url: %s"), $url);
@@ -239,7 +239,7 @@ class http_class
    return $this->_HttpError ($error." ".$result[1], E_USER_WARNING);
   }
   self::_ReadReply ();
-  if (!preg_match ('#http/1.1 401 unauthorized#', $this->status))
+  if (!preg_match ('#http/1.1 401 unauthorized#', (string) $this->status))
   {
    return array (true, "success");
   }
@@ -250,7 +250,7 @@ class http_class
    return $this->_HttpError ($error, E_USER_WARNING);
   }
   #$authtype = split (' ', $this->reply_headers["www-authenticate"]);
-  $authtype = preg_split ('# #', $this->reply_headers["www-authenticate"]);
+  $authtype = preg_split ('# #', (string) $this->reply_headers["www-authenticate"]);
   $authtype = strtolower ($authtype[0]);
   switch ($authtype)
   {
@@ -276,7 +276,7 @@ class http_class
   $error =
    sprintf (_
      ('Streaming request failed to %s after a try to authenticate'),
-     $url);
+     $arguments['URL']);
   $result = self::_StreamRequest ($arguments);
   if (!$result[0])
   {
@@ -293,7 +293,7 @@ class http_class
 
  public function ReadReplyBody (&$body, $chunk_size)
  {
-  $body = substr ($this->reply_body, $this->last_limit, $chunk_size);
+  $body = substr ((string) $this->reply_body, $this->last_limit, $chunk_size);
   $this->last_limit += $chunk_size;
  }
 
@@ -333,7 +333,7 @@ class http_class
 
  private function _streamString ($string)
  {
-  $success = fwrite ($this->connection, $string);
+  $success = fwrite ($this->connection, (string) $string);
   if (!$success)
   {
    return false;
@@ -354,11 +354,13 @@ class http_class
   $content_length = 0;
   foreach ($this->arguments["BodyStream"] as $argument)
   {
-   list ($type, $value) = each ($argument);
+   $type = key($argument);
+   $value = current($argument);
+   next($argument);
    reset ($argument);
    if ($type == "Data")
    {
-    $length = strlen ($value);
+    $length = strlen ((string) $value);
    }
    elseif ($type == "File")
    {
@@ -421,14 +423,16 @@ class http_class
   }
   foreach ($this->arguments["BodyStream"] as $argument)
   {
-   list ($type, $value) = each ($argument);
+   $type = key($argument);
+   $value = current($argument);
+   next($argument);
    reset ($argument);
    if ($type == "Data")
    {
     $streamed_length = 0;
-    while ($streamed_length < strlen ($value))
+    while ($streamed_length < strlen ((string) $value))
     {
-     $string = substr ($value, $streamed_length, $this->window_size);
+     $string = substr ((string) $value, $streamed_length, $this->window_size);
      if (!$this->_streamString ($string))
      {
       return self::_HttpError (_("error while sending body data"),
@@ -520,13 +524,13 @@ class http_class
  {
   $auth = $this->reply_headers["www-authenticate"];
   #list ($head, $auth) = split (" ", $auth, 2);
-  list ($head, $auth) = preg_split ("# #", $auth, 2);
+  [$head, $auth] = preg_split ("# #", (string) $auth, 2);
   #$auth = split (", ", $auth);
   $auth = preg_split ("#, #", $auth);
   foreach ($auth as $sheme)
   {
    #list ($sheme, $value) = split ('=', $sheme);
-   list ($sheme, $value) = preg_split ('#=#', $sheme);
+   [$sheme, $value] = preg_split ('#=#', $sheme);
    $fields[$sheme] = trim (trim ($value), '"');
   }
   $nc = sprintf ('%x', $this->nc);
@@ -604,12 +608,4 @@ class http_class
  }
 
 };
-
-/*
- * Local variables:
- * mode: php
- * tab-width: 2
- * c-basic-offset: 2
- * End:
- */
 ?>

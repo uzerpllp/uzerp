@@ -1,7 +1,5 @@
 <?php
-/* vim: set expandtab tabstop=2 shiftwidth=2 foldmethod=marker: */
-/* @(#) $Header: /export/shared/ITSupport/Projects/CVS/egs3/plugins/printIPP/BasicIPP.php,v 1.2 2011-11-29 10:53:35 deaseman Exp $
- *
+/*
  * Class BasicIPP - Send Basic IPP requests, Get and parses IPP Responses.
  *
  *   Copyright (C) 2005-2009  Thomas HARDING
@@ -24,9 +22,10 @@
  *   mailto:thomas.harding@laposte.net
  *   Thomas Harding, 56 rue de la bourie rouge, 45 000 ORLEANS -- FRANCE
  *
+ *   2024-07-17 [uzERP] - Updated to run under PHP8.3
  */
-/*
 
+/*
    This class is intended to implement Internet Printing Protocol on client side.
 
    References needed to debug / add functionnalities:
@@ -35,10 +34,12 @@
    - RFC 3380
    - RFC 3382
  */
-/*
+
+ /*
    TODO: beta tests on other servers than Cups
  */
-// required and included files
+
+ // required and included files
 require_once ("http_class.php");
 /*
 // If you want http backend from http://www.phpclasses.org/browse/package/3.html
@@ -120,11 +121,9 @@ include_once("SASL/ntlm_sasl_client.php");
  ************************/
 class ippException extends Exception
 {
- protected $errno;
- public function __construct($msg, $errno = null) 
+ public function __construct($msg, protected $errno = null) 
  {
   parent::__construct($msg);
-  $this->errno = $errno;
  }
  public function getErrorFormatted() 
  {
@@ -217,6 +216,13 @@ class BasicIPP
  protected $collection_nbr = array(); //RFC3382
  protected $unix = false; // true -> use unix sockets instead of http
 
+ protected $values;
+ protected $_parsing;
+ protected $tags_types;
+ protected $printer_tags;
+ protected $output;
+ protected $disconnected;
+
  // constructor
  public function __construct() 
  {
@@ -269,7 +275,7 @@ class BasicIPP
 
  public function setPrinterURI($uri) 
  {
-  $length = strlen($uri);
+  $length = strlen((string) $uri);
   $length = chr($length);
   while (strlen($length) < 2) $length = chr(0x00) . $length;
   $this->meta->printer_uri = chr(0x45) // uri type | value-tag
@@ -303,7 +309,7 @@ class BasicIPP
   {
    $output = $this->data;
   }
-  if (substr($output, -1, 1) != chr(0x0c)) if (!isset($this->setup->noFormFeed)) $this->datatail = chr(0x0c);
+  if (substr((string) $output, -1, 1) != chr(0x0c)) if (!isset($this->setup->noFormFeed)) $this->datatail = chr(0x0c);
   self::_putDebug(_("Forcing data to be interpreted as RAW TEXT") , 2);
  }
 
@@ -334,7 +340,7 @@ class BasicIPP
 
  public function setCharset($charset = 'us-ascii') 
  {
-  $charset = strtolower($charset);
+  $charset = strtolower((string) $charset);
   $this->charset = $charset;
   $this->meta->charset = chr(0x47) // charset type | value-tag
    . chr(0x00) . chr(0x12) // name-length
@@ -347,7 +353,7 @@ class BasicIPP
 
  public function setLanguage($language = 'en_us') 
  {
-  $language = strtolower($language);
+  $language = strtolower((string) $language);
   $this->meta->language = chr(0x48) // natural-language type | value-tag
    . chr(0x00) . chr(0x1B) //  name-length
    . "attributes-natural-language" //attributes-natural-language
@@ -360,7 +366,7 @@ class BasicIPP
  public function setDocumentFormat($mime_media_type = 'application/octet-stream') 
  {
   self::setBinary();
-  $length = chr(strlen($mime_media_type));
+  $length = chr(strlen((string) $mime_media_type));
   while (strlen($length) < 2) $length = chr(0x00) . $length;
   self::_putDebug(sprintf(_("mime type: %s") , $mime_media_type) , 2);
   $this->meta->mime_media_type = chr(0x49) // document-format tag
@@ -393,7 +399,7 @@ class BasicIPP
  {
   $this->meta->document_name = "";
   if (!$document_name) return true;
-  $document_name = substr($document_name, 0, 1023);
+  $document_name = substr((string) $document_name, 0, 1023);
   $length = strlen($document_name);
   $length = chr($length);
   while (strlen($length) < 2) $length = chr(0x00) . $length;
@@ -532,8 +538,8 @@ class BasicIPP
    . chr(0x00) 
    . chr(0x07) 
    . "message" 
-   . self::_giveMeStringLength(substr($message, 0, 127))
-   . substr($message, 0, 127);
+   . self::_giveMeStringLength(substr((string) $message, 0, 127))
+   . substr((string) $message, 0, 127);
   self::_putDebug(sprintf(_('Setting message to "%s"') , $message) , 2);
  }
 
@@ -803,7 +809,7 @@ class BasicIPP
    else
    {
     self::_errorLog(
-      sprintf("printing job: ", $this->last_job) 
+      sprintf("printing job: %s", $this->last_job) 
       . $this->serveroutput->status,
       1);
    }
@@ -879,7 +885,7 @@ class BasicIPP
     "File" => $post_values["File"]
     );
   if (isset($post_values["FileType"]) 
-    && !strcmp($post_values["FileType"], "TEXT"))
+    && !strcmp((string) $post_values["FileType"], "TEXT"))
   {
    $arguments["BodyStream"][] = array("Data" => Chr(12));
   }
@@ -925,7 +931,7 @@ class BasicIPP
     }
     self::_putDebug("Request body:");
     self::_putDebug(
-      htmlspecialchars($http->request_body) 
+      htmlspecialchars((string) $http->request_body) 
       . "*********** END REQUEST BODY *********"
             );
     $i = 0;
@@ -963,9 +969,9 @@ class BasicIPP
     for (;;) 
     {
      $http->ReadReplyBody($body, 1024);
-     if (strlen($body) == 0) break;
+     if (strlen((string) $body) == 0) break;
 
-     self::_putDebug(htmlentities($body));
+     self::_putDebug(htmlentities((string) $body));
      $this->serveroutput->body.= $body;
     }
     self::_putDebug("********* END RESPONSE BODY ********");
@@ -1256,19 +1262,12 @@ class BasicIPP
   $ippversion =
    (ord($this->serveroutput->body[$this->_parsing->offset]) * 256)
    + ord($this->serveroutput->body[$this->_parsing->offset + 1]);
-  switch ($ippversion) 
-  {
-   case 0x0101:
-    $this->serveroutput->ipp_version = "1.1";
-    break;
-
-   default:
-    $this->serveroutput->ipp_version =
-     sprintf("%u.%u (Unknown)",
-       ord($this->serveroutput->body[$this->_parsing->offset]) * 256,
-       ord($this->serveroutput->body[$this->_parsing->offset + 1]));
-    break;
-  }
+  $this->serveroutput->ipp_version = match ($ippversion) {
+      0x0101 => "1.1",
+      default => sprintf("%u.%u (Unknown)",
+        ord($this->serveroutput->body[$this->_parsing->offset]) * 256,
+        ord($this->serveroutput->body[$this->_parsing->offset + 1])),
+  };
   self::_putDebug("I P P    R E S P O N S E :\n\n");
   self::_putDebug(
     sprintf("IPP version %s%s: %s",
@@ -1472,13 +1471,13 @@ class BasicIPP
  {
   // they are _signed_ integers
   $value_parsed = 0;
-  for ($i = strlen($value); $i > 0; $i --)
+  for ($i = strlen((string) $value); $i > 0; $i --)
   {
    $value_parsed +=
     (
      (1 << (($i - 1) * 8)) 
      * 
-     ord($value[strlen($value) - $i])
+     ord($value[strlen((string) $value) - $i])
     );
 
   }
@@ -1503,7 +1502,7 @@ class BasicIPP
   if (!isset($this->setup->datatype)) self::setBinary();
   if (!isset($this->setup->uri)) 
   {
-   $this->getPrinters();
+   //$this->getPrinters();
    unset($this->jobs[count($this->jobs) - 1]);
    unset($this->jobs_uri[count($this->jobs_uri) - 1]);
    unset($this->status[count($this->status) - 1]);
@@ -1668,7 +1667,7 @@ class BasicIPP
 
  protected function _giveMeStringLength($string) 
  {
-  $length = strlen($string);
+  $length = strlen((string) $string);
   if ($length > ((0xFF << 8) + 0xFF)  )
   {
    $errmsg = sprintf (
@@ -1815,7 +1814,7 @@ class BasicIPP
    break;
   }
   $prepend = '';
-  while ((strlen($value) + strlen($prepend)) < 4)
+  while ((strlen((string) $value) + strlen($prepend)) < 4)
   {
    $prepend .= chr(0);
   }
@@ -1850,7 +1849,7 @@ class BasicIPP
  protected function _rangeOfIntegerBuild($integers) 
  {
   #$integers = split(":", $integers);
-  $integers = preg_split("#:#", $integers);
+  $integers = preg_split("#:#", (string) $integers);
   for ($i = 0; $i < 2; $i++) $outvalue[$i] = self::_integerBuild($integers[$i]);
   return $outvalue[0] . $outvalue[1];
  }
@@ -1885,8 +1884,8 @@ class BasicIPP
     break;
 
    case 'resolution':
-    if (preg_match("#dpi#", $value)) $unit = chr(0x3);
-    if (preg_match("#dpc#", $value)) $unit = chr(0x4);
+    if (preg_match("#dpi#", (string) $value)) $unit = chr(0x3);
+    if (preg_match("#dpc#", (string) $value)) $unit = chr(0x4);
     $search = array(
       "#(dpi|dpc)#",
       '#(x|-)#'
@@ -1966,7 +1965,7 @@ class BasicIPP
  {
   if ($level === false) return;
   if ($level < $this->debug_level) return;
-  $this->debug[$this->debug_count] = substr($string, 0, 1024);
+  $this->debug[$this->debug_count] = substr((string) $string, 0, 1024);
   $this->debug_count++;
   //$this->debug .= substr($string,0,1024);
 
@@ -1978,23 +1977,16 @@ class BasicIPP
  protected function _errorLog($string_to_log, $level) 
  {
   if ($level > $this->log_level) return;
-  $string = sprintf('%s : %s:%s user %s : %s', basename($_SERVER['PHP_SELF']) , $this->host, $this->port, $this->requesting_user, $string_to_log);
+  $string = sprintf('%s : %s:%s user %s : %s', basename((string) $_SERVER['PHP_SELF']) , $this->host, $this->port, $this->requesting_user, $string_to_log);
   if ($this->log_type == 0) 
   {
    error_log($string);
    return;
   }
-  $string = sprintf("%s %s Host %s:%s user %s : %s\n", date('M d H:i:s') , basename($_SERVER['PHP_SELF']) , $this->host, $this->port, $this->requesting_user, $string_to_log);
+  $string = sprintf("%s %s Host %s:%s user %s : %s\n", date('M d H:i:s') , basename((string) $_SERVER['PHP_SELF']) , $this->host, $this->port, $this->requesting_user, $string_to_log);
   error_log($string, $this->log_type, $this->log_destination);
   return;
  }
 
 };
-/*
- * Local variables:
- * mode: php
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- */
 ?>
