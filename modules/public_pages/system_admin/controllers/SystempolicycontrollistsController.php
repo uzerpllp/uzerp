@@ -53,12 +53,15 @@ class SystempolicycontrollistsController extends Controller {
 		
 	}
 
+	/**
+	 * Delete
+	 *
+	 * @param $modelName
+	 * @return void
+	 */
 	public function delete($modelName = null) {
-
 		$result = parent::delete($this->modeltype);
-		
 		sendTo($this->name, 'index', $this->_modules);
-		
 	}
 
 	public function _new() {
