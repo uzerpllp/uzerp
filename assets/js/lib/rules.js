@@ -80,7 +80,7 @@ $(document).ready(function () {
 		.delay(3000)
 		.hide("blind", {}, 800);
 	
-	$('#errors_button, #warnings_button, #messages_button').on('click', function (event) {
+	$(document).on('click', '#errors_button, #warnings_button, #messages_button', function (event) {
 		
 		var link = $('#'+$(this).data('id'));
 		
@@ -118,7 +118,7 @@ $(document).ready(function () {
 	});
 
 	// confirm action on delete links
-	$('li.delete a').on('click', function (event) {
+	$(document).on('click', 'li.delete a', function (event) {
 		
 		if (!(confirm("Are you sure you wish to delete this record?"))) {
 			event.preventDefault();
@@ -223,7 +223,7 @@ $(document).ready(function () {
 
 	/* related items, order by, sorting, paging... */
 	
-	$('#sidebar_open_close').on('click', function (event) {
+	$(document).on('click', '#sidebar_open_close', function (event) {
 		
 		$("#sidebar").toggle('slide', {}, 500 );
 		
@@ -239,7 +239,7 @@ $(document).ready(function () {
 	});
 	
 	// need a description as to what this does... as it can prevent binding of new events
-	$('#sidebar_related_items a').on('click', function (event) {
+	$(document).on('click', '#sidebar_related_items a', function (event) {
 		
 		if (!$(this).hasClass('new_link')) {
 			event.preventDefault();
@@ -248,7 +248,7 @@ $(document).ready(function () {
 		
 	});
 
-	$('#sidebar_related_items a, .paging a, thead a,').on('click', function (event) {
+	$(document).on('click', '#sidebar_related_items a, .paging a, thead a', function (event) {
 		
 		if (!$(this).hasClass('newtab') && !$(this).hasClass('new_link') && !$(this).hasClass('dont-sort')) {
 			
@@ -281,7 +281,7 @@ $(document).ready(function () {
 		}
 	}, false);
 	
-	$('#data_grid_search .uz_breadcrumbs a').on('click', function (event) {
+	$(document).on('click', '#data_grid_search .uz_breadcrumbs a', function (event) {
 		
 		if (!$(this).hasClass('newtab') && !$(this).hasClass('new_link') && !$(this).hasClass('dont-sort')) {
 			
@@ -325,7 +325,7 @@ $(document).ready(function () {
 	});
 	
 	// This doesn't seem to be used anywhere?
-	$('.paging input').on('change', function (event) {
+	$(document).on('change', '.paging input', function (event) {
 		
 		event.preventDefault();
 		
@@ -359,7 +359,7 @@ $(document).ready(function () {
 
 	// This doesn't seem to be used anywhere?
 	// cancel button on ajaxed page
-	$('.ajax_cancel').on('click', function (event) {
+	$(document).on('click', '.ajax_cancel', function (event) {
 		
 		event.preventDefault();
 		
@@ -377,7 +377,7 @@ $(document).ready(function () {
 	//  popup dialog for fk
 
 	// This doesn't seem to be used anywhere?
-	$('.dialog').on('click', function (event) {
+	$(document).on('click', '.dialog', function (event) {
 		
 		event.preventDefault();
 		
@@ -453,7 +453,7 @@ $(document).ready(function () {
 	//  SEARCH
 
 	// advanced search
-	$('#show_advanced_search').on('click', function () {
+	$(document).on('click', '#show_advanced_search', function () {
 		
 		var $self				= $(this),
 			$advanced_search	= $('#advanced_search');
@@ -507,7 +507,7 @@ $(document).ready(function () {
 	drag_drop_fields();
 		
 	// breadcrumb automatic search
-	$('.uz_breadcrumbs select').on('change', function () {
+	$(document).on('change', '.uz_breadcrumbs select', function () {
 		$(this).parents('form').find('#search_submit').click();
 	});
 	
@@ -885,7 +885,7 @@ $(document).ready(function () {
 	 //********
 	//  OTHERS
 	
-	$('#company_selector #company').on('change', function () {
+	$(document).on('change', '#company_selector #company', function () {
 		$(this).parents('form').submit();
 	});
 	
@@ -900,7 +900,7 @@ $(document).ready(function () {
 	});
 
 	// View Section show-hide
-	$('.expand.heading').on('click', function() {
+	$(document).on('click', '.expand.heading', function() {
 		
 		var $self	= $(this),
 		$next	= $self.next();
@@ -931,7 +931,7 @@ $(document).ready(function () {
 	 //********
 	// SORTING
 	
-	$('.ul-sort').on('click', function(event) {
+	$(document).on('click', '.ul-sort', function(event) {
 		
 		event.preventDefault();
 
@@ -953,7 +953,7 @@ $(document).ready(function () {
 		return this.animate({opacity: '1', marginTop: '0'}, speed, easing, callback);
 	};
 	
-	$('ul.collapsible > li div:first-of-type span').on('click',function() {
+	$(document).on('click', 'ul.collapsible > li div:first-of-type span',function() {
 		
 		var $collapsible	= $(this).parents('li'),
 			$last_div		= $collapsible.find('div:last-of-type');
