@@ -107,6 +107,10 @@ class Employee extends DataObject {
 		$this->hasMany('EmployeePayHistory', 'pay_history', 'employee_id');
 		$this->hasMany('HRAuthoriser', 'can_authorise', 'employee_id');
 		
+		// Define default values
+		$params = DataObjectFactory::Factory('GLParams');
+		$base_currency = $params->base_currency();
+
 		// Define field formats
 		$this->getField('expenses_balance')->setFormatter(new CurrencyFormatter($base_currency));
 
@@ -132,11 +136,6 @@ class Employee extends DataObject {
 					'W'	=> 'Weekly',
 			)
 		);
-		
-		
-		// Define default values
-		$params			= DataObjectFactory::Factory('GLParams');
-		$base_currency	= $params->base_currency();
 		
 		// Define link rules for related items
 	
@@ -314,9 +313,11 @@ class Employee extends DataObject {
 		
 		$employee = DataObjectFactory::Factory('employee');
 		
-		$employee->_policyConstraint['constraint']->add(new Constraint('person_id', '=', $this->user_person_id), 'OR');
-		$employee->_policyConstraint['name'][] = 'Own detail';
-		$employee->_policyConstraint['field'][] = 'person_id';
+		if (SYSTEM_POLICIES_ENABLED) {
+			$employee->_policyConstraint['constraint']->add(new Constraint('person_id', '=', $this->user_person_id), 'OR');
+			$employee->_policyConstraint['name'][] = 'Own detail';
+			$employee->_policyConstraint['field'][] = 'person_id';
+		}
 		
 		$employee->loadBy('person_id', $this->user_person_id);
 		
@@ -338,9 +339,11 @@ class Employee extends DataObject {
 			$cc->add(new Constraint($this->idField, 'in', '('.implode(',', $authorisation_list).')'), 'OR');
 		}
 		
-		$this->_policyConstraint['constraint']->add($cc, 'OR');
-		$this->_policyConstraint['name'][] = 'Is Authorised';
-		$this->_policyConstraint['field'][] = 'id';
+		if (SYSTEM_POLICIES_ENABLED) {
+			$this->_policyConstraint['constraint']->add($cc, 'OR');
+			$this->_policyConstraint['name'][] = 'Is Authorised';
+			$this->_policyConstraint['field'][] = 'id';
+		}
 		
 		return $cc;
 		
