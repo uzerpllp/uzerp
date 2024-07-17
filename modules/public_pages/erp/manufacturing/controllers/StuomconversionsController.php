@@ -85,7 +85,7 @@ class StuomconversionsController extends Controller
 		}
 		else
 		{
-			$stitem=new STitem();
+			$stitem=new STItem();
 			$stitem->load($this->_data['stitem_id']);
 			$stitem_id = $stitem->id;
 			$stitem_uom_id = $stitem->uom_id;
@@ -95,7 +95,8 @@ class StuomconversionsController extends Controller
 		$this->view->set('stitem_id', $stitem_id);
 		$this->view->set('stitem_uom_id', $stitem_uom_id);
 		$this->view->set('stitem_uom_name', $stitem_uom_name);
-		$this->view->set('stitem', Stuomconversion::getStockItem($stitem_id));
+		$convObj = new STuomconversion();
+		$this->view->set('stitem', $convObj->getStockItem($stitem_id));
 		
 		$elements = new STuomconversionCollection(new STuomconversion());
 		
