@@ -6,7 +6,7 @@
  *	Released under GPLv3 license; see LICENSE.
  **/
 
-class MfstructuresController extends PrintController
+class MfstructuresController extends printController
 {
 
 	protected $version='$Revision: 1.25 $';
@@ -248,6 +248,7 @@ class MfstructuresController extends PrintController
 
 	public function _new()
 	{
+		$errors = [];
 
 		// need to store the ajax flag in a different variable and the unset the original
 		// this is to prevent any functions that are further called from returning the wrong datatype
