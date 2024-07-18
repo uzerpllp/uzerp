@@ -414,8 +414,7 @@ class PlpaymentsController extends printController
 		{
 				sendTo($this->name
 				,'view'
-				,$this->_modules
-				,array('id'=>$supplier_id));
+				,$this->_modules);
 		}
 		else
 		{
@@ -680,16 +679,6 @@ class PlpaymentsController extends printController
 
 	public function make_batch_payment ($status='generate')
 	{
-		
-		// if we've encountered errors there's no point in continuing
-		if(!empty($errors))
-		{
-			// print dialog will look out for the string "FAILURE" on the dialog, 
-			// anything after the ":" will be used as the error message
-			echo "FAILURE:".implode("<br />",$errors);
-			exit;
-		}
-		
 		// build options array
 		$options=array('type'			=>	array('text'=>''),
 					   'actions'		=>	array('save'=>''),
