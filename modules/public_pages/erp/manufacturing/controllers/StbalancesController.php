@@ -43,7 +43,7 @@ class StbalancesController extends Controller {
 		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
 	}
 	
-	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
+	public function save($modelName = null, $dataIn = [], &$errors = []) : bool {
 		$flash=Flash::Instance();
 		$db = DB::Instance();
 		$db->StartTrans();
