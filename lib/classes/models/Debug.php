@@ -41,7 +41,7 @@ class Debug extends DataObject {
 		return $debug;
 	}
 
-	function update() {
+	function update($id, $fields, $values) {
 		if(isLoggedIn()) {
 			if (isset($_SESSION['customer_id'])) {
 				$this->customer_id=$_SESSION['customer_id'];

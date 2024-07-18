@@ -11,6 +11,7 @@ abstract class InputControl extends FormControl {
 		$this->_data=$field;
 		$this->extractData();
 	}
+	#[\Override]
 	function render($additional='') {
 		$html="{input type='{$this->type}'  attribute='{$this->name}' {$this->getClassNameString()}}\n";
 		return $html;

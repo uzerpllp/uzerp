@@ -10,7 +10,8 @@ class CheckboxControl extends InputControl {
 	public $type='checkbox';
 	protected $checked;
 	
-	public function render() {
+	#[\Override]
+	public function render($additional='') {
 		if($this->checked=='checked')
 			$additional='checked="'.$this->checked.'" ';
 		else

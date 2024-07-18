@@ -12,8 +12,8 @@ class DataObjectWithImage extends DataObject {
 	public $image_filename;
 	private $image_width=100;
 	private $image_height=100;
-	public function load($constraint) {
-		$res=parent::load($constraint);
+	public function load($clause, $override = false, $return = false) {
+		$res=parent::load($clause);
 		$path = DATA_ROOT.'tmp/';
 		$file=new File($path);
 		$image=$this->image;

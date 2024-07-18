@@ -12,11 +12,13 @@ class SelectControl extends FormControl{
 		$this->extractData();
 	}
 
+	#[\Override]
 	function extractData() {
 			$this->name=$this->_data->name;
 		if($this->_data->not_null&&!$this->_data->has_default)
 			$this->setCompulsory();
 	}
+	#[\Override]
 	function render($additional='') {
 		$html="{select attribute='{$this->name}' {$this->getClassNameString()}}\n";
 			return $html;

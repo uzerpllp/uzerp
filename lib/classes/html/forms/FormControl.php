@@ -32,7 +32,7 @@ abstract class FormControl {
 	}
 	function getTag() {
 		if(empty($this->tag))
-			$this->tag=ucwords($this->name);
+			$this->tag=ucwords((string) $this->name);
 		return $this->tag;
 	}
 

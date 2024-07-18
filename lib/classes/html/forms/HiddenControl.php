@@ -9,7 +9,8 @@ class HiddenControl extends InputControl {
 
 	public $type='hidden';
 	
-	public function render() {
+	#[\Override]
+	public function render($additional='') {
 		
 		$html = parent::render($additional);
 		return $html;

@@ -9,7 +9,7 @@ abstract class BaseRoute {
 	protected $regex;
 	protected $predefined_arguments;
 	
-	abstract public function __construct();
+	abstract public function __construct($regex, $predefined_arguments = []);
 
 	public function GetRegex () {
 		return $this->regex;

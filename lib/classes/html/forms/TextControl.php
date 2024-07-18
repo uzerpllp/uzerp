@@ -11,11 +11,13 @@ class TextControl extends InputControl {
 	protected $match;
 	protected $compulsory;
 	
-	public function render() {
+	#[\Override]
+	public function render($additional='') {
 		$additional='value="'.$this->value.'" ';
 		return parent::render($additional);
 	}
 
+	#[\Override]
 	public function setCompulsory() {
 		$this->compulsory=true;
 		$this->addClassName('compulsory');

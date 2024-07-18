@@ -12,11 +12,13 @@ class TextAreaControl extends FormControl {
 		$this->extractData();
 	}
 	
-	public function render() {
+	#[\Override]
+	public function render($additional='') {
 		$html="{textarea attribute='{$this->name}' {$this->getClassNameString()}}\n";
 		return $html;
 	}
 
+	#[\Override]
 	public function setCompulsory() {
 		$this->compulsory=true;
 		$this->addClassName('compulsory');
