@@ -22,6 +22,7 @@ class AdminController extends Controller {
 	public function Newuser() {
 		static $menuaction='New User';
 		global $smarty;
+		$models = [];
 		foreach($this->_uses as $model) {
 			$models[get_class($model)]=$model;
 		}
@@ -39,8 +40,8 @@ class AdminController extends Controller {
 	public function Saveuser() {
 		$user=User::Factory($this->_data['User'],$errors);
 		$flash=Flash::Instance();
+		$success = $user->save();
 		if($success!==false) {
-			$user->save();
 			$flash->addMessage('User saved successfully');
 			sendTo('admin');
 		}
