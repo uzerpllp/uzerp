@@ -122,7 +122,8 @@ class CBAccount extends DataObject
 		$data['glaccount_id']	= $this->currency_detail->writeoff_glaccount_id;
 		$data['glcentre_id']	= $this->currency_detail->glcentre_id;
 		
-		GLTransaction::setTwinCurrency($data);
+		$gl = new GLTransaction();
+        $gl->setTwinCurrency($data);
 		
 		$gl_trans[] = GLTransaction::Factory($data, $errors);
 		
@@ -130,7 +131,7 @@ class CBAccount extends DataObject
 		$data['glaccount_id']	= $this->glaccount_id;
 		$data['glcentre_id']	= $this->glcentre_id;
 		
-		GLTransaction::setTwinCurrency($data);
+		$gl->setTwinCurrency($data);
 		
 		$gl_trans[] = GLTransaction::Factory($data, $errors);
 		

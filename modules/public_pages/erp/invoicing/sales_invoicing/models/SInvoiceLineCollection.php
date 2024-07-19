@@ -41,9 +41,9 @@ class SInvoiceLineCollection extends DataObjectCollection {
 		$invoice_fields = $fields;
 		$invoices = clone $this;
 		$sh = new SearchHandler($invoices, false);
-		if (isset($constraint)) {
-			$sh->addConstraint($constraint);
-		}
+		//if (isset($constraint)) {
+		//	$sh->addConstraint($constraint);
+		//}
 		$sh->setGroupBy($invoice_fields);
 		$sh->setOrderby($invoice_fields);
 		$invoice_fields[]='sum('.$sumby.') as value';

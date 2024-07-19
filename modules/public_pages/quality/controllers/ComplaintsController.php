@@ -91,7 +91,7 @@ class ComplaintsController extends printController
 	 * output functions
 	 */
 	
-	public function printComplaint($_status = 'generate', $_filename)
+	public function printComplaint($_status = 'generate', $_filename = null)
 	{
 		
 		// build xml vars array

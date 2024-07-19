@@ -6,7 +6,7 @@
  *	Released under GPLv3 license; see LICENSE. 
  **/
 
-class ReportsController extends PrintController {
+class ReportsController extends printController {
 
 	protected $version = '$Revision: 1.35 $';
 	protected $_templateobject;
@@ -473,7 +473,7 @@ class ReportsController extends PrintController {
 		}
 		
 		// NB: The follow idField is being passed by reference... it isn't passing a value, instead recieving one back
-		$do = $report->createDataObject($display_fields, $idField, $this->getColumns($report->tablename));
+		$do = $report->createDataObject($display_fields, '', $this->getColumns($report->tablename));
 		
 		$doc = new DataObjectCollection($do);
 		$sh = new SearchHandler($doc, FALSE);
@@ -514,7 +514,7 @@ class ReportsController extends PrintController {
 		
 		// prepend the id field to the display fields... 
 		// at this stage the items are in order, so keys don't matter
-		$display_fields = array_merge(array($idField), $display_fields);
+		$display_fields = array_merge(array(''), $display_fields);
 		
 		$sh->setFields($display_fields);
 		

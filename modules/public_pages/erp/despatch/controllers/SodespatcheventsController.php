@@ -78,7 +78,7 @@ class SodespatcheventsController extends printController {
 	}
 	
 	public function delete($modelName = null) {
-		
+		$flash = Flash::Instance();
 		$accessobject=AccessObject::Instance();
 		$editable=$accessobject->hasPermission('despatch','sodespatchevents','edit');
 		

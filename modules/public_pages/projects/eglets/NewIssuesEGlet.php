@@ -30,8 +30,8 @@ class NewIssuesEGlet extends SimpleListUZlet
 		
 		$new_issues->load($sh);
 		
-		$tasks_do->clickcontroller = 'projectissues';
-		$tasks_do->editclickaction = 'view';
+		//$tasks_do->clickcontroller = 'projectissues';
+		//$tasks_do->editclickaction = 'view';
 		
 		$this->contents = $new_issues;
 		

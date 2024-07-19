@@ -538,11 +538,11 @@ class PlsuppliersController extends LedgerController
 			// Check for form input due to paging or ordering
 			if (isset($this->_data['PLTransaction']))
 			{
-				foreach ($this->_data['PLTransaction'] as $id=>$data)
+				foreach ($this->_data['PLTransaction'] as $id=>$fields)
 				{
 					if ($fields['contra'] == 'on')
 					{
-						$contras_sessionobject->updatePageData($id, $fields, $errors);
+						$contras_sessionobject->updatePageData($id, $fields);
 					}
 					else
 					{
@@ -551,7 +551,7 @@ class PlsuppliersController extends LedgerController
 				}
 			}
 
-			$contras_data = $contras_sessionobject->getPageData($errors);
+			$contras_data = $contras_sessionobject->getPageData();
 
 			$contra_total = 0;
 
@@ -1675,7 +1675,7 @@ class PlsuppliersController extends LedgerController
 
 		if ($current_type != 'enter_journal')
 		{
-			$sidebarlist[$type] = array(
+			$sidebarlist[$current_type] = array(
 					'tag'	=> 'enter_journal',
 					'link'	=> array('modules'		=> $this->_modules
 									,'controller'	=> $this->name

@@ -988,14 +988,14 @@ class SlcustomersController extends LedgerController
             if (isset($this->_data['SLTransaction'])) {
                 foreach ($this->_data['SLTransaction'] as $id => $fields) {
                     if ($fields['contra'] == 'on') {
-                        $contras_sessionobject->updatePageData($id, $fields, $errors);
+                        $contras_sessionobject->updatePageData($id, $fields);
                     } else {
                         $contras_sessionobject->deletePageData($id);
                     }
                 }
             }
 
-            $contras_data = $contras_sessionobject->getPageData($errors);
+            $contras_data = $contras_sessionobject->getPageData();
 
             $contra_total = 0;
 
@@ -1815,7 +1815,7 @@ class SlcustomersController extends LedgerController
         );
         unset($this->_data['depends']);
 
-        return $this->getOptions($this->_uses['SLTransaction'], 'person_id', 'getPeople', 'getOptions', $smarty_params, $depends);
+        return $this->getOptions($this->_uses['SLTransaction'], 'person_id', 'getPeople', 'getOptions', $smarty_params);
     }
 
     /*

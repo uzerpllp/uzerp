@@ -66,11 +66,11 @@ class WHTransfer extends DataObject {
 		return parent::save();
 	}
 	
-	public static function Factory($header_data, $lines_data, &$errors = []) {
+	public static function WHTFactory($header_data, $lines_data, &$errors = []) {
 
 		if (!isset($header_data['transfer_number'])) {
 			$gen_id=new WarehouseTransferNumberHandler();
-			$header_data['transfer_number']=$gen_id->handle(new whtransfer());
+			$header_data['transfer_number']=$gen_id->handle(new WHTransfer());
 		}
 		
 		$transfer_header=DataObject::Factory($header_data, $errors, 'WHTransfer');
@@ -97,7 +97,7 @@ class WHTransfer extends DataObject {
 		return $transfer_header;
 	}
 	
-	function save(&$errors) {
+	function save($debug=false, &$errors = []) {
 		if (parent::save()) {
 			foreach ($this->unsaved_lines as $line) {
 				if (!$line->save()) {
@@ -105,9 +105,12 @@ class WHTransfer extends DataObject {
 					break;
 				}
 			}
+			if (count($errors) > 0) return false;
 		} else {
 			$errors[]='Failed to save Transfer Header';
+			return false;
 		}
+		return true;
 	}
 	
 }

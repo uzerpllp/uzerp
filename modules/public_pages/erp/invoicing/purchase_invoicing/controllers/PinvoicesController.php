@@ -11,6 +11,7 @@ class PinvoicesController extends printController {
 	protected $version='$Revision: 1.57 $';
 	
 	protected $_templateobject;
+	protected $settlement_discount;
 
 	public function __construct($module=null,$action=null) {
 		parent::__construct($module, $action);
@@ -252,7 +253,7 @@ class PinvoicesController extends printController {
 
 	public function view()
 	{
-
+		$flash = Flash::Instance();
 		if (!$this->loadData()
 		&& !isset($this->_data['order_number'])
 		&& !isset($this->_data['invoice_number']))

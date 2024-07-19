@@ -136,12 +136,11 @@ class soproductlineheadersController extends printController
             $product_group = $this->getProductGroups($this->_data['stitem_id']);
             $product->prod_group_id = $this->_data['prod_group_id'] = key($product_group);
             $this->view->set('product_group', current($product_group));
-
             $this->view->set('uoms', $this->getUomList($this->_data['stitem_id']));
         } else {
             $stitem_list = $this->getItems($product->prod_group_id);
             $this->view->set('stitems', $stitem_list);
-            $this->view->set('uoms', $uom_list);
+            $this->view->set('uoms', $this->getUomList());
         }
 
         $tax_rates = array();
@@ -155,7 +154,6 @@ class soproductlineheadersController extends printController
         }
 
         $this->view->set('tax_rates', $tax_rates);
-        $this->view->set('country', $this->country);
     }
 
     public function save($modelName = null, $dataIn = [], &$errors = []) : void
@@ -810,12 +808,7 @@ class soproductlineheadersController extends printController
         $sql = 'select stitem_id from so_product_lines_header where stitem_id = st_items.id';
         $cc->add(new Constraint('', 'not exists', '(' . $sql . ')'));
 
-        if (! $date) {
-            $date = Constraint::TODAY;
-        } elseif (is_int($date)) {
-            $db = DB::Instance();
-            $date = $db->DBDate($date);
-        }
+        $date = Constraint::TODAY;
 
         $cc1 = new ConstraintChain();
         $cc1->add(new Constraint('obsolete_date', '=', 'NULL'));

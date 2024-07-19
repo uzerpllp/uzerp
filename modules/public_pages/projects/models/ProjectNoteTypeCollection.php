@@ -14,7 +14,7 @@ class ProjectNoteTypeCollection extends DataObjectCollection {
 		
 	function __construct($do = 'ProjectNoteType')
 	{
-		parent::__construct($do, $tablename);
+		parent::__construct($do);
 			
 	}
 	

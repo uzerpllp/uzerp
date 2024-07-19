@@ -9,9 +9,8 @@
 class HoursController extends Controller
 {
 
-	protected $version = '$Revision: 1.10 $';
-	
 	protected $_templateobject;
+	protected $related;
 
 	public function __construct($module = null, $action = null)
 	{
@@ -461,7 +460,7 @@ class HoursController extends Controller
 		}
 		else
 		{
-			return $projects;
+			return $tasks;
 		}
 		
 	}

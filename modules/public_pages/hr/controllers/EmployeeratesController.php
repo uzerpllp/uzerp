@@ -122,7 +122,7 @@ class EmployeeratesController extends Controller
 			$ee_rate->end_date  = $employee->finished_date;
 		}
 		
-		if (!is_null($employee->finished_date) && $employee->finished_date < $start_date)
+		if (!is_null($employee->finished_date) && $employee->finished_date < $ee_rate->start_date)
 		{
 			$flash->addError('Employee is leaving');
 			sendBack();

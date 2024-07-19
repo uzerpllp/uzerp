@@ -31,7 +31,8 @@ class MfwostructuresController extends Controller {
 		$wostructure=$this->_uses[$this->modeltype];
 		if (isset($this->_data['work_order_id'])) {
 			$work_order_id=$this->_data['work_order_id'];
-			$stitem_id=key($items_list);
+			// $item_list is not defined at this point!
+			//$stitem_id=key($items_list);
 			$uom_id='';
 		} elseif ($wostructure->isLoaded()) {
 			$work_order_id=$wostructure->work_order_id;

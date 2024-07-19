@@ -31,8 +31,8 @@ class MyCurrentIssuesEGlet extends SimpleListUZlet
 		
 		$my_issues->load($sh);
 		
-		$tasks_do->clickcontroller = 'projectissues';
-		$tasks_do->editclickaction = 'view';
+		//$tasks_do->clickcontroller = 'projectissues';
+		//$tasks_do->editclickaction = 'view';
 		
 		$this->contents = $my_issues;
 		

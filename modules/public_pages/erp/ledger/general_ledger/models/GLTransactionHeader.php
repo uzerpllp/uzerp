@@ -164,7 +164,7 @@ class GLTransactionHeader extends DataObject
 	 */
 	public function post(&$errors = array())
 	{
-		$db = db::Instance();
+		$db = DB::Instance();
 
 		// Check it hasn't been posted!
 		if (!$this->isUnposted())
@@ -199,7 +199,8 @@ class GLTransactionHeader extends DataObject
 			$transaction['transaction_date'] = un_fix_date($this->transaction_date);
 			$transaction['glperiods_id'] = $this->glperiods_id;
 
-			GLTransaction::setTwinCurrency($transaction);
+			$gl = new GLTransaction();
+			$gl->setTwinCurrency($transaction);
 
 			$cp_override = false;
 			if ($this->isClosingBalanceJournal()) {

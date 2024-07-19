@@ -187,7 +187,7 @@ class SODespatchLine extends DataObject
 				$despatchline['despatch_action']=$order->despatch_action;
 				$despatchline['status']='N';
 				$stitem=new STItem();
-				$stitem->load($data['stitem_id']);
+				$stitem->load($orderline->stitem_id);
 				$param=new GLParams();
 				$net_mass_uom_id=$param->intrastat_net_mass();
 		

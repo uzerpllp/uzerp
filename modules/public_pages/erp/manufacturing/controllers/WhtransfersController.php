@@ -132,10 +132,10 @@ class WHtransfersController extends Controller {
 			$action='added';
 		}
 		
-		$whtransfer=WHTransfer::Factory($header_data, $lines_data, $errors);
+		$whtransfer=WHTransfer::WHTFactory($header_data, $lines_data, $errors);
 		
 		if ($whtransfer && count($errors)==0) {
-			$whtransfer->save($errors);
+			$whtransfer->save(false, $errors);
 		}
 		
 		if(count($errors)==0 && $db->CompleteTrans()) {

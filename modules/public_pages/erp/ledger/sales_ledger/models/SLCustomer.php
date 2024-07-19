@@ -293,7 +293,7 @@ class SLCustomer extends DataObject
 
         $amount = $db->GetOne($query);
 
-        if ($amounts === false) {
+        if ($amount === false) {
             return false;
         }
 

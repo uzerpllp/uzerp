@@ -567,6 +567,8 @@ class GltransactionheadersController extends printController
 	 */
 	private function create_standard($header, $errors = array())
 	{
+		$db = DB::Instance() ;
+		$flash = Flash::Instance();
 		if (isset($this->_data['reverse']) && $this->_data['reverse']=='yes')
 		{
 			$reversal = true;

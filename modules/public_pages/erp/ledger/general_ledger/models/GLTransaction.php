@@ -119,7 +119,7 @@ class GLTransaction extends DataObject
             'glcentre_id' => 'glcentre_id'
         )));
         if ($cp_override == false) {
-            $this->addValidator(new GLPeriodOpenModelValidator($this));
+            $this->addValidator(new GLPeriodOpenModelValidator());
         }
 
         // Define enumerated types
@@ -218,7 +218,8 @@ class GLTransaction extends DataObject
         $data['glaccount_id'] = $currency->writeoff_glaccount_id;
         $data['glcentre_id'] = $currency->glcentre_id;
 
-        self::setTwinCurrency($data);
+        $selfObj = new self;
+        $selfObj->setTwinCurrency($data);
 
         $gl_trans[] = GLTransaction::Factory($data, $errors);
 
@@ -226,7 +227,7 @@ class GLTransaction extends DataObject
         $data['glaccount_id'] = $control['glaccount_id'];
         $data['glcentre_id'] = $control['glcentre_id'];
 
-        self::setTwinCurrency($data);
+        $selfObj->setTwinCurrency($data);
 
         $gl_trans[] = GLTransaction::Factory($data, $errors);
 
@@ -271,7 +272,8 @@ class GLTransaction extends DataObject
         $gl_data['glperiods_id'] = $glperiod->id;
         $gl_data['value'] = bcadd($value, 0);
 
-        GLTransaction::setTwinCurrency($gl_data);
+        $selfObj = new self;
+        $selfObj->setTwinCurrency($gl_data);
 
         $group = DataObjectFactory::Factory('ARGroup');
         $group->load($asset->argroup_id);
@@ -353,7 +355,8 @@ class GLTransaction extends DataObject
         $gl_data['glperiods_id'] = $glperiod['id'];
         $gl_data['value'] = $ar_trans->value;
 
-        GLTransaction::setTwinCurrency($gl_data);
+        $selfObj = new self;
+        $selfObj->setTwinCurrency($gl_data);
 
         $group = DataObjectFactory::Factory('ARGroup');
 
@@ -448,7 +451,8 @@ class GLTransaction extends DataObject
                 $gl_data['value'] = round(bcmul($line['rate'], $gl_data['value'], 4), 2);
             }
 
-            GLTransaction::setTwinCurrency($gl_data);
+            $selfObj = new self;
+            $selfObj->setTwinCurrency($gl_data);
 
             $gl_transaction = GLTransaction::Factory($gl_data, $errors);
 
@@ -502,7 +506,8 @@ class GLTransaction extends DataObject
                 $gl_data['glcentre_id'] = $line['glcentre_id'];
                 $gl_data['comment'] = $line['comment'];
 
-                GLTransaction::setTwinCurrency($gl_data);
+                $selfObj = new self;
+                $selfObj->setTwinCurrency($gl_data);
 
                 $gl_transaction = GLTransaction::Factory($gl_data, $errors);
                 $gl_transactions[] = $gl_transaction;
@@ -580,7 +585,7 @@ class GLTransaction extends DataObject
         $gl_data['docref'] = $trans->our_reference;
         $gl_data['transaction_date'] = un_fix_date($trans->transaction_date);
         $gl_data['type'] = $data['transaction_type'];
-        $gl_data['reference'] = ! empty($desc) ? $desc : $trans->ext_reference;
+        $gl_data['reference'] = $trans->ext_reference;
 
         $glperiod = GLPeriod::getPeriod($trans->transaction_date);
 
@@ -951,22 +956,23 @@ class GLTransaction extends DataObject
         $net = $gl_data['value']['net'];
         $vat = $gl_data['value']['vat'];
         $gl_transactions = array();
+        $selfObj = new self;
 
         // Write Net Value
         $gl_data['docref'] = $db->GenID('gl_transactions_docref_seq');
         $gl_data['value'] = $net;
-        GLTransaction::setTwinCurrency($gl_data);
+        $selfObj->setTwinCurrency($gl_data);
         $gl_transactions[] = GLTransaction::Factory($gl_data, $errors);
 
         // Write Vat Value
         $gl_data['value'] = $vat;
-        GLTransaction::setTwinCurrency($gl_data);
+        $selfObj->setTwinCurrency($gl_data);
         $gl_transactions[] = GLTransaction::Factory($gl_data, $errors);
 
         // Write Net contra entry
         $gl_data['docref'] = $db->GenID('gl_transactions_docref_seq');
         $gl_data['value'] = bcmul($net, - 1);
-        GLTransaction::setTwinCurrency($gl_data);
+        $selfObj->setTwinCurrency($gl_data);
         $gl_transactions[] = GLTransaction::Factory($gl_data, $errors);
 
         // Write Vat control entry
@@ -974,7 +980,7 @@ class GLTransaction extends DataObject
         $gl_data['glaccount_id'] = $gl_data['vat_account'];
         $glparams = DataObjectFactory::Factory('GLParams');
         $gl_data['glcentre_id'] = $glparams->balance_sheet_cost_centre();
-        GLTransaction::setTwinCurrency($gl_data);
+        $selfObj->setTwinCurrency($gl_data);
         $gl_transactions[] = GLTransaction::Factory($gl_data, $errors);
 
         return $gl_transactions;
@@ -984,6 +990,7 @@ class GLTransaction extends DataObject
     {
         $vat = $gl_data['value']['vat'];
         $gl_transactions = array();
+        $selfObj = new self;
 
         $gl_data['source'] = 'P';
         $gl_data['type'] = 'I';
@@ -994,12 +1001,12 @@ class GLTransaction extends DataObject
 
         // Write VAT Value
         $gl_data['value'] = $vat;
-        GLTransaction::setTwinCurrency($gl_data);
+        $selfObj->setTwinCurrency($gl_data);
         $gl_transactions[] = GLTransaction::Factory($gl_data, $errors, true);
 
         // Write VAT control entry
         $gl_data['value'] = bcmul($vat, - 1);
-        GLTransaction::setTwinCurrency($gl_data);
+        $selfObj->setTwinCurrency($gl_data);
         $gl_transactions[] = GLTransaction::Factory($gl_data, $errors, true);
 
         return $gl_transactions;
@@ -1279,7 +1286,7 @@ class GLTransaction extends DataObject
      * @param array $errors
      * @param boolean $cp_override  Override closed period validation,
      *   e.g. when posting a closing balance journal
-     * @return void
+     * @return mixed
      */
     public static function Factory($data, &$errors = array(), $cp_override=false)
     {

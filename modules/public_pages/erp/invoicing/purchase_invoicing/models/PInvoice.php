@@ -141,7 +141,7 @@ class PInvoice extends Invoice
 		
 	}
 	
-	public function getNextLineNumber($_invoiceline)
+	public function getNextLineNumber($_invoiceline=null)
 	{
 		$pinvoiceline = DataObjectFactory::Factory('PInvoiceLine');
 		return parent::getNextLineNumber($pinvoiceline);

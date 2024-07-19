@@ -7,12 +7,12 @@
  **/
 class ProjectCostChargeCollection extends DataObjectCollection {
 	
-	protected $version='$Revision: 1.1 $';
+	protected $identifierField;
 	
 	public $field;
 		
 	function __construct($do='ProjectCostCharge') {
-		parent::__construct($do, $tablename);
+		parent::__construct($do);
 			
 		$this->identifierField='item_type';
 	}

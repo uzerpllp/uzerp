@@ -18,7 +18,6 @@ class WHtransferlinesController extends Controller {
 	}
 
 	public function index($collection = null, $sh = '', &$c_query = null){
-		$flash=Flash::Instance();
 
 // Preserve any search criteria selection so that the context is maintained
 		$s_data=array();
@@ -77,6 +76,7 @@ class WHtransferlinesController extends Controller {
 	}
 
 	public function view() {
+		$flash=Flash::Instance();
 		if (!isset($this->_data['id'])) {
 			$flash->addError('Select an item');
 		} else {

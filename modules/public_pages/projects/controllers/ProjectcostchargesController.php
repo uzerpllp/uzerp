@@ -355,7 +355,7 @@ class ProjectcostchargesController extends Controller {
 			$this->view->set('data', $output);
 			$this->setTemplateName('ajax_multiple');
 		} else {
-			return $orders;
+			return $accounts;
 		}
 		
 	}

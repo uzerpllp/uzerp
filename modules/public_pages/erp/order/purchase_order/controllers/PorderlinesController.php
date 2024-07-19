@@ -216,7 +216,7 @@ class PorderlinesController extends Controller {
 		
 		$this->view->set('display_fields', $display_fields);
 		//$this->view->set('product_search', $_product_search);
-		$this->view->set('productline_options', $productline_options);
+		//$this->view->set('productline_options', $productline_options);
 		
 		$data = $this->getProductLineData($_productline_id);
 		$this->view->set('stuom_options', $data['stuom_id']);

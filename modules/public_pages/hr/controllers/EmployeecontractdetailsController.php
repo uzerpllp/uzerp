@@ -103,7 +103,7 @@ class EmployeecontractdetailsController extends Controller
 				{
 					$ee_contract_detail->start_date = date(DATE_FORMAT, strtotime($latest->end_date . ' + 1 day'));
 				}
-				elseif ($start_date > fix_date(date(DATE_FORMAT)))
+				elseif ($latest->start_date > fix_date(date(DATE_FORMAT)))
 				{
 					$ee_contract_detail->start_date = date(DATE_FORMAT, strtotime($latest->start_date . ' + 1 day'));
 				}
@@ -120,7 +120,7 @@ class EmployeecontractdetailsController extends Controller
 			$ee_contract_detail->end_date		= $employee->finished_date;
 		}
 		
-		if (!is_null($employee->finished_date) && $employee->finished_date < $start_date)
+		if (!is_null($employee->finished_date) && $employee->finished_date < $ee_contract_detail->start_date)
 		{
 			$flash->addError('Employee is leaving');
 			sendBack();

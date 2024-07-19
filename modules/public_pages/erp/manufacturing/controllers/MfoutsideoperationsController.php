@@ -79,6 +79,7 @@ class MfoutsideoperationsController extends Controller {
      */
     public function _new()
     {
+		$db = DB::Instance();
         parent::_new();
         $mfoperation = new MFOutsideOperation();
         $mfoperation->load($this->_data['id']);
@@ -128,6 +129,7 @@ class MfoutsideoperationsController extends Controller {
     }
 
 	public function delete($modelName = null){
+		$db = DB::Instance();
 		$flash = Flash::Instance();
 		$errors = array();
 		$data = array(

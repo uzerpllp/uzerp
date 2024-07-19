@@ -135,25 +135,11 @@ class POProductline extends DataObject
 				
 	}
 	
-	function getDescription ()
-	{
-		if (!$this->price && $this->stitem_id)
-		{
-			$this->loadSTItem($stitem_id);
-			
-			return $this->item_detail->getIdentifier();
-		}
-		else
-		{
-			return $this->description;
-		}
-	}
-
 	function getPrice ()
 	{
 		if (!$this->price && $this->stitem_id)
 		{
-			$this->loadSTItem($stitem_id);
+			$this->loadSTItem($this->stitem_id);
 			
 			return $this->item_detail->price;
 		}

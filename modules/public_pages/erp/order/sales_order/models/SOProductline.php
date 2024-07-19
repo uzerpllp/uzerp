@@ -335,17 +335,6 @@ class SOProductline extends DataObject
         return $this->getAll($cc);
     }
 
-    function getDescription()
-    {
-        if (! $this->price && $this->stitem_id) {
-            $this->loadSTItem($stitem_id);
-
-            return $this->item_detail->getIdentifier();
-        } else {
-            return $this->description;
-        }
-    }
-
     function getGrossPrice($_stitem_id = '')
     {
         if (! $this->price) {

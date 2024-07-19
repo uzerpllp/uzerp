@@ -151,7 +151,7 @@ class poproductlineheadersController extends printController
         } else {
             $stitem_list = $this->getItems($product->prod_group_id);
             $this->view->set('stitems', $stitem_list);
-            $this->view->set('uoms', $uom_list);
+            $this->view->set('uoms', $this->getUomList());
         }
 
         $tax_rates = array();
@@ -866,12 +866,7 @@ class poproductlineheadersController extends printController
 
         $cc->add(new Constraint('', 'not exists', '(' . $sql . ')'));
 
-        if (! $date) {
-            $date = Constraint::TODAY;
-        } elseif (is_int($date)) {
-            $db = DB::Instance();
-            $date = $db->DBDate($date);
-        }
+        $date = Constraint::TODAY;
 
         $cc1 = new ConstraintChain();
 

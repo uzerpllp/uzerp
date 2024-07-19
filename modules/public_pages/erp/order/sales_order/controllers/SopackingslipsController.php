@@ -191,8 +191,7 @@ class SopackingslipsController extends printController {
    				'email'	=> '',
    				'view'	=> ''
 			),
-			'report'	=> 'SO_PackingList',
-			'xslVars'	=> $xslVars
+			'report'	=> 'SO_PackingList'
 		);
 		
 		if (strtolower($status) == "dialog")

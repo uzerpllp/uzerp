@@ -147,7 +147,7 @@ class SystemobjectpolicysController extends Controller
 		
 		$current_field = is_null($systempolicy->fieldname)?key($fields):$systempolicy->fieldname;
 		
-		$output = $this->get_values($current_field, $module_components->id, $systempolicy->value);
+		$output = $this->get_values($current_field, $module_component->id, $systempolicy->value);
 		
 		$this->view->set('operators', $output['operators']['data']);
 		$this->view->set('input_value', $output['input_value']['data']);

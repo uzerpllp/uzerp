@@ -90,7 +90,7 @@ class RrcomplaintsController extends ComplaintsController
 		{
 			
 			$glparams			= DataObjectFactory::Factory('GLParams');
-			$default_currency	= utf8_decode($glparams->base_currency());
+			$default_currency	= $glparams->base_currency();
 			
 			$this->view->set('default_currency', $default_currency);
 			
@@ -107,7 +107,7 @@ class RrcomplaintsController extends ComplaintsController
 						'action'		=> 'printDialog',
 						'printaction'	=> 'printComplaint',
 						'id'			=> $this->_data['id'],
-						'filename'		=> 'Complaint-RR' . $complaint->complaint_number . '_' . date('d-m-Y'),
+						'filename'		=> 'Complaint-RR' . $rrcomplaint->complaint_number . '_' . date('d-m-Y'),
 						'type'			=> 'New'
 					)
 				)
@@ -133,7 +133,7 @@ class RrcomplaintsController extends ComplaintsController
 
 	/* output functions */
 	
-	public function printComplaint($_status = 'generate', $_filename)
+	public function printComplaint($_status = 'generate', $_filename = null)
 	{
 		
 		$filename = (!empty($this->_data['filename']))?$this->_data['filename']:'RR_complaint_' . date('d-m-Y');
