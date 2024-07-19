@@ -1,5 +1,5 @@
 paths:
-    migrations: %%PHINX_CONFIG_DIR%%/schema/phinx/migrations
+    migrations: '%%PHINX_CONFIG_DIR%%/schema/phinx/migrations'
 
 migration_base_class: UzerpPhinx\UzerpMigration
 
