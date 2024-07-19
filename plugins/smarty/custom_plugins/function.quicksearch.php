@@ -29,7 +29,7 @@ function smarty_function_quicksearch($params, &$smarty)
 	$letters = array('a','b','c','d','e','f','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
 
 	$location	 = '/?module='.$smarty->getTemplateVars('module').'&controller='.$smarty->getTemplateVars('controller').'&action='.$smarty->getTemplateVars('action');
-	$html		.='<div id="quickSearch">'."\n".'<table><tr>';
+	$html		='<div id="quickSearch">'."\n".'<table><tr>';
 	
 	foreach($letters as $letter)
 	{

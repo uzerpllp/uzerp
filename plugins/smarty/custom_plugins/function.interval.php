@@ -140,7 +140,7 @@ function smarty_function_interval($params, &$smarty)
 	// processing over, collect vars
 	// ATTN: should the above be $value, then converted to $data['attrs']['value']?
 	
-	if ($hidden)
+	if ($data['hidden'])
 	{
 		
 		if (isset($days_selected))
