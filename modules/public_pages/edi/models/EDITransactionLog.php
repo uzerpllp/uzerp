@@ -77,7 +77,7 @@ class EDITransactionLog extends DataObject {
 	 * Copies the current log entry to the log history table
 	 *
 	 */
-	function archive(&$errors = array())
+	function archive($id = null, &$errors = [], $archive_table = null, $archive_schema = null)
 	{
 		return parent::archive($this->id, $errors, 'edi_transactions_log_history', 'current');
 	}

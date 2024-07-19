@@ -28,7 +28,7 @@ class DataDefinitionDetailCollection extends DataObjectCollection {
 		if (empty($parent_id)) {
 			$sh->addConstraint(new Constraint('parent_id', 'is', 'NULL'));
 		} else {
-			$sh->addConstraint(new Constraint('parent_id', '=', $parent));
+			$sh->addConstraint(new Constraint('parent_id', '=', $parent_id));
 		}
 		$sh->setOrderby('position');
 		$nextlevel->load($sh);

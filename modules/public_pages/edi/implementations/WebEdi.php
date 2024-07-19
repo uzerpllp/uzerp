@@ -5,9 +5,23 @@
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
-class WebEdi extends EdiInterface {
+class WebEdi extends EDIInterface {
 
 	protected $version='$Revision: 1.4 $';
+	protected $direction;
+	protected $transfer_type;
+	protected $username;
+	protected $password;
+	protected $root_location;
+	protected $file_prefix;
+	protected $process_model;
+	protected $process_function;
+	protected $id;
+	protected $working_folder;
+	protected $external_identifier_field;
+	protected $name;
+	protected $type;
+
 	
 	function getFileList (&$errors=array()) {
 		
