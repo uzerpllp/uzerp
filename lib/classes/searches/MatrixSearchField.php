@@ -44,7 +44,7 @@ class MatrixSearchField extends SearchField
 			
 		}
 		
-		$html .= '<dd><div id="matrix_' . $this->fieldname . '">';
+		$html = '<dd><div id="matrix_' . $this->fieldname . '">';
 		
 		for ($i= 0; $i <= $value['count'] - 1; $i++)
 		{

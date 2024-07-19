@@ -15,6 +15,7 @@ class AttachmentsController extends Controller {
 	protected $attachmentController;
 	protected $attachmentModel;
 	protected $attachmentIdField;
+	protected $attachmentTitle;
 	
 	public function __construct($module = null, $action = null)
 	{
@@ -88,7 +89,7 @@ class AttachmentsController extends Controller {
  				// perhaps should do it in module_components?
 				if (empty($this->attachmentModel))
 				{
-	 				$this->setModel(str_replace('scontroller', '', $controller->name));
+	 				$this->setModel(str_replace('scontroller', '', $this->attachmentController->name));
 				}
 			}
 			
@@ -300,6 +301,7 @@ class AttachmentsController extends Controller {
 			sendBack();
 		}
 		
+		$db = DB::Instance();
 		$errors = array();
 		
 		$flash = Flash::Instance();

@@ -9,14 +9,14 @@ class TreeSearchField extends SearchField {
 
 	protected $version		='$Revision: 1.10 $';
 	protected $options		= array();
-	protected $breadrcumbs	= array();
+	protected $breadcrumbs	= array();
 	
 	public function toHTML()
 	{
 		
-		$html .= '<ul class="uz_breadcrumbs">';
+		$html = '<ul class="uz_breadcrumbs">';
 			
-		if (isset($this->breadrcrumbs) && count($this->breadcrumbs) > 0)
+		if (isset($this->breadcrumbs) && count($this->breadcrumbs) > 0)
 		{
 			
 			$system	= system::Instance();

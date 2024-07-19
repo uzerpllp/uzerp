@@ -14,7 +14,7 @@ class MultiSelectSearchField extends SearchField {
 	public function toHTML()
 	{
 		
-		$html .= '<select multiple size="5" id="search_' . $this->fieldname . '" class="multiselect" name="Search[' . $this->fieldname . '][]">';
+		$html = '<select multiple size="5" id="search_' . $this->fieldname . '" class="multiselect" name="Search[' . $this->fieldname . '][]">';
 		$value = [];
 		
 		if (is_countable($this->value) && count($this->value) > 0)
