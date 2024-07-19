@@ -84,7 +84,7 @@ class Dataset extends DataObject
 	N:  Numeric or decimal number
 */
 		
-		$config	= Config::Instance();
+		$config	= Config::Instance($_field_type);
 		
 		$field_type = get_config('DB_TYPE').'_ADODB_field_type';
 		
@@ -110,7 +110,7 @@ class Dataset extends DataObject
 		return (isset($field_types[$_field_type]))?$field_types[$_field_type]:'';
 	}
 	
-	static function get_fk_field_type ()
+	static function get_fk_field_type ($_field_type)
 	{
 		$config	= Config::Instance();
 		
@@ -119,14 +119,14 @@ class Dataset extends DataObject
 		return self::$field_type($_field_type);
 	}
 
-	private function pgsql_fk_field_type()
+	private function pgsql_fk_field_type($_field_type)
 	{
-		return self::postgres_fk_field_type();
+		return self::postgres_fk_field_type($_field_type);
 	}
 	
-	private function postgres_fk_field_type()
+	private function postgres_fk_field_type($_field_type)
 	{
-		return int8;
+		return $this->postgres_ADODB_field_type($_field_type);
 	}
 	
 }

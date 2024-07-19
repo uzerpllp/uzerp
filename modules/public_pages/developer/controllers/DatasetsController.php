@@ -223,6 +223,8 @@ class DatasetsController extends printController
 		$flash = Flash::Instance();
 		
 		$db = DB::Instance();
+
+		$errors = [];
 		
 		$db->StartTrans();
 		
@@ -408,6 +410,8 @@ class DatasetsController extends printController
 			$this->dataError();
 			sendBack();
 		}
+
+		$errors = [];
 		
 		$dataset = $this->_uses[$this->modeltype];
 		
@@ -620,7 +624,7 @@ class DatasetsController extends printController
 		
 		if ($_action != 'delete')
 		{
-			$flds.= ' '.DATASET::get_ADODB_field_type($_data['type']);
+			$flds.= ' '.Dataset::get_ADODB_field_type($_data['type']);
 			
 			$flds.= (empty($_data['field_length']))?'':' ('.$_data['length'].')';
 			
