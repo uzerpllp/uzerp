@@ -1698,6 +1698,7 @@ class SordersController extends printController
         $this->checkRequest(['post'], true);
 
         $order = $this->order_details();
+        $notes = [];
         foreach ($order->lines as $line){
             if ($line->note != ''){
                 $notes[] = $line;
