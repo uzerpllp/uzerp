@@ -124,19 +124,19 @@ class WorkSchedule extends DataObject
 		return ($this->status == $this->_status_new);
 	}
 	
-	static function Factory($data, &$errors, $do)
+	static function Factory($data, &$errors = [], $do_name = null)
 	{
 		
 		if (!isset($data['id']) || $data['id']=='') {
 		
 			$generator						= new UniqueNumberHandler();
-			$model							= new $do;
+			$model							= new $do_name;
 			$model->identifierField			= 'job_no';
 			$data[$model->identifierField]	= $generator->handle($model);
 		
 		}
 
-		return parent::Factory($data, $errors, $do);
+		return parent::Factory($data, $errors, $do_name);
 
 	}
 
