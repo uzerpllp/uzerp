@@ -14,19 +14,6 @@ class pogoodsreceivedSearch extends BaseSearch {
 	public static function useDefault($search_data=null, &$errors=array(), $defaults=null) {
 		$search = new pogoodsreceivedSearch($defaults);
 
-// Search by Customer
-		$search->addSearchField(
-			'plmaster_id',
-			'Supplier',
-			'select',
-			0,
-			'advanced'
-			);
-		$supplier = new PLSupplier();
-		$options=array('0'=>'All');
-		$suppliers=$supplier->getAll(null, false, true);
-		$options+=$suppliers;
-		$search->setOptions('plmaster_id',$options);
 
 // Search by Stock Item
 		$search->addSearchField(
