@@ -140,7 +140,7 @@ class Constraint {
 				$string.=$this->value;
 				break;
 			default:
-				if(substr($this->value,0,1) == '('
+				if(substr((string) $this->value,0,1 ?? '') == '('
 				|| $this->operator=='between') {
 					$string.=$this->value;
 					break;
