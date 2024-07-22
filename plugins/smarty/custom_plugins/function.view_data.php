@@ -73,9 +73,9 @@ function smarty_function_view_data($params, &$smarty) {
 			$value = $model->$attribute;
 		}
 		
-		if (isset($field->is_safe) && substr($attribute, -2) == '()')
+		if (isset($field->is_safe) && substr((string) $attribute, -2) == '()')
 		{
-			$attribute		= substr($attribute, 0, -2);
+			$attribute		= substr((string) $attribute, 0, -2);
 			$field->is_safe	= TRUE;
 			$value			= call_user_func(array($model, $attribute));
 		}
@@ -89,7 +89,7 @@ function smarty_function_view_data($params, &$smarty) {
 	
 	// use the value as the css class instead of the class string from the view
 	if ($ddclass == 'show_value')
-		$ddclass = strtolower($value);
+		$ddclass = strtolower((string) $value);
 	{
 		
 	}
@@ -141,7 +141,7 @@ function smarty_function_view_data($params, &$smarty) {
 		'opportunity'			=> 'crm'
 		);
 
-	if (str_replace(' ', '', $value) == '') 
+	if (str_replace(' ', '', $value ?? '') == '') 
 	{
 		$value = '<span class="blank">-</span>';
 	}
@@ -199,8 +199,8 @@ function smarty_function_view_data($params, &$smarty) {
 		{
 			// This is probably a fk id field so need to translate the id value
 			// to the fk identifier value via the belongsTo link
-			$belongs_field = strtolower($model->belongsToField[$attribute]);
-			$belongs_model = strtolower($model->belongsTo[$belongs_field]['model']);
+			$belongs_field = strtolower((string) $model->belongsToField[$attribute]);
+			$belongs_model = strtolower((string) $model->belongsTo[$belongs_field]['model']);
 			$fk_field		= $model->belongsTo[$belongs_field]['field'];
 			// Should already have the value from above; if not, try getting it again
 			if (empty($value))
@@ -212,7 +212,7 @@ function smarty_function_view_data($params, &$smarty) {
 		if (isset($model->belongsTo[$attribute]))
 		{
 			// This is a fk field name via a belongsTo link
-			$belongs_model	= strtolower($model->belongsTo[$attribute]['model']);
+			$belongs_model	= strtolower((string) $model->belongsTo[$attribute]['model']);
 			$fk_field		= $model->belongsTo[$attribute]['field'];
 		}
 		
@@ -300,7 +300,7 @@ function smarty_function_view_data($params, &$smarty) {
 		return '';
 	}
 		
-	$template_id=(isset($params['id']))?$params['id']:$attribute;
+	$template_id=$params['id'] ?? $attribute;
 	$template_id=(empty($template_id))?'':get_class($model).'_'.$template_id;
 	return sprintf($template_html, $tag, $template_id, $value, $ddclass);
 

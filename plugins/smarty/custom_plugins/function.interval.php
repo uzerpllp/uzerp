@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -10,13 +10,13 @@
 
 function smarty_function_interval($params, &$smarty)
 {
-	
+
 	$with = &$smarty->getTemplateVars('with');
-	
+
 	$data = array(
 		'class' => array()
 	);
-	
+
 	if (!empty($params['model']))
 	{
 		$model = &$params['model'];
@@ -25,31 +25,31 @@ function smarty_function_interval($params, &$smarty)
 	{
 		$model = $with['model'];
 	}
-	
+
 	if (!empty($params['readonly']) && $params['readonly'])
 	{
 		$data['attrs']['readonly']=$params['readonly'];
 	}
-	
+
 	$controller_data	= &$smarty->getTemplateVars('controller_data');
 	$modelname			= get_class($model);
 	$basename			= $params['attribute'];
 	$unitname			= $basename . '_unit';
 	$name				= $modelname . '[' . $basename . ']';
 	$field				= $model->getField($basename);
-	
+
 	if (isset($params['postfix']))
 	{
 		$name .= $params['postfix'];
 	}	
-	
+
 	$data['select_name'] = $modelname . '[' . $unitname . ']';
-	
+
 	if (isset($params['postfix']))
 	{
 		$data['select_name'] .= $params['postfix'];
 	}
-	
+
 	$data['attrs']['id']			= strtolower($modelname) . '_' . $basename;
 	$data['attrs']['name']			= $name;
 	$data['label']['attrs']['for']	= strtolower($modelname) . '_' . $basename;
@@ -87,7 +87,7 @@ function smarty_function_interval($params, &$smarty)
 	{
 		$data['attrs']['value'] = $field->value;
 	}
-	
+
 	if (isset($_POST[$modelname][$unitname]))
 	{
 		$units = $_POST[$modelname][$unitname];
@@ -108,19 +108,19 @@ function smarty_function_interval($params, &$smarty)
 	{
 		$units = 'hours';
 	}
-			
+
 	$data['days_label']		= prettify('days');
 	$data['hours_label']	= prettify('hours');
 	$data['minutes_label']	= prettify('minutes');
-	
+
 	if (!isset($data['attrs']['value']) && $field->has_default == 1)
 	{
 		$data['attrs']['value'] = $field->default_value;
 	}
-	
+
 	if (!empty($data['attrs']['value']))
 	{
-		
+
 		if (is_array($data['attrs']['value']))
 		{
 			$units = $data['attrs']['value'][1];
@@ -132,17 +132,17 @@ function smarty_function_interval($params, &$smarty)
 			$data['attrs']['value'] = to_working_days($data['attrs']['value'],false);
 			$data['attrs']['value'] = $data['attrs']['value'] * SystemCompanySettings::DAY_LENGTH;
 		}
-		
+
 		$data[$units . '_selected'] = 'selected="selected"';
-		
+
 	}
-	
+
 	// processing over, collect vars
 	// ATTN: should the above be $value, then converted to $data['attrs']['value']?
-	
+
 	if ($data['hidden'])
 	{
-		
+
 		if (isset($days_selected))
 		{
 			$data['unit_value']	= 'days';
@@ -151,18 +151,18 @@ function smarty_function_interval($params, &$smarty)
 		{
 			$data['unit_value']	= 'hours';
 		}
-	
+
 	}
 
 	$data['class'] = implode(' ', $data['class']);
-	
+
 	// convert attrs array to a string
 	$data['attrs']			= build_attribute_string($data['attrs']);
 	$data['label']['attrs']	= build_attribute_string($data['label']['attrs']);
-	
+
 	// fetch smarty plugin template
 	return smarty_plugin_template($smarty, $data, 'function.interval');
-	
+
 }
 
 // end of function.interval.php

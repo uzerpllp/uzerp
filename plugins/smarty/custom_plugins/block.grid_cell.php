@@ -15,7 +15,7 @@ function smarty_block_grid_cell($params, $content, &$smarty, $repeat)
 	{
 
 		// no point continuing if we're dealing with an id field
-		if (substr($params['field'], -2) == 'id') {
+		if (substr((string) $params['field'], -2) == 'id') {
 			return '';
 		}
 
@@ -37,7 +37,7 @@ function smarty_block_grid_cell($params, $content, &$smarty, $repeat)
 
 		if($model->getField($params['field'])->type !== 'html' && !isset($params['no_escape']))
 		{
-			$content = uzh(trim($content));
+			$content = uzh(trim((string) $content));
 		}
 
 		if ($params['cell_num'] == 1)
@@ -111,9 +111,9 @@ function smarty_block_grid_cell($params, $content, &$smarty, $repeat)
 
 				foreach ($params as $field => $value)
 				{
-					if (substr($field, 0, 1) == '_' && $model->isField(substr($field,1)))
+					if (substr((string) $field, 0, 1) == '_' && $model->isField(substr((string) $field,1)))
 					{
-						$link[substr($field,1)] = $value;
+						$link[substr((string) $field,1)] = $value;
 					}
 				}
 
@@ -166,14 +166,14 @@ function smarty_block_grid_cell($params, $content, &$smarty, $repeat)
 
 			if (isset($model->belongsToField[$params['field']]))
 			{
-				$belongs_field = strtolower($model->belongsToField[$params['field']]);
-				$belongs_model = strtolower($model->belongsTo[$belongs_field]['model']);
+				$belongs_field = strtolower((string) $model->belongsToField[$params['field']]);
+				$belongs_model = strtolower((string) $model->belongsTo[$belongs_field]['model']);
 				$fk_field		= $model->belongsTo[$belongs_field]['field'];
 			}
 
 			if (isset($model->belongsTo[$params['field']]))
 			{
-				$belongs_model	= strtolower($model->belongsTo[$params['field']]['model']);
+				$belongs_model	= strtolower((string) $model->belongsTo[$params['field']]['model']);
 				$fk_field		= $model->belongsTo[$params['field']]['field'];
 			}
 			if (!empty($belongs_model))

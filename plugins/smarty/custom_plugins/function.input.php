@@ -39,17 +39,17 @@ function smarty_function_input($params, &$smarty)
 
 	if (empty($params['group']))
 	{
-		$params['group'] = isset($with['group']) ? $with['group'] : '';
+		$params['group'] = $with['group'] ?? '';
 	}
 
 	if (empty($params['alias']))
 	{
-		$params['alias'] = isset($with['alias']) ? $with['alias'] : '';
+		$params['alias'] = $with['alias'] ?? '';
 	}
 
 	if (empty($params['composite']))
 	{
-		$params['composite'] = isset($with['composite']) ? $with['composite'] : '';
+		$params['composite'] = $with['composite'] ?? '';
 	}
 
 	if (!empty($params['model']))
@@ -81,7 +81,7 @@ function smarty_function_input($params, &$smarty)
 	if (isset($params['label']))
 	{
 
-		$params['label'] = trim($params['label']);
+		$params['label'] = trim((string) $params['label']);
 
 		if (strtoupper($params['label']) === 'FALSE' || empty($params['label']))
 		{
@@ -370,7 +370,7 @@ function smarty_function_input($params, &$smarty)
 		$data['attrs']['data-row-number'] = $params['rowid'];
 	}
 
-	if (strpos($attribute, 'confirmation_') === 0)
+	if (strpos((string) $attribute, 'confirmation_') === 0)
 	{
 
 		if (empty($label))
@@ -463,11 +463,11 @@ function smarty_function_input($params, &$smarty)
 				if (!empty($modelvalue))
 				{
 
-					if (strpos($modelvalue, '/'))
+					if (strpos((string) $modelvalue, '/'))
 					{
 						$data['attrs']['value'] = $modelvalue;
 					} else {
-						$data['attrs']['value'] = date(DATE_FORMAT, strtotime($modelvalue));
+						$data['attrs']['value'] = date(DATE_FORMAT, strtotime((string) $modelvalue));
 					}
 
 				}
@@ -521,7 +521,7 @@ function smarty_function_input($params, &$smarty)
 			$data['attrs']['class'][] = $attribute;
 
 		default:
-			$data['attrs']['value'] = uzh(trim($data['attrs']['value']), ENT_QUOTES);
+			$data['attrs']['value'] = uzh(trim((string) $data['attrs']['value']), ENT_QUOTES);
 
 			break;
 

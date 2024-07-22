@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,8 +9,8 @@
 /* $Revision: 1.3 $ */
 
 function smarty_modifier_escape($string) {
-	
-	return htmlspecialchars($string);
+
+	return htmlspecialchars((string) $string);
 
 }
 

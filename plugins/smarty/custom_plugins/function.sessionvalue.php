@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -28,7 +28,7 @@ function smarty_function_sessionvalue($params, $model_name, $attribute)
 	{
 		$value = $_SESSION['_controller_data'][$model_name][$attribute];
 	}
-	
+
 	return $value;
 }
 

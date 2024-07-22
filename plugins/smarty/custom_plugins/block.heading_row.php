@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2000-2012 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -15,7 +15,7 @@ function smarty_block_heading_row($params, $content, &$smarty, $repeat)
 	{
 		return '<thead><tr>' . $content . '</tr></thead>' . "\n";	
 	}
-	
+
 }
 
 // end of block.heading_row.php

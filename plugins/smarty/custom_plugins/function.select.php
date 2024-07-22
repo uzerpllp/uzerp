@@ -76,7 +76,7 @@ function smarty_function_select($params, &$smarty) {
 		}
 		else
 		{
-			$exp		= explode(',', $constraint);
+			$exp		= explode(',', (string) $constraint);
 			$constraint	= new Constraint($exp[0], $exp[1], $exp[2]);
 		}
 		
@@ -86,7 +86,7 @@ function smarty_function_select($params, &$smarty) {
 	
 	if (empty($params['alias']))
 	{
-		$params['alias'] = isset($with['alias']) ? $with['alias'] : '';
+		$params['alias'] = $with['alias'] ?? '';
 	}
 	
 	if (!empty($params['alias']))
@@ -114,7 +114,7 @@ function smarty_function_select($params, &$smarty) {
 	
 	if (empty($params['composite']))
 	{
-		$params['composite'] = isset($with['composite']) ? $with['composite'] : ''; // DEFAULT
+		$params['composite'] = $with['composite'] ?? ''; // DEFAULT
 	}
 	
 	if (!empty($params['composite']))
@@ -160,7 +160,7 @@ function smarty_function_select($params, &$smarty) {
 		$get_options = $field->options->_data;
 		$use_autocomplete=$field->options->_autocomplete;
 		$text_value=$model->{$model->belongsToField[$attribute]};
-		if (trim($text_value) == '' && count($get_options)>0) {
+		if (trim((string) $text_value) == '' && count($get_options)>0) {
 			$text_value=current($get_options);
 		}
 		$selected=key($get_options);
@@ -216,7 +216,7 @@ function smarty_function_select($params, &$smarty) {
 	
 	
 	if (!empty($params['depends'])) {
-		$depends=explode(',', $params['depends']);
+		$depends=explode(',', (string) $params['depends']);
 	} elseif (!is_null($field->options->_depends)) {
 		$depends=array_keys($field->options->_depends);
 	} else {
@@ -224,7 +224,7 @@ function smarty_function_select($params, &$smarty) {
 	}
 //    echo 'Smarty function.select depends='.$depends.'<br>';
 	if (!empty($params['constrains'])) {
-		$affects=explode(',', $params['constrains']);
+		$affects=explode(',', (string) $params['constrains']);
 		$constrains=true;
 	} elseif (!is_null($field->options->_affects)) {
 		$affects=array_keys($field->options->_affects);
@@ -263,7 +263,7 @@ function smarty_function_select($params, &$smarty) {
 		
 		$x = $model->belongsTo[$model->belongsToField[$attribute]]["model"];
 		
-		$controllername = strtolower($x) . 's';
+		$controllername = strtolower((string) $x) . 's';
 		
 		if (isset($_SESSION['cache']['select'][$controllername]))
 		{
@@ -322,7 +322,7 @@ function smarty_function_select($params, &$smarty) {
 				$use_autocomplete	= TRUE;
 				$text_value			= $model->{$model->belongsToField[$attribute]};
 				
-				if (trim($text_value) == '')
+				if (trim((string) $text_value) == '')
 				{
 					
 					if (empty($selected) && !$model->isLoaded() && $field->has_default) {
@@ -499,7 +499,7 @@ function smarty_function_select($params, &$smarty) {
 		}
 		
 		// for the sake of it, trim the class string
-		$data['select']['attrs']['class'] = trim($data['select']['attrs']['class']);
+		$data['select']['attrs']['class'] = trim((string) $data['select']['attrs']['class']);
 		
 		// build the attribute string
 		// $data['select']['attrs'] is no longer an array!!!
@@ -588,7 +588,7 @@ function smarty_function_select($params, &$smarty) {
 		$data['data_inline'] = true;
 		$data['select']['selected'] = $selected;
 		$data['select']['value'] = $get_options[$selected];
-		$data['select']['options'] = json_encode(dataObject::toJSONArray($get_options));
+		$data['select']['options'] = json_encode(DataObject::toJSONArray($get_options));
 		$data['select']['attrs']['class'] = 'uz-autocomplete ui-autocomplete-input icon '.$data['select']['attrs']['class'];
 		
 	} else {
@@ -604,7 +604,7 @@ function smarty_function_select($params, &$smarty) {
 			$data['select']['attrs']['data-action']='getOptions';
 		}
 		if (!empty($params['identifierfield'])) {
-			$data['select']['attrs']['data-identifierfield']=json_encode(explode(',', $params['identifierfield']));
+			$data['select']['attrs']['data-identifierfield']=json_encode(explode(',', (string) $params['identifierfield']));
 		} elseif (!is_null($field->options->_identifierfield)) {
 			$data['select']['attrs']['data-identifierfield']=json_encode(array_keys($field->options->_identifierfield));
 		} else {

@@ -2,7 +2,7 @@
 
 function smarty_block_content_wrapper($params, $content, &$smarty, $repeat)
 {
-	
+
 	/**************************************************************
 	 * Content Wrapper block
 	 **************************************************************
@@ -17,7 +17,7 @@ function smarty_block_content_wrapper($params, $content, &$smarty, $repeat)
 	 * $Revision: 1.6 $
 	 * 
 	 **************************************************************/
-	
+
 	// set initial vars
 	$data = array(
 		'attrs'		=> array(),
@@ -25,7 +25,7 @@ function smarty_block_content_wrapper($params, $content, &$smarty, $repeat)
 		'flash'		=> FALSE,
 		'content'	=> $content
 	);
-		
+
 	if (!empty($content))
 	{
 
@@ -35,50 +35,50 @@ function smarty_block_content_wrapper($params, $content, &$smarty, $repeat)
 		/*
 		 * Page Identifier
 		 ***********************************************************/		
-				
+
 		if (isset($params['module']) && !empty($params['module']))
 		{
 			$module = $params['module'];
 		}
 		else
 		{
-			$module = trim($smarty->getTemplateVars('module'),'_');
+			$module = trim((string) $smarty->getTemplateVars('module'),'_');
 		}
-			
+
 		if (isset($params['controller']) && !empty($params['controller']))
 		{
 			$controller = $params['controller'];
 		}
 		else
 		{
-			$controller = trim($smarty->getTemplateVars('controller'),'_');
+			$controller = trim((string) $smarty->getTemplateVars('controller'),'_');
 		}
-			
+
 		if (isset($params['action']) && !empty($params['action']))
 		{
 			$action = $params['action'];
 		}
 		else
 		{
-			$action = trim(basename($smarty->getTemplateVars('templateName'), ".tpl"),'_');
+			$action = trim(basename((string) $smarty->getTemplateVars('templateName'), ".tpl"),'_');
 		}
-			
+
 		if (!isset($params['page_identifier']) || $params['page_identifier'] !== FALSE)
 		{
 			$data['attrs']['id'] = strToLower($module . '-' . $controller . '-' . $action);
 		}
-		
+
 		$data['attrs']['data-module']		= $module;
 		$data['attrs']['data-controller']	= $controller;
 		$data['attrs']['data-action']		= $action;
-		
+
 		$self = $smarty->getTemplateVars('self');
-		
+
 		unset($self['modules']);
 		unset($self['module']);
 		unset($self['controller']);
 		unset($self['action']);
-		
+
 		// This is used by popup dialog forms to refresh the calling form/page
 		foreach ($self as $key=>$value)
 		{
@@ -87,26 +87,26 @@ function smarty_block_content_wrapper($params, $content, &$smarty, $repeat)
 				$data['attrs']['data-'.$key] = $value;
 			}
 		}
-		
+
 		/*
 		 * Class
 		 ***********************************************************/
-		
+
 		$data['attrs']['class'][] = 'content_wrapper';
-		
+
 		if (isset($params['class']))
 		{
 			$data['attrs']['class'][] = $params['class'];
 		}
-		
-		
+
+
 		/*
 		 * Page Title
 		 ***********************************************************/
 
 		if (!isset($params['title']) || $params['title'] !== FALSE)
 		{
-			
+
 			if (isset($params['title'])) 
 			{
 				$data['title'] = prettify($params['title']);
@@ -115,32 +115,32 @@ function smarty_block_content_wrapper($params, $content, &$smarty, $repeat)
 			{
 				$data['title'] = prettify($smarty->getTemplateVars('page_title'));
 			}
-			
+
 		}
 
-		
+
 		/*
 		 * Flash
 		 ***********************************************************/
-		
+
 		if (!isset($params['flash']) || $params['flash'] !== FALSE)
 		{
 			$data['flash'] = TRUE;
 		}
-		
-		
+
+
 		/*
 		 * Generate and output final HTML
 		 ***********************************************************/
-		
+
 		// convert attrs array to a string
 		$data['attrs'] = build_attribute_string($data['attrs']);
-		
+
 		// fetch smarty plugin template
 		return smarty_plugin_template($smarty, $data, 'block.content_wrapper');
-		
+
 	}
-	
+
 }
 
 // end of block.content_wrapper.php
