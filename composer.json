@@ -24,7 +24,10 @@
         ],
         "psr-4": {
             "UzerpPhinx\\": "schema/phinx/classes/"
-        }
+        },
+        "files" : [
+            "vendor/adodb/adodb-php/adodb-xmlschema03.inc.php"
+        ]
     },
     "config": {
         "platform": {
