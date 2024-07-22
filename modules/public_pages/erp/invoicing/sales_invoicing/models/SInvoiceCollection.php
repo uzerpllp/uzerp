@@ -12,6 +12,8 @@ class SInvoiceCollection extends DataObjectCollection
 	protected $version = '$Revision: 1.12 $';
 	
 	public $field;
+	protected $view;
+	protected $customerorders;
 		
 	function __construct($do = 'SInvoice', $tablename = 'si_headeroverview')
 	{

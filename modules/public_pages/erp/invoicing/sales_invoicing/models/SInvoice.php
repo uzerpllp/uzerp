@@ -216,7 +216,7 @@ class SInvoice extends Invoice
         return $invoiceAddress;
     }
 
-    public function getPersonAddresses($id = '', $data)
+    public function getPersonAddresses($id = '', $data = [])
     {
         $addresslist = array();
         $addresses = array();

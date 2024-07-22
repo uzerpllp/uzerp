@@ -248,14 +248,11 @@ class ReportsController extends printController {
 		
 		//Set currently selected report definition
 		$selected_def = ReportDefinition::getDefinitionByID($report->report_definition);
-		if ($selected_def->_data['name'] == 'PrintCollection')
-		{
-			$this->view->set('selected_reportdef', 0);
+		if ($selected_def->_data != null) {
+			($selected_def->_data['name'] == 'PrintCollection') ? 
+				$this->view->set('selected_reportdef', 0) :
+				$this->view->set('selected_reportdef', $selected_def->_data['id']);
 		}
-		else
-		{
-			$this->view->set('selected_reportdef', $selected_def->_data['id']);
-		}	
 	}
 
 	public function copy() 
@@ -472,8 +469,8 @@ class ReportsController extends printController {
 			
 		}
 		
-		// NB: The follow idField is being passed by reference... it isn't passing a value, instead recieving one back
-		$do = $report->createDataObject($display_fields, '', $this->getColumns($report->tablename));
+		$idField = '';
+		$do = $report->createDataObject($display_fields, $idField, $this->getColumns($report->tablename));
 		
 		$doc = new DataObjectCollection($do);
 		$sh = new SearchHandler($doc, FALSE);
@@ -514,7 +511,7 @@ class ReportsController extends printController {
 		
 		// prepend the id field to the display fields... 
 		// at this stage the items are in order, so keys don't matter
-		$display_fields = array_merge(array(''), $display_fields);
+		$display_fields = array_merge(array($idField), $display_fields);
 		
 		$sh->setFields($display_fields);
 		
@@ -744,7 +741,7 @@ class ReportsController extends printController {
 		$this->_data['Report']['options']=serialize($this->_data['Report']['options']);
 		
 		// remove the id if we want to save as a copy, a new id (and thus the record) will be generated
-		if (strtolower($this->_data['save'])=='save copy')
+		if (strtolower((string) $this->_data['save'])=='save copy')
 		{
 			unset($this->_data['Report']['id']);
 		}
@@ -867,7 +864,8 @@ class ReportsController extends printController {
 			}
 			
 			// if the field is also a search field, add it to the search array
-			if ($field_options['normal_enable_search'] === 'true')
+			if (array_key_exists('normal_enable_search', $field_options)
+				&& $field_options['normal_enable_search'] === 'true')
 			{
 				$search_fields[$field]=$field;	
 			}
@@ -913,8 +911,10 @@ class ReportsController extends printController {
 		$this->view->set('filter_fields',implode('<br />',$filter_fields));
 		
 		$rd = ReportDefinition::getDefinitionByid($report->report_definition);
-		$report_definition_name = $rd->_data['name'];
-		$this->view->set('report_definition', $report_definition_name);
+		if ($rd->_data !== null) {
+			$report_definition_name = $rd->_data['name'];
+			$this->view->set('report_definition', $report_definition_name);
+		}
 		
 		$hasreport=new HasReport();
 		$report_list=$hasreport->getAssignedRoles($report->id);
@@ -1387,7 +1387,7 @@ class ReportsController extends printController {
 				foreach ($fields as $key => $fieldname)
 				{
 					// less-than causes issues in XML/HTML
-					$model[$key] = str_replace('<', '&#60;', $model[$key]);	
+					$model[$key] = str_replace('<', '&#60;', (string) $model[$key] ?? '');	
 					if ($break === '' && isset($measure_fields[$key]))
 					{
 						if ($model[$key] === '')
@@ -1539,7 +1539,7 @@ class ReportsController extends printController {
 					
 					foreach ($fields as $field_slug => $fieldname)
 					{
-						
+						$measure_field = '';
 						if (isset($measure_fields[$field_slug]))
 						{
 							$measure_field=$field_slug;

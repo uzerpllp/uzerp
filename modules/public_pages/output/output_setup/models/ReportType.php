@@ -59,7 +59,7 @@ class ReportType extends DataObject
 		
 		$report_type->loadBy('name', $name);
 	
-		return $report_type->_data['id'];
+		return $report_type->_data['id'] ?? '';
 	
 	}
 }

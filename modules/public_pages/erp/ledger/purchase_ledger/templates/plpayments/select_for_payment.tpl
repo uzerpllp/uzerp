@@ -57,7 +57,8 @@
 			<td>{$transaction->getFormatted('due_date')}</td>
 			<td align=right>{$transaction->gross_value|string_format:"%.2f"}</td>
 			<td align=right>{$transaction->settlement_discount|string_format:"%.2f"}
-				<input type="hidden" id='settlement_discount{$rowid}' value={$transaction->settlement_discount*-1}>
+				{$converted = settype ($transaction->settlement_discount, 'integer')}
+				<input type="hidden" id='settlement_discount{$rowid}' value={$converted * -1}>
 			</td>
 			<td align=right>{$transaction->os_value|string_format:"%.2f"}
 				<input type="hidden" id='os_value{$rowid}' value={$transaction->os_value}>
