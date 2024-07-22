@@ -154,7 +154,7 @@ class XMLSWFGrapher {
 	}
 	
 	function setSeriesColourForUsername($username) {
-		$colour = substr(md5($username),0,6);
+		$colour = substr(md5((string) $username),0,6);
 		$this->setSeriesColours($username);
 	}
 	
@@ -176,7 +176,7 @@ class XMLSWFGrapher {
 	
 	function save() {
 		$fp=fopen(DATA_ROOT.'tmp/chart'.$this->id,'w+');
-		fwrite($fp,$this->dom->saveXML($this->dom->getElementsByTagName('chart')->item(0)));
+		fwrite($fp,(string) $this->dom->saveXML($this->dom->getElementsByTagName('chart')->item(0)));
 		fclose($fp);
 	}
 

@@ -19,7 +19,7 @@ header('Content-type: application/json');
 // if the username is set in the session...
 if (isset($_SESSION['username']) && !empty($_SESSION['username']))
 {
-	
+
 	// return the username
 	echo json_encode(
 		array(
@@ -27,14 +27,14 @@ if (isset($_SESSION['username']) && !empty($_SESSION['username']))
 			'username'	=> $_SESSION['username']
 		)
 	);
-	
+
 }
 else
 {
-	
+
 	// otherwise report that the user is not logged in
 	echo json_encode(array('logged_in' => FALSE));
-	
+
 }
 
 exit;

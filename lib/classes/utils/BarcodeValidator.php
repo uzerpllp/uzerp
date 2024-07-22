@@ -22,7 +22,7 @@ class BarcodeValidator {
     public function __construct($barcode) {
         $this->barcode = $barcode;
         // Trims parsed string to remove unwanted whitespace or characters
-        $this->barcode = trim($this->barcode);
+        $this->barcode = trim((string) $this->barcode);
         if (preg_match('/[^0-9]/', $this->barcode)) {
             $this->valid = false;
             return;
@@ -81,17 +81,17 @@ class BarcodeValidator {
         return $this->type;
     }
     public function getGTIN14(){
-        return (string)substr($this->gtin14, -14);
+        return (string)substr((string) $this->gtin14, -14);
     }
     public function isValid(){
         return $this->valid;
     }
     private function checkDigitValid() {
         $calculation = 0;
-        for ($i = 0; $i < (strlen($this->gtin14) - 1); $i++) {
+        for ($i = 0; $i < (strlen((string) $this->gtin14) - 1); $i++) {
             $calculation += $i % 2 ? $this->gtin14[$i] * 1 : $this->gtin14[$i] * 3;
         }
-        if (substr(10 - (substr($calculation, -1)), -1) != substr($this->gtin14, -1)) {
+        if (substr(10 - (substr($calculation, -1)), -1) != substr((string) $this->gtin14, -1)) {
             return false;
         } else {
             return true;

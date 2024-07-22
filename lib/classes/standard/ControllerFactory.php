@@ -24,7 +24,7 @@ class ControllerFactory {
 		
 		if($router->Dispatch('controller') !== null)
 		{
-			$classname=ucfirst(strtolower($router->Dispatch('controller'))).'Controller';
+			$classname=ucfirst(strtolower((string) $router->Dispatch('controller'))).'Controller';
 			
 			if (is_array($modulecomponents))
 			{

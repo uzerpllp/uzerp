@@ -385,7 +385,7 @@ class SelectorController extends printController
                 $description = $this->getNextDescription(strtolower($parent->description));
             } else {
                 $parent_id = '';
-                $description = strtolower(current($this->itemFields));
+                $description = strtolower((string) current($this->itemFields));
             }
         }
 
@@ -626,7 +626,7 @@ class SelectorController extends printController
             $sh = new SearchHandler($items, false);
             $sh->addConstraint(new Constraint($item->description . '_id', '=', $item->id));
             $items->load($sh);
-            
+
             // We may be here becuase the user cleared an item search.
             // Only create the session array if there are no targets,
             // otherwise the user's new selections will keep disapearing
@@ -998,7 +998,7 @@ class SelectorController extends printController
         // 'report' => 'CustomReport'
 
         // simply return the options if we're only at the dialog stage
-        if (strtolower($status) === "dialog") {
+        if (strtolower((string) $status) === "dialog") {
             return $options;
         }
         ;
@@ -1058,7 +1058,7 @@ class SelectorController extends printController
      */
     public function selected_items()
     {
-        $items = explode('^', $this->_data['id']);
+        $items = explode('^', (string) $this->_data['id']);
         foreach ($items as $key => $value) {
             if (! empty($value)) {
                 // dbug::e('processing value',true);
@@ -1097,7 +1097,7 @@ class SelectorController extends printController
 
     public function selected_targets()
     {
-        $targets = explode('^', $this->_data['id']);
+        $targets = explode('^', (string) $this->_data['id']);
         foreach ($targets as $key => $value) {
             if (! empty($value)) {
                 unset($params);
@@ -1201,7 +1201,7 @@ class SelectorController extends printController
 
         if (count($breadcrumbs) > 0) {
             foreach ($breadcrumbs as $key => $value) {
-                $output[] = '<li>' . $value['name'] . ' <a href="#" onclick="setSelectTree(\'' . $this->_data['parent'] . '\',\'' . $value['parent_id'] . '\',\'' . $this->_data['module'] . '\',\'' . $this->_data['submodule'] . '\',\'' . $this->_data['controller'] . '\',\'getParentSelectorList\')" title="Click to see other items on this level">(Choose another ' . strtolower($value['descriptor']) . ')</a></li>';
+                $output[] = '<li>' . $value['name'] . ' <a href="#" onclick="setSelectTree(\'' . $this->_data['parent'] . '\',\'' . $value['parent_id'] . '\',\'' . $this->_data['module'] . '\',\'' . $this->_data['submodule'] . '\',\'' . $this->_data['controller'] . '\',\'getParentSelectorList\')" title="Click to see other items on this level">(Choose another ' . strtolower((string) $value['descriptor']) . ')</a></li>';
             }
             // breadcrumbs are construct backwards, lets sort them out (pun intended)
             sort($output, SORT_NUMERIC);
@@ -1213,7 +1213,7 @@ class SelectorController extends printController
         echo $html;
         exit();
     }
-    
+
     /*
      * Protected Functions
      */
@@ -1309,7 +1309,7 @@ class SelectorController extends printController
         );
 
         // simply return the options if we're only at the dialog stage
-        if (strtolower($status) === "dialog") {
+        if (strtolower((string) $status) === "dialog") {
             return $options;
         }
         ;
@@ -1349,7 +1349,7 @@ class SelectorController extends printController
         $width = strlen($current->description);
 
         foreach ($parent as $item_detail) {
-            $width = strlen($item_detail['description']) > $width ? strlen($item_detail['description']) : $width;
+            $width = strlen((string) $item_detail['description']) > $width ? strlen((string) $item_detail['description']) : $width;
         }
 
         $item_list = '';

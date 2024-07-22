@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,7 +9,7 @@
 class SearchHandler {
 
 	protected $version = '$Revision: 1.28 $';
-	
+
 	private $model;
 	public $fields = array();
 	public $groupby = array();
@@ -27,39 +27,39 @@ class SearchHandler {
 	private $use_session;
 	private $use_system_company;	
 	private $search_id;
-		
+
 	public function __construct(DataObjectCollection $collection, $use_session = TRUE, $use_system_company = TRUE, $search_id = '')
 	{
-		
+
 		$tablename					= $collection->getViewName();
 		$this->tablename			= $tablename;
 		$this->use_session			= $use_session;
 		$this->search_id			= $search_id;
 		$this->constraints			= new ConstraintChain();
 		$this->use_system_company	= $use_system_company;
-		
+
 		$this->setOrderby($collection->orderby, $collection->direction);
-		
-		if (strpos($tablename, ' '))
+
+		if (strpos((string) $tablename, ' '))
 		{
-			$this->tablename = substr($tablename, strrpos($tablename, ' ')+1);
+			$this->tablename = substr((string) $tablename, strrpos((string) $tablename, ' ')+1);
 		}
-				
+
 		$cache_id = array(
 			'searches',
 			EGS_USERNAME,
 			$this->tablename . '_' . $this->search_id
 		);
-		
+
 		$cache			= Cache::Instance();		
 		$cached_search	= $cache->get($cache_id, 1800);
-		
+
 		if ($this->use_session && $cached_search !== FALSE)
 		{
-			
+
 			foreach ($cached_search as $key => $val)
 			{
-				
+
    				if ($key == 'constraints' || $key == 'fields')
    				{
 					$this->$key = unserialize($val);
@@ -68,41 +68,41 @@ class SearchHandler {
   				{
 					$this->$key = $val;
   				}
-  				
+
 			}
-			
+
 			debug('SearchHandler::__construct ' . $tablename . ' ' . print_r($this, TRUE));
 //			echo 'SearchHandler::__construct<pre>'.print_r($this, true).'</pre>';
 
 		}
 		elseif ($this->use_system_company)
 		{
-			
+
 			//if usercompanyid is a field, then it's always a constraint
 			// TODO: Need to revisit this;
 			//       gets added in DataObject(?)/DataObjectCollection(?)
 			//       if the search is access controlled
-			
+
 			$model = $collection->getModel();
-			
+
 			if($model->isField('usercompanyid'))
 			{
 				$this->constraints = new ConstraintChain();
 				$this->addConstraint(new Constraint('usercompanyid','=',EGS_COMPANY_ID));
 			}
-			
+
 		}
-		
+
 		$this->collection = $collection;
-		
+
 	}
 
 	public function save() {
-		
+
 		$this->constraints->removeByField('usercompanyid');
-		
+
 		$array = array();
-		
+
 		$array['fields']		= serialize($this->fields);
 		$array['constraints']	= serialize($this->constraints);
 		$array['orderby']		= $this->orderby;
@@ -112,7 +112,7 @@ class SearchHandler {
 		$array['maxlimit']		= $this->maxlimit;
 		$array['lastpage']		= $this->lastpage;
 		$array['lastupdated']	= time();
-		
+
 		// instanciate and set the cache
 		$cache		= Cache::Instance();
 		$cache_id	= array(
@@ -120,11 +120,11 @@ class SearchHandler {
 			EGS_USERNAME,
 			$this->tablename . '_' . $this->search_id
 		);
-		
+
 		$cache->add($cache_id, $array, 1800);
-				
+
 		debug('SearchHandler::save '.$this->tablename.' '.print_r($array, TRUE));
-		
+
 	}
 
 	public function __get($var) {
@@ -152,7 +152,7 @@ class SearchHandler {
 		if (!is_numeric($this->perpage)) {
 			$this->perpage = 10;
 		}
-		
+
 		if (!empty($page)) {
 			$this->page=$page;
 		} elseif(isset($_GET['page'])) {
@@ -163,7 +163,7 @@ class SearchHandler {
 		if (!is_numeric($this->page)) {
 			$this->page = 1;
 		}
-		
+
 		if ($this->page>$this->lastpage) {
 			$this->page=$this->lastpage;
 		} elseif ($this->page<1){
@@ -187,7 +187,7 @@ class SearchHandler {
 		}
 		$this->fields=$fields;
 	}
-	
+
 	public function setFields($fields) {
 		$this->fields=array();
 		if($fields=='*') {
@@ -200,9 +200,9 @@ class SearchHandler {
 				if($field instanceof DataField) {
 					$this->fields[$field->name]=$field;
 				} else {
-					$tmp=strrpos(strtolower($field), ' as ');
+					$tmp=strrpos(strtolower((string) $field), ' as ');
 					if ($tmp) {
-						$fieldname=substr($field, $tmp+4);
+						$fieldname=substr((string) $field, $tmp+4);
 					} else {
 						$fieldname=$field;
 					}
@@ -213,11 +213,11 @@ class SearchHandler {
 			}
  		}
 	}
-	
+
 	public function setGroupBy($groupby) {
 		$this->groupby=$groupby;
 	}
-	
+
 	private function extractConstraints() {
 		//check for 'active' searches
 		if(isset($_REQUEST['clearsearch']))
@@ -231,11 +231,11 @@ class SearchHandler {
 				$this->constraints = new ConstraintChain();
 			}
 			$model = new $this->collection->_doname;
-			$searchfield = strtolower($_POST['quicksearchfield']);
-			$search = '%'.strtolower($_POST['quicksearch']).'%';
+			$searchfield = strtolower((string) $_POST['quicksearchfield']);
+			$search = '%'.strtolower((string) $_POST['quicksearch']).'%';
 			$cc = new ConstraintChain();
 			if ($model->getField($searchfield)->type == 'bool') {
-				switch(strtolower($_POST['quicksearch'])) {
+				switch(strtolower((string) $_POST['quicksearch'])) {
 					case "yes":
 					case "true":
 					case "y":
@@ -314,7 +314,7 @@ class SearchHandler {
 				$this->orderdir='ASC';
 			}
 		}
-		
+
 	}
 
 	private function checkFields() {
@@ -345,11 +345,11 @@ class SearchHandler {
 		$this->perpage=$limit;
 		$this->offset=$offset;
 	}
-	
+
 	function addPolicyConstraints($_policyConstraint)
 	{
 		$this->addConstraint($_policyConstraint['constraint']);
-		
+
 		$this->policies = $_policyConstraint['name'];
 	}
 

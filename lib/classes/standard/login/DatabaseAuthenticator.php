@@ -12,7 +12,7 @@ class DatabaseAuthenticator implements AuthenticationGateway
     private function update_hash($password, $username)
     {
         try {
-            $new_hash = password_hash($password, PASSWORD_DEFAULT);
+            $new_hash = password_hash((string) $password, PASSWORD_DEFAULT);
             $update_query = 'UPDATE users SET password=? WHERE username=?;';
 
             $update_query_params = array(
@@ -50,7 +50,7 @@ class DatabaseAuthenticator implements AuthenticationGateway
 
         if ($test !== false && ! is_null($test)) {
             // try against default hash
-            if (password_verify($params['password'], $test[$params['username']])) {
+            if (password_verify((string) $params['password'], (string) $test[$params['username']])) {
                 if (password_needs_rehash($test[$params['username']], PASSWORD_DEFAULT)) {
                     $this->update_hash($params['password'], $params['username']);
                 }
@@ -59,7 +59,7 @@ class DatabaseAuthenticator implements AuthenticationGateway
             }
 
             // try against hashed md5
-            if (password_verify(md5($params['password']), $test[$params['username']])) {
+            if (password_verify(md5((string) $params['password']), (string) $test[$params['username']])) {
                 // update hash
                 $this->update_hash($params['password'], $params['username']);
 

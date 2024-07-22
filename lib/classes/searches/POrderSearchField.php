@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -16,13 +16,13 @@ class POrderSearchField extends SearchField
 {
 
 	protected $version = '$Revision: 1.7 $';
-	
+
 	/**
 	 * $value array
 	 * The values for this SearchField is an array of $value=>'on' pairs
 	 */
 	protected $value = array();
-	
+
 	/**
 	 * $statuses array
 	 * the status codes that ticket statuses can be given
@@ -34,7 +34,7 @@ class POrderSearchField extends SearchField
 		'Awaiting Authorisation',
 		'Other Orders'
 	);
-		
+
 	/**
 	 * @param void
 	 * @return string
@@ -44,27 +44,27 @@ class POrderSearchField extends SearchField
 	 */
 	public function toHTML()
 	{
-		
+
 		$html = '';
-		
+
 		foreach ($this->statuses as $status)
 		{
-			
+
 			$checked = '';
-			
+
 			if (($this->value_set && isset($this->value[$status])) || (!$this->value_set && in_array($status, $this->default)))
 			{
 				$checked = 'checked="checked"';
 			}
-			
+
 			$html .= '<label>' . prettify($status) . '</label><input type="checkbox" class="checkbox" name="Search[' . $this->fieldname . '][' . $status . ']" ' . $checked . '/>';
-			
+
 		}
-		
+
 		return $html;
-		
+
 	}
-	
+
 	/**
 	 * @param void
 	 * @return ConstraintChain
@@ -73,52 +73,52 @@ class POrderSearchField extends SearchField
 	 */
 	public function toConstraint()
 	{
-		
+
 		$cc = false;
-		
+
 		if (!is_array($this->value))
 		{
 			$this->value = array($this->value);
 		}
-		
+
 		$cc		= new ConstraintChain();
 		$codes	= ($this->value_set)?$this->value:array_flip($this->default);
 		$db		= DB::Instance();
 		$date	= fix_date(date(DATE_FORMAT));
-		
+
 		foreach ($codes as $code => $on)
 		{
-			
+
 			if ($code != '')
 			{
-				
+
 				switch($code)
 				{
-					
+
 					case 'Raised by me':
 						$cc->add(new Constraint('raised_by', '=', getCurrentUser()->username));
 						break;
-						
+
 					case 'Other Orders':
 						$cc->add(new Constraint('raised_by', '!=', getCurrentUser()->username), 'OR');
 						break;
-						
+
 					case 'Authorised by me':
 						$c = new ConstraintChain();
 						$c->add(new Constraint('authorised_by', '=' ,getCurrentUser()->username));
 						$c->add(new Constraint('date_authorised', 'is not', 'NULL'));
 						$cc->add($c, 'OR');
 						break;
-						
+
 					case 'Awaiting Authorisation':
 						$awaitingauth	= new POAwaitingAuthCollection(new POAwaitingAuth);
 						$authlist		= $awaitingauth->getOrderList(getCurrentUser()->username);
-						
+
 						if (empty($authlist))
 						{
 							$authlist = '-1';
 						}
-						
+
 						$c = new ConstraintChain();
 						$c->add(new Constraint('type', '=', 'R'));
 						$c->add(new Constraint('authorised_by', 'is', 'NULL'));
@@ -126,17 +126,17 @@ class POrderSearchField extends SearchField
 						$c->add(new Constraint('id', 'in', '(' . $authlist . ')'));
 						$cc->add($c, 'OR');
 						break;
-						
+
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		return $cc;
-		
+
 	}
-	
+
 	/**
 	 * @param $value mixed
 	 *
@@ -144,17 +144,17 @@ class POrderSearchField extends SearchField
 	 */
 	public function setDefault($value = array())
 	{
-		
+
 		if (!is_array($value))
 		{
 			$value = array($value);
 		}
-		
+
 		$this->default = $value;
 
 	}
-	
-	
+
+
 	/**
 	 * @param $value mixed
 	 * @return void
@@ -164,34 +164,34 @@ class POrderSearchField extends SearchField
 	 */
 	public function setValue($value = array())
 	{
-		
+
 		if ($value !== null)
 		{
-			
+
 			if (!is_array($value))
 			{
 				$value = array($value => 'On');
 			}
-			
+
 			$this->value		= $value;
 			$this->value_set	= true;
-			
+
 		}
-		
+
 	}
 
 	public function getCurrentValue()
 	{
-		
+
 		if (count($this->value) == 0 && count($this->default) > 0)
 		{
 			return implode(',', $this->default);
 		}
-		
+
 		return implode(',', array_keys($this->value));
-		
+
 	}
-	
+
 }
 
 // end of POrderSearchField.php

@@ -10,7 +10,7 @@ class OutputDetail extends DataObject
 {
 
 	protected $version = '$Revision: 1.4 $';
-	
+
 	function __construct($tablename = 'output_details')
 	{
 		parent::__construct($tablename);
@@ -18,7 +18,7 @@ class OutputDetail extends DataObject
 		$this->idField	= 'id';
 
 		$this->hasOne('OutputHeader', 'output_header_id', 'output_header');
-		
+
 	}
 
 }

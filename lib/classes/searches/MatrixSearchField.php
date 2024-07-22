@@ -138,13 +138,13 @@ class MatrixSearchField extends SearchField
 				foreach ($field_value as $key3 => $value3)
 				{
 					
-					switch(strtolower($value['operator'][$key3]))
+					switch(strtolower((string) $value['operator'][$key3]))
 					{
 						
 						case "like":
 							// jake actually posted a post on carsonified about speeding up like searches (vs ILIKE)
 							// http://carsonified.com/blog/dev/databases/speed-up-your-web-app-by-1000-with-1-line-of-sql/
-							$cc->add(new Constraint('lower(' . $field_key . ')', $value['operator'][$key3], '%' . strtolower($value['value'][$key3]) . '%'), 'OR');
+							$cc->add(new Constraint('lower(' . $field_key . ')', $value['operator'][$key3], '%' . strtolower((string) $value['value'][$key3]) . '%'), 'OR');
 							break;
 							
 						default:

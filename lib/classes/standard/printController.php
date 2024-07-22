@@ -94,7 +94,7 @@ class printController extends Controller
         // If selection of display fields is disabled, don't set them up
         if (! $this->search->disable_field_selection) {
             foreach ($model->getFields() as $fieldname => $field) {
-                if ($fieldname != 'id' && $fieldname != 'usercompanyid' && substr($fieldname, - 3) != '_id' && ! isset($model->belongsToField[$fieldname]) && ! $model->isHidden($fieldname) && (!$field->ignoreField === true || $field->isComposite === true)) {
+                if ($fieldname != 'id' && $fieldname != 'usercompanyid' && substr((string) $fieldname, - 3) != '_id' && ! isset($model->belongsToField[$fieldname]) && ! $model->isHidden($fieldname) && (!$field->ignoreField === true || $field->isComposite === true)) {
                     $display_fields[$fieldname] = $field->tag;
                 }
             }
@@ -107,7 +107,7 @@ class printController extends Controller
                 }
             } else {
                 foreach ($collection->getFields() as $fieldname => $field) {
-                    if (substr($fieldname, - 3) != '_id') {
+                    if (substr((string) $fieldname, - 3) != '_id') {
                         $selected_fields[$fieldname] = $field->tag;
                     }
                 }
@@ -835,7 +835,7 @@ class printController extends Controller
     {
         $printparams['printtype'] = $data['printtype'];
         $printparams['printaction'] = $data['printaction'];
-        $printparams['filename'] = isset($data['filename']) ? $data['filename'] : '';
+        $printparams['filename'] = $data['filename'] ?? '';
 
         if ($printparams['printaction'] == 'Email' || $printparams['printaction'] == 'Save') {
 
@@ -844,8 +844,8 @@ class printController extends Controller
             }
         }
 
-        $printparams['email'] = isset($data['email']) ? $data['email'] : '';
-        $printparams['emailtext'] = isset($data['emailtext']) ? $data['emailtext'] : '';
+        $printparams['email'] = $data['email'] ?? '';
+        $printparams['emailtext'] = $data['emailtext'] ?? '';
 
         if ($printparams['printaction'] == 'Email' && $printparams['email'] == '') {
             $errors[] = 'Requires an email address';
@@ -1171,7 +1171,7 @@ class printController extends Controller
         }
 
         // if we're requesting an fop document (e.g. PDF, Text etc) we need to fetch the XML, XSL and then process it
-        switch (strtolower($data_type)) {
+        switch (strtolower((string) $data_type)) {
 
             case "text":
                 // for now lets assume we're handling an array of lines
@@ -1368,7 +1368,7 @@ class printController extends Controller
         $params['paths'] = $paths;
 
         // a lowercase version of printaction
-        $print_action = strtolower($params['printaction']);
+        $print_action = strtolower((string) $params['printaction']);
 
         // if we're one of the appropriate actions...
         if (in_array($print_action, array(
@@ -1441,7 +1441,7 @@ class printController extends Controller
                 }
 
                 return $this->build_print_dialog_response(TRUE, array(
-                    'action' => strtolower($params['printaction']),
+                    'action' => strtolower((string) $params['printaction']),
                     'location' => $file_path,
                     'filename' => $paths['filename']
                 ), $params);
@@ -1840,7 +1840,7 @@ class printController extends Controller
             $line = '';
 
             foreach ($headings as $heading) {
-                $line .= $text_delimiter . addslashes($heading) . $text_delimiter . $field_separater;
+                $line .= $text_delimiter . addslashes((string) $heading) . $text_delimiter . $field_separater;
             }
 
             $output .= trim($line, $field_separater) . "\n";
@@ -1852,13 +1852,13 @@ class printController extends Controller
             $line = '';
 
             foreach ($row as $field) {
-                $line .= $text_delimiter . addslashes($field) . $text_delimiter . $field_separater;
+                $line .= $text_delimiter . addslashes((string) $field) . $text_delimiter . $field_separater;
             }
 
             // don't trim... just remove the very last field seperator character
             // we don't rtrim (especially not trim) because it loses empty fields
 
-            $output .= substr($line, 0, (strlen($line) - strlen($field_separater))) . "\n";
+            $output .= substr($line, 0, (strlen($line) - strlen((string) $field_separater))) . "\n";
         }
 
         return $output;
@@ -1938,7 +1938,7 @@ class printController extends Controller
                     if (is_object($data->getField($key)) && $data->getField($key)->type == 'date') {
                         $rowData[$key] = is_null($data->$key) ? '' : un_fix_date($data->$key);
                     } elseif (is_object($data->getField($key)) && $data->getField($key)->type == 'timestamp') {
-                        $rowData[$key] = is_null($data->$key) ? '' : date(DATE_TIME_FORMAT, strtotime($data->$key));
+                        $rowData[$key] = is_null($data->$key) ? '' : date(DATE_TIME_FORMAT, strtotime((string) $data->$key));
                     } elseif (is_object($data->getField($key))) {
 
                         // $rowData[$key]=$data->$key;
@@ -1986,7 +1986,7 @@ class printController extends Controller
                     $value['value'] = $this->currentPage;
                 }
 
-                $rowData[$key] = (isset($value['value'])) ? $value['value'] : (isset($value['title']) ? $value['title'] : prettify($key));
+                $rowData[$key] = $value['value'] ?? $value['title'] ?? prettify($key);
             }
         }
 
@@ -2255,13 +2255,13 @@ class printController extends Controller
         $paths = array();
 
         // set filenames
-        $paths['file_name'] = $file_name . '.' . strtolower($file_type);
-        $paths['temp_name'] = mt_rand(000, 999) . '_' . time() . '.' . strtolower($file_type);
+        $paths['file_name'] = $file_name . '.' . strtolower((string) $file_type);
+        $paths['temp_name'] = mt_rand(000, 999) . '_' . time() . '.' . strtolower((string) $file_type);
 
         // set various file paths
         $paths['data_path'] = 'data/users/';
         $paths['user_path'] = $paths['data_path'] . EGS_USERNAME . '/';
-        $paths['type_path'] = $paths['user_path'] . strtoupper($file_type) . '/';
+        $paths['type_path'] = $paths['user_path'] . strtoupper((string) $file_type) . '/';
         $paths['temp_path'] = $paths['user_path'] . 'TMP/';
 
         // set http / file paths
@@ -2319,8 +2319,8 @@ class printController extends Controller
         }
 
         $from = $replyto = $contact;
-        $address_list = array_map('trim', explode(',', $params['email']));
-        
+        $address_list = array_map('trim', explode(',', (string) $params['email']));
+
         $mailer_conf = get_config('PHPMAILER_CONF');
         $mail = new PHPMailer(true);
 
@@ -2524,7 +2524,7 @@ class printController extends Controller
     // ATTN: these need to be moved?
     public function isPrintDialog()
     {
-        return (isset($this->_data['action']) && strtolower($this->_data['action']) == 'printdialog');
+        return (isset($this->_data['action']) && strtolower((string) $this->_data['action']) == 'printdialog');
     }
 
     public function isPrinting()
@@ -2545,7 +2545,7 @@ class printController extends Controller
         $fields = $collection->getHeadings();
 
         foreach ($fields as $field => $title) {
-            if (substr($field, - 2) != 'id') {
+            if (substr((string) $field, - 2) != 'id') {
                 $coll_headers[$field] = $title;
             }
         }
@@ -2781,7 +2781,7 @@ class printController extends Controller
         if ($filename_safe) {
 
             // generate filename, remove preceeding _ from title, add date format
-            $report_title = ltrim($this->getPageName('', ''), '_') . ' ' . date(DATE_TIME_FORMAT);
+            $report_title = ltrim((string) $this->getPageName('', ''), '_') . ' ' . date(DATE_TIME_FORMAT);
 
             // find / replace various characters
             $find = array(
@@ -2812,7 +2812,7 @@ class printController extends Controller
         if (isset($this->_data['col_widths'])) {
 
             // trim the last delimiter, just to ensure we don't get a blank item in the array
-            $temp_widths = trim($this->_data['col_widths'], '|');
+            $temp_widths = trim((string) $this->_data['col_widths'], '|');
             $temp_widths = explode('|', $temp_widths);
 
             foreach ($temp_widths as $key => $value) {
@@ -3275,7 +3275,7 @@ class printController extends Controller
         $ipp_log_level = get_config('IPP_LOG_LEVEL');
 
         if (! empty($ipp_log_path) && empty($ipp_log_type)) {
-            $ipp_log_type = (strpos($ipp_log_path, '@') ? 'e-mail' : 'file');
+            $ipp_log_type = (strpos((string) $ipp_log_path, '@') ? 'e-mail' : 'file');
         }
 
         $ipp->setLog($ipp_log_path, $ipp_log_type, $ipp_log_level);

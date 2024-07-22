@@ -10,9 +10,9 @@ class SimpleListEGlet extends SimpleEGlet
 {
 
 	protected $version = '$Revision: 1.4 $';
-	
+
 	protected $template = 'list_eglet.tpl';
-	
+
 	protected $limit = 10;
 
 	function populate()
@@ -22,12 +22,12 @@ class SimpleListEGlet extends SimpleEGlet
 			$this->contents = array_slice($this->contents,0,$this->limit);
 		}
 	}
-	
+
 	function setData($the_data)
 	{
 		$this->contents = $the_data;
 	}
-	
+
 	function setLimit($limit)
 	{
 		$this->limit = $limit;

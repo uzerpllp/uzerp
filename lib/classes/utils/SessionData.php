@@ -10,12 +10,12 @@ class SessionData
 {
 
 	protected $version = '$Revision: 1.3 $';
-	
+
 	/*
 	 * The key identify the persistent session data
 	 */
 	private $key;
-	
+
 	/*
 	 * Persistent data array with keys 'fields' and 'values'
 	 * 
@@ -29,14 +29,14 @@ class SessionData
 	 * 			exists in the 'fields' array
 	 */
 	private $data = array();
-	
+
 	/*
 	 * 	Data Object to maintain paged data between page requests
 	 */
 	public function __construct($key)
 	{
 		$this->key = $key;
-		
+
 		// get the saved session data for this key if it exists
 		if (isset($_SESSION['persistent_data'][$this->key]))
 		{
@@ -47,7 +47,7 @@ class SessionData
 			$this->save();
 		}
 	}
-	
+
 	/*
 	 * 	clear
 	 * 
@@ -59,7 +59,7 @@ class SessionData
 
 		$this->data = array();
 	}
-	
+
 	/*
 	 * 	save
 	 * 
@@ -69,7 +69,7 @@ class SessionData
 	{
 		$_SESSION['persistent_data'][$this->key] = $this->data;
 	}
-	
+
 	/*
 	 * 	registerPageData
 	 * 
@@ -79,10 +79,10 @@ class SessionData
 	public function registerPageData($fields)
 	{
 		$this->data = array('fields' => $fields);
-		
+
 		$this->save();
 	}
-	
+
 	/*
 	 * 	PageDataExists
 	 * 
@@ -92,7 +92,7 @@ class SessionData
 	{
 		return (!empty($this->data));
 	}
-	
+
 	/*
 	 * 	getPageData
 	 * 
@@ -110,7 +110,7 @@ class SessionData
 			return array();
 		}
 	}
-	
+
 	/*
 	 * 	clearPageData
 	 * 
@@ -122,10 +122,10 @@ class SessionData
 		{
 			unset($this->data['values']);
 		}
-		
+
 		$this->save();
 	}
-	
+
 	/*
 	 * 	deletePageData
 	 * 
@@ -137,10 +137,10 @@ class SessionData
 		{
 			unset($this->data['values'][$id]);
 		}
-		
+
 		$this->save();
 	}
-	
+
 	/*
 	 * 	updatePageData
 	 * 
@@ -155,16 +155,16 @@ class SessionData
 			{
 				$this->data['values'][$id][$fieldname] = $fields[$fieldname];
 			}
-			
+
 			$this->save();
 		}
 		else
 		{
 			$errors[] = $this->keyNotFound();
 		}
-		
+
 	}
-	
+
 	/*
 	 * 	addPageData
 	 * 
@@ -182,16 +182,16 @@ class SessionData
 					$this->data['values'][$id][$fieldname] = $fields[$fieldname];
 				}
 			}
-			
+
 			$this->save();
 		}
 		else
 		{
 			$errors[] = $this->keyNotFound();
 		}
-		
+
 	}
-	
+
 	/*
 	 * Private functions
 	 */
@@ -199,7 +199,7 @@ class SessionData
 	{
 		return 'Session persistent_data not found for key '.$this->key;
 	}
-	
+
 }
 
 // End of SessionData

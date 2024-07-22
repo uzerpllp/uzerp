@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -16,13 +16,13 @@ class TicketStatusSearchField extends SearchField
 {
 
 	protected $version = '$Revision: 1.5 $';
-	
+
 	/**
 	 * $value array
 	 * The values for this SearchField is an array of $value=>'on' pairs
 	 */
 	protected $value = array();
-	
+
 	/**
 	 * $statuses array
 	 * the status codes that ticket statuses can be given
@@ -34,7 +34,7 @@ class TicketStatusSearchField extends SearchField
 		'RESO',
 		'CLSD' 
 	);
-		
+
 	/**
 	 * @param void
 	 * @return string
@@ -44,26 +44,26 @@ class TicketStatusSearchField extends SearchField
 	 */
 	public function toHTML()
 	{
-		
+
 		$html = '';
-		
+
 		foreach ($this->statuses as $status)
 		{
-			
+
 			$checked = '';
-			
+
 			if (($this->value_set && isset($this->value[$status])) || (!$this->value_set && in_array($status, $this->default)))
 			{
 				$checked = 'checked="checked"';
 			}
-			
+
 			$html .= '<li class="checkbox"><label>' . prettify($status) . '</label><input type="checkbox" class="checkbox" name="Search[' . $this->fieldname . '][' . $status . ']" ' . $checked . '/></li>';
 		}
-		
+
 		return $html;
-		
+
 	}
-	
+
 	/**
 	 * @param void
 	 * @return ConstraintChain
@@ -72,32 +72,32 @@ class TicketStatusSearchField extends SearchField
 	 */
 	public function toConstraint()
 	{
-		
+
 		$cc = false;
-		
+
 		if (!is_array($this->value))
 		{
 			$this->value = array($this->value);
 		}
-		
+
 		$cc		= new ConstraintChain();
 		$codes	= ($this->value_set)?$this->value:array_flip($this->default);
-		
+
 		foreach ($codes as $code => $on)
 		{
-			
+
 			if ($code != '')
 			{
 				$c = new Constraint($this->fieldname, '=', $code);
 				$cc->add($c, 'OR');
 			}
-			
+
 		}
-		
+
 		return $cc;
-		
+
 	}
-	
+
 	/**
 	 * @param $value mixed
 	 *
@@ -105,16 +105,16 @@ class TicketStatusSearchField extends SearchField
 	 */
 	public function setDefault($value = array())
 	{
-		
+
 		if (!is_array($value))
 		{
 			$value = array($value);
 		}
-		
+
 		$this->default = $value;
-		
+
 	}
-	
+
 	/**
 	 * @param $value mixed
 	 * @return void
@@ -124,27 +124,27 @@ class TicketStatusSearchField extends SearchField
 	 */
 	public function setValue($value = array())
 	{
-		
+
 		if ($value !== null)
 		{
-			
+
 			if (!is_array($value))
 			{
 				$value = array($value => 'On');
 			}
-			
+
 			$this->value		= $value;
 			$this->value_set	= true;
-		
+
 		}
-		
+
 	}
 
 	public function getCurrentValue()
 	{
 		return implode(',', array_keys($this->value));
 	}
-	
+
 }
 
 // end of TicketStatusSearchField.php

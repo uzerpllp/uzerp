@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -17,28 +17,28 @@ if (!defined('MODULE'))
 	{
 		define('MODULE', 'dashboard');
 	}
-	
+
 }
-	
+
 class FileReadingTranslator extends Prettifier implements Translation {
-	
+
 	protected $version = '$Revision: 1.4 $';
-	
+
 	protected static $strings = array();
 
 	function translate($string)
 	{
 
-		if (isset(self::$strings[MODULE][strtolower($string)]))
+		if (isset(self::$strings[MODULE][strtolower((string) $string)]))
 		{
-			return self::$strings[MODULE][strtolower($string)];
+			return self::$strings[MODULE][strtolower((string) $string)];
 		}
-		
-		if (isset(self::$strings['global'][strtolower($string)]))
+
+		if (isset(self::$strings['global'][strtolower((string) $string)]))
 		{
-			return self::$strings['global'][strtolower($string)];
+			return self::$strings['global'][strtolower((string) $string)];
 		}
-		
+
 		return parent::translate($string);
 
 	}

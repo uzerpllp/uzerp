@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -12,9 +12,9 @@
 class TimeframeSearchField extends SelectSearchField {
 
 	protected $version='$Revision: 1.3 $';
-	
+
 	protected $options = array('all'=>'all','today'=>'today','tomorrow'=>'tomorrow','this_week'=>'this_week');
-		
+
 	public function toConstraint() {
 		switch($this->value) {
 			case 'today':

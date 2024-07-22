@@ -61,7 +61,7 @@ class Debug extends DataObject {
 			$this->saveline($msg,$newline);
 		} else {
 			foreach ($this->debugoptions as $option) {
-				if (strpos($msg, $option)===0) {
+				if (strpos((string) $msg, (string) $option)===0) {
 					$this->saveline($msg,$newline);
 				}
 			}

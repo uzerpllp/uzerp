@@ -75,7 +75,7 @@ class ModulePreferences {
 		foreach ($fields as $preference)
 		{
 		    if (isset($preference['group_title'])) {
-		        $this->view->set('group_title', htmlentities($preference['group_title']));
+		        $this->view->set('group_title', htmlentities((string) $preference['group_title']));
 		        $html .= $this->view->fetch('smarty/function.grouptitle');
 		    }
 			switch($preference['type'])
@@ -117,9 +117,9 @@ class ModulePreferences {
 						$option_attrs = array();
 
 						$key = $option['value'];
-						
+
 						$option_attrs['value'] = uzh($key, ENT_COMPAT);
-						
+
 						if (isset($option['selected']) && $option['selected'])
 						{
 							$option_attrs['selected'] = 'selected';
@@ -178,9 +178,9 @@ class ModulePreferences {
 						$option_attrs = array();
 
 						$key = $option['value'];
-						
+
 						$option_attrs['value'] = uzh($key, ENT_COMPAT);
-						
+
 						if ((is_array($selected) && in_array($key, $selected)) || ($selected==$key))
 						{
 							$option_attrs['selected'] = 'selected';

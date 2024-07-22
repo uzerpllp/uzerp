@@ -24,7 +24,7 @@ class Interval {
 	}
 	
 	private function splitString() {
-		$t = explode(':',$this->string);
+		$t = explode(':',(string) $this->string);
 		$this->hours = $t[0];
 		$this->minutes = $t[1];
 		$this->seconds = $t[2];

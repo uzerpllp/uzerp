@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -14,7 +14,7 @@
 class TwoDateSearchField extends SearchField {
 
 	protected $version = '$Revision: 1.17 $';
-	
+
 	/**
 	 * @param void
 	 * @return string
@@ -25,7 +25,7 @@ class TwoDateSearchField extends SearchField {
 	 */
 	public function toHTML()
 	{
-		
+
 		if (!empty($this->value['from']))
 		{
 			$from = $this->value['from'];
@@ -38,7 +38,7 @@ class TwoDateSearchField extends SearchField {
 		{
 			$from = '';
 		}
-		
+
 		if (!empty($this->value['to']))
 		{
 			$to = $this->value['to'];
@@ -51,12 +51,12 @@ class TwoDateSearchField extends SearchField {
 		{
 			$to = '';
 		}
-		
+
 		$html = '<input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . '][from]" value="' . $from . '" /><span class="search-twofield-sep"> to </span><input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '_to" name="Search[' . $this->fieldname . '][to]" value="' . $to . '" /></li>';
 		return $this->labelHTML() . $html;
-		
+
 	}
-	
+
 	/**
 	 * @param void
 	 * @return Constraint
@@ -65,12 +65,12 @@ class TwoDateSearchField extends SearchField {
 	 */
 	public function toConstraint()
 	{
-		
+
 		$db		= DB::Instance();
 		$c		= false;
 		$to		= '';
 		$from	= '';
-		
+
 		if ($this->value_set)
 		{
 			$from	= $this->value['from'];
@@ -81,15 +81,15 @@ class TwoDateSearchField extends SearchField {
 			$from	= $this->default['from'];
 			$to		= $this->default['to'];
 		}
-		
+
 		switch($this->type)
 		{
-			
+
 			case 'between':
-				
+
 				if(!empty($from))
 				{
-					
+
 					if (!empty($to))
 					{
 						$c = new Constraint($this->fieldname . '::date', 'between', $db->qstr(fix_date($from)) . ' and ' . $db->qstr(fix_date($to)));
@@ -98,41 +98,41 @@ class TwoDateSearchField extends SearchField {
 					{
 						$c = new Constraint($this->fieldname . '::date', '>=', $db->qstr(fix_date($from)));
 					}
-					
+
 				}
 				else
 				{
-					
+
 					if (!empty($to))
 					{
 						$c = new Constraint($this->fieldname . '::date', '<=', $db->qstr(fix_date($to)));
 					}
-					
+
 				}
-				
+
 				break;
-				
+
 		}
-		
+
 		return $c;
-		
+
 	}
 
 	public function setDefault($value = array())
 	{
-		
+
 		if (!is_array($value))
 		{
 			$value = array($value);
 		}
-		
+
 		$this->default = $value;
-		
+
 	}
 
 	public function isValid($value, &$errors = [])
 	{
-		
+
 		if (!is_array($value))
 		{
 			$errors[] = 'Search on ' . prettify($this->label) . ' needs to be a date pair';
@@ -140,50 +140,50 @@ class TwoDateSearchField extends SearchField {
 		}
 		else
 		{
-			
+
 			$prevdate = '';
-			
+
 			foreach ($value as $key => $date)
 			{
-				
+
 				if (!empty($date))
 				{
-					
+
 					if (!empty($prevdate) && $prevdate > fix_date($date))
 					{
 						$errors[] = 'Search on ' . prettify($this->label) . ' date range invalid';
 						return false;
 					}
-					elseif (!strtotime(fix_date($date)))
+					elseif (!strtotime((string) fix_date($date)))
 					{
 						$errors[] = 'Search on ' . prettify($this->label) . ' needs to be a date';
 						return false;
 					}
-					elseif (date(DATE_FORMAT, strtotime(fix_date($date))) != $date)
+					elseif (date(DATE_FORMAT, strtotime((string) fix_date($date))) != $date)
 					{
 						$errors[] = 'Invalid date ' . $date . ' for search on ' . prettify($this->label);
 						return false;
 					}
-					
+
 				}
-				
+
 				$prevdate = fix_date($date);
-				
+
 			}
-			
+
 		}
-		
+
 		return true;
-		
+
 	}
-	
+
 	public function getCurrentValue()
 	{
-	
+
 		$errors	= array();
 		$to		= '';
 		$from	= '';
-		
+
 		if ($this->value_set)
 		{
 			$from	= $this->value['from'];
@@ -194,25 +194,25 @@ class TwoDateSearchField extends SearchField {
 			$from	= $this->default['from'];
 			$to		= $this->default['to'];
 		}
-				
+
 		// both values cannot be empty
 		if (empty($from) && empty($to))
 		{
 			return FALSE;
 		}
-	
+
 		if (empty($from))
 		{
 			$from = 'Beginning of time';
 		}
-		
+
 		if (empty($to))
 		{
 			$to = 'End of time';
 		}
-		
+
 		return $from . ' to ' . $to;
-		
+
 	}
 
 }

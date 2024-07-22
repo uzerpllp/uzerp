@@ -26,7 +26,7 @@ class TextSearchField extends SearchField {
 		}
 		
 		// change to facilitate list
-		$html = '<input '.$error_str.' type="text" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . uzh(stripslashes($value)) . '" /></li>';
+		$html = '<input '.$error_str.' type="text" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . uzh(stripslashes((string) $value)) . '" /></li>';
 		
 		return $this->labelHTML() . $html;
 		
@@ -51,7 +51,7 @@ class TextSearchField extends SearchField {
 		{
 			// Ensure input value is properly escaped
 			$db = DB::Instance();
-			$value = preg_quote($value);
+			$value = preg_quote((string) $value);
 
 			switch($this->type)
 			{

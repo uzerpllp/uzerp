@@ -336,7 +336,7 @@ class DataField {
 	public function formatDate($date)
 	{
 
-		$timestamp = mktime(0, 0, 0, substr($date, 5, 2), substr($date, 8, 2), substr($date, 0, 4));
+		$timestamp = mktime(0, 0, 0, substr((string) $date, 5, 2), substr((string) $date, 8, 2), substr((string) $date, 0, 4));
 		$formatted = date(DATE_FORMAT, $timestamp);
 
 		return $formatted;
@@ -352,7 +352,7 @@ class DataField {
 	public function __get($var)
 	{
 
-		if (substr($var, 0, 9) == 'formatted')
+		if (substr((string) $var, 0, 9) == 'formatted')
 		{
 
 			if (!$this->formatters_set)

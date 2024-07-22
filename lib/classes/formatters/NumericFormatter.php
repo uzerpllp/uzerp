@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,9 +9,9 @@
 class NumericFormatter implements FieldFormatter {
 
 	protected $version = '$Revision: 1.2 $';
-	
+
 	private $decimal_places;
-	
+
 	function __construct($decimal_places = 2)
 	{
 		$this->decimal_places	= $decimal_places;
@@ -19,14 +19,14 @@ class NumericFormatter implements FieldFormatter {
 
 	function format($value)
 	{
-		
+
 		if (!is_numeric($value))
 		{
 			return $value;
 		}
-		
+
 		return number_format($value, $this->decimal_places);
-		
+
 	}
 
 }

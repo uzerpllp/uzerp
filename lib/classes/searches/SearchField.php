@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -13,7 +13,7 @@
 abstract class SearchField {
 
 	protected $version='$Revision: 1.17 $';
-	
+
 	protected $type;
 	protected $fieldname;
 	protected $label;
@@ -22,7 +22,7 @@ abstract class SearchField {
 	protected $default;
 	protected $value_set = false;
 	protected $do_constraint = true;
-	
+
 	/**
 	 * @param $fieldname string
 	 *
@@ -32,7 +32,7 @@ abstract class SearchField {
 	{
 		$this->fieldname = $fieldname;
 	}
-	
+
 	/**
 	 * @abstract
 	 * @return string
@@ -48,7 +48,7 @@ abstract class SearchField {
 	 * Constraints are currently only AND'd together, so anything else will need to happen entirely within the field.
 	 */
 	abstract public function toConstraint();
-	
+
 	/**
 	 * @param $fieldname string
 	 *[@param $label string ]
@@ -60,26 +60,26 @@ abstract class SearchField {
 	 */
 	public static function Factory($fieldname, $label = null, $type = 'contains', $default = null, $do_constraint = true)
 	{
-		
+
 		switch($type)
 		{
-			
+
 			case 'hidden':	// hidden field to be used in searches
 				$search = new HiddenSearchField($fieldname);
 				break;
-				
+
 			case 'show':	// 'show' means that unless the box is checked, ($fieldname=false) will be used in the query
 			case 'hide':	// 'hide' means that if the box is checked, then ($fieldname=true) will be used in the query
 				$search = new CheckboxSearchField($fieldname);
 				break;
-				
+
 			case 'contains':	// %s are placed before and after the search term in the LIKE part of the query
 			case 'begins':		// a % will be placed at the end of the search term
 			case 'ends':		// a % will be placed at the beginning of the search term 	(@TODO)
 			case 'is':			// no wildcards are used, requires an exact match
 				$search = new TextSearchField($fieldname);
 				break;
-				
+
 			case 'greater':
 			case 'greater_or_equal':
 			case 'less_or_equal':
@@ -88,7 +88,7 @@ abstract class SearchField {
 			case 'not_equal':
 				$search = new NumericSearchField($fieldname);
 				break;
-				
+
 			case 'greater-integer':
 			case 'greater_or_equal-integer':
 			case 'less_or_equal-integer':
@@ -96,9 +96,9 @@ abstract class SearchField {
 			case 'equal-integer':
 			case 'not_equal-integer':
 				$search = new IntegerSearchField($fieldname);
-				$type = substr($type, 0, -8);
+				$type = substr((string) $type, 0, -8);
 				break;
-				
+
 			case 'before':		  // gets rows where the searchfield is before the entered value
 			case 'beforeornull':  // gets rows where the searchfield is before the entered value or null
 			case 'after':		  // gets rows where the searchfield is later than the entered value
@@ -108,59 +108,59 @@ abstract class SearchField {
 			case 'to': // gets rows where the entered date falls between 2 searchfields (opposite of between)
 				$search = new DateSearchField($fieldname);
 				break;
-				
+
 			case 'between':	      // gets rows where the searchfield falls between 2 entered dates
 				$search = new TwoDateSearchField($fieldname);
 				break;
-				
+
 			case 'ticket_status':	// a special Field for handling ticket statuses. 
 				$search = new TicketStatusSearchField($fieldname);
 				break;
-				
+
 			case 'order_status':	//order status has a similar special search
 				$search = new OrderStatusSearchField($fieldname);
 				break;
-				
+
 			case 'multi_select':	// a special Field for handling 'OR' for multiple fields. 
 				$search = new MultiSelectSearchField($fieldname);
 				break;
-				
+
 			case 'treesearch':	// a special Field for handling 'OR' for multiple fields. 
 				$search = new TreeSearchField($fieldname);
 				break;
-				
+
 			case 'porder_status':	// a special Field for handling 'OR' for multiple fields. 
 				$search = new POrderSearchField($fieldname);
 				break;
-				
+
 			case 'timeframe':
 				$search = new TimeframeSearchField($fieldname);	//allows a choice from a number of timeframes to restrict by
 				break;
-				
+
 			case 'select':
 			case 'null':	      // gets rows where the searchfield is null or not null
 				$search = new SelectSearchField($fieldname);
 				break;
-				
+
 			case 'matrix':	      // gets rows where the searchfield is null or not null
 				$search = new MatrixSearchField($fieldname);
 				break;
-				
+
 			default:
 				throw new Exception('No SearchField for type ' . $type);
-				
+
 		}
-		
+
 		$search->setType($type);
 		$search->setLabel($label);
 		$search->setDefault($default);
-		
+
 		$search->do_constraint = $do_constraint;
-		
+
 		return $search;
-		
+
 	}
-	
+
 	/**
 	 * @param $type string
 	 * @return void
@@ -172,7 +172,7 @@ abstract class SearchField {
 	{
 		$this->type = $type;
 	}
-	
+
 	/**
 	 * @param void
 	 * @return string
@@ -182,14 +182,14 @@ abstract class SearchField {
 	 */
 	protected function labelHTML()
 	{
-		
+
 		// change to facilitate sortable fields
 		$html = '<li><label for="search_' . str_replace('/', '_', $this->fieldname) . '">' . prettify($this->label) . '</label>';
 
 		return $html;
-		
+
 	}
-	
+
 	/**
 	 *[ @param $label string]
 	 * @return void
@@ -198,21 +198,21 @@ abstract class SearchField {
 	 */
 	public function setLabel($label = null)
 	{
-		
+
 		if ($label == null)
 		{
 			$label = $this->fieldname;
 		}
-		
+
 		$this->label = $label;
-		
+
 	}
-	
+
 	public function getLabel()
 	{
 		return $this->label;		
 	}
-	
+
 	/**
 	 *[ @param value string]
 	 *
@@ -222,7 +222,7 @@ abstract class SearchField {
 	{
 		$this->default = $value;
 	}
-	
+
 	/**
 	 * @param $value mixed
 	 * @param &errors array
@@ -233,7 +233,7 @@ abstract class SearchField {
 	{
 		return true;
 	}
-	
+
 	/**
 	 *[ @param $value string]
 	 * 
@@ -244,19 +244,19 @@ abstract class SearchField {
 		$this->value		= $value;
 		$this->value_set	= true;
 	}
-	
+
 	public function getValue()
 	{
-		
+
 		if (!empty($this->value))
 		{
 			return $this->value;
 		}
-		
+
 		return $this->default;
-		
+
 	}
-	
+
 	public function getDefault()
 	{
 		return $this->default;
@@ -266,27 +266,27 @@ abstract class SearchField {
 	{
 		return $this->fieldname;
 	}
-	
+
 	public function doConstraint()
 	{
 		return $this->do_constraint;
 	}
-	
+
 	public function getCurrentValue()
 	{
-		
+
 		if (!empty($this->value))
 		{
 			return $this->value;
 		}
-		
+
 		if (!empty($this->default))
 		{
 			return $this->default;
 		}
-		
+
 	}
-	
+
 }
 
 // end of SearchField.php

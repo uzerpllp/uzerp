@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -7,11 +7,11 @@
  **/
 
 class CurrencyFormatter implements FieldFormatter {
-	
+
 	protected $version = '$Revision: 1.8 $';
-	
+
 	private $currency, $decimal_places;
-	
+
 	function __construct($currency, $decimal_places = 2)
 	{
 		$this->currency			= $currency;
@@ -20,22 +20,22 @@ class CurrencyFormatter implements FieldFormatter {
 
 	function format($value)
 	{
-		
+
 		if (empty($value))
 		{
 			return $value;
 		}
-		
+
 		$currency = DataObjectFactory::Factory('Currency');
 		$currency->load($this->currency);
-		
+
 		if ($currency)
 		{
 			return $currency->symbol . number_format($value, $this->decimal_places);
 		}
-		
+
 		return number_format($value, $this->decimal_places);
-		
+
 	}
 
 }

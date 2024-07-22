@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,19 +9,19 @@
 class TimestampFormatter implements FieldFormatter {
 
 	protected $version = '$Revision: 1.3 $';
-	
+
 	function format($value)
 	{
-		
+
 		if (empty($value))
 		{
 			return "";
 		}
-		
-		return date(DATE_TIME_FORMAT, strtotime($value));
-		
+
+		return date(DATE_TIME_FORMAT, strtotime((string) $value));
+
 	}
-	
+
 }
 
 // end of TimestampFormatter.php

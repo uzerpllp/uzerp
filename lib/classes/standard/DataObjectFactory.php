@@ -9,7 +9,7 @@ class DataObjectFactory
 {
 
 	protected $version='$Revision: 1.2 $';
-	
+
 	/**
 	 * Factory
 	 * 
@@ -27,13 +27,13 @@ class DataObjectFactory
 	 */
 	public static function Factory($_class_name, $_tablename = '')
 	{
-		
+
 		static $classes;
-		
+
 		$_tablename = (empty($_tablename)?'NONE':$_tablename);
-		
+
 		$_class_name = strtolower($_class_name);
-		
+
 		if (!isset($classes[$_class_name][$_tablename]))
 		{
 			if ($_tablename == 'NONE')
@@ -44,21 +44,21 @@ class DataObjectFactory
 			{
 				$data_object = new $_class_name($_tablename);
 			}
-			
+
 			if (!($data_object instanceOf DataObject))
 			{
 				return $data_object;
 			}
-			
+
 			$_class_name = strtolower(get_class($data_object));
-			
+
 			$classes[$_class_name][$_tablename] = $data_object;
 		}	
-		
+
 		$data_object = clone $classes[$_class_name][$_tablename];
-		
+
 		return $data_object;
-	
+
 	}
 
 }

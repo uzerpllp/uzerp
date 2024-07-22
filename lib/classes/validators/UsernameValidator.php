@@ -15,7 +15,7 @@ class UsernameValidator implements FieldValidation
     function test(DataField $field, Array &$errors=array())
     {
         // Don't validate on get requests, we're possibly displaying and empty password field
-        if (trim(strtolower($_SERVER['REQUEST_METHOD'])) === 'get') {
+        if (trim(strtolower((string) $_SERVER['REQUEST_METHOD'])) === 'get') {
             return $field->value;
         }
 
@@ -24,7 +24,7 @@ class UsernameValidator implements FieldValidation
         //
         // NOTE: Adding a new user uses the same form as updating a user. If the username
         // entered matches an existing username, the existing User object is updated.
-        if (trim(strtolower($_SERVER['REQUEST_METHOD'])) === 'post') {
+        if (trim(strtolower((string) $_SERVER['REQUEST_METHOD'])) === 'post') {
             $user = new User();
             $user->load($field->value);
             if ($user->isLoaded()) {

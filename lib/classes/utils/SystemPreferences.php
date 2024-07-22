@@ -150,7 +150,7 @@ class SystemPreferences
 
 	private function decode($_settings)
 	{
-	    return unserialize(base64_decode($_settings));
+	    return unserialize(base64_decode((string) $_settings));
 	}
 
 	private function encode($_settings)

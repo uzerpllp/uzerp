@@ -18,17 +18,17 @@ use Smarty as Smarty;
 class View implements Iterator, Countable {
 
 	protected $version = '$Revision: 1.13 $';
-	
+
 	public $data				= array();
 	public $registered_things	= array();
 	private $pointer			= 0;
 	private $smarty;
-	
+
 	function __construct()
 	{
 		$config = Config::Instance();
 		$this->smarty = new Smarty();
-		
+
 		if ($config->get('SMARTY_DEBUG')) {
 			$this->smarty->setDebugging(true);
 		}
@@ -45,43 +45,43 @@ class View implements Iterator, Countable {
 				'plugins'
 			)
 		);
-		
-		if (strtolower($config->get('ENVIRONMENT')) == 'production') {
+
+		if (strtolower((string) $config->get('ENVIRONMENT')) == 'production') {
 			$this->smarty->setCompileCheck(false);
 		}
-		
+
 		if (isset($_GET['ajax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'))
 		{
-			
-			list($accept,) = explode(',',$_SERVER['HTTP_ACCEPT']);
-			
+
+			list($accept,) = explode(',',(string) $_SERVER['HTTP_ACCEPT']);
+
 			// we cannot always rely on the HTTP_ACCEPT value, we need a backup just in case
 			// as blank.tpl and json.tpl are the same, just use blank. We handle JSON in PHP anyway
 			// this is covered by the default: case
-					
+
 			switch($accept)
 			{
-				
+
 				default:
 				case 'text/html':
 					$layout = 'blank';
 					break;
-				
+
 				case 'text/javascript':
 					$layout = 'json';
 					break;
-			
+
 			}
-			
+
 		}
 		else
 		{
 			$layout = 'default';
 		}
-				
+
 		$this->smarty->assign('layout', $layout);
 		$this->smarty->assign('DATE_FORMAT', DATE_FORMAT);
-		
+
 	}
 
 	/**
@@ -111,60 +111,60 @@ class View implements Iterator, Countable {
 	 */
 	function get($name)
 	{
-		
+
 		if (isset($this->data[$name]))
 		{
 			return $this->data[$name];
 		}
 		else
 		{
-			
+
 			$var = $this->smarty->getTemplateVars($name);
-			
+
 			if (!empty($var))
 			{
 				return $var;
 			}
-			
+
 			return FALSE;
-			
+
 		}
-		
+
 	}
-	
+
 	public function add_plugin_dir($path)
 	{
 		$this->smarty->addPluginsDir($path);
 	}
-	
+
 	/** to implement Iterator**/
 	public function current(): mixed
 	{
 		$vals = array_values($this->data);
 		return $vals[$this->pointer];
 	}
-	
+
 	public function next() :void
 	{
 		$this->pointer++;
 	}
-	
+
 	public function key(): mixed
 	{
 		$keys = array_keys($this->data);
 		return $keys[$this->pointer];
 	}
-	
+
 	public function rewind(): void
 	{
 		$this->pointer = 0;
 	}
-	
+
 	public function valid(): bool
 	{
 		return ($this->pointer < count($this));
 	}
-	
+
 	/** to implement countable **/
 	function count(): int
 	{
@@ -173,36 +173,36 @@ class View implements Iterator, Countable {
 
 	function fetch($template)
 	{
-		
+
 		$template = $this->getTemplateName($template);
-		
+
 		return ($template)?$this->smarty->fetch($template):$template;
-		
+
 	}
-	
+
 	function getTemplateName($template)
 	{
-		
+
 		// check (and fix) if the path has a tpl extension
-		if (substr($template, -4) != ".tpl")
+		if (substr((string) $template, -4) != ".tpl")
 		{
 			$template .= ".tpl";
 		}
-		
+
 		// check if the template exists
 		if (!file_exists($template))
 		{
 			$template_exists = FALSE;
-			
+
 			// fetch the smarty template directory list
 			$smarty_dirs = $this->smarty->getTemplateDir();
-			
+
 			// we need to make sure we're dealing with an array
 			if (!is_array($smarty_dirs))
 			{
 				$smarty_dirs = array($smarty_dirs);	
 			}
-			
+
 			// now loop through all the known smarty directories looking for our template
 			foreach ($smarty_dirs as $dirs)
 			{
@@ -210,33 +210,33 @@ class View implements Iterator, Countable {
 				if (file_exists($dirs . $template))
 				{
 					$template = $dirs . $template;
-					
+
 					$template_exists = TRUE;
 				}
-				
+
 			}
 		}
 		else
 		{
 			$template_exists = TRUE;
 		}
-		
+
 		return ($template_exists)?$template:$template_exists;
-		
+
 	}
-	
+
 	function __call($func, $args)
 	{
-		
+
 		if (is_callable(array($this->smarty, $func))) 
 		{
 			return call_user_func_array(array($this->smarty, $func), $args);
 		}
-		
+
 		throw new Exception('Unknown function: ' . $func . ' - couldn\'t be passed through to Smarty');
-		
+
 	}
-	
+
 }
 
 // end of View.php

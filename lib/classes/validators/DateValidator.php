@@ -20,7 +20,7 @@ class DateValidator implements FieldValidation {
 	 * @todo	Always allow a date in ISO 8601 (yyyy-mm-dd) format
 	 */
 	function test(DataField $field, Array &$errors=array()) {
-		
+
 		$format = DATE_FORMAT;
 
 		if(function_exists('strptime')) {
@@ -45,11 +45,11 @@ class DateValidator implements FieldValidation {
 
 			return false;
 		}
-	
+
 		$year = $bits[2];			//set 4 digit year value
 		if($year<100)
 			$year+=($year>70)?1900:2000;	//anything after 70 is 20th century
-			
+
 
 		if($format=="d/m/y" || $format=="d/m/Y") { //European
 			$month = $bits[1];
@@ -61,7 +61,7 @@ class DateValidator implements FieldValidation {
 			$day = $bits[1];
 		}
 
-		
+
 		//check for valid date
 		if(!checkdate($month, $day, $year)
 		 || strlen($year)==3 || strlen($year)>4 ) {
@@ -69,7 +69,7 @@ class DateValidator implements FieldValidation {
 			$errors[$field->name]=$message;
 			return false;
 		}
-		
+
 		if (count($bits) == 5) {
 			$return = "$year-$month-$day {$bits[3]}:{$bits[4]}:00";
 			return $return;

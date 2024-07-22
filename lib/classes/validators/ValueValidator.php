@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,14 +9,14 @@
 class ValueValidator implements FieldValidation {
 
 	protected $version = '$Revision: 1.3 $';
-	
+
 	/**
 	 * The minimum value
 	 *
 	 * @var Int
 	 */
 	protected $value;
-	
+
 	private $message_stub = '%s must be %s %s';
 
 	private $types = array('<'	=> 'less than'
@@ -26,9 +26,9 @@ class ValueValidator implements FieldValidation {
 						  ,'<>'	=> 'not equal to'
 						  ,'>='	=> 'equal to or greater than'
 						  ,'>'	=> 'greater than');
-	
+
 	private $type;
-	
+
 	/**
 	 * Set the minimum value
 	 *
@@ -37,14 +37,14 @@ class ValueValidator implements FieldValidation {
 	function __construct($value, $type)
 	{
 		$this->value = $value;
-		
+
 		if (key_exists($type, $this->types))
 		{
 			$this->type = $type;
 		}
-		
+
 	}
-	
+
 	function test(DataField $field, Array &$errors = array())
 	{
 
@@ -87,15 +87,15 @@ class ValueValidator implements FieldValidation {
 					return $field->value;
 				}
 				break;
-				
+
 		}
-		
+
 		$errors[$field->name] = sprintf($this->message_stub, $field->tag, $this->types[$this->type], $this->value);
 
 				return FALSE;
-		
+
 	}
-	
+
 }
 
 // end of ValueValidator.php

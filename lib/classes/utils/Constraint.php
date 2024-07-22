@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,38 +9,38 @@
 class Constraint {
 
 	protected $version='$Revision: 1.4 $';
-	
+
 	/**
 	 * The name of the field the condition involves
 	 * @access private
 	 * @var String $fieldname 
 	 */
 	private $fieldname;
-	
+
 	/**
 	 * The operator used in the condition
 	 * @access private
 	 * @var String $operator
 	 */
 	private $operator;
-	
+
 	/**
 	 * The value the fieldname is compared to
 	 * @access private
 	 * @var mixed $value
 	 */
 	private $value;
-	
+
 	/**
 	 * A constant for date-comparisons involving 'today'
 	 */
 	const TODAY = "'today'::date";
-	
+
 	/**
 	 * A constant for date-comparisons involving 'tomorrow'
 	 */
 	const TOMORROW = "'tomorrow'::date";
-	
+
 	/**
 	 * Represent a constraint given fieldname,operator,value
 	 * 
@@ -50,26 +50,26 @@ class Constraint {
 	 */
 	function __construct($fieldname, $operator, $value)
 	{
-		
+
 		$this->fieldname	= $fieldname;
 		$this->value		= $value;
-		
+
 		if ($this->value === TRUE)
 		{
 			$this->value = 'true';
 		}
-		
+
 		if ($this->value === FALSE) {
 			$this->value = 'false';
 		}
-		
+
 		if ($value === 'NULL' && $operator == '=')
 		{
 			$operator = ' IS ';
 		}
-		
+
 		$this->operator = $operator;
-		
+
 	}
 
 	/**
@@ -90,7 +90,7 @@ class Constraint {
 	 */
 	function __toString()
 	{
-		
+
 		if (func_num_args() > 0)
 		{
 			$table_prefix = func_get_arg(0);
@@ -99,7 +99,7 @@ class Constraint {
 		{
 			$table_prefix = '';
 		}
-		
+
 		if (!empty($table_prefix))
 		{
 			$table_prefix = $table_prefix . '.';
@@ -108,29 +108,29 @@ class Constraint {
 		{
 			$table_prefix = '';
 		}
-		
+
 		$db		 = DB::Instance();
 		$string	 = '';
 		$string .= $table_prefix . $this->fieldname . ' ';
-		
+
 		switch($this->operator)
 		{
-			
+
 			case 'LIKE':	//fall through
 			case 'ILIKE':	// ""
 			case 'IS':		// ""
 			case 'IS NOT':	// ""
 				$string.=' '.$this->operator.' ';
 				break;	
-				
+
 			default:
 				$string.=$this->operator.' ';
-				
+
 		}
-		
+
 		switch($this->value)
 		{
-			
+
 			case 'NULL':
 			case 'NOT NULL':
 			case 'false':
@@ -146,13 +146,13 @@ class Constraint {
 					break;
 				}
 				$string.=$db->qstr($this->value);
-				
+
 		}
-		
+
 		return $string;
-		
+
 	}
-	
+
 }
 
 // end of Constraint.php

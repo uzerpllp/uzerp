@@ -27,10 +27,10 @@ class SelectSearchField extends SearchField {
 				$selected=$this->default;
 			}
 			$html.='<input type="hidden" name="'.$name.'" id="'.$id.'" value="'.$selected.'" />';
-			$text_value=isset($this->options[$selected])?$this->options[$selected]:'';
+			$text_value=$this->options[$selected] ?? '';
 			$html.='<input alt="Autocomplete enabled" type="text" id="'.$id.'_text" value="'.$text_value.'" class="uz-autocomplete  ui-autocomplete-input icon slim" data-id="'.$id.'" data-action="array"  />';
 			$html.='<script type="text/javascript">'
-					.'var '.$id.'='.json_encode(dataObject::toJSONArray($this->options))
+					.'var '.$id.'='.json_encode(DataObject::toJSONArray($this->options))
 					.'</script>';
 		} else {
 			
@@ -76,7 +76,7 @@ class SelectSearchField extends SearchField {
 		if (!empty($value))
 		{
 			
-			switch (strtolower($this->type))
+			switch (strtolower((string) $this->type))
 			{
 				
 				case 'select':
@@ -84,7 +84,7 @@ class SelectSearchField extends SearchField {
 					return $c;
 					
 				case 'null':
-					$c = new Constraint($this->fieldname, 'IS', strtoupper($value));
+					$c = new Constraint($this->fieldname, 'IS', strtoupper((string) $value));
 					return $c;
 					
 			}

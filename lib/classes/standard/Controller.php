@@ -59,7 +59,7 @@ abstract class Controller
                 $flash->addErrors($current['errors']);
                 $flash->save();
                 if (count($current['errors']) == 0) {
-                    sendTo($current['controller'], $current['action'], $current['modules'], isset($current['other']) ? $current['other'] : null);
+                    sendTo($current['controller'], $current['action'], $current['modules'], $current['other'] ?? null);
                 }
             }
         }
@@ -93,7 +93,7 @@ abstract class Controller
     public function checkRequest($allowed_methods=[], $xhr_required=false)
     {
         $request = $this->_injector->getRequest();
-        $request_method = strtolower($request->getMethod());
+        $request_method = strtolower((string) $request->getMethod());
 
         // test http method
         if (!empty($allowed_methods) && !in_array($request_method, $allowed_methods)) {
@@ -187,7 +187,7 @@ abstract class Controller
 
                 // Now get any id fields
                 foreach ($sh->fields as $fieldname => $field) {
-                    if ($fieldname == 'usercompanyid' || substr($fieldname, - 3) == '_id') {
+                    if ($fieldname == 'usercompanyid' || substr((string) $fieldname, - 3) == '_id') {
                         $fields[$fieldname] = $field;
                     }
                 }
@@ -251,7 +251,7 @@ abstract class Controller
         $this->view->set('cur_page', $collection->cur_page);
 
         showtime('post-load');
-        $this->view->set(strtolower($collection->getModelName()) . 's', $collection);
+        $this->view->set(strtolower((string) $collection->getModelName()) . 's', $collection);
 
         if (isset($this->_data['json'])) {
             $this->view->set('echo', $collection->toJSON());
@@ -452,7 +452,7 @@ abstract class Controller
                             }
                         }
                         $aliasdata = $data[$aliasname];
-                        $aliasdata[strtolower($model->get_name()) . '_id'] = $model->{$model->idField};
+                        $aliasdata[strtolower((string) $model->get_name()) . '_id'] = $model->{$model->idField};
                         $aliasmodel = DataObject::Factory($aliasdata, $errors, $alias['modelName']);
                         if ($aliasmodel !== false) {
                             $success = $aliasmodel->save();
@@ -480,7 +480,7 @@ abstract class Controller
             // $this->$modelName=$model;
             return $success;
         } else {
-            $flash->addErrors($errors, strtolower($modelName) . '_');
+            $flash->addErrors($errors, strtolower((string) $modelName) . '_');
             return false;
         }
     }
@@ -702,7 +702,7 @@ abstract class Controller
         $flash = Flash::Instance();
         $flash->addMessage('Action cancelled');
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
     }
 
     /**
@@ -737,7 +737,7 @@ abstract class Controller
             return true;
         } else {
             $errors[] = $modelName . ' not deleted successfully';
-            $flash->addErrors($errors, strtolower($modelName) . '_');
+            $flash->addErrors($errors, strtolower((string) $modelName) . '_');
             return false;
         }
     }
@@ -831,7 +831,7 @@ abstract class Controller
         // we need to make sure the template path is fully qualified path, otherwise we
         // might find that smarty cannot find the correct file... and we wouldn't want that
 
-        if (substr($this->_templateName, 0, strlen(FILE_ROOT)) !== FILE_ROOT) {
+        if (substr((string) $this->_templateName, 0, strlen(FILE_ROOT)) !== FILE_ROOT) {
             $template_name = FILE_ROOT . $this->_templateName;
         } else {
             $template_name = $this->_templateName;
@@ -868,7 +868,7 @@ abstract class Controller
             $permission = DataObjectFactory::Factory('Permission');
             $permission->load($this->_data['pid']);
 
-            if ($permission && ((! empty($this->_action) && strtolower($permission->permission) == strtolower($this->_action)) || (empty($this->_action) && $permission->type == 'c'))) {
+            if ($permission && ((! empty($this->_action) && strtolower($permission->permission) == strtolower((string) $this->_action)) || (empty($this->_action) && $permission->type == 'c'))) {
 
                 $action = (! is_null($permission->title) ? $permission->title : $this->_action);
 
@@ -972,18 +972,18 @@ abstract class Controller
      */
     public function __call($method, $args)
     {
-        if (strtolower(substr($method, 0, 4)) == 'view') {
-            $view_name = substr($method, 4);
+        if (strtolower(substr((string) $method, 0, 4)) == 'view') {
+            $view_name = substr((string) $method, 4);
             $this->viewRelated($view_name);
             return true;
         }
 
-        if (strtolower(substr($method, 0, 3)) == 'get') {
+        if (strtolower(substr((string) $method, 0, 3)) == 'get') {
             if (isset($this->_data['ajax']) && isset($this->_data['id'])) {
                 $value = array();
                 $id = $this->_data['id'];
                 $inflector = new Inflector();
-                $property = $inflector->pluralize(strtolower(substr($method, 3)));
+                $property = $inflector->pluralize(strtolower(substr((string) $method, 3)));
                 // $model = new $this->modeltype;
                 $model = DataObjectFactory::Factory($this->modeltype);
                 if (method_exists(get_class($model), $method)) {
@@ -1006,7 +1006,7 @@ abstract class Controller
                         unset($value);
                         $value = $newModel->getAll();
                     } else {
-                        $property = substr($method, 3);
+                        $property = substr((string) $method, 3);
                         $value = $model->$property;
                         $newModel = substr($property, 0, - 3);
                         // $newModel = new $newModel;
@@ -1149,7 +1149,7 @@ abstract class Controller
 
         foreach ($qstring as $key => $value) {
             if ($key == 'type') {
-                $value = ucfirst($value);
+                $value = ucfirst((string) $value);
             }
             $sh->addConstraint(new Constraint($key, '=', $value));
             $link[$key] = $value;
@@ -1162,7 +1162,7 @@ abstract class Controller
 
         $this->_templateName = $this->getTemplateName('view_related');
 
-        $c_action = (isset($this->related[$name]['clickaction']) ? $this->related[$name]['clickaction'] : 'view');
+        $c_action = ($this->related[$name]['clickaction'] ?? 'view');
 
         if (isset($this->related[$name]['allow_delete']) && $this->related[$name]['allow_delete']) {
             $this->view->set('allow_delete', true);
@@ -1298,14 +1298,14 @@ abstract class Controller
                     $field = $hasmany['fkfield'];
                 }
 
-                $modules = isset($hasmany['modules'][$action]) ? $hasmany['modules'][$action] : $this->_modules;
+                $modules = $hasmany['modules'][$action] ?? $this->_modules;
 
                 if (isset($hasmany['newtab'][$action])) {
 
                     $link[$action] = array(
                         'modules' => $modules,
                         'controller' => $controller_name,
-                        'action' => strtolower($action_name[$action]),
+                        'action' => strtolower((string) $action_name[$action]),
                         $field => $model->{$model->idField},
                         'newtab' => TRUE
                     );
@@ -1314,7 +1314,7 @@ abstract class Controller
                     $link[$action] = array(
                         'modules' => $modules,
                         'controller' => $controller_name,
-                        'action' => strtolower($action_name[$action]),
+                        'action' => strtolower((string) $action_name[$action]),
                         $field => $model->{$model->idField}
                     );
                 }
@@ -1323,7 +1323,7 @@ abstract class Controller
             if (! empty($link)) {
 
                 $sidebarlist[$name] = array_merge(array(
-                    'tag' => (isset($hasmany['label']) ? $hasmany['label'] : 'Show ' . $name)
+                    'tag' => ($hasmany['label'] ?? 'Show ' . $name)
                 ), $link);
 
                 // If a tag is set, use that instead
@@ -1562,7 +1562,7 @@ abstract class Controller
         if (! empty($_depends)) {
             $field_options->_depends = $_depends;
         } elseif (! empty($this->_data['depends'])) {
-            $array = explode(',', $this->_data['depends']);
+            $array = explode(',', (string) $this->_data['depends']);
             foreach ($array as $key) {
                 if (! empty($this->_data[$key])) {
                     $_depends[$key] = $this->_data[$key];
@@ -1576,7 +1576,7 @@ abstract class Controller
         if (! empty($_identifierField)) {
             $field_options->_identifierField = $_identifierField;
         } elseif (! empty($this->_data['identifierfield'])) {
-            $field_options->_identifierField = explode(',', $this->_data['identifierfield']);
+            $field_options->_identifierField = explode(',', (string) $this->_data['identifierfield']);
         }
         if (isset($_smarty_params['use_collection']) && $_smarty_params['use_collection']) {
             $field_options->_use_collection = true;

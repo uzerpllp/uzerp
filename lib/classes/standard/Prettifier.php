@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,7 +9,7 @@
 class Prettifier implements Translation {
 
 	protected $version = '$Revision: 1.5 $';
-	
+
 	protected $acronyms = array(
 		'crm'			=> 'CRM',
 		'erp'			=> 'ERP',
@@ -45,30 +45,30 @@ class Prettifier implements Translation {
 		'websiteadmin'			=> 'website_admin',
 		'calendarevent'			=> 'calendar_event'
 	);
-	
+
 	protected $known_replacements = array(
 		'uzlet' => 'uzLET'
 	);
-	
+
 	function translate($string)
 	{
-		
+
 		// return, if set, the acronym for a string
-		if (isset($this->acronyms[strtolower($string)]))
+		if (isset($this->acronyms[strtolower((string) $string)]))
 		{
-			return $this->acronyms[strtolower($string)];
+			return $this->acronyms[strtolower((string) $string)];
 		}
-		
+
 		// return, if set, the over ride for a string
-		if (isset($this->over_ride[strtolower($string)]))
+		if (isset($this->over_ride[strtolower((string) $string)]))
 		{
-			return prettify($this->over_ride[strtolower($string)]);
+			return prettify($this->over_ride[strtolower((string) $string)]);
 		}
-		
+
 		// capatilse, replace "_" with " " and remove "_id" at end of string, apply this to $string
-		$string = (substr($string, -3)=='_id')?substr($string, 0, -3):$string;
+		$string = (substr((string) $string, -3)=='_id')?substr((string) $string, 0, -3):$string;
 		$string = ucwords(str_replace('_', ' ', $string));
-		
+
 		/*
 		 * Because some words may not exist atomically (such as the word CRM might) 
 		 * we need to find specific words and replace them with their known output, 
@@ -78,10 +78,10 @@ class Prettifier implements Translation {
 		{
 			$string = str_ireplace($find, $replace, $string);
 		}
-		
+
 		// return the prettified word
 		return $string;
-		
+
 	}
 
 }

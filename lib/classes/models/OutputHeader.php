@@ -9,13 +9,13 @@
 class OutputHeader extends DataObject {
 
 	protected $version = '$Revision: 1.6 $';
-	
+
 	protected $defaultDisplayFields = array('type'
 											,'created'
 											,'createdby'
 											,'processed'
 											);
-	
+
 	function __construct($tablename = 'output_header')
 	{
 		parent::__construct($tablename);
@@ -23,15 +23,15 @@ class OutputHeader extends DataObject {
 		$this->idField='id';
 		$this->orderby='created';
 		$this->orderdir='DESC';
-		
+
 		$this->hasMany('OutputDetail', 'output_details', 'output_header_id');
-		
+
 	}
 
 	public function detail_counts ()
 	{
 		$counts=array();
-		
+
 		foreach ($this->output_details as $output_detail)
 		{
 			if (isset($counts[$output_detail->printaction]))

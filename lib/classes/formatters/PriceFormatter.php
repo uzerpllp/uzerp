@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,7 +9,7 @@
 class PriceFormatter implements FieldFormatter {
 
 	protected $version = '$Revision: 1.4 $';
-	
+
 	public $is_safe = true;
 	private $is_html = true;
 

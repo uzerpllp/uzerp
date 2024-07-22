@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -12,21 +12,21 @@ class PSQL_CSV {
 
 	public function go($query, $params)
 	{
-	
+
 		// create temp file for CSV
 		$tmpcsv = tempnam('/tmp', 'CSV');
 		chmod($tmpcsv, 0777);
-		
+
 		$header = "";
-		
+
 		if ($params['fieldnames'] === 'on')
 		{
 			$header = "HEADER";
 		}
-		
+
 		// basic sql structure
 		$sql = "psql -d %s -c \"\copy (%s) TO '%s' WITH DELIMITER '%s' CSV %s\" 2>&1";
-		
+
 		// populate sql structure with values
 		$sql = sprintf(
 			$sql,
@@ -36,15 +36,15 @@ class PSQL_CSV {
 			$params['fieldseparater'],
 			$header
 		);
-						
+
 		// execute the SQL command
 		exec($sql);
-				
+
 		// return the csv filepath
 		return $tmpcsv;
-	
+
 	}
-	
+
 }
 
 // end of PSQL_CSV.php

@@ -36,7 +36,7 @@ class MTD {
         $this->vrn = $company->getVRN();
 
         $oauth_config = OauthStorage::getconfig($this->config_key);
-        
+
         $this->base_url = $oauth_config['baseurl'];
         $this->api_part = "/organisations/vat/{$this->vrn}";
         $this->provider = new \League\OAuth2\Client\Provider\GenericProvider([
@@ -57,7 +57,7 @@ class MTD {
         $hoursAndSec = gmdate('H:i', abs($offsetInSecs));
         $utc_offset = stripos($offsetInSecs, '-') === false ? "+{$hoursAndSec}" : "-{$hoursAndSec}";
         $uz_user = rawurlencode(constant('EGS_USERNAME'));
-        $uz_version = rawurlencode($config->get('SYSTEM_VERSION'));
+        $uz_version = rawurlencode((string) $config->get('SYSTEM_VERSION'));
 
         $this->fraud_protection_headers = [
             'Gov-Client-Connection-Method' => 'WEB_APP_VIA_SERVER',
@@ -67,7 +67,7 @@ class MTD {
         ];
 
         if (isset($oauth_config['productname']) && $oauth_config['productname'] !== '') {
-            $this->fraud_protection_headers['Gov-Vendor-Product-Name'] = rawurlencode($oauth_config['productname']);
+            $this->fraud_protection_headers['Gov-Vendor-Product-Name'] = rawurlencode((string) $oauth_config['productname']);
         } else {
             $this->fraud_protection_headers['Gov-Vendor-Product-Name'] = 'uzERP';
         }
@@ -118,16 +118,16 @@ class MTD {
         // Public networks only
         $server_ip = $_SERVER['SERVER_ADDR'];
         if (!self::ip_is_private($server_ip)) {
-            $this->fraud_protection_headers['Gov-Vendor-Public-IP'] = rawurlencode($server_ip);
+            $this->fraud_protection_headers['Gov-Vendor-Public-IP'] = rawurlencode((string) $server_ip);
         }
-       
+
         // Gov-Vendor-Forwarded
         // A list that details hops over the internet between services that terminate Transport Layer Security (TLS).
         // Each key and value must be percent encoded. Do not percent encode separators (equal signs, ampersands and commas).
         // Public networks only
         if (!self::ip_is_private($_SERVER['SERVER_ADDR'])) {
-            $by_ip = rawurlencode($_SERVER['SERVER_ADDR']);
-            $for_ip = rawurlencode($client_public_ip);
+            $by_ip = rawurlencode((string) $_SERVER['SERVER_ADDR']);
+            $for_ip = rawurlencode((string) $client_public_ip);
             $this->fraud_protection_headers['Gov-Vendor-Forwarded'] = "by={$by_ip}&for={$for_ip}";
         }
 
@@ -148,19 +148,19 @@ class MTD {
     function authorizationGrant() {
         // If we don't have an authorization code then get one
         if (!isset($_GET['code'])) {
-        
+
             // Fetch the authorization URL from the provider; this returns the
             // urlAuthorize option and generates and applies any necessary parameters
             // (e.g. state).
             $authorizationUrl = $this->provider->getAuthorizationUrl();
-        
+
             // Get the state generated for you and store it to the session.
             $_SESSION['oauth2state'] = $this->provider->getState();
-        
+
             // Redirect the user to the authorization URL.
             header('Location: ' . $authorizationUrl);
             exit;
-        
+
         // Check given state against previously stored one to mitigate CSRF attack
         } elseif (empty($_GET['state']) || (isset($_SESSION['oauth2state']) && $_GET['state'] !== $_SESSION['oauth2state'])) {
         
@@ -277,11 +277,11 @@ class MTD {
         try
         {
             $response = $this->provider->getResponse($request);
-            return json_decode($response->getBody(), true);
+            return json_decode((string) $response->getBody(), true);
         }
         catch (Exception $e)
         {
-            $api_errors = json_decode($e->getResponse()->getBody()->getContents());
+            $api_errors = json_decode((string) $e->getResponse()->getBody()->getContents());
             if (count($api_errors) > 1) {
                 foreach ($api_errors->errors as $error) {
                     $this->logger->error("{$error->code} {$error->message}", [__METHOD__]);
@@ -386,7 +386,7 @@ class MTD {
                         'vat_return_data' => $body,
                         'class_method' =>__METHOD__]);
                     $response = $this->provider->getResponse($request);
-                    $rbody = json_decode($response->getBody(), true);
+                    $rbody = json_decode((string) $response->getBody(), true);
                     $rheader['Receipt-ID'] = $response->getHeader('Receipt-ID')[0];
                     $details = array_merge($rbody, $rheader);
                     $this->logger->info('VAT return submission response', [
@@ -406,7 +406,7 @@ class MTD {
                 }
                 catch (Exception $e)
                 {
-                    $api_errors = json_decode($e->getResponse()->getBody()->getContents());
+                    $api_errors = json_decode((string) $e->getResponse()->getBody()->getContents());
                     foreach ($api_errors->errors as $error) {
                         $this->logger->error("HMRC API ERROR: {$error->code} {$error->message}", [
                             'http_status' => $e->getResponse()->getStatusCode(),

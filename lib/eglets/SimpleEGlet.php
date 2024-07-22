@@ -8,11 +8,9 @@
 
 abstract class SimpleEGlet extends EGlet
 {
-
-	protected $version = '$Revision: 1.6 $';
-	
 	protected $params =  array();
-	
+	protected $smarty;
+
 	function render()
 	{
 		$this->renderer->render($this,$this->smarty);
@@ -22,12 +20,12 @@ abstract class SimpleEGlet extends EGlet
 	{
 		return 'eglet';
 	}
-	
+
 	function getTitle()
 	{
 		return FALSE;
 	}
-	
+
 	static function getRenderer()
 	{
 		return new SimpleRenderer();

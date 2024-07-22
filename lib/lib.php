@@ -38,7 +38,7 @@ define('SEARCH_SESSION_IDLE', 20);
 
 function add ($value1, $value2)
 {
-	
+
 	// php error - adding 0.09+0.01 gives 0.0:
 	if (($value1 == 0.09 && $value2 == 0.01) || ($value1 == 0.01 && $value2 == 0.09))
 	{
@@ -48,23 +48,23 @@ function add ($value1, $value2)
 	{
 		return $value1 + $value2;
 	}
-	
+
 }
 
 function array2xml($array, $xml = FALSE, $parent = '')
 {
-	
+
 	if ($xml === FALSE)
 	{
 		$xml = new SimpleXMLElement('<root/>');
 	}
-	
+
 	foreach ($array as $key => $value)
 	{
-		
+
 		if (is_array($value))
 		{
-			
+
 			if(!is_numeric($key) && is_numeric(key($value)))
 			{
 				array2xml($value, $xml, $key);
@@ -77,58 +77,58 @@ function array2xml($array, $xml = FALSE, $parent = '')
 			{
 				array2xml($value, $xml->addChild($key));
 			}
-			
+
 		}
 		else
 		{
 			$xml->addChild($key, $value);
 		}
 	}
-	
+
 	return $xml->asXML();
-	
+
 }
 
 function audit($msg)
 {
-	
+
 	if (defined('AUDIT') && AUDIT)
 	{
-		
+
 		$db			= DB::Instance();
 		$debug		= $db->debug;
 		$db->debug	= FALSE;
 		$audit		= Audit::Instance();
-		
+
 		$audit->write($msg, TRUE, (microtime(TRUE) - START_TIME));
 		$db->debug($debug);
-		
+
 	}
-	
+
 }
 
 function debug($msg)
 {
-	
+
 	if (defined('DEBUG') && DEBUG)
 	{
-		
+
 		$db			= DB::Instance();
 		$db->debug	= FALSE;
 		$debug		= Debug::Instance();
-		
+
 		$debug->write($msg);
 		$db->debug(DEBUG);
-		
+
 	}
-	
+
 }
 
 function system_email($subject, $body, &$errors = [])
 {
 	$email = get_config('ADMIN_EMAIL');
 	$from = get_config('ADMIN_FROM_EMAIL');
-	
+
 	if (!empty($email) && !get_config('DEV_PREVENT_EMAIL'))
 	{
 
@@ -191,7 +191,7 @@ function setLoggedIn()
  */
 function setupLoggedInUser()
 {
-	
+
 	showtime('start-user');
 
 	if (empty($_SESSION['username']))
@@ -200,25 +200,25 @@ function setupLoggedInUser()
 		header("Location: /");
 		exit;
 	}
-	
+
 	define('EGS_USERNAME', $_SESSION['username']);
-	
+
 	// If the user has selected a company using the company selector
 	// update their lastcompanylogin value and save this value to their session
 	if (isset($_GET['companyselector']))
 	{
-		
+
 		$access = DataObjectFactory::Factory('Usercompanyaccess');
-		
+
 		if ($access->loadBy(array('username', 'usercompanyid'), array(EGS_USERNAME, $_GET['companyselector'])))
 		{
 			$user = getCurrentUser();
 			$user->update(EGS_USERNAME, 'lastcompanylogin', $_GET['companyselector']);
 			$_SESSION['EGS_COMPANY_ID'] = $_GET['companyselector'];
 		}
-		
+
 	}
-	
+
 	// Define the EGS_COMPANY_ID global constant either from
 	// 1 - saved session variable
 	// 2 - users lastcompanylogin
@@ -230,42 +230,42 @@ function setupLoggedInUser()
 	}
 	else
 	{
-		
+
 		$user = getCurrentUser();
 		$lcl = $user->lastcompanylogin;
-		
+
 		if (!empty($lcl))
 		{
 			define('EGS_COMPANY_ID', $lcl);
 		}
 		elseif (!is_null($user->person_id))
 		{
-			
+
 			$sc = DataObjectFactory::Factory('SystemCompany');
 			$sc->loadBy('company_id', $user->persondetail->company_id);
-			
+
 			if ($sc->isLoaded())
 			{
 				define('EGS_COMPANY_ID',$sc->usercompanyid);
 			}
 			else
 			{
-				
+
 				$uca		= DataObjectFactory::Factory('UserCompanyAccess');
-				
+
 				$companies	= $uca->getCompanies($_SESSION['username']);
-								
+
 				if (count($companies) > 0) {
 					define('EGS_COMPANY_ID', $companies[0]['usercompanyid']);
 				}
 			}
 		}
-		
+
 		$_SESSION['EGS_COMPANY_ID'] = EGS_COMPANY_ID;
 	}
-	
+
 	showtime('end-user');
-	
+
 }
 
 function getCurrentUser()
@@ -283,7 +283,7 @@ function getCurrentUser()
 
 		$user = DataObjectFactory::Factory('User');
 		$user->load(EGS_USERNAME);
-		
+
 	}
 
 	return $user;
@@ -300,14 +300,14 @@ function returnJSONResponse($status,$extra=array()) {
 		audit(print_r($_POST,true).print_r($response,true));
 		return json_encode($response);
 	}
-	
+
 function sendTo() 
 {
-	
+
 	global $system;
 
 	$args = func_get_args();
-	
+
 	// If this is a dialog box, and it is not 'Save and add Another'
 	// then need to return JSON response and exit
 	if ((isset($_GET['dialog']) || isset($_POST['dialog']))
@@ -315,7 +315,7 @@ function sendTo()
 	{
 		$flash = Flash::Instance();
 		$flash->save();
-		
+
 		// Close dialog and refresh page or redirect?
 		if (isset($_GET['refresh']) || isset($_POST['refresh']))
 		{
@@ -333,7 +333,7 @@ function sendTo()
 					$url_params[$param] = $val;
 				}
 			}
-			
+
 			echo returnJSONResponse(true, ['refresh_params' => $url_params]);
 		}
 		else
@@ -348,7 +348,7 @@ function sendTo()
 
 		exit;
 	}
-	
+
 	if (isset($_GET['ajax']) || isset($_POST['ajax']))
 	{
 		$args[3]['ajax'] = '';
@@ -361,12 +361,12 @@ function sendTo()
 
 	$redirector = $system->injector->instantiate('Redirection');
 	$redirector->Redirect($args);
-	
+
 }
 
 function sendBack($status = null)
 {
-	
+
 	if ($status !== null && isset($_GET['ajax']))
 	{
 		die($status);
@@ -374,12 +374,12 @@ function sendBack($status = null)
 
 	$current = setParamsString(getParamsArray($_SERVER['QUERY_STRING']));
 	$referer = getParamsString();
-	
+
 	//echo 'lib::sendBack current='.$current.' referer='.$referer.'<br>';
-	
+
 	if ($current == $referer)
 	{
-		
+
 		if (isset($_SESSION['referer'][$current]))
 		{
 			$referer = $_SESSION['referer'][$current];
@@ -389,106 +389,106 @@ function sendBack($status = null)
 			$referer = '';
 		}
 	}
-	
+
 	$referer = getParamsArray($referer);
 
 	//	$referer=getParamsArray();
 	//echo 'lib::sendBack<pre>'.print_r($referer, TRUE).'</pre><br>';
-	
+
 	sendTo(
 		$referer['controller'],
 		$referer['action'],
 		$referer['modules'],
-		isset($referer['other']) ? $referer['other'] : null
+		$referer['other'] ?? null
 	);
-	
+
 }
 
 function getParamsString($url = '')
 {
-	
+
 	if (empty($url) && isset($_SERVER['HTTP_REFERER']))
 	{
 		$url = $_SERVER['HTTP_REFERER'];
 	}
-	
-	$params = explode('?', $url);
-	
-	return (isset($params[1])?$params[1]:'');
-	
+
+	$params = explode('?', (string) $url);
+
+	return ($params[1] ?? '');
+
 }
 
 function getParamsArray($params = '')
 {
-	
+
 	if (empty($params))
 	{
 		$params = getParamsString();
 	}
-	
+
 	$res = array(
 		'modules'		=> array(),
 		'controller'	=> 'Index',
 		'action'		=> 'index'
 	);
-	
+
 	if (!empty($params)) 
 	{
-		
-		$refs = explode('&', $params);
-		
+
+		$refs = explode('&', (string) $params);
+
 		foreach ($refs as $ref) 
 		{
-			
+
 			$refsplit = explode('=', $ref);
-			
+
 			if (substr($refsplit[0], -6)=='module')
 			{
-				
+
 				if (!empty($refsplit[1]))
 				{
 					$res['modules'][$refsplit[0]] = $refsplit[1];
 				}
-				
+
 			} 
 			elseif (strtolower($refsplit[0]) == 'controller' || strtolower($refsplit[0]) == 'action' || strtolower($refsplit[0]) == 'pid')
 			{
 				$res[$refsplit[0]] = $refsplit[1];
 			}
 			else {
-				
+
 				if ($refsplit[0]!='rememberUser' && $refsplit[0] != 'pid')
 				{
-					
+
 					if (isset($refsplit[1]))
 					{
 						$res['other'][$refsplit[0]] = $refsplit[1];
 					}
-					
+
 				}
-				
+
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	return $res;
-	
+
 }
 
 function setParamsString($array)
 {
-	
+
 	$params_string	= '';
 	$params_array	= array();
-	
+
 	if (is_array($array))
 	{
-		
+
 		if (!isset($array['pid']))
 		{
-			
+
 			if (isset($array['modules']))
 			{
 				$module = $array['modules'];
@@ -501,7 +501,7 @@ function setParamsString($array)
 			{
 				$module = '';
 			}
-			
+
 			if (isset($array['controller']))
 			{
 				$controller = $array['controller'];
@@ -510,7 +510,7 @@ function setParamsString($array)
 			{
 				$controller = '';
 			}
-			
+
 			if (isset($array['action']))
 			{
 				$action = $array['action'];
@@ -519,69 +519,69 @@ function setParamsString($array)
 			{
 				$action = '';
 			}
-			
+
 			$ao=AccessObject::Instance();
 			$pid=$ao->getPermission($module, $controller, $action);
-			
+
 			if (!empty($pid))
 			{
 				$array['pid']=$pid;
 			}
-			
+
 		}
-		
+
 		if (isset($array['pid']))
 		{
 			$params_array[] = 'pid=' . $array['pid'];
 		}
-		
+
 		if (isset($array['modules']))
 		{
-			
+
 			foreach ($array['modules'] as $key => $value)
 			{
 				$params_array[] = $key . '=' . $value;
 			}
-			
+
 		}
 		elseif (isset($array['module']))
 		{
 			$params_array[] = 'module=' . $array['module'];
 		}
-		
+
 		if (isset($array['controller']))
 		{
-			$params_array[] = 'controller=' . strtolower($array['controller']);
+			$params_array[] = 'controller=' . strtolower((string) $array['controller']);
 		}
-		
+
 		if (isset($array['action']))
 		{
 			$params_array[] = 'action=' . $array['action'];
 		}
-		
+
 		if (isset($array['other']))
 		{
-			
+
 			foreach ($array['other'] as $key => $value)
 			{
 				$params_array[] = $key . '=' . $value;
 			}
-			
+
 		}
-		
+
 		$params_string = implode('&', $params_array);
 	}
-	
+
 	return $params_string;
-	
+
 }
 
 function setReferer($refs = '') 
 {
-	
+
 	if (empty($refs))
 	{
-		
+
 		if (isset($_SERVER['HTTP_REFERER']))
 		{
 			$refs = getParamsArray();
@@ -591,13 +591,13 @@ function setReferer($refs = '')
 			$refs = $_SESSION['refererPage'];
 		}
 	}
-	
+
 	$referer = setParamsString($refs);
 	$current = setParamsString(getParamsArray($_SERVER['QUERY_STRING']));
-	
+
 	//	echo 'lib::setReferer referer='.$referer.'<br>';
 	//	echo 'lib::setReferer current='.$current.'<br>';
-	
+
 	if ($current != $referer)
 	{
 		$_SESSION['referer'][$current] = $referer;
@@ -606,22 +606,22 @@ function setReferer($refs = '')
 	{
 		$_SESSION['referer'][$current] = $current;
 	}
-	
+
 	//	echo 'lib::setReferer<pre>'.print_r($_SESSION['referer'][$current],TRUE).'</pre><br>';
-	
+
 	debug('lib::setReferer' . $_SESSION['referer'][$current]);
-	
+
 }
 
 function setRefererPage() 
 {
-	
+
 	// Backwards compatibility
 	if (isset($_SESSION['referer']))
 	{
-		
+
 		$referer = setParamsString(getParamsArray());
-		
+
 		if (isset($_SESSION['referer'][$referer]))
 		{
 			$_SESSION['refererPage'] = getParamsArray($_SESSION['referer'][$referer]);
@@ -631,17 +631,17 @@ function setRefererPage()
 			$_SESSION['refererPage'] = getParamsArray('');
 			$_SESSION['refererPage']['action'] = '';
 		}
-		
+
 	}
 	else
 	{
 		$_SESSION['refererPage'] = getParamsArray('');
 	}
-	
+
 	//	echo 'lib::setRefererPage $referer='.$referer.'<br>';
 	//	echo 'lib::setRefererPage <pre>'.print_r($_SESSION['referer'], TRUE).'</pre><br>';
 	//	echo 'lib::setRefererPage<pre>'.print_r($_SESSION['refererPage'], TRUE).'</pre><br>';
-	
+
 }
 
 // define the autoload function
@@ -656,32 +656,32 @@ function setRefererPage()
  */
 function uz_autoload($class_name)
 {
-	
+
 	$autoloader = AutoLoader::Instance();
 	$autoloader->load($class_name);
-	
+
 }
 spl_autoload_register('uz_autoload');
 
 
 function with(&$params, &$smarty)
 {
-	
+
 	$with = $smarty->getTemplateVars('with');
-	
+
 	if (!is_array($with))
 	{
 		return;
 	}
-	
+
 	foreach ($with as $key=>$val)
 	{
-		
+
 		if (empty($params[$key]))
 		{
 			$params[$key] = $val;
 		}
-		
+
 	}
 
 }
@@ -704,7 +704,7 @@ function u($string)
 
 function un_u($string)
 {
-	return str_replace('_', ' ', urldecode($string));
+	return str_replace('_', ' ', urldecode((string) $string));
 }
 
 function file_path_concat($path,$array)
@@ -716,7 +716,7 @@ function file_path_concat($path,$array)
 	{
 		$scanpath .= $dir . "/";
 	}
-	
+
 	return $scanpath;
 
 }
@@ -731,7 +731,7 @@ function file_path_concat($path,$array)
  * @return	string
  */
 function link_to($params, $data = FALSE, $html = TRUE) {
-	
+
 	$script			= '';
 	$url			= '?';
 	$attr_array		= array();
@@ -792,19 +792,19 @@ function link_to($params, $data = FALSE, $html = TRUE) {
 
 	// if we're handling a print link we want to test permissions
 	// against the print action and not the dialog action
-	
+
 	if (isset($params['printaction']))
 	{
 		$action = $params['printaction'];
 	}
-	
+
 	if (empty($pid))
 	{
 		$pid = $ao->getPermission($module, $controller, $action); /** @phpstan-ignore-line */
 	}
 
 	$allowed = $ao->hasPermission($module, $controller, $action, $pid); /** @phpstan-ignore-line */
-	
+
 	$modules = array();
 
 	if (!empty($pid))
@@ -833,7 +833,7 @@ function link_to($params, $data = FALSE, $html = TRUE) {
 
 		switch ($per->type)
 		{
-				
+
 			case 'g':
 			case 'm':
 			case 's':
@@ -902,10 +902,10 @@ function link_to($params, $data = FALSE, $html = TRUE) {
 
 		if (!is_array($val))
 		{
-			$url .= strtolower($key) . '=' . urlencode($val) . '&amp;';
+			$url .= strtolower($key) . '=' . urlencode((string) $val) . '&amp;';
 		}
 	}
-	
+
 	//remove last ampersand
 	$url = substr($url, 0, -5);
 	$url = '/' . $url;
@@ -914,7 +914,7 @@ function link_to($params, $data = FALSE, $html = TRUE) {
 	{
 		$url = $params['link'];
 	}
-	
+
 	$attr_array['href'] = $url;
 
 	// convert the attributes array to string
@@ -945,7 +945,7 @@ function link_to($params, $data = FALSE, $html = TRUE) {
 
 		if ($html === TRUE)
 		{
-				
+
 			if ($params['value']=='')
 			{
 				$params['value'] = 'link';
@@ -968,7 +968,7 @@ function link_to($params, $data = FALSE, $html = TRUE) {
 			{
 				$string = '<a ' . $attr_string . ' >' . prettify($tag) . '</a>';
 			}
-				
+
 		}
 		else
 		{
@@ -994,13 +994,13 @@ function prettify($word)
 			global $system;
 			$translator = $system->injector->instantiate('Translation');
 		}
-			
+
 		$word_cache[$word] = $translator->translate($word);
 
 	}
-	
+
 	return $word_cache[$word];
-	
+
 
 }
 
@@ -1011,12 +1011,12 @@ function cssify($css)
 
 function pricify($number, $html = TRUE)
 {
-	
+
 	if (empty($number) || !is_numeric($number))
 	{
 		return;
 	}
-	
+
 	if ($html)
 	{
 		$symbol = uzh(EGS_CURRENCY_SYMBOL);
@@ -1025,14 +1025,14 @@ function pricify($number, $html = TRUE)
 	{
 		$symbol = EGS_CURRENCY_SYMBOL;
 	}
-	
+
 	return $symbol . number_format($number, 2);
-	
+
 }
 
 function sizify($b, $p = null)
 {
-	
+
 	/**
 	 *
 	 * @author Martin Sweeny
@@ -1044,42 +1044,42 @@ function sizify($b, $p = null)
 	 * result automatically.
 	 *
 	 **/
-	
+
 	$units = array("B","kB","MB","GB","TB","PB","EB","ZB","YB");
 	$c=0;
-	
+
 	if (!$p && $p !== 0) 
 	{
-		
+
 		foreach($units as $k => $u)
 		{
-			
+
 			if(($b / pow(1024,$k)) >= 1) 
 			{
 				$r["bytes"] = $b / pow(1024,$k);
 				$r["units"] = $u;
 				$c++;
 			}
-			
+
 		}
-		
+
 		return number_format($r["bytes"],2) . " " . $r["units"];
-		
+
 	} 
 	else
 	{
 		return number_format($b / pow(1024,$p)) . " " . $units[$p];
 	}
-	
+
 }
 
 function isModuleAdmin($name = null)
 {
-	
+
 	return true;
-	
+
 	$router = RouteParser::Instance();
-	
+
 	if (isset($name))
 	{
 		$module = $name;
@@ -1088,7 +1088,7 @@ function isModuleAdmin($name = null)
 	{
 		$module=$router->dispatch('module');
 	}
-	
+
 	if (isset($_SESSION['module_admins']))
 	{
 		$cache = $_SESSION['module_admins'];
@@ -1097,50 +1097,50 @@ function isModuleAdmin($name = null)
 	{
 		$cache = array();
 	}
-	
+
 	if (!isset($cache[$module]))
 	{
-		
+
 		$access			= AccessObject::Instance();
 		$db				= DB::Instance();
 		$roles_string	= implode(',', $access->roles);
-		
+
 		//		foreach ($access->roles as $role) {
 		//			$roles_string.=$role.',';
 		//		}
 		//		$roles_string=rtrim($roles_string,',');
-		
+
 		$query = 'SELECT module_name FROM module_admins WHERE role_id IN (' . $roles_string . ') AND module_name=' . $db->qstr($module);
 		debug('lib::isModuleAdmin ' . $query);
 
 		$module = $db->GetOne($query);
-		
+
 		if (!empty($module) && $module !== FALSE)
 		{
 			$cache[$module] = TRUE;
 		}
 		else
 		{
-			
+
 			foreach ($access->tree as $treenode)
 			{
 				if ($treenode['name'] == 'egs')
 				{
 					$cache[$module] = TRUE;
 				}
-				
+
 			}
-			
+
 			$cache[$module] = FALSE;
-			
+
 		}
-		
+
 	}
-	
+
 	$_SESSION['module_admins'][$module] = $cache[$module];
-	
+
 	return $cache[$module];
-	
+
 }
 
 /**
@@ -1151,25 +1151,25 @@ function isModuleAdmin($name = null)
  */
 function getRange($min, $max, $step, $keys = FALSE, $value_prefix = '', $value_suffix = '', $signed = FALSE, $ignore_zero = FALSE)
 {
-	
+
 	$values	= array();
 	$dp		= maxdp($min,$max,$step);
 
 	for ($i = $min; $i <= $max; $i += $step)
 	{
-		
+
 		if ($ignore_zero && $i == 0) 
 		{
 			continue;
 		}
-		
+
 		$value = sprintf('%01.' . $dp . 'f', $i);
-		
+
 		if ($signed && floatval($value) > 0)
 		{
 			$value = '+' . $value;
 		}
-		
+
 		if ($keys)
 		{
 			$values[$value] = $value_prefix . $value . $value_suffix;
@@ -1178,11 +1178,11 @@ function getRange($min, $max, $step, $keys = FALSE, $value_prefix = '', $value_s
 		{
 			$values[] = $value;
 		}
-		
+
 	}
-	
+
 	return $values;
-	
+
 }
 
 /**
@@ -1191,110 +1191,110 @@ function getRange($min, $max, $step, $keys = FALSE, $value_prefix = '', $value_s
  */
 function maxdp()
 {
-	
+
 	$dp		= 0;
 	$args	= func_get_args();
-	
+
 	foreach ($args as $arg)
 	{
-		
-		if (strrpos($arg, '.') !== FALSE && (strlen(strval($arg)) - strrpos(strval($arg), '.')) -1 > $dp)
+
+		if (strrpos((string) $arg, '.') !== FALSE && (strlen(strval($arg)) - strrpos(strval($arg), '.')) -1 > $dp)
 		{
 			$dp = strlen(strval($arg)) - strrpos(strval($arg), '.') -1;
 		}
-		
+
 	}
-	
+
 	return $dp;
-	
+
 }
 
 function to_working_days($time, $suffix = TRUE)
 {
-	
-	$time			= explode(':', $time);
+
+	$time			= explode(':', (string) $time);
 	$hours			= $time[0];
 	$minutes		= $time[1];
 	$day_length		= SystemCompanySettings::DAY_LENGTH;
 	$hour			= $hours + ($minutes/60);
 	$days			= $hours / $day_length;
 	$suffix_text	= ($suffix)?' days':'';
-	
+
 	return $days . $suffix_text;
-	
+
 }
 
 function coalesce()
 {
-	
+
 	$args = func_get_args();
-	
+
 	foreach ($args as $arg)
 	{
-		
+
 		if ($arg !== null)
 		{
 			return $arg;
 		}
-		
+
 	}
-	
+
 }
 
 function decorate($object, $decorator)
 {
-	
+
 	if (class_exists($decorator))
 	{
 		$decorator = new $decorator($object);
 		return $decorator;
 	}
-	
+
 	throw new Exception('Class not found: ' . $decorator);
-	
+
 }
 
 function date_strip($date_string)
 {
-	
-	list($date,$time) = explode(' ', $date_string);
+
+	list($date,$time) = explode(' ', (string) $date_string);
 	list($time,) = explode('.', $time);
 	list($h, $m,) = explode(':', $time);
-	
+
 	return $date . ' ' . $h . ':' . $m;
-	
+
 }
 
 function overdue($date)
 {
-	
+
 	$o_date	= $date;
 	$date	= fix_date($date);
-	$t_date	= strtotime($date);
-	
+	$t_date	= strtotime((string) $date);
+
 	if ($t_date < time())
 	{
 		return '<em class="overdue_date">' . $o_date . '</em>';
 	}
-	
+
 	return $o_date;
-	
+
 }
 
 function month_to_string($number)
 {
-	
+
 	$months = array('January','February','March','April','May','June','July','August','September','October','November','December');
-	
+
 	return $months[$number-1];
-	
+
 	//return date('F',($number%12-1)*(60*60*24*31));
-	
+
 }
 
 function trunc($num, $precision = 0)
 {
-	return bcmul($num, 1, $precision);
+	return bcmul((string) $num, 1, $precision);
 }
 
 function currentDateConstraint($date = '')
@@ -1303,7 +1303,7 @@ function currentDateConstraint($date = '')
 	{
 		$date = Constraint::TODAY;
 	}
-	
+
 	$ccdate=new ConstraintChain();
 	$ccdate->add(new Constraint('start_date', '<=', $date));
 	$ccend=new ConstraintChain();
@@ -1316,7 +1316,7 @@ function currentDateConstraint($date = '')
 function ownerConstraint($_field = 'owner', $_value = EGS_USERNAME)
 {
 	$cc = new ConstraintChain();
-	
+
 	$cc->add(new Constraint($_field, '=', $_value));
 
 	return $cc;
@@ -1324,7 +1324,7 @@ function ownerConstraint($_field = 'owner', $_value = EGS_USERNAME)
 
 function fix_date($date, $format = DATE_FORMAT, &$errors = array())
 {
-	
+
 	//
 	//	strptime is not available on all OS platforms
 	//
@@ -1336,27 +1336,27 @@ function fix_date($date, $format = DATE_FORMAT, &$errors = array())
 	//	$day = sprintf('%02d',$date_array['tm_mday']);
 
 	$date_array = date_parse_from_format($format, $date);
-	
+
 	if ($date_array['error_count'] > 0)
 	{
 		$errors = array_merge_recursive($errors, $date_array['errors']);
 		return FALSE;
 	}
-	
+
 	$month	= sprintf('%02d', $date_array['month']);
 	$year	= $date_array['year'];
 	$day	= sprintf('%02d', $date_array['day']);
-	
+
 	if ($format == DATE_TIME_FORMAT)
 	{
 		$hour	= sprintf('%02d', $date_array['hour']);
 		$minute	= sprintf('%02d', $date_array['minute']);
-		
+
 		return $year . '-' . $month . '-' . $day . ' ' . $hour . ':' . $minute;
 	}
-	
+
 	return $year . '-' . $month . '-' . $day;
-	
+
 }
 
 function format_for_strptime($format)
@@ -1366,51 +1366,51 @@ function format_for_strptime($format)
 
 function un_fix_date($date, $showtime = FALSE)
 {
-	
+
 	if (empty($date))
 	{
 		return;
 	}
-	
+
 	if ($showtime)
 	{
-		return date(DATE_TIME_FORMAT, strtotime($date));
+		return date(DATE_TIME_FORMAT, strtotime((string) $date));
 	} 
 	else
 	{
-		return date(DATE_FORMAT, strtotime($date));
+		return date(DATE_FORMAT, strtotime((string) $date));
 	}
-	
+
 }
 
 function next_working_day($date)
 {
-	
-	$dayno = date('w', strtotime($date));
-	
+
+	$dayno = date('w', strtotime((string) $date));
+
 	if ($dayno == 0)
 	{
-		return date(DATE_FORMAT, strtotime('+1 days', strtotime($date)));
+		return date(DATE_FORMAT, strtotime('+1 days', strtotime((string) $date)));
 	}
-	
+
 	if ($dayno == 6)
 	{
-		return date(DATE_FORMAT, strtotime('+2 days', strtotime($date)));
+		return date(DATE_FORMAT, strtotime('+2 days', strtotime((string) $date)));
 	}
-	
+
 	return un_fix_date($date);
-	
+
 }
 
 function last_day($month, $year)
 {
-	
+
 	// Use mktime to create a timestamp one month into the future, but one
 	//  day less.  Also make the time for almost midnight, so it can be
 	//  used as an 'end of month' boundary
-	
+
 	return mktime(23, 59, 59, $month + 1, 0, $year);
-	
+
 }
 
 /**
@@ -1418,17 +1418,17 @@ function last_day($month, $year)
  */
 function calc_due_date($trans_date, $basis, $days = 0, $months = 0)
 {
-	
+
 	$trans_date = fix_date($trans_date);
-	
+
 	if ($basis == 'I' || $basis == 'Invoice')
 	{
-		$time = strtotime($trans_date);
+		$time = strtotime((string) $trans_date);
 	}
 	elseif ($basis == 'M' || $basis == 'Month')
 	{
-		$month		= date('m',strtotime($trans_date));
-		$year		= date('Y',strtotime($trans_date));
+		$month		= date('m',strtotime((string) $trans_date));
+		$year		= date('Y',strtotime((string) $trans_date));
 		$month_end	= last_day($month+$months,$year);
 		$time		= $month_end;
 	}
@@ -1436,90 +1436,90 @@ function calc_due_date($trans_date, $basis, $days = 0, $months = 0)
 	{
 		throw new Exception('calc_due_date only understands Invoice and Month type payment term logic');
 	}
-	
+
 	$time = strtotime('+ ' . $days . ' days', $time);
-	
+
 	return date(DATE_FORMAT, $time);
-	
+
 }
 
 function calc_tax_percentage($rate_id, $status_id, $amount)
 {
-	
+
 	// global $injector;
 	global $system;
-	
+
 	$redirector = $system->injector->instantiate('TaxCalculation');
-	
+
 	return $redirector->calc_percentage($rate_id, $status_id, $amount);
-	
+
 }
 
 function logtime($msg = '')
 {
-	
+
 	$starttime	= START_TIME;
 	$mtime		= microtime();
 	$mtime		= explode(" ", $mtime);
 	$mtime		= $mtime[1] + $mtime[0];
 	$endtime	= $mtime;
 	$fp			= fopen('/tmp/timelog5', 'a+');
-	
+
 	fwrite($fp, $msg . ($endtime - $starttime) . "\n");
 	fclose($fp);
-	
+
 	echo $msg . ($endtime - $starttime) . '<br>';
-	
+
 }
 
 function showtime($msg = '', $return = FALSE)
 {
-	
+
 	return;
-	
+
 	static $prev = 0;
-	
+
 	$msg = empty($msg) ? $msg : $msg . ': ';
-	
+
 	global $starttime;
-	
+
 	$time = microtime(TRUE);
 	$time = ($time - $starttime);
 
 	$diff = $time-$prev;
 	$prev = $time;
-	
+
 	if ($return)
 	{
 		//return $msg."		".str_pad($time,20)."			($diff)\n<br>";
 	}
-	
+
 	//	echo str_pad($msg,30,'-')."			".str_pad($time,20)."			(".($diff*1).")\n<br>";
-	
+
 }
 
 function remove_line_breaks($string)
 {
-	
+
 	$find    = array(chr(10), chr(13), "\n", "\r");
 	$replace = array(" ", " ", " ", " ");
-	
+
 	return str_replace($find, $replace, $string);
-	
+
 }
 
 function json_reply($data)
 {
-	
+
 	header('Content-type: application/json');
 	echo json_encode($data);
 	exit;
-	
+
 }
 
 function isPartUppercase($string)
 {
-	return (preg_match("/[A-Z]/", $string) === 0);
+	return (preg_match("/[A-Z]/", (string) $string) === 0);
 }
 
 /**
@@ -1600,7 +1600,7 @@ function build_attribute_string($attrs)
 		}
 		else
 		{
-				
+
 			if (is_array($value))
 			{
 				$arr[] = $key . '="' . implode(' ', $value) . '"';
@@ -1609,7 +1609,7 @@ function build_attribute_string($attrs)
 			{
 				$arr[] = $key . '="' . $value . '"';
 			}
-				
+
 		}
 
 	}
@@ -1621,19 +1621,19 @@ function build_attribute_string($attrs)
 
 function back_trace()
 {
-	
+
 	$backtrace = debug_backtrace();
-	
+
 	foreach ($backtrace as $key => $value)
 	{
-		
+
 		if (isset($value['file']) && isset($value['line']))
 		{
 			echo 'Trace "' . $value['function'] . '() ' . $value['file'] . '" on line ' . $value['line'] . '<br />' . "\r\n";
 		}
-		
+
 	}
-	
+
 	echo "<br /><br />" . "\r\n";
 
 }
@@ -1647,24 +1647,24 @@ function cmp_position($a, $b)
 
 function cmp_filename($a, $b)
 {
-	return strtolower($a['name']) > strtolower($b['name']) ? 1 : -1;
+	return strtolower((string) $a['name']) > strtolower((string) $b['name']) ? 1 : -1;
 }
 
 function get_string_between($string, $start, $end)
 {
 	$string	= " " . $string;
-	$ini	= strpos($string,$start);
-	
+	$ini	= strpos($string,(string) $start);
+
 	if ($ini == 0) 
 	{
 		return "";
 	}
-	
-	$ini += strlen($start);
-	$len  = strpos($string, $end, $ini) - $ini;
-	
+
+	$ini += strlen((string) $start);
+	$len  = strpos($string, (string) $end, $ini) - $ini;
+
 	return substr($string, $ini, $len);
-	
+
 }
 
 function get_plural_string($number, $plural = 's', $singular = '')
@@ -1683,7 +1683,7 @@ function get_plural_string($number, $plural = 's', $singular = '')
 
 function is_ajax() {
 
-	if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+	if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower((string) $_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
 	{
 		return TRUE;
 	}
@@ -1704,7 +1704,7 @@ function is_direct_request()
 	// if this function is index 0, we want the previous element, index 1
 	$backtrace = $backtrace[1];
 
-	if (strtolower($backtrace['function']) === strtolower($_GET['action']))
+	if (strtolower($backtrace['function']) === strtolower((string) $_GET['action']))
 	{
 		return TRUE;
 	}
@@ -1724,22 +1724,22 @@ function clean_tmp_directory($directory)
 
 	if ($handle = opendir($directory))
 	{
-		
+
 		clearstatcache();
-		
+
 		while (FALSE !== ($file = readdir($handle)))
 		{
-			
+
 			if ($file != "." && $file != "..") 
 			{
 				$files[] = $file;
 				$index[] = filemtime($directory . $file);
 			}
-			
+
 		}
-		
+
 		closedir($handle);
-		
+
 	}
 
 	asort( $index );
@@ -1758,7 +1758,7 @@ function clean_tmp_directory($directory)
 
 function get_file_extension($path)
 {
-	return pathinfo($path, PATHINFO_EXTENSION);
+	return pathinfo((string) $path, PATHINFO_EXTENSION);
 }
 
 function smarty_plugin_template(&$smarty, $data=NULL, $identifier='')
@@ -1781,7 +1781,7 @@ function smarty_plugin_template(&$smarty, $data=NULL, $identifier='')
 
 	// fetch the template
 	$html = $smarty->fetch($filename . '.tpl');
-	
+
 	// if needed, clear the assigned smarty var
 	if ($data !== NULL)
 	{
@@ -1795,42 +1795,42 @@ function smarty_plugin_template(&$smarty, $data=NULL, $identifier='')
 
 function is_css($file)
 {
-	return (in_array(strtolower(get_file_extension($file)), array('css', 'less')));
+	return (in_array(strtolower((string) get_file_extension($file)), array('css', 'less')));
 }
 
 function is_js($file)
 {
-	return (in_array(strtolower(get_file_extension($file)), array('js')));
+	return (in_array(strtolower((string) get_file_extension($file)), array('js')));
 }
 
 function get_config($key)
 {
-	
+
 	$config = Config::Instance();
-	
+
 	return $config->get($key);
-	
+
 }
 
 function set_config($key, $value)
 {
-	
+
 	$config = Config::Instance();
-	
+
 	return $config->get($key, $value);
-	
+
 }
 
 function is_domain_availible($domain)
 {
-		
+
 	if (function_exists('curl_init'))
 	{
-		
+
 		// ATTN check if curl_init exists
 		$agent	= "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)";
 		$ch		= curl_init();
-		
+
 		curl_setopt($ch, CURLOPT_URL, $domain);
 		curl_setopt($ch, CURLOPT_USERAGENT, $agent);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -1839,18 +1839,18 @@ function is_domain_availible($domain)
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt($ch, CURLOPT_SSLVERSION, 3);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-		
+
 		$page		= curl_exec($ch);
 		$httpcode	= curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		
+
 		curl_close($ch);
-		
+
 		return ($httpcode >= 200 && $httpcode < 300);
-	
+
 	}
-	
+
 	return FALSE;
-	       
+
 }
 
 /**
@@ -1861,38 +1861,38 @@ function is_domain_availible($domain)
  */
 function get_final_class_methods($object)
 {
-	
+
 	if (class_exists('ReflectionClass') && !empty($object))
 	{
-		
+
 		$reflection		= new ReflectionClass($object);
 		$methods		= $reflection->getMethods();
 		$methods_array	= array();
-		
+
 		// dealing with a lowercase controller name
 		$object = strtolower($object);
-		
+
 		foreach($methods as $method) {
-			
+
 			if (strtolower($method->class) == $object)
 			{
 				$methods_array[$method->name] = $method->name;
 			}
-	
+
 		}
-		
+
 		return $methods_array;
-		
+
 	}
 
 	return FALSE;
-				
+
 }
 
 function registerProgress ($value = 0, $name = 'progress')
 {
 	$_SESSION[$name] = $value;
-	
+
 	// Need to close the session to write to the session file
 	session_write_close();
 	// Now need to re-start the session
@@ -1992,7 +1992,7 @@ function sanitize($input)
 			$result[$safe_key] = sanitize($value);
 		}
 	} else {
-		$result = htmlentities($input, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8');
+		$result = htmlentities((string) $input, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8');
 	}
 
 		return $result;

@@ -14,118 +14,118 @@ class MasterSetupController extends Controller
 	protected $setup_options = array();
 	protected $setup_module;
 	protected $preferences;
-	
+
 	public function __construct($module = null, $action = null)
 	{
 		parent::__construct($module, $action);
-		
+
 		$this->setup_module = $module;
 	}
-	
+
 	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		// Get any System Preferences for the module
-		
+
 		if (!empty($this->setup_preferences))
 		{
 			$prefs = SystemPreferences::instance($this->setup_module);
-			
+
 			foreach ($this->setup_preferences as $pref=>$title)
 			{
 				$this->module_preferences[$pref]['preference']	= $prefs->getPreferenceValue($pref, $this->setup_module);
 				$this->module_preferences[$pref]['title']		= $title;
 			}
-			
+
 //			$this->preferences = new ModulePreferences();
-			
+
 //			$this->preferences->setModuleName($this->setup_module);
-			
+
 			$this->registerPreference();
-			
+
 			$this->view->set('templateCode', $this->preferences->generateTemplate());
-		
+
 		}
-		
+
 		// Get any Data Options for the module
 		$current_options	= array();
-		
+
 		if (!empty($this->setup_options))
 		{
 			foreach ($this->setup_options as $name => $modelname)
 			{
-				
+
 				if ($modelname != 'spacer')
 				{
-					
+
 					if (is_array($modelname))
 					{
-						
+
 						$options = DataObjectFactory::Factory($modelname['model']);
-						
+
 					}
 					else
 					{
-						
+
 						$options = DataObjectFactory::Factory($modelname);
-						
+
 					}
-					
+
 					$current_options[$name]			 = $this->option_link($name, $modelname);
 					$current_options[$name]['count'] = $options->getCount();
-					
+
 				}
-				
+
 			}
 		}
-		
+
 		$this->view->set('setup_options', $current_options);
-		
+
 		$this->view->set('no_ordering', TRUE);
-		
+
 		$this->view->set('page_title', $this->getPageName($this->setup_module, 'Setup'));
-		
+
 		$this->view->set('link', array(
 									'module'		=> $this->setup_module,
 									'controller'	=> 'setup',
 									'action'		=> 'save_preferences'
 									)
 				);
-		
+
 		$this->setTemplateName('module_setup_index');
 	}
-	
+
 	public function delete_items()
 	{
-		
+
 		if (isset($this->_data['delete_items']))
 		{
-			
+
 			$items					= $this->_data['delete_items'];
-			
+
 			$this->_data['option']	= key($items);
-			
+
 			$option					= $this->checkValidOption() or sendBack();
-			
+
 			$flash					= Flash::Instance();
-			
+
 			$modelname				= $this->setup_options[$option];
-			
+
 			$model					= DataObjectFactory::Factory($modelname);
-			
+
 			$db						= &DB::Instance();
-			
+
 			$count					= 0;
-			
+
 			$db->StartTrans();
-			
+
 			$errors = array();
-			
+
 			foreach ($items[$option] as $id => $on)
 			{
 				$model->delete($id, $errors);
 				$count++;
 			}
-			
+
 			if ($db->CompleteTrans())
 			{
 				$flash->addMessage($count . ' items deleted');
@@ -134,39 +134,39 @@ class MasterSetupController extends Controller
 			{
 				$flash->addErrors($errors);
 			}
-			
+
 		}
-		
+
 		sendBack();
-		
+
 	}
-	
+
 	public function edit()
 	{
-		
+
 		$this->view();
-		
+
 		$option = $this->checkValidOption() or sendBack();
 		$model = DataObjectFactory::Factory($this->setup_options[$option]);
 		$model->load($this->_data['id']) or sendBack();
-		
+
 		$this->view->set('model', $model);
-		
+
 		$this->view->set('edit_extrafields', $this->editFields($option, $model));
-		
+
 	}
 
 	public function save_item()
 	{
-		
+
 		$option		= $this->checkValidOption() or sendBack();
-		
+
 		$modelname	= $this->setup_options[$option];
 		$db			= DB::Instance();
-		
+
 		if (isset($this->_data[$modelname]))
 		{
-			
+
 			if (empty($this->_data[$modelname]['id']))
 			{
 				$action	= 'added';
@@ -177,41 +177,41 @@ class MasterSetupController extends Controller
 				$action	= 'updated';
 				$update	= TRUE;
 			}
-			
+
 			if (!empty($this->_data[$modelname]['position']))
 			{
 				if ($update)
 				{
 					$model = DataObjectFactory::Factory($modelname);
-					
+
 					$model->load($this->_data[$modelname]['id']);
-					
+
 					$current_position = $model->position;
 				}
 				else
 				{
 					$model = DataObjectFactory::Factory($modelname);
-						
+
 					$model->loadBy('position', $this->_data[$modelname]['position']);
-						
+
 					if (!$model->isLoaded())
 					{
 						// No need to update sequences because new sequence is not used
 						$current_position = $this->_data[$modelname]['position'];
 					}
 				}
-				
+
 				$this->updatePositions($modelname, 'position', $this->_data[$modelname]['position'], $current_position);
 			}
-			
+
 			$flash		= Flash::Instance();
 			$errors		= array();
 			$model		= DataObject::Factory($this->_data[$modelname], $errors, $modelname);
-			
+
 			if ($model && $model->save())
 			{
 				$flash->addMessage('Item '.$action.' successfully');
-				
+
 				sendTo($this->name, 'view', $this->_modules, array('option'=>$option));
 			}
 			else
@@ -220,34 +220,34 @@ class MasterSetupController extends Controller
 				$flash->addErrors($errors);
 				sendBack();
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	public function save_preferences()
 	{
 		$flash = Flash::Instance();
-		
+
 		$module = SystemPreferences::instance($this->setup_module);
-		
+
 		$this->registerPreference();
-		
+
 		$preferenceNames = $this->preferences->getPreferenceNames();
-		
+
 		$result = TRUE;
-		
+
 		// FIXME: Validate incoming data against supplied values
 		foreach($preferenceNames as $preferenceName)
 		{
 			$preference = $this->preferences->getPreference($preferenceName);
-			
+
 			if (isset($this->_data[$preferenceName]))
 			{
-				
+
 				if(isset($preference['type'])&&$preference['type']=='numeric')
 				{
-				
+
 					if(!is_numeric($this->_data[$preferenceName]))
 					{
 						$flash->addError($preference['display_name'].' must be numeric');
@@ -255,7 +255,7 @@ class MasterSetupController extends Controller
 						continue;
 					}
 				}
-				
+
 				$module->setPreferenceValue(
 					$preferenceName,
 					$this->_data['__moduleName'],
@@ -273,7 +273,7 @@ class MasterSetupController extends Controller
 							'off'
 						);
 						break;
-						
+
 					case 'select_multiple':
 						$module->setPreferenceValue(
 							$preferenceName,
@@ -284,9 +284,9 @@ class MasterSetupController extends Controller
 				}
 			}
 		}
-		
+
 		$handled = $this->preferences->getHandledPreferences();
-		
+
 		foreach($handled as $name=>$preference)
 		{
 			if(!empty($this->_data[$name])&&isset($preference['callback']))
@@ -305,44 +305,44 @@ class MasterSetupController extends Controller
 			$errors[] = 'Error saving preferences';
 			$flash->addErrors($errors);
 		}
-		
+
 		sendBack();
-		
+
 	}
-	
+
 	public function view()
 	{
 		$option		= $this->checkValidOption() or sendBack();
-		
+
 		$modelname	= $this->setup_options[$option];
-		
+
 		$col_name	= $modelname . 'Collection';
-		
+
 		$model		= DataObjectFactory::Factory($modelname);
-		
+
 		$collection	= new $col_name();
-		
+
 		$sh = new SearchHandler($collection, FALSE);
 		$sh->extract();
 		$sh->setLimit(0);
 		$collection->load($sh);
-		
+
 		$this->view->set('collection', $collection);
 		$this->view->set('model', $model);
-		
+
 		$this->view->set('extrafields', $this->viewFields($option, $model));
 		$this->view->set('edit_extrafields', $this->newFields($option, $model));
-		
+
 		if ($model->isField('position') || $model->isField('index'))
 		{
 			$this->view->set('orderable', TRUE);
 		}
-		
+
 		// Set the Sidebar options
 		$this->sidebar_options();
-		
+
 		$this->setTemplateName('module_setup_view');
-		
+
 	}
 
 	/*
@@ -350,26 +350,26 @@ class MasterSetupController extends Controller
 	 */
 	protected function checkValidOption($value = 'option')
 	{
-		
-		$option	= (isset($this->_data[$value]))?$this->_data[$value]:'';
+
+		$option	= $this->_data[$value] ?? '';
 		$valid	= isset($this->setup_options[$option]);
-		
+
 		if ($valid)
 		{
 			return $option;
 		}
-		
+
 		$flash = Flash::Instance();
 		$flash->addError('Invalid setup option');
 		return FALSE;
-		
+
 	}
-	
+
 	protected function newFields($option, $model)
 	{
 		// Want to make sure the Identifier Fiels occur first in list
 		$fields = array_flip($model->getIdentifierFields());
-		
+
 		// Now loop through the model's fields; these will
 		// be in alphabetic order
 		foreach ($model->getFields() as $fieldname=>$field)
@@ -389,7 +389,7 @@ class MasterSetupController extends Controller
 			}
 			elseif ($field->type != '')
 			{
-				
+
 				switch ($field->type)
 				{
 					case ('int'):
@@ -413,45 +413,45 @@ class MasterSetupController extends Controller
 				unset($fields[$fieldname]);
 			}
 		}
-		
+
 		return $fields;
 	}
-	
+
 	protected function viewFields($option, $model)
 	{
 		return $this->newFields($option, $model);
 	}
-	
+
 	protected function editFields($option, $model)
 	{
 		return $this->newFields($option, $model);
 	}
-	
+
     protected function makeLookupField($modelname, $fieldname, $compulsory = FALSE)
     {
-	 	
+
 		$model		= DataObjectFactory::Factory($modelname);
 		$options	= $model->getAll();
-		
+
 		if (!$compulsory)
 		{
 			$options = array('' => 'None') + $options;
 		}
-		
+
 		return array(
 			'type'		=> 'select',
 			'options'	=> $options
 			);
-		
+
 	}
-	
+
 	protected function registerPreference()
 	{
 		$this->preferences = new ModulePreferences();
-			
+
 		$this->preferences->setModuleName($this->setup_module);
 	}
-	
+
 	/*
 	 * Private Functions
 	 */
@@ -459,7 +459,7 @@ class MasterSetupController extends Controller
 	{
 		if (is_array($modelname))
 		{
-		
+
 			return array(
 					'tag'	=> $name,
 					'link'	=> array(
@@ -468,11 +468,11 @@ class MasterSetupController extends Controller
 							'action'		=> $modelname['action']
 					)
 			);
-				
+
 		}
 		else
 		{
-				
+
 			return array(
 					'tag'	=> $name,
 					'link'	=> array(
@@ -482,15 +482,15 @@ class MasterSetupController extends Controller
 							'option'		=> $name
 					)
 			);
-		
+
 		}
-		
+
 	}
-	
+
 	private function sidebar_options()
 	{
 		$sidebar			= new SidebarController($this->view);
-		
+
 		$sidebar->addList($this->setup_module 
 						, array('index' => 
 										array('tag'		=> $this->name . ' Index'
@@ -500,46 +500,46 @@ class MasterSetupController extends Controller
 											  )
 								)
 				);
-		
+
 		$list = array();
-		
+
 		foreach ($this->setup_options as $name => $modelname)
 		{
-			
+
 			if ($modelname == 'spacer')
 			{
 				$list[] = $modelname;
 			}
 			else
 			{
-				
+
 				$list[]	= $this->option_link($name, $modelname);
-			   	
+
 			}
-			
+
 		}
-		
+
 		$sidebar->addList('Options', $list);
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 	}
-	
+
 	private function updatePositions($modelname, $fieldname, $new_sequence, $current_sequence = NULL, &$errors = array())
 	{
-		
+
 		if ($new_sequence == $current_sequence)
 		{
 			// No update required
 			return TRUE;
 		}
-			 
+
 		$collectionname = $modelname . 'Collection';
-		 
+
 		$collection = new $collectionname(DataObjectFactory::Factory($modelname));
-		
+
 		$sh = new SearchHandler($collection, FALSE);
-		
+
 		if (is_null($current_sequence))
 		{
 			// This is an insert so need to increase sequences after inserted sequence
@@ -563,18 +563,18 @@ class MasterSetupController extends Controller
 				$sh->addConstraint(new Constraint($fieldname, 'between', $new_sequence . ' and ' . $current_sequence));
 				$increment = '+1';
 			}
-		
+
 		}
-		
+
 		if (!$collection->update($fieldname, '(' . $fieldname . $increment . ')', $sh))
 		{
 			$db = DB::Instance();
 			$errors[] = 'Error updating ' . $fieldname . ' : ' . $db->ErrorMsg();
 			return FALSE;
 		}
-		
+
 		return TRUE;
-		
+
 	}
 
 }

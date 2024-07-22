@@ -533,8 +533,8 @@ class DataObject implements Iterator
     function setAdditional($fieldname, $type = null, $tag = null)
     {
         $t = new ADOFieldObject();
-        $t->type = (isset($type) ? $type : 'varchar');
-        $t->tag = (isset($tag) ? $tag : prettify($fieldname));
+        $t->type = ($type ?? 'varchar');
+        $t->tag = ($tag ?? prettify($fieldname));
         $t->name = $fieldname;
         $t->ignoreField = TRUE;
 
@@ -643,7 +643,7 @@ class DataObject implements Iterator
 
             foreach ($values as $index => $value) {
 
-                if (strtolower($value) !== 'null' && substr($value, 0, 1) != '(') {
+                if (strtolower((string) $value) !== 'null' && substr((string) $value, 0, 1) != '(') {
                     $field_value[$index] = $fields[$index] . ' = ' . $db->qstr($value);
                 } else {
                     $field_value[$index] = $fields[$index] . ' = ' . $value;
@@ -744,7 +744,7 @@ class DataObject implements Iterator
         }
 
         foreach ($this->hashes as $fieldname => $array) {
-            $this->hashes[$fieldname] = unserialize(base64_decode($this->$fieldname));
+            $this->hashes[$fieldname] = unserialize(base64_decode((string) $this->$fieldname));
         }
 
         if (count($row) > 0) {
@@ -1229,7 +1229,7 @@ class DataObject implements Iterator
         foreach ($data as $key => $value) {
 
             if (! is_array($value)) {
-                $data[$key] = trim($value);
+                $data[$key] = trim((string) $value);
             }
         }
 
@@ -1586,7 +1586,7 @@ class DataObject implements Iterator
             return new DataField('default');
         }
 
-        $field = strtolower($field);
+        $field = strtolower((string) $field);
 
         if (isset($this->_fields[$field])) {
             return $this->_fields[$field];
@@ -1643,7 +1643,7 @@ class DataObject implements Iterator
     public function isField($var, $depth = 1)
     {
         if ($var === null) return false;
-        return (! is_object($var) && isset($this->_fields[strtolower($var)]));
+        return (! is_object($var) && isset($this->_fields[strtolower((string) $var)]));
     }
 
     public function getOptions($_field, $depth = 5)
@@ -1836,7 +1836,7 @@ class DataObject implements Iterator
         $this->debug('DataObject(' . get_class($this) . ')::__get field ' . $var);
         // echo 'DataObject('.get_class($this).')::__get field '.$var.'<br>';
 
-        $var = strtolower($var);
+        $var = strtolower((string) $var);
 
         if ($this->isField($var, 1)) {
             if (is_string($this->_fields[$var])) {
@@ -1909,7 +1909,7 @@ class DataObject implements Iterator
             return $model;
         }
 
-        
+
         if (isset($this->concatenations[$var])) {
 
             $string = '';
@@ -1956,7 +1956,7 @@ class DataObject implements Iterator
             $r_model = DataObjectFactory::Factory($this->habtm[$var]['model']);
 
             $a = strtolower(get_class($this)) . '_id';
-            $b = strtolower($this->habtm[$var]['model']) . '_id';
+            $b = strtolower((string) $this->habtm[$var]['model']) . '_id';
             $query = 'SELECT remote.* FROM ' . $this->_tablename . ' AS local JOIN ' . $this->habtm[$var]['table'] . ' AS middle ON (local.' . $this->idField . '=middle.' . $a . ') JOIN ' . $r_model->_tablename . ' AS remote ON (middle.' . $b . '=remote.' . $r_model->idField . ') WHERE local.' . $this->idField . '=' . $db->qstr($this->{$this->idField});
             $c_query = str_replace('remote.*', 'count(*)', $query);
             $c_name = $this->habtm[$var]['model'] . 'Collection';
@@ -2102,10 +2102,10 @@ class DataObject implements Iterator
     {
         if (! is_array($this->identifierField)) {
 
-            if (strpos($this->identifierField, '||')) {
-                $identifier_fields = explode('||', $this->identifierField);
-            } elseif (strpos($this->identifierField, $this->identifierFieldJoin)) {
-                $identifier_fields = explode($this->identifierFieldJoin, $this->identifierField);
+            if (strpos((string) $this->identifierField, '||')) {
+                $identifier_fields = explode('||', (string) $this->identifierField);
+            } elseif (strpos((string) $this->identifierField, (string) $this->identifierFieldJoin)) {
+                $identifier_fields = explode($this->identifierFieldJoin, (string) $this->identifierField);
             } else {
                 $identifier_fields = array(
                     $this->identifierField
@@ -2137,7 +2137,7 @@ class DataObject implements Iterator
 
     function getIdentifierValue()
     {
-        $exploded = explode('||', $this->getIdentifier());
+        $exploded = explode('||', (string) $this->getIdentifier());
         $return = '';
 
         if ($this->isLoaded()) {
@@ -2303,7 +2303,7 @@ class DataObject implements Iterator
     {
         if (! isset($name)) {
             // default to adding an s
-            $name = strtolower($do) . 's';
+            $name = strtolower((string) $do) . 's';
         }
 
         if (! isset($fkfield)) {
@@ -2347,7 +2347,7 @@ class DataObject implements Iterator
     {
         if ($name == null) {
             $inflector = new Inflector();
-            $name = $inflector->pluralize(strtolower($do));
+            $name = $inflector->pluralize(strtolower((string) $do));
         }
 
         $this->habtm[$name] = array(
@@ -2398,11 +2398,11 @@ class DataObject implements Iterator
     protected function setComposite($model_name, $field_name = null, $name = null, $fields = array())
     {
         if ($field_name == null) {
-            $field_name = strtolower($model_name) . '_id';
+            $field_name = strtolower((string) $model_name) . '_id';
         }
 
         if ($name == null) {
-            $name = strtolower($model_name);
+            $name = strtolower((string) $model_name);
         }
 
         $this->composites[$name]['modelName'] = $model_name;
@@ -2795,7 +2795,7 @@ class DataObject implements Iterator
                 $this->_policyConstraint['constraint'] = new ConstraintChain();
             }
 
-            $module_component = strtolower($module_component);
+            $module_component = strtolower((string) $module_component);
 
             $rows = SystemPolicyControlListCollection::getPolicies($module_component, EGS_USERNAME);
 
@@ -3206,7 +3206,7 @@ class DataObject implements Iterator
         // and return the identifierField if it contains the concatenation character
         if (! is_array($this->identifierField)) {
 
-            if (strpos($this->identifierField, '||')) {
+            if (strpos((string) $this->identifierField, '||')) {
                 return $this->identifierField;
             }
 
@@ -3476,7 +3476,7 @@ class DataObject implements Iterator
      */
     public function isHidden($field)
     {
-        $field = strtolower($field);
+        $field = strtolower((string) $field);
         return (isset($this->hidden[$field]) && $this->hidden[$field] === 1);
     }
 
@@ -3496,7 +3496,7 @@ class DataObject implements Iterator
     public function addConfirmationField($fieldname, $tag = null)
     {
         if ($tag == null) {
-            $tag = 'Confirm ' . ucwords($fieldname);
+            $tag = 'Confirm ' . ucwords((string) $fieldname);
         }
 
         $c_fieldname = 'confirm_' . $fieldname;
@@ -3779,8 +3779,8 @@ class DataObject implements Iterator
         // default to be a valid field
         if (! is_array($this->identifierField)) {
 
-            if (strpos($this->identifierField, '||')) {
-                $identifier_fields = explode('||', $this->identifierField);
+            if (strpos((string) $this->identifierField, '||')) {
+                $identifier_fields = explode('||', (string) $this->identifierField);
             } else {
                 $identifier_fields = array(
                     $this->identifierField
@@ -3964,7 +3964,7 @@ class DataObject implements Iterator
                 $rules = '';
 
                 foreach ($this->linkRules[$name]['rules'] as $rule) {
-                    $rules .= isset($rule['logical']) ? $rule['logical'] : (empty($rules) ? '' : '&&');
+                    $rules .= $rule['logical'] ?? (empty($rules) ? '' : '&&');
                     $rules .= '($this->' . $rule['field'] . $rule['criteria'] . ')';
                 }
 
@@ -4034,7 +4034,7 @@ class DataObject implements Iterator
 
     public function getXML($field, $key = '')
     {
-        $xml = simplexml_load_string(unserialize($this->$field));
+        $xml = simplexml_load_string((string) unserialize($this->$field));
 
         if (! $xml) {
             return '';

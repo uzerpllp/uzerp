@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -13,9 +13,9 @@
 
 class OrderStatusSearchField extends StatusSearchField
 {
-	
+
 	protected $version = '$Revision: 1.3 $';
-	
+
 	/**
 	 * $statuses array
 	 * the status codes that ticket statuses can be given
@@ -28,7 +28,7 @@ class OrderStatusSearchField extends StatusSearchField
 		'cancelled',
 		'dispatched'
 	);
-		
+
 }
 
 // end of OrderStatusSearchField.php

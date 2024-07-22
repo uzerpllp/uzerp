@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -13,33 +13,34 @@
 
 class CheckboxSearchField extends SearchField {
 
-	protected $version = '$Revision: 1.5 $';
-	
+	protected $constraint;
+	protected $off_value;
+
 	/**
 	 * $checked boolean
 	 * whether or not the checkbox was checked when the user submitted a form
 	 */
 	protected $checked = FALSE;
-	
+
 	/**
 	 * $default boolean
 	 * whether the checkbox should be selected by default, i.e. when the form hasn't been submitted
 	 */
 	protected $default = FALSE;
-		
+
 	/**
 	 * $on_value string
 	 * What the 'value' attribute of the input should be.
 	 * This is (probably) to be used when representing an equality surrounding a non-boolean field, for example 'my tickets' has on_value of the current user's person_id
 	 */
 	protected $on_value = 'true';
-	
+
 	public function toHTML()
 	{
 		$html = '<input type="checkbox" class="checkbox" value="' . $this->on_value . '" name="Search[' . $this->fieldname . ']" id="search_' . $this->fieldname . '" ' . (($this->checked) || (!$this->value_set && $this->default)?'checked="checked"':'') . " /></li>" . "\n";
 		return $this->labelHTML() . $html;
 	}
-	
+
 	/**
 	 * @param void
 	 * @return Constraint
@@ -54,15 +55,15 @@ class CheckboxSearchField extends SearchField {
 	 */
 	public function toConstraint()
 	{
-		
+
 		$c = FALSE;
-		
+
 		if ($this->type == 'show')
 		{
-			
+
 			if (($this->value_set && !$this->checked) || (!$this->value_set && !$this->default))
 			{
-				
+
 				if (isset($this->off_value))
 				{
 					$val = $this->off_value;
@@ -71,30 +72,30 @@ class CheckboxSearchField extends SearchField {
 				{
 					$val = 'false';
 				}
-				
+
 				$c = new Constraint($this->fieldname, '=', $val);
-				
+
 			}
-			
+
 		}
 		elseif ($this->type == 'hide')
 		{
-			
+
 			if (($this->value_set && $this->checked) || (!$this->value_set && $this->default))
 			{
-				
+
 				if (!$this->value_set)
 				{
 					$this->value = 'true';
 				}
-				
+
 				if (isset($this->constraint))
 				{
 					$c = $this->constraint;
 				}
 				else
 				{
-					
+
 					if (isset($this->on_value))
 					{
 						$val = $this->on_value;
@@ -103,19 +104,19 @@ class CheckboxSearchField extends SearchField {
 					{
 						$val = $this->value;
 					}
-					
+
 					$c = new Constraint($this->fieldname, '=' ,$val);
-					
+
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		return $c;
-		
+
 	}
-	
+
 	/**
 	 * @param $constraint Constraint(Chain)
 	 * 
@@ -125,7 +126,7 @@ class CheckboxSearchField extends SearchField {
 	{
 		$this->constraint = $constraint;
 	}
-	
+
 	/**
 	 * @param string (value will be used in a string-context, so values can be numeric)
 	 * @return void
@@ -136,12 +137,12 @@ class CheckboxSearchField extends SearchField {
 	{
 		$this->on_value = $value;
 	}
-	
+
 	public function setOffValue($value)
 	{
 		$this->off_value = $value;
 	}
-	
+
 	/**
 	 * @param string 
 	 * @return void
@@ -151,7 +152,7 @@ class CheckboxSearchField extends SearchField {
 	 */
 	public function setValue($value = '')
 	{
-		
+
 		if ($value == 'on')
 		{
 			$this->checked	= TRUE;
@@ -162,11 +163,11 @@ class CheckboxSearchField extends SearchField {
 			$this->checked	= TRUE;
 			$this->value	= $value;
 		}
-		
+
 		$this->value_set = TRUE;
-			
+
 	}
-	
+
 	/**
 	 * @param string
 	 * @return void
@@ -175,7 +176,7 @@ class CheckboxSearchField extends SearchField {
 	 */
 	public function setDefault($value = '')
 	{
-		
+
 		if ($value == 'checked')
 		{
 			$this->default = TRUE;
@@ -184,14 +185,14 @@ class CheckboxSearchField extends SearchField {
 		{
 			$this->default = FALSE;
 		}
-		
+
 	}
-	
+
 	public function getCurrentValue()
 	{
-		return ucwords($this->value);
+		return ucwords((string) $this->value);
 	}
-	
+
 }
 
 // end of CheckboxSearchField.php

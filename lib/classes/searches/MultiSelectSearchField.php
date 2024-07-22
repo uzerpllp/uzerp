@@ -63,7 +63,7 @@ class MultiSelectSearchField extends SearchField {
 		if (is_array($value) && (count($value) > 0 && current($value) !== '' && current($value) !== 0 && current($value) !== '0'))
 		{
 			
-			switch (strtolower($this->type))
+			switch (strtolower((string) $this->type))
 			{
 			
 				case 'multi_select':

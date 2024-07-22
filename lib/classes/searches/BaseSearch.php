@@ -360,14 +360,14 @@ class BaseSearch
                     continue;
                 }
 
-                if (strtolower($output_type) === 'html') {
+                if (strtolower((string) $output_type) === 'html') {
                     $block_start = '<span class="search-field" data-fieldname="' . $field->getFieldname() . '">';
                     $block_end = '</span>';
                     $field_start = '<strong>';
                     $field_end = '</strong>';
                 }
 
-                if (strtolower($output_type) === 'fop') {
+                if (strtolower((string) $output_type) === 'fop') {
                     $field_start = '<fo:inline font-weight="bold">';
                     $field_end = '</fo:inline>';
                 }

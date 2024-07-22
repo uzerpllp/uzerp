@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -10,7 +10,7 @@ class ModuleObject extends DataObject
 {
 
 	protected $version='$Revision: 1.12 $';
-	
+
 	protected $defaultDisplayFields = array('name'
 										   ,'description'
 										   ,'registered'
@@ -19,36 +19,36 @@ class ModuleObject extends DataObject
 										   ,'created'
 										   ,'help_link'
 										   );
-	
+
 	protected $_title = 'Module';
-	
+
 	function __construct($tablename='modules')
 	{
 // Register non-persistent attributes
 
 // Contruct the object
 		parent::__construct($tablename);
-		
+
 // Set specific characteristics
 		$this->idField='id';
- 		
+
 		$this->validateUniquenessOf('name');
 		$this->validateUniquenessOf('location');
-		
+
 // Set ordering attributes
 		$this->orderby='name';
 		$this->identifierField='name';
-		
+
 // Define relationships
 		$this->hasMany('ModuleComponent', 'module_components', 'module_id');
 		$this->getField('name')->setFormatter(new NullFormatter());
 
 // Define enumerated types
-		
+
 // Define field formats
 		$this->getField('help_link')->setFormatter(new URLFormatter());
 		$this->getField('help_link')->type = 'html';
-		
+
 // Define system defaults
 
 	}
@@ -62,11 +62,11 @@ class ModuleObject extends DataObject
 		$cc=new ConstraintChain();
 		$cc->add(new Constraint('module_id', '=', $this->id));
 		$cc->add(new Constraint('type', 'in', "('C', 'E', 'M', 'R')"));
-		
+
 		return $components->getAll($cc);
-		
+
 	}
-	
+
 	function isRegistered()
 	{
 		return ($this->module_components->count()>0);
@@ -85,7 +85,7 @@ class ModuleObject extends DataObject
 		}
 		return true;
 	}
-	
+
 	function enable (&$errors=array(), $menu_options=array())
 	{
 
@@ -100,7 +100,7 @@ class ModuleObject extends DataObject
 					 ,'title'=>prettify($this->name)
 					 ,'display'=>true
 					 ,'position'=>$position+1);
-		
+
 		$m_parent_id=$this->addPermission($data, $errors);
 		if (!$m_parent_id)
 		{
@@ -108,7 +108,7 @@ class ModuleObject extends DataObject
 		}
 
 		$c_position=1;
-		
+
 		foreach ($this->module_components as $component)
 		{
 			switch ($component->type) {
@@ -125,7 +125,7 @@ class ModuleObject extends DataObject
 								 ,'position'=>$c_position++
 								 ,'parent_id'=>$m_parent_id);
 						$c_parent_id=$this->addPermission($data, $errors);
-						
+
 						if (!$c_parent_id)
 						{
 							return false;
@@ -149,18 +149,18 @@ class ModuleObject extends DataObject
 			}
 		}
 		return $this->update($this->id, 'enabled', true);
-		
+
 	}
-	
+
 	function unregister ()
 	{
-		
+
 		$sh=new SearchHandler($this->module_components, false);
 		$sh->addConstraint(new Constraint('module_id', '=', $this->id));
 		$this->module_components->delete($sh);
-		
+
 		return $this->update($this->id, 'registered', false);
-		
+
 	}
 
 	private function addPermission ($data, &$errors=array())
@@ -183,19 +183,19 @@ class ModuleObject extends DataObject
 		{
 			return $permission->id;
 		}
-		
+
 	}
-	
+
 	static function getModule($_module_name)
 	{
-		
+
 		$module = DataObjectFactory::Factory(__CLASS__);
-		
+
 		$module->loadBy('name', $_module_name);
-		
+
 		return $module;
 	}
-	
+
 	/*
 	 * Override the DataObject method because policies do not apply here
 	 */
@@ -221,14 +221,14 @@ class ModuleObject extends DataObject
 		$cc->add(new Constraint('enabled', 'is', true));
 		$sh->addConstraintChain($cc);
 		$uzlets->load($sh);
-		
+
 		if (count($uzlets) > 0) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 }
 
 // End of ModuleObject

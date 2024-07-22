@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,7 +9,7 @@
 class QueryBuilder {
 
 	protected $version = '$Revision: 1.12 $';
-	
+
 	private $db;
 	private $doname;
 	private $tablename = '';
@@ -23,15 +23,15 @@ class QueryBuilder {
 	private $select_string = '';
 	private $from_string = '';
 	private $where_string = '';
-	
+
 	public function __construct($db, $do = null)
 	{
-		
+
 		$this->db = $db;
-		
+
 		if (isset($do))
 		{
-			
+
 			if ($do instanceof DataObject)
 			{
 				$this->doname	= get_class($do);
@@ -46,79 +46,79 @@ class QueryBuilder {
 			{
 				$this->doname = $do;
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	public function setDistinct($distinct = true)
 	{
 		$this->distinct = $distinct;
 	}
-	
+
 	private function getDO()
 	{
-		
+
 //		echo 'QueryBuilder::getDO : start '.$this->doname.'<br>';		
 		if (empty($this->model))
 		{
 			$this->model = new $this->doname;
 		}
-		
+
 		return $this->model;
-		
+
 	}
-	
+
 	public function select($fields)
 	{
-		
+
 		$this->field_array	= $fields;
 		$this->fields		= '';
 		$fields_array		= array();
-		
+
 		if (!empty($this->doname))
 		{
 			$do = $this->getDO();
 		}
-		
+
 		if (is_array($fields) && count($fields) > 0)
 		{
-			
+
 			foreach ($fields as $fieldname => $field)
 			{
-				
+
 				if (isset($do))
 				{
-					
+
 					if (isset($do->concatenations[$fieldname]))
 					{
-						
+
 						foreach ($do->concatenations[$fieldname]['fields'] as $concatfield)
 						{
 							$fields_array[] = $concatfield;
 						}
-						
+
 					}
 					elseif (is_object($field))
 					{
 						$fields_array[] = $field->name;
 					}
-					
+
 				}
-				
+
 			}
-			
+
 			$this->fields = implode(',', $fields_array);
-			
+
 //			if (count($fields) == 2)
 //			{
 //				$this->fields .=', \'blanking\' as blanking';
 //			}
-			
+
 		}
 		else
 		{
-			
+
 			if (isset($do) && $do->isField($do->idField))
 			{
 				$this->fields = $do->idField . ', *';
@@ -127,14 +127,14 @@ class QueryBuilder {
 			{
 				$this->fields = '*';
 			}
-			
+
 		}
-		
+
 		if ($this->fields == ', *')
 		{
 			$this->fields = '*';
 		}
-		
+
 		if (empty($this->fields))
 		{
 			$this->select_string = '';
@@ -143,45 +143,45 @@ class QueryBuilder {
 		{
 			$this->select_string = 'SELECT ' . ($this->distinct ? ' DISTINCT ' : '') . $this->fields;
 		}
-		
+
 		return $this;
-		
+
 	}
-	
+
 	public function delete()
 	{
 		$this->select_string = 'DELETE ';
 		return $this;
 	}
-	
+
 	public function update($tablename)
 	{
 		$this->select_string = 'UPDATE ' . $tablename;
 		return $this;
 	}
-	
+
 	public function update_fields($fields, $values)
 	{
-		
+
 		if (!is_array($fields))
 		{
 			$fields = array($fields);
 		}
-		
+
 		if (!is_array($values))
 		{
 			$values = array($values);
 		}
-		
+
 		$field_values = array();
-		
+
 		if (count($fields) == count($values))
 		{
-			
+
 		 	foreach ($values as $index => $value)
 		 	{
-		 		
-				if ($value !== 'null' && substr($value, 0, 1) != '(')
+
+				if ($value !== 'null' && substr((string) $value, 0, 1) != '(')
 				{
 					$field_values[$index] = $fields[$index] . ' = ' . $this->db->qstr($value);
 		 		}
@@ -189,32 +189,32 @@ class QueryBuilder {
 		 		{
 		 			$field_values[$index] = $fields[$index] . ' = ' . $value;
 		 		}
-		 		
+
 			}
-			
+
 		}
-		
+
 		$this->from_string = ' SET ' . implode(',', $field_values);
-		
+
 		return $this;
-		
+
 	}
-	
+
 	public function from($tablename)
 	{
-		
+
 		$this->tablename	= $tablename;
 		$this->from_string	= 'FROM ' . $tablename;
-		
+
 		return $this;
-		
+
 	}
 
 	public function where($constraints)
 	{
-		
+
 		$constraintString = $constraints->__toString();
-		
+
 		if (!empty($constraintString))
 		{
 			$this->where_string = 'WHERE ' . $constraintString;
@@ -223,24 +223,24 @@ class QueryBuilder {
 		{
 			$this->where_string = '';
 		}
-		
+
 		return $this;
-		
+
 	}
 
 	public function groupby($groupby)
 	{
-		
+
 		if (!is_array($groupby))
 		{
 			$groupby = array($groupby);
 		}
-		
+
 		$groupbystring = '';
-		
+
 		foreach ($groupby as $i => $fieldname)
 		{
-			
+
 			if (count($this->field_array) > 0)
 			{
 
@@ -248,19 +248,19 @@ class QueryBuilder {
 				{
 					$groupbystring .= $fieldname . ', ';
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		if (!empty($groupbystring))
 		{
 			$groupbystring			= substr($groupbystring, 0, -2);
 			$this->groupby_string	= 'GROUP BY ' . $groupbystring;
 		}
-		
+
 		return $this;
-		
+
 	}
 
 	/**
@@ -278,14 +278,14 @@ class QueryBuilder {
 		{
 			$orderby = array($orderby);
 		}
-		
+
 		if (!is_array($orderdir))
 		{
 			$orderdir = array($orderdir);
 		}
-		
+
 		$orderstring = '';
-		
+
 		foreach ($orderby as $i => $fieldname)
 		{
 			// orderby is potential user input, it may have come via a URL parameter on an index view
@@ -298,39 +298,39 @@ class QueryBuilder {
 
 			if (is_array($this->field_array) && count($this->field_array) > 0)
 			{
-				
-				if (!empty($fieldname) && !array_key_exists(strtolower($fieldname), $this->field_array))
+
+				if (!empty($fieldname) && !array_key_exists(strtolower((string) $fieldname), $this->field_array))
 				{
 					$this->select_string .= ',' . $fieldname;
 				}
-				
+
 			}
-			
+
 			if (!empty($fieldname))
 			{
 				$orderstring .= $fieldname . ' ' . (!empty($orderdir[$i]) ? $orderdir[$i] : 'ASC') . ', ';
 			}
-			
+
 		}
-		
+
 		if (!empty($orderstring))
 		{
 			$orderstring		= substr($orderstring, 0, -2);
 			$this->order_string	= 'ORDER BY ' . $orderstring;
 		}
-		
+
 		return $this;
-		
+
 	}
 
 	public function limit($limit, $offset)
 	{
-		
+
 		if (!empty($limit))
 		{
-			
+
 			$this->limit_string = 'LIMIT ' . $limit . ' ';
-			
+
 			// Rescue negative value
 			if ($offset < 0) $offset = 0 - $offset;
 
@@ -338,16 +338,16 @@ class QueryBuilder {
 			{
 				$this->limit_string .= 'OFFSET ' . $offset;
 			}
-			
+
 		}
-		
+
 		return $this;
-		
+
 	}
 
 	public function __toString()
 	{
-		
+
 		return implode(
 			' ',
 			array(
@@ -359,15 +359,15 @@ class QueryBuilder {
 				$this->limit_string
 			)
 		);
-		
+
 	}
-	
+
 	public function countQuery($id = '')
 	{
-		
+
 		if (empty($id))
 		{
-			
+
 			if (current($this->field_array) instanceof DataField)
 			{
 				$id = strtolower(current($this->field_array)->name);
@@ -376,25 +376,25 @@ class QueryBuilder {
 			{
 				$id = implode($this->model->identifierFieldJoin, array_keys($this->field_array));
 			}
-			
+
 		}
-		
+
 		if (is_array($id))
 		{
 				$id = implode($this->model->identifierFieldJoin, $id);
 		}
-		elseif (strpos($id, ' as '))
+		elseif (strpos((string) $id, ' as '))
 		{
 			// field name has alias
-			$id = substr($id, 0, strpos($id, ' as '));
+			$id = substr((string) $id, 0, strpos((string) $id, ' as '));
 		}
-		
-		
+
+
 		if (empty($id))
 		{
 			$id = 'id';
 		}
-		
+
 		if ($this->distinct)
 		{
 			$string = 'SELECT COUNT(DISTINCT ' . $id . ')';
@@ -403,13 +403,13 @@ class QueryBuilder {
 		{
 			$string = 'SELECT count(*) ';
 		}
-		
+
 		$string .= $this->from_string . ' ' . $this->where_string;
-		
+
 		return $string;
 
 	}
-	
+
 }
 
 // end of QueryBuilder.php

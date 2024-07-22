@@ -13,8 +13,8 @@
 
 class HiddenSearchField extends SearchField {
 
-	protected $version	= '$Revision: 1.9 $';
 	protected $value	= '';
+	protected $constraint;
 	
 	public function toHTML()
 	{
@@ -24,7 +24,7 @@ class HiddenSearchField extends SearchField {
 			$this->value = $this->default;
 		}
 		
-		$html = '<input type="hidden" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . uzh(stripslashes($this->value)) . '" />';
+		$html = '<input type="hidden" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . uzh(stripslashes((string) $this->value)) . '" />';
 		return $html;
 		
 	}

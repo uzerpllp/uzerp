@@ -323,7 +323,7 @@ class User extends DataObject
 			$password = $generator->generateString(10);;
 		}
 
-		if (strlen($password) < 10) {
+		if (strlen((string) $password) < 10) {
 		    $errors[] = "Error setting password for user {$this->username}, new password must be at least 10 characters long";
 		    return false;
 		}
@@ -346,7 +346,7 @@ class User extends DataObject
 	{
 		$db = DB::Instance();
 
-		$user_data = array('username'=>$username, 'password'=>password_hash($password, PASSWORD_DEFAULT));
+		$user_data = array('username'=>$username, 'password'=>password_hash((string) $password, PASSWORD_DEFAULT));
 
 		return($db->Replace('users', $user_data, 'username', true)!==false);
 	}

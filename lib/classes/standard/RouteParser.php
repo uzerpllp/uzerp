@@ -34,7 +34,7 @@ class RouteParser {
 	
 	public function ParseRoute ($url) {
 		foreach ($this->routes as $route) {
-			preg_match('#' . $route->GetRegex() . '#', $url, $matches);
+			preg_match('#' . $route->GetRegex() . '#', (string) $url, $matches);
 			
 			if ( !empty($matches) ) {
 				$this->dispatch = array_merge($matches, $route->GetPredefinedArguments());

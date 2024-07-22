@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -56,7 +56,7 @@ class AutoLoader {
 			require $this->paths[$classname];
 			return;
 		}
-		
+
 		if (isset($this->paths[strtolower($classname)]))
 		{
 			require $this->paths[strtolower($classname)];
@@ -71,24 +71,24 @@ class AutoLoader {
 		// go and fetch the data and populate the cache
 		if ($module_path === FALSE)
 		{
-		
+
 			$module = new ModuleComponent();
 			$module->loadBy('name', strtolower($classname));
-			
+
 			if ($module->isLoaded())
 			{
-				
+
 				if (substr($module->location,-4) === '.php')
 				{
 					
 					$cache->add($cache_id, $module->location);
-										
+
 					require $module->location;
-					
+
 				}
-				
+
 				return;
-				
+
 			}
 			
 		}
