@@ -736,10 +736,10 @@ class DataObject implements Iterator
 
         foreach ($row as $key => $val) {
 
-            $this->$key = stripslashes((string) $val);
+            $this->$key = stripslashes((string) $val ?? '');
 
             if (! isset($this->_fields[$key])) {
-                $this->_fields[$key] = stripslashes($val);
+                $this->_fields[$key] = stripslashes((string) $val ?? '');
             }
         }
 
