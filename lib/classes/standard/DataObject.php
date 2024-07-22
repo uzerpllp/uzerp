@@ -1642,6 +1642,7 @@ class DataObject implements Iterator
      */
     public function isField($var, $depth = 1)
     {
+        if ($var === null) return false;
         return (! is_object($var) && isset($this->_fields[strtolower($var)]));
     }
 
