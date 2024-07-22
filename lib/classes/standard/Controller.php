@@ -782,7 +782,7 @@ abstract class Controller
 
             if (! empty($this->search->display_fields)) {
                 $this->_data['Search']['display_fields'] = $this->search->display_fields;
-            } elseif (is_array($this->_data['Search']) && isset($this->_data['Search']['clear']) && isset($this->_data['Search']['display_fields'])) {
+            } elseif ((isset($this->_data['Search']) && is_array($this->_data['Search'])) && isset($this->_data['Search']['clear']) && isset($this->_data['Search']['display_fields'])) {
                 unset($this->_data['Search']['display_fields']);
             }
 
