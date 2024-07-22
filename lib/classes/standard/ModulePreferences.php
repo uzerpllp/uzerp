@@ -8,17 +8,16 @@
 
 class ModulePreferences {
 
-	protected $version='$Revision: 1.8 $';
-
 	private $moduleName;
 	private $preferences;
 	private $additionalFields;
 	private $handledPreferences;
+	protected $view;
 
 	function __construct()
 	{
 
-		$system = System::Instance();
+		$system = system::Instance();
 
 		$this->view = $system->view;
 

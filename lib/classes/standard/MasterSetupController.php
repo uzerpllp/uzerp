@@ -9,13 +9,11 @@
 class MasterSetupController extends Controller
 {
 
-	protected $version = '$Revision: 1.16 $';
-	
 	protected $module_preferences = array();
-	
 	protected $setup_preferences = array();
-		
 	protected $setup_options = array();
+	protected $setup_module;
+	protected $preferences;
 	
 	public function __construct($module = null, $action = null)
 	{
