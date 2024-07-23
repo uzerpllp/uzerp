@@ -293,9 +293,6 @@ abstract class Invoice extends DataObject {
 	 */
 	protected function makeGLTransactions(&$errors=array())
 	{
-
-		$newerrors = array();
-
 		//sort out the header details
 		$gl_transactions = array();
 		$gl_data		 = array();
@@ -357,7 +354,7 @@ abstract class Invoice extends DataObject {
 		$gl_data['base_tax_value'] = $this->base_tax_value;
 		$gl_data['twin_tax_value'] = $this->twin_tax_value;
 
-		$vat_element = GLTransaction::makeCBTax($gl_data, $newerrors);
+		$vat_element = GLTransaction::makeCBTax($gl_data, $errors);
 
 		if($vat_element!==false)
 		{
@@ -365,7 +362,6 @@ abstract class Invoice extends DataObject {
 		}
 		else
 		{
-			$errors+=$newerrors;
 			return false;
 		}
 
@@ -389,7 +385,7 @@ abstract class Invoice extends DataObject {
 			return FALSE;
 		}
 
-		$control = GLTransaction::makeCBControl($gl_data, $newerrors);
+		$control = GLTransaction::makeCBControl($gl_data, $errors);
 
 		if($control!==false)
 		{
@@ -397,7 +393,6 @@ abstract class Invoice extends DataObject {
 		}
 		else
 		{
-			$errors+=$newerrors;
 			return false;
 		}
 
@@ -405,33 +400,23 @@ abstract class Invoice extends DataObject {
 		$this->makeGLTransactionLines($gl_data, $gl_transactions, $errors);
 
 		return $gl_transactions;
-
 	}
 
 	protected function makeGLTransactionLines($gl_data, &$gl_transactions, &$errors = array())
 	{
-
-		$newerrors = array();
-
 		foreach($this->lines as $line)
 		{
-
 			// Set common gl data for the line
 			$line->makeGLTransactions($gl_data);
 
-			$element = GLTransaction::makeCBLine($gl_data, $newerrors);
+			$element = GLTransaction::makeCBLine($gl_data, $errors);
 
-			if($element!==FALSE)
-			{
+			if($element!==FALSE) {
 				$gl_transactions[]=$element;
-			}
-			else
-			{
-				$errors+=$newerrors;
+			} else {
 				return FALSE;
 			}
 		}
-
 		return TRUE;
 	}
 
