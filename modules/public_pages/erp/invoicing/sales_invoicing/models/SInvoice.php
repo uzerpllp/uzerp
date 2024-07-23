@@ -448,10 +448,10 @@ class SInvoice extends Invoice
 
         // set the correct totals back to the order header
         foreach ($totals as $field => $value) {
-            $this->$field = (empty($value)) ? '0.00' : bcadd($value, 0);
+            $this->$field = (empty($value)) ? '0.00' : bcadd((string) $value, 0);
         }
 
-        $this->settlement_discount = bcadd($this->getSettlementDiscount(), 0);
+        $this->settlement_discount = bcadd((string) $this->getSettlementDiscount(), 0);
 
         return parent::save();
     }
@@ -591,7 +591,7 @@ class SInvoice extends Invoice
         return $result;
     }
 
-    public function transactionFactory()
+    public function transactionFactory(): \DataObject
     {
         $db = DB::Instance();
 
@@ -602,7 +602,7 @@ class SInvoice extends Invoice
         return $transaction;
     }
 
-    protected function get_ledger_control_account($gl_params = null, &$errors = array())
+    protected function get_ledger_control_account($gl_params = null, &$errors = array()): int
     {
         if (! ($gl_params instanceof GLParams)) {
             $gl_params = DataObjectFactory::Factory('GLParams');
