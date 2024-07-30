@@ -4,19 +4,19 @@ class VatController extends printController
 {
 
 	protected $titles;
-	
+
 	public function __construct($module = null, $action = null)
 	{
 		parent::__construct($module, $action);
-		
+
 		$this->_templateobject = DataObjectFactory::Factory('VatReturn');
-		
+
 		$this->uses($this->_templateobject);
-		
+
 		$this->titles=array(4=>'Inputs', 6=>'Outputs', 8=>'EU Sales', 9=>'EU Purchases', 98=>'Postponed VAT Purchases',99=>'Reverse Charge Purchases');
 
 	}
-	
+
 	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$errors = array();
@@ -84,19 +84,19 @@ class VatController extends printController
 	public function enter_journal()
 	{
 		//$flash=Flash::Instance();
-		
+
 		//$errors=array();
-		
+
 		if (!$this->checkParams('vat_type'))
 		{
 			sendBack();
 		}
-		
+
 		$gl_account = DataObjectFactory::Factory('GLAccount');
 		$gl_accounts = $gl_account->nonControlAccounts();
-		
+
 		$this->view->set('gl_accounts',$gl_accounts);
-		
+
 		if (isset($this->_data['glaccount_id']))
 		{
 			$account_id = $this->_data['glaccount_id'];
@@ -105,7 +105,7 @@ class VatController extends printController
 		{
 			$account_id = key($gl_accounts);
 		}
-		
+
 		$gl_account->load($account_id);
 		$this->view->set('gl_centres',$gl_account->getCentres());
 
@@ -113,7 +113,7 @@ class VatController extends printController
 		$current = $period->getPeriod(fix_date(date(DATE_FORMAT)));
 		$this->view->set('periods', $period->getOpenPeriods(false));
 		$this->view->set('current_period', $current['id']);
-		
+
 		$this->view->set('vat_type', $this->_data['vat_type']);
 		$this->view->set('vat', DataObjectFactory::Factory('Vat'));
 		$this->view->set('page_title', 'Enter VAT '.$this->_data['vat_type'].' Journal');
@@ -136,7 +136,7 @@ class VatController extends printController
 			$current = $period->getPeriod(fix_date(date(DATE_FORMAT)));
 			$period_id = $current['id'];
 		}
-		
+
 		$invoice_options = $this->getPVAInvoices($period_id);
 		if (count($invoice_options) == 0) {
 			$flash->addError('No PVA invoices found.');
@@ -204,7 +204,7 @@ class VatController extends printController
 
 		$gl_period = DataObjectFactory::Factory('GLPeriod');
 		$gl_period->load($period_id);
-		
+
 		//Get a list of invoice numbers that have PVA VAT entries
 		$pva_entries = new VatPVPurchasesCollection();
 		$pva_entries_search = new SearchHandler($pva_entries, false);
@@ -261,16 +261,16 @@ class VatController extends printController
 	public function savejournal ()
 	{
 		$flash = Flash::Instance();
-		
+
 		$errors = array();
-		
+
 		if (!$this->checkParams('Vat'))
 		{
 			sendBack();
 		}
-		
+
 		$data = $this->_data['Vat'];
-		
+
 		if ($data['value']['vat']<=0)
 		{
 			$errors[]='Vat Value must be greater than zero';
@@ -280,7 +280,7 @@ class VatController extends printController
 			$glparams = DataObjectFactory::Factory('GLParams');
 			$vat_type = 'vat_'.$data['vat_type'];
 			$data['vat_account'] = call_user_func(array($glparams, $vat_type));
-			
+
 			if ($data['vat_type'] == 'PVA') {
 				$data['docref'] = $data['invoice'];
 			} else {
@@ -289,18 +289,18 @@ class VatController extends printController
 
 			if ($data['vat_type']=='input' || $data['vat_type']=='PVA')
 			{
-				$data['value']['net'] = bcmul($data['value']['net'], -1);
-				$data['value']['vat'] = bcmul($data['value']['vat'], -1);
+				$data['value']['net'] = bcmul((string) $data['value']['net'], -1);
+				$data['value']['vat'] = bcmul((string) $data['value']['vat'], -1);
 			}
-			
-			
+
+
 
 			if ($data['vat_type'] == 'PVA') {
 				$gltransactions = GLTransaction::makePVAEntry($data, $errors);
 			} else {
 				$gltransactions = GLTransaction::makeFromVATJournalEntry($data, $errors);
 			}
-			
+
 			if (count($errors)==0 && GLTransaction::saveTransactions($gltransactions, $errors))
 			{
 				$flash->addMessage('VAT Journal created OK');
@@ -310,12 +310,12 @@ class VatController extends printController
 				sendTo($this->name, '', $this->_modules);
 			}
 		}
-		
+
 		$flash->addErrors($errors);
-		
+
 		$this->_data['vat_type']=$data['vat_type'];
 		$this->_data['glaccount_id']=$data['glaccount_id'];
-		
+
 		$this->refresh();
 	}
 
@@ -325,11 +325,11 @@ class VatController extends printController
 		{
 			if(!empty($this->_data['id'])) { $_id=$this->_data['id']; }
 		}
-		
+
 		$account = DataObjectFactory::Factory('GLAccount');
 		$account->load($_id);
 		$centres=$account->getCentres();
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('options',$centres);
@@ -340,101 +340,101 @@ class VatController extends printController
 			return $centres;
 		}
 	}
-	
+
 	public function viewEuArrivals ()
 	{
 
 		$collection = new VatCollection($this->_templateobject);
 		$collection->setParams();
-		
+
 		if (isset($this->_data['start_date']))
 		{
 			$s_data['received_date']['from'] = un_fix_date($this->_data['start_date']);
 		}
-		
+
 		if (isset($this->_data['end_date']))
 		{
 			$s_data['received_date']['to'] = un_fix_date($this->_data['end_date']);
 		}
-		
+
 		$this->setSearch('VatSearch', 'Transactions', $s_data, 'received_date');
-		
+
 		$sh = $this->setSearchHandler($collection);
-		
+
 		$collection->eu_arrivals($sh);
-		
+
 		$measure_fields=array('commodity_code'=>'', 'country_code'=>'');
-		
+
 		$aggregate_fields=array('sterling_order_line_value'=>array('decimal_places'=>2),'net_mass'=>array('decimal_places'=>2));
-		
+
 		$this->setBreakLevels($measure_fields, $aggregate_fields);
-		
+
 		$this->view->set('clickaction', 'edit_received_line');
 		$this->view->set('enablelink', array('net_mass'=>'net_mass'));
-	
+
 		return $this->viewEUTransactions($collection, $sh);
 	}
-	
+
 	public function viewEuDespatches ()
 	{
-		
+
 		$collection = new VatCollection($this->_templateobject);
-		
+
 		$collection->setParams();
-		
+
 		if (isset($this->_data['start_date']))
 		{
 			$s_data['despatch_date']['from'] = un_fix_date($this->_data['start_date']);
 		}
-		
+
 		if (isset($this->_data['end_date']))
 		{
 			$s_data['despatch_date']['to'] = un_fix_date($this->_data['end_date']);
 		}
-	
+
 		$this->setSearch('VatSearch', 'Transactions', $s_data, 'despatch_date');
 
 		$sh = $this->setSearchHandler($collection);
-		
+
 		$collection->eu_despatches($sh);
-		
+
 		$measure_fields = array('commodity_code'=>'', 'country_code'=>'');
-		
+
 		$aggregate_fields = array('sterling_order_line_value'=>array('decimal_places'=>2),'net_mass'=>array('decimal_places'=>2));
-		
+
 		$this->setBreakLevels($measure_fields, $aggregate_fields);
-		
+
 		$this->view->set('clickaction', 'edit_despatch_line');
 		$this->view->set('enablelink', array('net_mass'=>'net_mass'));
-	
+
 		return $this->viewEUTransactions($collection, $sh);
 	}
-	
+
 	public function viewEuSalesList ()
 	{
-		
+
 		$collection = new VatCollection($this->_templateobject);
-		
+
 		$collection->setParams();
-		
+
 		if (isset($this->_data['start_date']))
 		{
 			$s_data['invoice_date']['from'] = un_fix_date($this->_data['start_date']);
 		}
-		
+
 		if (isset($this->_data['end_date']))
 		{
 			$s_data['invoice_date']['to'] = un_fix_date($this->_data['end_date']);
 		}
-	
+
 		$this->setSearch('VatSearch', 'Transactions', $s_data, 'invoice_date');
-		
+
 		$sh = $this->setSearchHandler($collection);
-		
+
 		$collection->eu_saleslist($sh);
-		
+
 		$measure_fields = array('vat_number'=>'', 'report'=>'');
-		
+
 		$aggregate_fields = array('base_tax_value'=>array('normal_enable_formatting'	=> 'true',
 														'normal_decimal_places'		=> 2,
 							   							'normal_justify'			=> 'right',
@@ -448,11 +448,11 @@ class VatController extends printController
 
 		$this->setBreakLevels($measure_fields, $aggregate_fields);
 		$this->view->set('clickaction', 'none');
-	
+
 		return $this->viewEUTransactions($collection, $sh);
 	}
-	
-	
+
+
 	/**
 	 * View the list of transactions of each type for this VAT return
 	 * 
@@ -463,7 +463,7 @@ class VatController extends printController
 	public function viewTransactions()
 	{
 		$errors = array();
-		
+
 		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
 		{
 			$s_data['year']			= $this->_data['year'];
@@ -473,7 +473,7 @@ class VatController extends printController
 		{
 			$glperiod = DataObjectFactory::Factory('GLPeriod');
 			$glperiod->getCurrentTaxPeriod();
-			
+
 			if ($glperiod)
 			{
 				$s_data['year']			= $glperiod->year;
@@ -485,7 +485,7 @@ class VatController extends printController
 
 		$tax_period = $this->search->getValue('tax_period');
 		$year = $this->search->getValue('year');
-		
+
 		if (isset($this->_data['box']))
 		// switch the model/collection based on the 'box' (sic)
 		{
@@ -533,8 +533,16 @@ class VatController extends printController
 			$this->view->set('page_title',"VAT Transactions {$year}/{$tax_period} - ".$this->titles[$this->_data['box']]);
 		}		
 
-		$return = new VatReturn();
-		$return->loadVatReturn($year, $tax_period);
+		try {
+			$return = new VatReturn();
+			$return->loadVatReturn($year, $tax_period);
+		}
+		catch (VatReturnStorageException $e)
+		{
+			$flash=Flash::Instance();
+                        $flash->addError($e->getMessage());
+                }
+
 
 		if ($this->_data['format'] == 'csv') {
 
@@ -588,7 +596,7 @@ class VatController extends printController
                 'action' => 'index'
 			], 'tag' => "View All VAT Returns"
 		];
-		
+
 		$returns_sidebar['viewvatreturn'] = [
 			'link'=>['modules'=>$this->_modules
 						 ,'controller'=>$this->name
@@ -599,9 +607,9 @@ class VatController extends printController
 
 		$sidebar->addList('VAT Returns', $returns_sidebar);
 		$sidebar->addList("{$return->year}/{$return->tax_period} Reports", $this->reportSidebar($this->titles, $return->year, $return->tax_period));
-		
+
 		$print_params = array();
-		
+
 		if (isset($this->_data['box']))
 		{
 			$print_params['box'] = $this->_data['box'];
@@ -633,7 +641,7 @@ class VatController extends printController
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
@@ -650,7 +658,7 @@ class VatController extends printController
 	{
 		$errors = array();
 		$s_data = array();
-		
+
 		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
 		{
 			$s_data['year']			= $this->_data['year'];
@@ -660,7 +668,7 @@ class VatController extends printController
 		{
 			$glperiod = DataObjectFactory::Factory('GLPeriod');
 			$glperiod->getCurrentTaxPeriod();
-			
+
 			if ($glperiod)
 			{
 				$s_data['year']			= $glperiod->year;
@@ -669,10 +677,18 @@ class VatController extends printController
 		}
 
 		// need to this to know which VAT period we came from to get here and if its closed
-		$return = new VatReturn();
-		$return->loadVatReturn($s_data['year'], $s_data['tax_period']);
-		$return->getTaxPeriodStatus();
-		
+		try {
+			$return = new VatReturn();
+			$return->loadVatReturn($s_data['year'], $s_data['tax_period']);
+			$return->getTaxPeriodStatus();
+		}
+		catch (VatReturnStorageException $e)
+                {
+			$flash=Flash::Instance();
+                        $flash->addError($e->getMessage());
+			sendBack();
+                }
+
 		// the collection of adjustments
 		$collection = new VatAdjustmentCollection();
 
@@ -686,7 +702,7 @@ class VatController extends printController
 
 		$this->view->set('adjustments', $collection);
 		$this->view->set('page_title',"Adjustments to {$s_data['year']}/{$s_data['tax_period']} VAT Return");
-		
+
 		$sidebar = new SidebarController($this->view);
 
 		$returns_sidebar['all'] = [
@@ -718,7 +734,7 @@ class VatController extends printController
 			);
 			$sidebar->addList('Actions', $actionslist);
 		}
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 
@@ -729,7 +745,7 @@ class VatController extends printController
 		$flash=Flash::Instance();
 
 		$s_data = array();
-		
+
 		if ((isset($this->_data['year'])) && (isset($this->_data['tax_period'])))
 		{
 			$s_data['year']			= $this->_data['year'];
@@ -739,7 +755,7 @@ class VatController extends printController
 		{
 			$glperiod = DataObjectFactory::Factory('GLPeriod');
 			$glperiod->getCurrentTaxPeriod();
-			
+
 			if ($glperiod)
 			{
 				$s_data['year']			= $glperiod->year;
@@ -748,10 +764,17 @@ class VatController extends printController
 		}
 
 		// need this to know which VAT period we came from to get here and if its closed
-		$return = new VatReturn();
-		$return->loadVatReturn($s_data['year'], $s_data['tax_period']);
+		try {
+			$return = new VatReturn();
+			$return->loadVatReturn($s_data['year'], $s_data['tax_period']);
+		}
+		catch (VatReturnStorageException $e)
+                {
+                        $flash->addError($e->getMessage());
+			sendBack();
+                }
 		$return->getTaxPeriodStatus();
-		
+
 		// If we got here somehow but the VAT period is closed or the GL period is not closed bail out (safety first)
 		if ($return->tax_period_closed === 't' || $return->gl_period_closed === 'f') {
 			$flash->addError('Cannot enter VAT adjustment - either the GL period is open or the VAT period is closed');
@@ -766,7 +789,7 @@ class VatController extends printController
 	public function saveVATAdjustment()
 	{
 		$flash = Flash::Instance();
-		
+
 		$errors = array();
 
 		if (parent::save('VatAdjustment'))
@@ -774,7 +797,7 @@ class VatController extends printController
             sendTo($_SESSION['refererPage']['controller']
 			  ,$_SESSION['refererPage']['action']
 			  ,$_SESSION['refererPage']['modules']
-			  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+			  ,$_SESSION['refererPage']['other'] ?? null);
         }
         $this->refresh();
 
@@ -783,103 +806,103 @@ class VatController extends printController
 	public function edit_despatch_line ()
 	{
 		$flash=Flash::Instance();
-		
+
 		if (!$this->checkParams('id'))
 		{
 			sendback();
 		}
-		
+
 		$transaction = DataObjectFactory::Factory('SODespatchLine');
 		$transaction->load($this->_data['id']);
-		
+
 		if (!$transaction->isLoaded())
 		{
 			$flash->addError('Error loading Despatch Line');
 			sendback();
 		}
-		
+
 		$this->view->set('transaction', $transaction);
 		$this->view->set('date_field', 'despatch_date');
 		$this->view->set('qty_field', 'despatch_qty');
 		$this->view->set('company_field', 'customer');
-		
+
 		$messages=array();
-		
+
 		$net_mass=$this->getNetMass ($transaction->stitem_id, $transaction->stuom_id, $transaction->despatch_qty, $messages);
-		
+
 		if (count($messages)>0)
 		{
 			$flash->addWarnings($messages);
 		}
-		
+
 		$this->view->set('net_mass', $net_mass);
-		
+
 		$this->setTemplateName('editeutransactions');
 	}
-	
+
 	public function edit_received_line ()
 	{
 		$flash=Flash::Instance();
-		
+
 		if (!$this->checkParams('id'))
 		{
 			sendback();
 		}
-		
+
 		$transaction = DataObjectFactory::Factory('POReceivedLine');
 		$transaction->load($this->_data['id']);
-		
+
 		if (!$transaction->isLoaded())
 		{
 			$flash->addError('Error loading Received Line');
 			sendback();
 		}
-		
+
 		$this->view->set('transaction', $transaction);
 		$this->view->set('date_field', 'received_date');
 		$this->view->set('qty_field', 'received_qty');
 		$this->view->set('company_field', 'supplier');
-		
+
 		$messages=array();
-		
+
 		$net_mass=$this->getNetMass ($transaction->stitem_id, $transaction->stuom_id, $transaction->received_qty, $messages);
-		
+
 		if (count($messages)>0)
 		{
 			$flash->addWarnings($messages);
 		}
-		
+
 		$this->view->set('net_mass', $net_mass);
-		
+
 		$this->setTemplateName('editeutransactions');
 	}
 
 	public function savetransaction ()
 	{
 		$flash=Flash::Instance();
-		
+
 		if (!$this->checkParams('model_type'))
 		{
 			$flash->addError('model_type not defined');
 			sendback();
 		}
-		
+
 		if (!$this->checkParams($this->_data['model_type']))
 		{
 			$flash->addError('No input data for '.$this->_data['model_type']);
 			sendback();
 		}
-		
+
 		$model=$this->_data['model_type'];
-		
+
 		if (empty($this->_data[$model]['id']) || empty($this->_data[$model]['net_mass']))
 		{
 			$flash->addError('No id or Net Mass value for '.$model);
 			sendback();
 		}
-		
+
 		$transaction = DataObjectFactory::Factory($model);
-		
+
 		if ($transaction->netMass<>$this->_data[$model]['net_mass'])
 		{
 			if (!$transaction->update($this->_data[$model]['id'], 'net_mass', $this->_data[$model]['net_mass']))
@@ -891,23 +914,23 @@ class VatController extends printController
 				$flash->addMessage($model.' Net Mass value updated');
 			}
 		}
-		
+
 		sendTo($_SESSION['refererPage']['controller']
 			  ,$_SESSION['refererPage']['action']
 			  ,$_SESSION['refererPage']['modules']
-			  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
-		
+			  ,$_SESSION['refererPage']['other'] ?? null);
+
 	}
-	
+
 // Private functions
 	private function viewEuTransactions ($collection, $sh)
 	{
 
 		$errors = array();
 		$s_data = array();
-		
+
 		$flash = Flash::Instance();
-				
+
 		$this->view->set('page_title', $collection->title);
 
 		if (isset($this->search))
@@ -927,39 +950,39 @@ class VatController extends printController
 				exit;
 			}
 		} 
-	
+
 		parent::index($collection, $sh);
 
 		$this->view->set('transactions', $collection);
-		
+
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList('VAT Returns', $this->vatReturnSidebar());
 		$sidebar->addList('Intrastat', $this->intrastatSidebar());
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
+
 		$this->view->set('display_fields','');
 		$this->view->set('selected_fields','');
-		
+
 		$this->setTemplateName('vieweutransactions');
 	}
-	
+
 	private function getNetMass ($_stitem_id, $_stuom_id, $qty, &$messages)
 	{
 		$stitem = DataObjectFactory::Factory('STItem');
-		
+
 		$stitem->load($_stitem_id);
-		
+
 		$param = DataObjectFactory::Factory('GLParams');
-		
+
 		$net_mass_uom_id=$param->getParam($param->intrastat_net_mass);
-		
+
 		if ($stitem->isLoaded() && !empty($net_mass_uom_id))
 		{
 			$net_mass=$stitem->convertToUoM($_stuom_id, $net_mass_uom_id, $qty);
 		}
-		
+
 		if (empty($net_mass) || $net_mass===false)
 		{
 			$messages[]='No conversion factor for this item/uom';
@@ -967,7 +990,7 @@ class VatController extends printController
 		}
 		return $net_mass;
 	}
-	
+
 	private function reportSidebar($titles, $year, $tax_period)
 	{
 		$list = array(
@@ -1034,7 +1057,7 @@ class VatController extends printController
 		);
 		return $list;
 	}
-	
+
 	private function intrastatSidebar ()
 	{
 		$sidebarlist=array();
@@ -1046,7 +1069,7 @@ class VatController extends printController
 								 ),
 					'tag'=>'View EU Arrivals'
 		);
-		
+
 		$sidebarlist['despatches'] = array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -1054,7 +1077,7 @@ class VatController extends printController
 								 ),
 					'tag'=>'View EU Despatches'
 		);
-				
+
 		$sidebarlist['saleslist'] = array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -1062,9 +1085,9 @@ class VatController extends printController
 								 ),
 					'tag'=>'View EU Sales List'
 				);
-				
+
 		return $sidebarlist;
-		
+
 	}
 
 	private function vatReturnSidebar ()
@@ -1076,9 +1099,9 @@ class VatController extends printController
 								 ),
 					'tag'=>'View All VAT Returns'
 				);
-				
+
 		return $sidebarlist;
-		
+
 	}
 
 	public function CloseVatPeriod() {
@@ -1086,15 +1109,15 @@ class VatController extends printController
 		if (! $this->checkParams('id')) {
             sendBack();
 		}
-		
+
 		$flash = Flash::Instance();
 		$errors		= array();
-				
+
 		// load the model
 		$return = new VatReturn;
 		$return->load($this->_data['id']);
 		$return->getTaxPeriodStatus();
-		
+
 		$vat = new Vat;
 		$vat->vatreturn($return->tax_period, $return->year, $errors);
 		if ($return->tax_period_closed === 'f' && $return->gl_period_closed === 't')
@@ -1113,11 +1136,11 @@ class VatController extends printController
 		}
 		sendBack();
 	}
-	
+
 	/* output functions */
 	public function printVatReturn($status = 'generate')
 	{
-		
+
 		// build options array
 		$options = array(
 			'type' => array(
@@ -1135,22 +1158,22 @@ class VatController extends printController
 		);
 
 		// simply return the options if we're only at the dialog stage
-		if (strtolower($status) === "dialog") {
+		if (strtolower((string) $status) === "dialog") {
 			return $options;
 		};
-		
+
 		$errors		= array();
 		$messages 	= array();
 
 		$return = new VatReturn;
 		$return->load($this->_data['id']);
 		$return->getTaxPeriodStatus($return->tax_period, $return->year);
-		
+
 		if ($this->_data['filename'] === 'VAT_Return') {
 			$this->_data['filename'] .= '_' . $return->year . '_' . $return->tax_period;
 		}
-		
-		
+
+
 		if (count($errors) > 0)
 		{
 			echo $this->build_print_dialog_response(
@@ -1225,23 +1248,23 @@ class VatController extends printController
 		} else {
 			$extra['mtd_not_submitted'] = true;
 		}
-		
+
 		if ($return->tax_period_closed === 'f')
 		{
 			$extra['tax_period_not_closed'] = true;
 		}
-		
+
 		$extra['title'] = 'VAT Return ' . $return->year . '-' . $return->tax_period;
-		
+
 		// generate the xml and add it to the options array
 		$options['xmlSource'] = $this->generateXML(array('extra'=>$extra));
-		
+
 		// execute the print output function, echo the returned json for jquery
 		echo $this->generate_output($this->_data['print'], $options);
 		exit;
-		
+
 	}
-	
+
 	public function printTransactions($status = 'generate')
 	{
 		$errors = [];
@@ -1262,7 +1285,7 @@ class VatController extends printController
 		);
 
 		// simply return the options if we're only at the dialog stage
-		if (strtolower($status) === "dialog")
+		if (strtolower((string) $status) === "dialog")
 		{
 			return $options;
 		}
@@ -1322,7 +1345,7 @@ class VatController extends printController
 			);
 			exit;
 		}
-		
+
 		if (isset($this->_data['box']))
 		{
 			set_time_limit(180);
@@ -1345,7 +1368,7 @@ class VatController extends printController
 		}
 
 		$title = 'Audit Trail : Year ' . $year . ' - Tax Period ' . $tax_period;
-		
+
 		switch ($this->_data['box'])
 		{
 			case 1:
@@ -1370,14 +1393,14 @@ class VatController extends printController
 				$title = "Reverse Charge Purchases {$title}";
 				break;
 		}
-		
+
 		$extra = array(
 			'title'		=> $title
 			,'totalvat' => number_format($totalvat,2)
 			,'totalnet' => number_format($totalnet,2)
 
 		);
-					
+
 		// generate the xml and add it to the options array
 		$options['xmlSource'] = $this->generate_xml(
 			array(
@@ -1388,10 +1411,10 @@ class VatController extends printController
 		);
 
 		$options['query'] = $gltransactions->query;
-		
+
 		echo $this->generate_output($this->_data['print'], $options);
 		exit;
-		
+
 	}
 
 	/**
@@ -1411,7 +1434,7 @@ class VatController extends printController
 
 		$mtd = new MTD($this->_data['fp']);
 		$success = $mtd->postVat($year, $tax_period);
-		
+
 		sendBack();
 	}
 
@@ -1424,7 +1447,7 @@ class VatController extends printController
 		if (! $this->checkParams('id')) {
             sendBack();
 		}
-		
+
 		$flash = Flash::Instance();
 		$errors		= array();
 		$messages 	= array();
@@ -1484,7 +1507,7 @@ class VatController extends printController
         }
         $model = $this->_uses[$this->modeltype];
 		$this->view->set('model', $model);
-		
+
 		$model->getTaxPeriodStatus ($model->tax_period, $model->year);
 		$this->view->set('tax_period_closed', $model->tax_period_closed);
 
