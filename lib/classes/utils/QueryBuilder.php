@@ -329,14 +329,14 @@ class QueryBuilder {
 		if (!empty($limit))
 		{
 
-			$this->limit_string = 'LIMIT ' . $limit . ' ';
+			$this->limit_string = 'LIMIT ' . (string) $limit . ' ';
 
 			// Rescue negative value
 			if ($offset < 0) $offset = 0 - $offset;
 
 			if ($offset != '')
 			{
-				$this->limit_string .= 'OFFSET ' . $offset;
+				$this->limit_string .= 'OFFSET ' . (string) $offset;
 			}
 
 		}
