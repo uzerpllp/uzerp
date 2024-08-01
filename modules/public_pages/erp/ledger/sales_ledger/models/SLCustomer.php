@@ -117,6 +117,7 @@ class SLCustomer extends DataObject
         $collection = new SOrderCollection();
 
         $sh = new SearchHandler($collection, FALSE);
+        $sh->setLimit(1);
 
         $sh->addConstraint(new Constraint('slmaster_id', '=', $this->id));
 
@@ -127,6 +128,7 @@ class SLCustomer extends DataObject
         $collection = new SInvoiceCollection();
 
         $sh = new SearchHandler($collection, FALSE);
+        $sh->setLimit(1);
 
         $sh->addConstraint(new Constraint('slmaster_id', '=', $this->id));
 
@@ -137,6 +139,7 @@ class SLCustomer extends DataObject
         $collection = new SLTransactionCollection();
 
         $sh = new SearchHandler($collection, FALSE);
+        $sh->setLimit(1);
 
         $sh->addConstraint(new Constraint('slmaster_id', '=', $this->id));
 
@@ -157,6 +160,7 @@ class SLCustomer extends DataObject
         $collection = new SOrderCollection($model);
 
         $sh = new SearchHandler($collection, FALSE);
+        $sh->setLimit(1);
 
         $sh->addConstraint(new Constraint('slmaster_id', '=', $this->id));
         $sh->addConstraint(new Constraint('status', 'NOT IN', '(' . $db->qstr($model->cancelStatus()) . ', ' . $db->qstr($model->invoiceStatus()) . ')'));
@@ -170,6 +174,7 @@ class SLCustomer extends DataObject
         $collection = new SInvoiceCollection($model);
 
         $sh = new SearchHandler($collection, FALSE);
+        $sh->setLimit(1);
 
         $sh->addConstraint(new Constraint('slmaster_id', '=', $this->id));
         $sh->addConstraint(new Constraint('status', '!=', $model->paidStatus()));
@@ -183,6 +188,7 @@ class SLCustomer extends DataObject
         $collection = new SLTransactionCollection($model);
 
         $sh = new SearchHandler($collection, FALSE);
+        $sh->setLimit(1);
 
         $sh->addConstraint(new Constraint('slmaster_id', '=', $this->id));
         $sh->addConstraint(new Constraint('status', '!=', $model->paid()));
