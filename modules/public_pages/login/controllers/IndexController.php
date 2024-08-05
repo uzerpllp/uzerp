@@ -19,7 +19,7 @@ class IndexController extends Controller
     protected $username = '';
     protected $logger;
 
-    public function __construct($module=null, $view)
+    public function __construct($module = null, $view = null)
     {
         parent::__construct($module, $view);
 
@@ -86,7 +86,7 @@ class IndexController extends Controller
             } else {
                 $pack = $_SESSION['mfa_pack'];
             }
-            $qrcode_png = base64_encode($pack['qrCode']);
+            $qrcode_png = base64_encode((string) $pack['qrCode']);
             $this->view->set('qrcode', "data:image/png;base64, {$qrcode_png}");
             $this->view->set('secret', $pack['secret']);
             $this->view->set('action', 'mfaenroll');
@@ -302,7 +302,7 @@ class IndexController extends Controller
 
                 // If browser agent supports http_referer
                 // use this address instead of ajax request
-                $url = parse_url($_SERVER['HTTP_REFERER']);
+                $url = parse_url((string) $_SERVER['HTTP_REFERER']);
 
                 unset($_POST);
 
