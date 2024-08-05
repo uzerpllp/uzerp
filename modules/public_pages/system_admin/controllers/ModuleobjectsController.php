@@ -568,7 +568,7 @@ class ModuleobjectsController extends Controller {
 
 							if ($type != 'T')
 							{
-								$current_type = (isset($this->components[$current]))?$this->components[$current]:$type;
+								$current_type = $this->components[$current] ?? $type;
 							}
 							else
 							{
@@ -670,7 +670,7 @@ class ModuleobjectsController extends Controller {
 
 		if (!empty($_id))
 		{
-			$system		= System::Instance();
+			$system		= system::Instance();
 			$pathname	= str_replace(FILE_ROOT, '', $system->findModulePath(FILE_ROOT.'modules', $_id));
 		}
 		else

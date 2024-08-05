@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,7 +9,7 @@
 class SystempolicyaccesslistsController extends Controller {
 
 	protected $version='$Revision: 1.1 $';
-	
+
 	protected $_templateobject;
 
 	public function __construct($module=null,$action=null) {
@@ -20,22 +20,22 @@ class SystempolicyaccesslistsController extends Controller {
 	}
 
 	public function index($collection = null, $sh = '', &$c_query = null){
-		
+
 		// Search
 		$errors=array();
-	
+
 		$s_data=array();
 
 // Set context from calling module
 		$s_data['access_type']='';
 		$s_data['name']='';
-				
+
 //		$this->setSearch('SystemPolicySearch', 'useDefault', $s_data);
-		
+
 		parent::index(new SystemPolicyAccessListCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -47,31 +47,31 @@ class SystempolicyaccesslistsController extends Controller {
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
+
 		$this->view->set('page_title', $this->getPageName('', 'List'));
-		
+
 		$this->view->set('clickaction', 'view');
 	}
 
 	public function _new() {
-		
+
 		parent::_new();
-		
+
 		$access_list = $this->_uses[$this->modeltype];
-		
+
 		$access_types = $access_list->getEnumOptions('access_type');
-		
+
 		if (!$access_list->isLoaded())
 		{
 			$access_list->access_type = key($access_types);
 		}
-		
+
 		$this->view->set('access_types', $access_types);
 		$this->view->set('options', $this->get_values($access_list->access_type));
-		
+
 	}
 
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
@@ -79,42 +79,42 @@ class SystempolicyaccesslistsController extends Controller {
 		if(!$this->checkParams($this->modeltype)) {
 			sendBack();
 		}
-		
+
 		if (!parent::save($this->modeltype))
 		{
 			$this->refresh();
 		}
-		
+
 		sendTo($this->name, 'index', $this->_modules);
-	
+
 	}	
 
 	public function view()
 	{
-		
+
 		if (!$this->loadData())
 		{
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$accesslist = $this->_uses[$this->modeltype];
-		
+
 //		$this->addSidebar($systempolicy);
-		
+
 		$policy_permissions = new SystemPolicyControlListCollection();
-		
+
 		$sh = $this->setSearchHandler($policy_permissions);
 		$sh->addConstraint(new Constraint('access_lists_id', '=', $accesslist->{$accesslist->idField}));
-		
+
 		parent::index($policy_permissions, $sh);
-		
+
 		$this->view->set('no_ordering', true);
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebarlist = array();
-		
+
 		$sidebarlist['alllists']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -122,11 +122,11 @@ class SystempolicyaccesslistsController extends Controller {
 								 ),
 					'tag'=>'View All System Access Lists'
 					);
-					
+
 		$sidebar->addList('Actions',$sidebarlist);
-		
+
 		$sidebarlist = array();
-		
+
 		$sidebarlist['edit']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -150,9 +150,9 @@ class SystempolicyaccesslistsController extends Controller {
 								 ,'object_policies_id'=>$accesslist->{$accesslist->idField}),
 					'tag'=>'add_policy_permission'
 					);
-		
+
 		$sidebar->addList('This Policy',$sidebarlist);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 
@@ -168,7 +168,7 @@ class SystempolicyaccesslistsController extends Controller {
 		$result = parent::delete($this->modeltype);
 		sendTo($this->name, 'index', $this->_modules);
 	}
-	
+
 /*
  * Protected functions
  */
@@ -185,19 +185,19 @@ class SystempolicyaccesslistsController extends Controller {
  */
 	public function get_values($_access_type = '')
 	{
-		
+
 		if (isset($this->_data['access_type'])) { $_access_type = $this->_data['access_type']; }
-		
+
 		$values = array();
-		
+
 		if (!empty($_access_type))
 		{
 //			$access_type = DataObjectFactory::Factory($_access_type);
 //			$values = $access_type->getAll();
 			$values = $this->_templateobject->getAccessValues($_access_type);
-			
+
 		}
-		
+
 		if (isset($this->_data['ajax']))
 		{
 			$this->view->set('options',$values);
@@ -208,7 +208,7 @@ class SystempolicyaccesslistsController extends Controller {
 		{
 			return $values;
 		}
-		
+
 	}
 
 }

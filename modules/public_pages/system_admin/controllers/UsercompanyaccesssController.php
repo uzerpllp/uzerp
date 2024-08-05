@@ -26,7 +26,7 @@ class UsercompanyaccesssController extends Controller {
 //		$this->view->set('users',$user->getAll());
 		$Systemcompany=new Systemcompany();
 		$users=$Systemcompany->getNonUsers();
-		$system=System::Instance();
+		$system=system::Instance();
 
 		if ($users) {
 			$this->view->set('users',$users);
@@ -65,7 +65,7 @@ class UsercompanyaccesssController extends Controller {
 	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('Usercompanyaccess');
-		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],$_SESSION['refererPage']['other'] ?? null);
 	}
 	
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void {

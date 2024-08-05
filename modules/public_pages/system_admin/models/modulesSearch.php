@@ -10,11 +10,11 @@ class modulesSearch extends BaseSearch
 {
 
 	protected $version = '$Revision: 1.1 $';
-	
+
 	public static function useDefault($search_data=null, &$errors=array(), $defaults=null)
 	{
 		$search = new modulesSearch($defaults);
-		
+
 		// Search by Name
 		$search->addSearchField(
 			'name',
@@ -23,7 +23,7 @@ class modulesSearch extends BaseSearch
 			'',
 			'basic'
 		);
-		
+
 		// Search by Description
 		$search->addSearchField(
 			'description',
@@ -32,7 +32,7 @@ class modulesSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 		// Search by Location
 		$search->addSearchField(
 			'location',
@@ -41,7 +41,7 @@ class modulesSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 		// Search by Enabled
 		$search->addSearchField(
 			'registered',
@@ -53,7 +53,7 @@ class modulesSearch extends BaseSearch
 		$search->setOptions('registered', array(''		=> 'All'
 											   ,'TRUE'	=> 'True'
 											   ,'FALSE'	=> 'False'));
-		
+
 		// Search by Enabled
 		$search->addSearchField(
 			'enabled',
@@ -65,12 +65,12 @@ class modulesSearch extends BaseSearch
 		$search->setOptions('enabled', array(''			=> 'All'
 											,'TRUE'		=> 'True'
 											,'FALSE'	=> 'False'));
-		
+
 		$search->setSearchData($search_data,$errors);
-		
+
 		return $search;
 	}
-		
+
 }
 
 // End of modulesSearch
