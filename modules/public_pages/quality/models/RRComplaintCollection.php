@@ -10,7 +10,7 @@ class RRComplaintCollection extends ComplaintCollection
 {
 
 	protected $version = '$Revision: 1.5 $';
-	
+
 	function __construct($do = 'RRComplaint')
 	{
 		parent::__construct($do);

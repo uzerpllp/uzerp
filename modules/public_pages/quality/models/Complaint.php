@@ -22,7 +22,7 @@ class Complaint extends DataObject
 		'assigned_to',
 		'problem'
 	);
-	
+
 	function __construct($tablename = 'qc_complaints')
 	{
 // Register non-persistent attributes
@@ -34,7 +34,7 @@ class Complaint extends DataObject
 		$this->idField	='id';
 		$this->orderby	= 'complaint_number';
 		$this->orderdir	= 'desc';
-		
+
 // Define relationships
 		$this->belongsTo('SLCustomer', 'slmaster_id', 'retailer');
 		$this->belongsTo('STItem', 'stitem_id', 'product');
@@ -42,26 +42,26 @@ class Complaint extends DataObject
 		$this->belongsTo('ComplaintCode', 'complaint_code_id', 'complaint_code');
 		$this->belongsTo('SupplementaryComplaintCode', 'supplementary_code_id', 'supplmentary_code');
 		$this->belongsTo('User', 'assignedto', 'assigned_to');
-		
+
 // Define field formats
 
 // Define validation
-		
+
 // Define enumerated types
 
 // Define system defaults
 	}
-	
+
 	static function Factory($data, &$errors = [], $do_name = null)
 	{
 		if (!isset($data['id']) || $data['id']=='')
 		{
-		
+
 			$generator = new ComplaintNumberHandler();
 			$data['complaint_number'] = $generator->handle(new $do_name);
-		
+
 		}
-		
+
 		return parent::Factory($data, $errors, $do_name);
 
 	}

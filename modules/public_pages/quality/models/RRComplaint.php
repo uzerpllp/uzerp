@@ -8,9 +8,9 @@
 
 class RRComplaint extends Complaint
 {
-	
+
 	protected $version = '$Revision: 1.4 $';
-	
+
 	function __construct($tablename = 'qc_complaints') {
 // Register non-persistent attributes
 
@@ -18,20 +18,20 @@ class RRComplaint extends Complaint
 		parent::__construct($tablename);
 
 // Set specific characteristics
-		
+
 // Define relationships
 
 // Define field formats
 
 // Define validation
-		
+
 // Define enumerated types
 
 // Define system defaults
 		$this->type = 'RR';
-		
+
 		$this->getField('type')->setDefault('RR');
-		
+
 	}
 }
 

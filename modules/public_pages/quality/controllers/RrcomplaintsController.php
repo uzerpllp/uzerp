@@ -8,35 +8,35 @@
 
 class RrcomplaintsController extends ComplaintsController
 {
-	
+
 	protected $version = '$Revision: 1.27 $';
-	
+
 	protected $_templateobject;
-	
+
 	public function __construct($module = NULL, $action = NULL)
 	{
-		
+
 		parent::__construct($module, $action);
-		
+
 		$this->_templateobject = DataObjectFactory::Factory('RRComplaint');
-		
+
 		$this->uses($this->_templateobject);
-	
+
 	}
-	
+
 	public function index($collection = null, $sh = '', &$c_query = null)
 	{
-		
+
 		$s_data = array('type' => 'RR');
-		
+
 		$this->setSearch('ComplaintSearch', 'rrsearch', $s_data);
-		
+
 		$this->view->set('clickaction', 'edit');
-		
+
 		parent::index(new RRComplaintCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -58,21 +58,21 @@ class RrcomplaintsController extends ComplaintsController
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 	}
 
 	public function _new()
 	{
-		
+
 		parent::_new();
-		
+
 		$rrcomplaint = $this->_uses[$this->modeltype];
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebarlist = array(
 			'return' => array(
 				'tag'	=> 'Return to RR Complaints',
@@ -83,21 +83,21 @@ class RrcomplaintsController extends ComplaintsController
 				)
 			)
 		);
-		
+
 		$sidebar->addList('Action', $sidebarlist);
-		
+
 		if (!$rrcomplaint->isLoaded())
 		{
-			
+
 			$glparams			= DataObjectFactory::Factory('GLParams');
 			$default_currency	= $glparams->base_currency();
-			
+
 			$this->view->set('default_currency', $default_currency);
-			
+
 		}
 		else
 		{
-			
+
 			$sidebarlist = array(
 				'report' => array(
 					'tag'	=> 'Print Current Complaint',
@@ -112,36 +112,36 @@ class RrcomplaintsController extends ComplaintsController
 					)
 				)
 			);
-			
+
 			$sidebar->addList('Reports', $sidebarlist);
-			
+
 		}
-		
+
 		$retailer	= DataObjectFactory::Factory('SLCustomer');
 		$retailers	= $retailer->getAll(NULL, FALSE, TRUE);
 		$this->view->set('retailers', $retailers);
-		
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 	}
-	
+
 	protected function getPageName($base = NULL, $action = NULL)
 	{
 		return parent::getPageName((empty($base) ? 'RR Complaints' : $base), $action);
 	}
 
 	/* output functions */
-	
+
 	public function printComplaint($_status = 'generate', $_filename = null)
 	{
-		
+
 		$filename = (!empty($this->_data['filename']))?$this->_data['filename']:'RR_complaint_' . date('d-m-Y');
-		
+
 		return parent::printComplaint($_status, $filename);
-		
+
 	}
-	
+
 }
 
 // end of RrcompaintController.php

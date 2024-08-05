@@ -7,22 +7,22 @@
  **/
 
 class ComplaintSearch extends BaseSearch {
-	
+
 	protected $version = '$Revision: 1.19 $';
-	
+
 	public static function useDefault($search_data = null, &$errors = array(), $defaults = null)
 	{
-		
+
 		$search = new ComplaintSearch($defaults);
 		$search->setSearchData($search_data, $errors);
-		
+
 		return $search;
-		
+
 	}
-		
+
 	public static function rrsearch($search_data = null, &$errors = array(), $defaults = null)
 	{
-		
+
 		$search = new ComplaintSearch($defaults);
 
 		$search->addSearchField(
@@ -32,7 +32,7 @@ class ComplaintSearch extends BaseSearch {
 			'',
 			'advanced'
 		);
-		
+
 		$search->addSearchField(
 			'type',
 			'type',
@@ -40,17 +40,17 @@ class ComplaintSearch extends BaseSearch {
 			'RR',
 			'hidden'
 		);
-		
+
 		$search->defaultFields();
 		$search->setSearchData($search_data, $errors, 'rrsearch');
-		
+
 		return $search;
-		
+
 	}
 
 	public static function sdsearch($search_data = null, &$errors = array(), $defaults = null)
 	{
-		
+
 		$search = new ComplaintSearch($defaults);
 
 		// Search by type
@@ -61,17 +61,17 @@ class ComplaintSearch extends BaseSearch {
 			'SD',
 			'hidden'
 		);
-		
+
 		$search->defaultFields();
 		$search->setSearchData($search_data, $errors, 'sdsearch');
-		
+
 		return $search;
-		
+
 	}
-	
+
 	private function defaultFields()
 	{
-		
+
 		// Search by Complaint ID
 		$this->addSearchField(
 			'complaint_number',
@@ -80,7 +80,7 @@ class ComplaintSearch extends BaseSearch {
 			'',
 			'basic'
 		);
-		
+
 		// Search by Problem
 		$this->addSearchField(
 			'problem',
@@ -89,7 +89,7 @@ class ComplaintSearch extends BaseSearch {
 			'',
 			'basic'
 		);
-		
+
 		// Search by Retailer
 		$this->addSearchField(
 			'slmaster_id',
@@ -98,12 +98,12 @@ class ComplaintSearch extends BaseSearch {
 			0,
 			'basic'
 		);
-		
+
 		$slcustomer = DataObjectFactory::Factory('SLCustomer');
-		
+
 		$options  = array('0' => 'All');
 		$options += $slcustomer->getAll(null, false, true);
-		
+
 		$this->setOptions('slmaster_id', $options);
 
 		// Search by Type
@@ -114,15 +114,15 @@ class ComplaintSearch extends BaseSearch {
 			'',
 			'basic'
 		);
-		
+
 		$options = array(
 			''			=> 'All',
 			'NOT NULL'	=> 'Complete',
 			'NULL'		=> 'Incomplete'
 		);
-		
+
 		$this->setOptions('date_complete', $options);
-		
+
 		// Search by Complaint Code
 		$this->addSearchField(
 			'complaint_code_id',
@@ -131,18 +131,18 @@ class ComplaintSearch extends BaseSearch {
 			'0',
 			'advanced'
 		);
-		
+
 		$complaint_code = DataObjectFactory::Factory('ComplaintCode');
-		
+
 		$options = array(
 			'0'		=> 'All',
 			'NULL'	=> 'Unallocated'
 		);
-		
+
 		$options += $complaint_code->getAll();
-		
+
 		$this->setOptions('complaint_code_id', $options);	
-				
+
 		// Search by product_complaint
 		$this->addSearchField(
 			'product_complaint',
@@ -151,15 +151,15 @@ class ComplaintSearch extends BaseSearch {
 			'',
 			'advanced'
 		);
-		
+
 		$options = array(
 			''	=> 'All',
 			't'	=> 'Yes',
 			'f'	=> 'no'
 		);
-		
+
 		$this->setOptions('product_complaint', $options);
-		
+
 		// Search by Product
 		$this->addSearchField(
 			'stitem_id',
@@ -168,14 +168,14 @@ class ComplaintSearch extends BaseSearch {
 			0,
 			'advanced'
 		);
-		
+
 		$stitem = DataObjectFactory::Factory('STItem');
-		
+
 		$options  = array('0' => 'All');
 		$options += $stitem->getAll();
-		
+
 		$this->setOptions('stitem_id', $options);
-				
+
 		// Search by Assigned To
 		$this->addSearchField(
 			'assignedto',
@@ -184,12 +184,12 @@ class ComplaintSearch extends BaseSearch {
 			'',
 			'advanced'
 		);
-		
+
 		$user = DataObjectFactory::Factory('User');
-		
+
 		$options  = array('' => 'All');
 		$options += $user->getAll();
-		
+
 		$this->setOptions('assignedto', $options);
 
 		// Search by Transaction Date
@@ -202,7 +202,7 @@ class ComplaintSearch extends BaseSearch {
 		);
 
 	}
-	
+
 }
 
 // end of ComplaintSearch

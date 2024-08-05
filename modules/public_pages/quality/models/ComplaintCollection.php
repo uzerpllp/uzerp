@@ -10,11 +10,11 @@ class ComplaintCollection extends DataObjectCollection
 {
 
 	protected $version = '$Revision: 1.7 $';
-	
+
 	function __construct($do = 'Complaint', $tablename = 'qc_complaints_overview')
 	{
 		parent::__construct($do, $tablename);
-		
+
 	}
 
 }

@@ -9,7 +9,7 @@
 class ComplaintCodeCollection extends DataObjectCollection {
 
 	protected $version = '$Revision: 1.5 $';
-	
+
 	function __construct($do = 'ComplaintCode')
 	{
 		parent::__construct($do);

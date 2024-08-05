@@ -10,29 +10,29 @@ class ComplaintcodesController extends Controller
 {
 
 	protected $version = '$Revision: 1.8 $';
-	
+
 	protected $_templateobject;
 
 	public function __construct($module = NULL, $action = NULL)
 	{
-		
+
 		parent::__construct($module, $action);
-		
+
 		$this->_templateobject = DataObjectFactory::Factory('ComplaintCode');
-		
+
 		$this->uses($this->_templateobject);
-		
+
 	}
-	
+
 	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		$this->view->set('clickaction', 'edit');
-		
+
 		parent::index(new ComplaintCodeCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -56,43 +56,43 @@ class ComplaintcodesController extends Controller
 		);
 
 		$this->view->register('sidebar', $sidebar);
-		
+
 		$this->view->set('sidebar', $sidebar);
-		
+
 	}
 
 	public function delete($modelName = null)
 	{
-		
+
 		$flash = Flash::Instance();
-		
+
 		parent::delete($this->modeltype);
-		
+
 		sendTo($this->name, 'index', $this->_modules);
-		
+
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
-		
+
 		$flash=Flash::Instance();
-	
+
 		if (parent::save($this->modeltype))
 		{
 			sendTo($this->name, 'index', $this->_modules);
 		}
-		
+
 		$this->refresh();
 
 	}
-	
+
 	public function _new()
 	{
-		
+
 		parent::_new();
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -106,12 +106,12 @@ class ComplaintcodesController extends Controller
 				)
 			)
 		);
-	
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 	}
-	
+
 	protected function getPageName($base = NULL, $type = NULL)
 	{
 		return parent::getPageName((empty($base) ? 'complaint codes' : $base), $type);

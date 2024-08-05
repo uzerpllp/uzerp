@@ -10,7 +10,7 @@ class SupplementaryComplaintCodeCollection extends DataObjectCollection
 {
 
 	protected $version = '$Revision: 1.7 $';
-	
+
 	function __construct($do = 'SupplementaryComplaintCode', $tablename = 'qc_supplementary_complaint_code_overview')
 	{
 		parent::__construct($do, $tablename);

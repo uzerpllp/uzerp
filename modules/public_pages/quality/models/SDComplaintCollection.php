@@ -10,7 +10,7 @@ class SDComplaintCollection extends ComplaintCollection
 {
 
 	protected $version = '$Revision: 1.5 $';
-	
+
 	function __construct($do = 'SDComplaint')
 	{
 		parent::__construct($do);
