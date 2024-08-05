@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,7 +9,7 @@
 class ProjectissuelinesController extends Controller {
 
 	protected $version = '$Revision: 1.1 $';
-	
+
 	protected $_templateobject;
 
 	public function __construct($module = null, $action = null)
@@ -24,38 +24,38 @@ class ProjectissuelinesController extends Controller {
 		parent::delete('ProjectIssueLine');
 		sendBack();
 	}
-	
+
 	public function _new()
 	{
-		
+
 		parent::_new();
-		
+
 		$header_id = FALSE;
-		
-		
+
+
 		if ($this->_data['action'] === 'new')
 		{
-			
+
 			$header = new ProjectIssueHeader();
 			$header->load($this->_data['header_id']);
-			
+
 			$header_id		= $header->id;
 			$header_title	= $header->title;
-			
+
 		}
 		else
 		{
-			
+
 			$line = $this->_uses[$this->modeltype];
 			$line->load($this->_data['id']);
-			
+
 			$header_id		= $line->header_id;
 			$header_title	= $line->header->title;
-			
+
 		}
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Issue',
 			array(
@@ -70,39 +70,39 @@ class ProjectissuelinesController extends Controller {
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
-		
+
 		if (parent::save('ProjectIssueLine'))
 		{
-			
+
 			sendTo(
 				'projectissues',
 				'view',
 				array('projects'),
 				array('id' => $this->saved_model->header_id)
 			);
-			
+
 		}
 		else
 		{
 			$this->_new();
 			$this->_templateName=$this->getTemplateName('new');
 		}
-		
+
 	}
-	
+
 	protected function getPageName($base = \null, $action = \null)
 	{
 		return parent::getPageName('project_issues');
 	}
-	
+
 }
 
 // end of ProjectissuesController.php

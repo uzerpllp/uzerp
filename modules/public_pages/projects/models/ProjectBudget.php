@@ -25,7 +25,7 @@ class ProjectBudget extends DataObject {
 	
 	public function __construct($tablename='project_budgets', $item_type='') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
@@ -35,7 +35,7 @@ class ProjectBudget extends DataObject {
 		$this->belongsTo('Project', 'project_id');
 		$this->belongsTo('Task', 'task_id');
 		$this->belongsTo('STuom', 'uom_id', 'uom_name');
-		
+
 // Define field formats
 		$this->getField('setup_cost')->setFormatter(new PriceFormatter());
 		$this->getField('cost_rate')->setFormatter(new PriceFormatter());
@@ -43,9 +43,9 @@ class ProjectBudget extends DataObject {
 		$this->getField('setup_charge')->setFormatter(new PriceFormatter());
 		$this->getField('charge_rate')->setFormatter(new PriceFormatter());
 		$this->getField('total_charge_rate')->setFormatter(new PriceFormatter());
-		
+
 // The name for these links is determined from the enumerated type
-		switch (strtoupper($item_type)) {
+		switch (strtoupper((string) $item_type)) {
 			case 'R' :
 				$this->hasOne('SOProductline', 'budget_item_id', 'r');
 				break;
@@ -59,7 +59,7 @@ class ProjectBudget extends DataObject {
 				$this->hasOne('MFResource', 'budget_item_id', 'l');
 				break;
 		}
-		
+
 // Define field defaults
 		$this->getField('setup_cost')->setDefault('0.00');
 		$this->getField('cost_rate')->setDefault('0.00');
@@ -67,9 +67,9 @@ class ProjectBudget extends DataObject {
 		$this->getField('setup_charge')->setDefault('0.00');
 		$this->getField('charge_rate')->setDefault('0.00');
 		$this->getField('total_charge_rate')->setDefault('0.00');
-		
+
 // Define validation
-		
+
 // Define enumerated types
  		$this->setEnum('budget_item_type'
 							,array('R'=>'Revenue'
@@ -79,7 +79,7 @@ class ProjectBudget extends DataObject {
 								,'O'=>'Other'
 								  )
 						);
-		
+
 // Define Access Rules
 
 // Define link rules for sidebar related view

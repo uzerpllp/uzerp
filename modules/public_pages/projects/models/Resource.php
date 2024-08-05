@@ -21,31 +21,31 @@ class Resource extends DataObject {
 	
 	function __construct($tablename='project_resources') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
 // Set specific characteristics
 		$this->idField='id';
-		
+
 		$this->orderby = 'person';
 		$this->orderdir = 'asc';
-		
+
 		$this->identifierField = 'person';
-		
+
 // Define relationships
 		$this->belongsTo('Person', 'person_id', 'person', null, "surname || ', ' || firstname");
  		$this->belongsTo('Project', 'project_id', 'project');
  		$this->belongsTo('Task', 'task_id', 'task');
  		$this->belongsTo('MFResource', 'resource_id', 'resource');
- 		
+
 // Define field formats
-		
+
 // Define field defaults
-		
+
 // Define validation
 		$this->validateUniquenessOf(array('person_id', 'project_id', 'start_date', 'resource_id', 'task_id','usercompanyid'),'Resource already exists on this project');
-	
+
 // Define enumerated types
 
 // Define Access Rules

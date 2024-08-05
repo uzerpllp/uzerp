@@ -11,22 +11,22 @@ class ProjectCostCharge extends DataObject {
 	
 	public function __construct($tablename='project_costs_charges', $item_type='', $source_type='') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
-		
+
 // Set specific characteristics
 		$this->identifierField='item_id';
-		
+
 // Define relationships
 		$this->belongsTo('Project', 'project_id');
 		$this->belongsTo('Task', 'task_id');
 		$this->belongsTo('STItem', 'stitem_id');
-		
+
 // Define field formats
 
 // The name for these links is determined from the source and type on the GL Transaction
-		switch (strtoupper($item_type)) {
+		switch (strtoupper((string) $item_type)) {
 			case 'PO' :
 				$this->hasOne('POrder', 'item_id', 'po');
 				break;
@@ -54,16 +54,16 @@ class ProjectCostCharge extends DataObject {
 		}
 */		
 // Define field defaults
-		
+
 // Define validation
-		
+
 // Define enumerated types
 		$this->setEnum('item_type'
 							,array('PO'=>'Costs'
 								  ,'SI'=>'Charges'
 								)
 						);
-		
+
 		$this->setEnum('source_type'
 							,array('O'=>'Other'
 								  ,'B'=>'Budget'
@@ -73,7 +73,7 @@ class ProjectCostCharge extends DataObject {
 								  ,'X'=>'Expenses'
 								  )
 					);
-		
+
 // Define Access Rules
 
 // Define link rules for sidebar related view

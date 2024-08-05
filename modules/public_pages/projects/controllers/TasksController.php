@@ -201,7 +201,7 @@ class TasksController extends Controller {
 	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('Task');
-		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],$_SESSION['refererPage']['other'] ?? null);
 	}
 	
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
@@ -233,12 +233,12 @@ class TasksController extends Controller {
 			
 			if ($project->isLoaded())
 			{
-				if (strtotime(fix_date($start_date)) < strtotime($project->start_date))
+				if (strtotime((string) fix_date($start_date)) < strtotime($project->start_date))
 				{
 					$errors['start_date']='Start date before Project start date';
 				}
 
-				if (strtotime(fix_date($end_date)) > strtotime($project->end_date))
+				if (strtotime((string) fix_date($end_date)) > strtotime($project->end_date))
 				{
 					$errors['end_date']='End date after Project end date';
 				}
@@ -312,7 +312,7 @@ class TasksController extends Controller {
 				if(isset($this->_data['original_action']) && in_array($this->_data['original_action'],array('dayview','weekview','monthview'))) {
 					sendTo('index',$this->_data['original_action'],'calendar');
  				} else {
-					sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+					sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],$_SESSION['refererPage']['other'] ?? null);
  				}
 			}
 		} else {
@@ -462,13 +462,13 @@ class TasksController extends Controller {
 		$dates = array('start_date'=>$start_date
 					  ,'end_date'=>$end_date);
 					  
-		$start_date_hours	= array_shift(explode(':', array_pop(explode(' ', $start_date))));
-		$start_date_minutes	= array_pop(explode(':', array_pop(explode(' ', $start_date))));
-		$start_date			= array_shift(explode(' ', $start_date));
+		$start_date_hours	= array_shift(explode(':', array_pop(explode(' ', (string) $start_date))));
+		$start_date_minutes	= array_pop(explode(':', (string) array_pop(explode(' ', (string) $start_date))));
+		$start_date			= array_shift(explode(' ', (string) $start_date));
 		
-		$end_date_hours		= array_shift(explode(':', array_pop(explode(' ', $end_date))));
-		$end_date_minutes	= array_pop(explode(':', array_pop(explode(' ', $end_date))));
-		$end_date			= array_shift(explode(' ', $end_date));
+		$end_date_hours		= array_shift(explode(':', array_pop(explode(' ', (string) $end_date))));
+		$end_date_minutes	= array_pop(explode(':', (string) array_pop(explode(' ', (string) $end_date))));
+		$end_date			= array_shift(explode(' ', (string) $end_date));
 		
 		$output['start_date']=array('data'=>$start_date,'is_array'=>is_array($start_date));
 		$output['start_date_hours']=array('data'=>$start_date_hours,'is_array'=>is_array($start_date_hours));

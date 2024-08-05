@@ -78,12 +78,12 @@ class ProjectbudgetsController extends Controller {
 		
 		if (isset($this->_data[$this->modeltype]['quantity']) && isset($this->_data[$this->modeltype]['cost_rate']))
 		{
-			$this->_data[$this->modeltype]['total_cost_rate']=bcmuL($this->_data[$this->modeltype]['quantity'],$this->_data[$this->modeltype]['cost_rate']);
+			$this->_data[$this->modeltype]['total_cost_rate']=bcmuL((string) $this->_data[$this->modeltype]['quantity'],(string) $this->_data[$this->modeltype]['cost_rate']);
 		}
 		
 		if (isset($this->_data[$this->modeltype]['quantity']) && isset($this->_data[$this->modeltype]['charge_rate']))
 		{
-			$this->_data[$this->modeltype]['total_charge_rate']=bcmuL($this->_data[$this->modeltype]['quantity'],$this->_data[$this->modeltype]['charge_rate']);
+			$this->_data[$this->modeltype]['total_charge_rate']=bcmuL((string) $this->_data[$this->modeltype]['quantity'],(string) $this->_data[$this->modeltype]['charge_rate']);
 		}
 		
 		if(parent::save($this->modeltype, '' ,$errors))

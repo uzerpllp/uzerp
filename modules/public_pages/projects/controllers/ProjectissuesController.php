@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,7 +9,7 @@
 class ProjectissuesController extends Controller {
 
 	protected $version = '$Revision: 1.4 $';
-	
+
 	protected $_templateobject;
 
 	public function __construct($module = null, $action = null)
@@ -21,30 +21,30 @@ class ProjectissuesController extends Controller {
 
 	public function index($collection = null, $sh = '', &$c_query = null)
 	{
-		
+
 		$s_data = null;
 		$errors = array();
-		
+
 		if (isset($this->_data['Search'])) 
 		{
 			$s_data = $this->_data['Search'];
 		}
-		
+
 		$this->search = ProjectSearch::issues($s_data, $errors);
-		
+
 		if (count($errors) > 0)
 		{
 			$flash = Flash::Instance();
 			$flash->addErrors($errors);
 			$this->search->clear();
 		}
-		
+
 		$this->view->set('clickaction', 'edit');
-		
+
 		parent::index($pi = new ProjectIssueCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -58,10 +58,10 @@ class ProjectissuesController extends Controller {
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 	}
 
 	public function delete($modelName = null)
@@ -69,29 +69,29 @@ class ProjectissuesController extends Controller {
 		parent::delete('ProjectIssue');
 		sendBack();
 	}
-	
+
 	public function view()
 	{
-		
+
 		$flash = Flash::Instance();
-		
+
 		if (!$this->loadData())
 		{
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$header = $this->_uses[$this->modeltype];
-		
+
 		if ($header === false)
 		{
 			sendBack();
 		}
-		
+
 		$this->view->set('issue_lines', $header->lines);
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Project',
 			array(
@@ -106,7 +106,7 @@ class ProjectissuesController extends Controller {
 				)
 			)
 		);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -130,41 +130,41 @@ class ProjectissuesController extends Controller {
 				),
 			)
 		);
-		
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
-		
+
 		$flash = Flash::Instance();
-		
+
 		if (parent::save('ProjectIssueHeader'))
 		{
-			
+
 			sendTo(
 				'projectissues',
 				'view',
 				array('projects'),
 				array('id' => $this->saved_model->id)
 			);
-			
+
 		}
 		else
 		{
 			$this->_new();
 			$this->_templateName=$this->getTemplateName('new');
 		}
-		
+
 	}
-	
+
 	protected function getPageName($base = \null, $action = \null)
 	{
 		return parent::getPageName('project_issues');
 	}
-	
+
 }
 
 // end of ProjectissuesController.php

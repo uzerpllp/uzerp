@@ -78,7 +78,7 @@ class ProjectequipmentallocationsController extends Controller {
 		
 		$equipmentlist=$this->getOptions($this->_templateobject, 'project_equipment_id', 'getOptions', 'getOptions');
 
-		$data=isset($this->_data[$this->modeltype])?$this->_data[$this->modeltype]:array();
+		$data=$this->_data[$this->modeltype] ?? array();
 		
 		if (!empty($this->_data['project_id']))	{ $data['project_id']=$this->_data['project_id']; }
 		

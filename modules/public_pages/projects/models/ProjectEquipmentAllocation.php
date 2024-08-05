@@ -11,30 +11,30 @@ class ProjectEquipmentAllocation extends DataObject {
 	
 	public function __construct($tablename='project_equipment_allocation') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
-		
+
 // Set specific characteristics
 		$this->orderby=array('start_date');
-		
+
 // Define relationships
 		$this->belongsTo('Project', 'project_id', 'project');
 		$this->belongsTo('Task', 'task_id', 'task');
 		$this->belongsTo('ProjectEquipment', 'project_equipment_id', 'equipment');
 		$this->belongsTo('STuom', 'charge_rate_uom_id', 'charge_rate_uom');
 		$this->belongsTo('STuom', 'charging_period_uom_id', 'charging_period_uom');
-		
+
 // Define field formats
 		$this->getField('charge_rate')->setFormatter(new PriceFormatter());
 		$this->getField('setup_charge')->setFormatter(new PriceFormatter());
-		
+
 // Define field defaults
-		
+
 // Define validation
-		
+
 // Define enumerated types
-		
+
 // Define Access Rules
 
 // Define link rules for sidebar related view

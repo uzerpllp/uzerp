@@ -10,11 +10,11 @@ class ProjectattachmentsController extends AttachmentsController
 {
 
 	protected $version = '$Revision: 1.6 $';
-	
+
 	public function __construct($module = null, $action = null)
 	{
 		parent::__construct($module, $action);
-		
+
 		// Set up some variables
 		$this->setModule('projects');
 		$this->setController('projectattachments');
@@ -26,7 +26,7 @@ class ProjectattachmentsController extends AttachmentsController
 	{
 		parent::index();
 	}
-	
+
 }
 
 // End of ProjectattachmentsController
