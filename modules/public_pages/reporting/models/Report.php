@@ -97,7 +97,7 @@ class Report extends DataObject {
                   }
 
                   $search->addSearchField($field, $label, $options['search_type'], $default_value);
-                  if (substr($options['search_type'],-6)=='select') {
+                  if (substr((string) $options['search_type'],-6)=='select') {
                         $search->setOptions($field, $this->getSelectList($field));
                   }
 
