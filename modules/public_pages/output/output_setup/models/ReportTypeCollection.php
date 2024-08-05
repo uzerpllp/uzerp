@@ -10,7 +10,7 @@ class ReportTypeCollection extends DataObjectCollection
 {
 
 	protected $version = '$Revision: 1.1 $';
-	
+
 	function __construct($do = 'ReportType')
 	{
 		parent::__construct($do);

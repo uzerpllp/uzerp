@@ -10,14 +10,14 @@ class outputSearch extends BaseSearch
 {
 
 	protected $version='$Revision: 1.1 $';
-	
+
 	protected $fields=array();
-		
-	public static function useDefault($search_data=null, &$errors, $defaults=null)
+
+	public static function useDefault($search_data = null, &$errors = [], $defaults = null)
 	{
-		
+
 		$search = new outputSearch($defaults);
-		
+
 		// Name
 		$search->addSearchField(
 			'name',
@@ -26,7 +26,7 @@ class outputSearch extends BaseSearch
 			'',
 			'basic'
 		);
-		
+
 		// Report Type
 		$search->addSearchField(
 			'report_type_id',
@@ -40,7 +40,7 @@ class outputSearch extends BaseSearch
 		$options=array(''=>'all');
 		$options += $reporttypes;
 		$search->setOptions('report_type_id',$options);
-		
+
 		// User Defined
 		$search->addSearchField(
 			'user_defined',
@@ -52,14 +52,14 @@ class outputSearch extends BaseSearch
 		$search->setOptions('user_defined', array(''=>'All'
 												 ,'true'=>'True'
 												 ,'false'=>'False'));
-		
+
 		$search->setSearchData($search_data,$errors);
-		
+
 		return $search;
-	
+
 	}
-		
-	
+
+
 }
 
 // End of outputSearch

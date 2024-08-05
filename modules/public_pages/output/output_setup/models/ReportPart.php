@@ -12,9 +12,9 @@ class ReportPart extends DataObject
 	protected $version = '$Revision: 1.4 $';
 	
 	protected $defaultDisplayFields = array('name');
-	
+
 	protected $do;
-	
+
 	function __construct($tablename = 'report_parts')
 	{
 		// Register non-persistent attributes
@@ -42,10 +42,10 @@ class ReportPart extends DataObject
 		$report_definition = DataObjectFactory::Factory('ReportPart');
 		
 		$report_definition->loadBy('name', $name);
-		
+
 		return $report_definition->definition;
 	} 
-	
+
 }
 
 // End of ReportPart

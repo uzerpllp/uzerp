@@ -6,7 +6,7 @@
  *	Released under GPLv3 license; see LICENSE. 
  **/
 
-class ReportPartsController extends PrintController {
+class ReportPartsController extends printController {
 
 	protected $version='$Revision: 1.2 $';
 	protected $_templateobject;
@@ -71,7 +71,7 @@ class ReportPartsController extends PrintController {
 		$flash=Flash::Instance();
 		$errors=array();
 		
-		$this->_data['ReportPart']['name']=strtolower($this->_data['ReportPart']['name']);
+		$this->_data['ReportPart']['name']=strtolower((string) $this->_data['ReportPart']['name']);
 		
 		if(parent::save('ReportPart','',$errors)) {
 			sendBack();	
