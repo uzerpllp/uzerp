@@ -31,9 +31,9 @@ class TicketReleaseVersion extends DataObject {
 
 	public function __call($var, $args) {
 		
-		if (strtolower(substr($var, -6)) == 'status')
+		if (strtolower(substr((string) $var, -6)) == 'status')
 		{
-			$status=substr($var, 0, strlen($var)-6);
+			$status=substr((string) $var, 0, strlen((string) $var)-6);
 			switch (strtolower($status)) {
 				case 'new':
 					return 'N';

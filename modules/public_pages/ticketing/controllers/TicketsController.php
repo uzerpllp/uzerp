@@ -1,14 +1,14 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
-class TicketsController extends PrintController {
+class TicketsController extends printController {
 
 	protected $version='$Revision: 1.20 $';
-	
+
 	protected $_templateobject;
 
 	public function __construct($module=null,$action=null) {
@@ -17,19 +17,19 @@ class TicketsController extends PrintController {
 		$this->uses(new Hour());
 		$this->_templateobject = new Ticket();
 		$this->uses($this->_templateobject);
-		
-		
+
+
 		$this->view->set('controller', 'Tickets');
 	}
-	
+
 	public function index($collection = null, $sh = '', &$c_query = null) {
 		$errors=array();
-	
+
 		$this->setSearch('TicketsSearch', 'useDefault');
 
 		parent::index(new TicketCollection($this->_templateobject));
-		
-				
+
+
 		$this->view->set('no_delete',true);
 		$this->view->set('clickaction', 'view');
 
@@ -45,19 +45,19 @@ class TicketsController extends PrintController {
 		);
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
-		
-		
+
+
+
 	}
-	
+
 	private function changeStatuses($ticket_ids,$to_status) {
 		foreach($ticket_ids as $ticket_id=>$on) {
 		}
-		
+
 	}
-	
+
 	public function view () {
-		
+
 		if (!$this->loadData()) {
 			$this->dataError();
 			sendBack();
@@ -139,10 +139,10 @@ class TicketsController extends PrintController {
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 		$responses = new TicketResponseCollection(new TicketResponse);
 		$sh = new SearchHandler($responses, false);
 		$sh->AddConstraint(new Constraint('ticket_id', '=', $ticket->id));
@@ -153,17 +153,17 @@ class TicketsController extends PrintController {
 			if ($response->internal === 't') {
 				$response->type='internal';
 			}
-			
+
 			$pageResponses[] = $response;
 		}
 		$this->view->set('responses', $pageResponses);
-		
+
 		$ao = AccessObject::Instance();
 		$this->view->set('ticketing_client',false);
 		if($ao->hasPermission('ticketing_client')) {
 			$this->view->set('ticketing_client',true);
 		}
-		
+
 		$db = DB::Instance();
 		$query='SELECT ceil((EXTRACT(hour FROM SUM(duration)) + (EXTRACT(minute FROM SUM (duration))/60))*4)/4 AS duration FROM hours WHERE ticket_id = ' . $db->qstr($ticket->id);
 		$duration = $db->GetOne($query);
@@ -173,13 +173,13 @@ class TicketsController extends PrintController {
 			$this->view->set('duration',$duration . ' hours');
 		}
 	}
-	
+
 	public function _new () {
-		
+
 		parent::_new();
-		
+
 		$ticket=$this->_uses[$this->modeltype];
-		
+
 		if (isset($this->_data['originator_company_id'])) {
 			$company=new Company();
 			$company->load($this->_data['originator_company_id']);
@@ -196,10 +196,10 @@ class TicketsController extends PrintController {
 		$ticketreleaseversion = new TicketReleaseVersion();
 		$releaseversion_cc=new ConstraintChain();
 		$releaseversion_cc->add(new Constraint('status', '<>', $ticketreleaseversion->releasedStatus()));
-		
+
 		if (!$ticket->isLoaded()) {
 			$defaults=new TicketConfiguration();
-			
+
 			if (isset($this->_data['originator_company_id'])) {
 				$cc=new ConstraintChain();
 				$cc->add(new Constraint('company_id', '=', $this->_data['originator_company_id']));
@@ -210,7 +210,7 @@ class TicketsController extends PrintController {
 				$cc->add(new Constraint('company_id', '=', EGS_COMPANY_ID));
 				$defaults->loadBy($cc);
 			}
-				
+
 			if ($defaults->isLoaded()) {
 				$this->view->set('client_ticket_status_default', $defaults->client_ticket_status_id);
 				$this->view->set('internal_ticket_status_default', $defaults->internal_ticket_status_id);
@@ -227,22 +227,22 @@ class TicketsController extends PrintController {
 		{
 			$ticket->ticket_release_version_id = $this->_data['ticket_release_version_id'];
 		}
-		
+
 		if (!is_null($ticket->ticket_release_version_id))
 		{
 			$releaseversion_cc->add(new Constraint('id', '=', $ticket->ticket_release_version_id), 'OR');
 		}
-		
+
 		$ticket->belongsTo['release_version']['cc']=$releaseversion_cc;
-		
+
 	}
-	
+
 	public function add_response () {
 		parent::_new();
 
 		$ticket=$this->_uses['Ticket'];
 		$ticket->load($this->_data['id']);
-		
+
 		$ticketResponse = $this->_uses['TicketResponse'];
 		$ticketResponse->ticket_id = $ticket->id;
 
@@ -250,12 +250,12 @@ class TicketsController extends PrintController {
 		$sh = new SearchHandler($responses, false);
 		$sh->AddConstraint(new Constraint('ticket_id', '=', $ticket->id));
 		$responses->load($sh);
-		
+
 		$this->view->set('responses', $responses->getContents());
 	}
-	
+
 	public function extract_change_log () {
-		
+
 		if (!$this->loadData()) {
 			$this->dataError();
 			sendBack();
@@ -263,21 +263,21 @@ class TicketsController extends PrintController {
 		$ticket=$this->_uses[$this->modeltype];
 
 		$flash=Flash::Instance();
-		
+
 		$fname=FILE_ROOT.'install/change.log';
-		
+
 		$handle = fopen($fname, 'r');
-		
+
 		$line = fgets($handle);
-		
+
 		while (!feof($handle))
 		{
 			$data[]	= $line;
 			$line	= fgets($handle);
 		}
-		
+
 		fclose($handle);
-		
+
 		$handle = fopen($fname, 'w');
 // TODO: Move this to Ticketing Utils
 // and enable for multiple ticket extract
@@ -309,7 +309,7 @@ class TicketsController extends PrintController {
 					fputs($handle, $line);
 				}
 			}
-			
+
 			if ($notwritten) {
 				fputs($handle, $changelog);
 			}
@@ -321,16 +321,16 @@ class TicketsController extends PrintController {
 		} else {
 			$flash->addError('Cannot open Change Log file');
 		}
-		
+
 		sendTo($this->name, 'view', $this->_modules, array('id'=>$ticket->id));
 
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		// Set some defaults
 		$errors = array();
 		$flash=Flash::Instance();
-		
+
 		if (isset($this->_data['Ticket']['id']) && $this->_data['Ticket']['id']!='') {
 			$originalTicket = new Ticket();
 			$originalTicket->load($this->_data['Ticket']['id']);
@@ -358,9 +358,9 @@ class TicketsController extends PrintController {
 					'object' => 'TicketQueue'
 				)
 			);
-			
+
 			$changeText = array();
-			
+
 			foreach ($changes as $change) {
 				if($this->_data['Ticket'][$change['param']] != $originalTicket->$change['param']) {
 					$was = new $change['object'];
@@ -370,7 +370,7 @@ class TicketsController extends PrintController {
 					$changeText[] = $change['friendly'] . ': was ' . $was->name . ' now ' . $now->name . '.';
 				}
 			}
-			
+
 			if(count($changeText) > 0) {
 				$ticketResponse = TicketResponse::Factory(
 					array(
@@ -384,35 +384,35 @@ class TicketsController extends PrintController {
 					'TicketResponse'
 				);
 				$ticketResponse->save();
-			
+
 				if (!empty($this->_data['TicketResponse']['body']) && !isset($this->_data['TicketResponse']['internal'])) {
 					$changeText[] = $this->_data['TicketResponse']['body'];
 				}
-			
+
 				// Send mail
 				$headers = array(
 					'From' => TicketingUtils::getReplyAddress($originalTicket)
 				);
-			
+
 				$header_string = "";
 				foreach ($headers as $header => $value) {
 					$header_string .= $header . ': ' . $value . "\r\n";
 				}
-			
+
 				$body = TicketingUtils::StatusPlate($originalTicket) . implode("\n", $changeText);
-			
+
 				$recipients = TicketingUtils::GetRecipients($originalTicket);
-			
+
 				foreach ($recipients as $recipient) {
 					mail(
-						$recipient,
+						(string) $recipient,
 						're: [' . $originalTicket->ticket_queue_id . '-' . $originalTicket->id . '] ' . $originalTicket->summary,
 						$body,
 						$header_string
 					);
 				}
 			}
-			
+
 // Check for Internal Status/Priority/Severity/Assigned to/Originator Person/Company change
 			$changes = array(
 				array(
@@ -447,16 +447,16 @@ class TicketsController extends PrintController {
 					'object' => 'Company'	
 				)
 			);
-			
+
 			$changeText = array();
-			
+
 			foreach ($changes as $change) {
 				if($this->_data['Ticket'][$change['param']] != $originalTicket->$change['param']) {
 					$was = new $change['object'];
 					$now = new $change['object'];
 					$was->load($originalTicket->$change['param']);
 					$now->load($this->_data['Ticket'][$change['param']]);
-					
+
 					if (!isset($change['fields'])) {
 						$was_value = $was->name;
 					} else {
@@ -468,7 +468,7 @@ class TicketsController extends PrintController {
 
 						$was_value = $t;
 					}
-					
+
 					if (!isset($change['fields'])) {
 						$now_value = $now->name;
 					} else {
@@ -480,11 +480,11 @@ class TicketsController extends PrintController {
 
 						$now_value = $t;
 					}
-					
+
 					$changeText[] = $change['friendly'] . ': was ' . $was_value . ' now ' . $now_value . '.';
 				}
 			}
-			
+
 			if(count($changeText) > 0) {
 				$ticketResponse = TicketResponse::Factory(
 					array(
@@ -499,7 +499,7 @@ class TicketsController extends PrintController {
 				);
 				$ticketResponse->save();
 			}
-			
+
 			// Assignation changed?
 			if (($this->_data['Ticket']['assigned_to'] != $originalTicket->assigned_to) and ($this->_data['Ticket']['assigned_to'] != '')) {
 				// Find email address for user
@@ -518,9 +518,9 @@ class TicketsController extends PrintController {
 				if ($to <> '') {
 					$body = "The following ticket has been assigned to you:\n";
 					$body.=  '[' . $this->_data['Ticket']['ticket_queue_id'] . '-' . $this->_data['Ticket']['id'] . '] ' . $this->_data['Ticket']['summary'] . "\n";
-				
+
 					$header_string = 'From: ' . TicketingUtils::getReplyAddress($originalTicket);
-				
+
 					mail(
 						$to,
 						'You\'ve been assigned: [' . $this->_data['Ticket']['ticket_queue_id'] . '-' . $this->_data['Ticket']['id'] . '] ' . $this->_data['Ticket']['summary'],
@@ -530,7 +530,7 @@ class TicketsController extends PrintController {
 				}
 			}
 		}
-		
+
 		if (isset($this->_data['TicketResponse']) && empty($this->_data['TicketResponse']['body'])) {
 			unset($this->_data['TicketResponse']);
 		}
@@ -540,12 +540,12 @@ class TicketsController extends PrintController {
 		$errors[]='Error saving ticket';
 		$flash->addErrors($errors);
 		$this->refresh();
-		
+
 	}
-	
+
 	public function save_response()
 	{
-		
+
 		// sort the data out
 		if (isset($this->_data['response']))
 		{
@@ -553,50 +553,50 @@ class TicketsController extends PrintController {
 			$this->_data['TicketResponse']['ticket_id']	= $this->_data['ticket_id'];
 			$this->_data['TicketResponse']['type']		= 'site';
 		}
-		
+
 		$save = parent::save('TicketResponse', $this->_data['TicketResponse']);
-		
+
 		$ticket = new Ticket();
 		$ticket->load($this->_data['TicketResponse']['ticket_id']);
-		
+
 		$plateout = TicketingUtils::StatusPlate($ticket);
-		
+
 		$headers = array(
 			'From' => TicketingUtils::getReplyAddress($ticket)
 		);
-		
+
 		$hours_data = &$this->_data['Hour'];
 
 		if (isset($hours_data['duration']) && $hours_data['duration'] != 0)
 		{
-			
+
 			if ($hours_data['duration_unit'] == 'days')
 			{
 				$hours_data['duration'] = $hours_data['duration'] * SystemCompanySettings::DAY_LENGTH;
 			}
-			
+
 			// Calculate start time by working backward NB: Needs changing with date_format?
 			$hours_data['start_time'] = date(
 				"d/m/Y H:i",
 				time() - ($hours_data['duration'] * 60 * 60)
 			);
-			
+
 			$hours_data['duration'] .= ' hours';
-			
+
 			parent::save('Hour');
-			
+
 		}
-		
+
 		// FIXME: If someone forces a file upload... I guess that causes this code to randomly send the file?
 		if ($_FILES['file']['size'] > 0)
 		{
-			
+
 			// Send MIME mail
 			$boundary = 'EGS-Ticketing-System-' . base_convert(rand(1000,9000), 10, 2);
 			$headers['Content-Type'] = 'multipart/mixed; boundary=' . $boundary;
-		
+
 			$base64 = base64_encode(file_get_contents($_FILES['file']['tmp_name']));
-		
+
 			// Yay, hand written MIME email!
 			$body =
 				"--$boundary\r\n" .
@@ -615,10 +615,10 @@ class TicketsController extends PrintController {
 				"\r\n" .
 				"--$boundary--\r\n" .
 				".";
-			
+
 			$errors	= array();
 			$file	= File::Factory($_FILES['file'], $errors, new File());
-			
+
 			$file->save();
 
 			$ticketAttachment = TicketAttachment::Factory(
@@ -629,9 +629,9 @@ class TicketsController extends PrintController {
 			    $errors,
 			    new TicketAttachment()
 			);
-			
+
 			$ticketAttachment->save();
-			
+
 		}
 		else
 		{
@@ -640,29 +640,29 @@ class TicketsController extends PrintController {
 		}
 
 		$header_string = "";
-		
+
 		foreach ($headers as $header => $value)
 		{
 			$header_string .= $header . ': ' . $value . "\r\n";
 		}
-		
+
 		// FIXME: Do this further up
 		if (!isset($this->_data['TicketResponse']['internal']) 
 		|| (isset($this->_data['TicketResponse']['internal']) && $this->_data['TicketResponse']['internal'] != 'on'))
 		{
-			
+
 			$recipients = TicketingUtils::GetRecipients($ticket);
-			
+
 			foreach ($recipients as $recipient) {
 				mail(
-					$recipient,
+					(string) $recipient,
 					're: [' . $ticket->ticket_queue_id . '-' . $ticket->id . '] ' . $ticket->summary,
 					$body,
 					$header_string
 				);
 			}
 		}
-		
+
 		if (is_ajax())
 		{
 			echo json_encode(array('success' => $save));
@@ -672,9 +672,9 @@ class TicketsController extends PrintController {
 		{
 			sendTo('Tickets', 'view', array('ticketing'), array('id' => $this->_data['TicketResponse']['ticket_id']));
 		}
-		
+
 	}
-	
+
 	public function delete($modelName = null) {
 	}
 
@@ -688,7 +688,7 @@ class TicketsController extends PrintController {
 			if(!empty($this->_data['person_id'])) { $_person_id=$this->_data['person_id']; }
 			if(!empty($this->_data['company_id'])) { $_company_id=$this->_data['company_id']; }
 		}
-		
+
 		// Used by Ajax to return the person's email address
 		// If no person is supplied, or they have no email address
 		// look for the company technical email address
@@ -701,7 +701,7 @@ class TicketsController extends PrintController {
 				$email=$person->email->contactmethod;
 			}
 		}
-		
+
 		if (empty($email) && !empty($_company_id)) {
 			$email=Ticket::getCompanyEmail($_company_id);
 		}

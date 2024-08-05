@@ -21,17 +21,17 @@ class TicketConfiguration extends DataObject {
 	
 	function __construct($tablename='ticket_configurations') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 //echo 'TicketConfiguration::__construct client_ticket_priority_default not null='.$this->getField('client_ticket_priority_default')->not_null.'<br>';
-		
+
 // Set specific characteristics
 		$this->idField='id';
 		$this->identifierField='';
 
  		$this->validateUniquenessOf('company_id');
-		
+
 // Define relationships
  		$this->belongsTo('Company', 'company_id', 'company');
  		$this->belongsTo('ticketPriority', 'client_ticket_priority_id', 'client_ticket_priority_default');
@@ -42,7 +42,7 @@ class TicketConfiguration extends DataObject {
  		$this->belongsTo('ticketStatus', 'internal_ticket_status_id', 'internal_ticket_status_default');
  		$this->belongsTo('ticketQueue', 'ticket_queue_id', 'ticket_queue_default');
  		$this->belongsTo('ticketCategory', 'ticket_category_id', 'ticket_category_default');
- 		
+
 // Define field formats
 
 // Define enumerated types

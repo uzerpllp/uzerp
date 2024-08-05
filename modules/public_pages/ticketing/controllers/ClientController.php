@@ -212,7 +212,7 @@ class ClientController extends Controller {
 			
 				foreach ($recipients as $recipient) {
 					mail(
-						$recipient,
+						(string) $recipient,
 						're: [' . $originalTicket->ticket_queue_id . '-' . $originalTicket->id . '] ' . $originalTicket->summary,
 						$body,
 						$header_string
@@ -402,7 +402,7 @@ class ClientController extends Controller {
 			
 			foreach ($recipients as $recipient) {
 				mail(
-					$recipient,
+					(string) $recipient,
 					're: [' . $ticket->ticket_queue_id . '-' . $ticket->id . '] ' . $ticket->summary,
 					$body,
 					$header_string
