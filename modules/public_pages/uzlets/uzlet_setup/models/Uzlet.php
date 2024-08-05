@@ -16,9 +16,9 @@ class Uzlet extends DataObject
 											'preset',
 											'enabled',
 											'dashboard');
-	
+
 	protected $do;
-	
+
 	function __construct($tablename = 'uzlets')
 	{
 		parent::__construct($tablename);

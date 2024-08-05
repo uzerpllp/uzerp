@@ -7,40 +7,40 @@ class UzletsController extends printController {
 	public function __construct($module = null, $action = null)
 	{
 		parent::__construct($module, $action);
-		
+
 		$this->_templateobject = DataObjectFactory::Factory('Uzlet');
-		
+
 		$this->uses($this->_templateobject);
 
 	}
 
 	public function index($collection = null, $sh = '', &$c_query=null)
 	{
-		
+
 		$errors = array();
-		
+
 		$s_data = array();
-		
+
 // Set context from calling module
 		$this->setSearch('UzletSearch', 'Uzlets', $s_data);
-		
+
 		$this->view->set('clickaction', 'edit');
-		
+
 		$uzlets = new UzletCollection($this->_uses[$this->modeltype]);
-		
+
 		parent::index($uzlets);
 
 		$sidebar = new SidebarController($this->view);
 
 		$sidebarlist=array();
-		
+
 		$sidebarlist['new']=array('tag'=>'New uzLet'
 							  ,'link'=>array('modules'=>$this->_modules
 											,'controller'=>$this->name
 											,'action'=>'new'
 											)
 				 			  );
-				 			  
+
 		$sidebar->addList(
 			'Actions',
 			$sidebarlist
@@ -49,29 +49,29 @@ class UzletsController extends printController {
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
-	
+
 	public function _new()
 	{
 		parent::_new();
-		
+
 		// get the uzlet object
 		$uzlet = $this->_uses[$this->modeltype];
-		
+
 		// get uzlet calls
 		$this->view->set('uzlet_calls', $uzlet->getCalls());
-		
+
 		// get uzlet modules
 		$this->view->set('selected_uzlet_modules', $uzlet->getModules());
-		
+
 		// get all modules
 		$modules = DataObjectFactory::Factory('ModuleObject');
-		
+
 		$this->view->set('uzlet_modules', $modules->getAll());
-		
+
 		$sidebar = new SidebarController($this->view);
 
 		$sidebarlist = array();
-		
+
 		$sidebarlist['index'] = array('tag'=>'View All Uzlet'
 									 ,'link'=>array('modules'		=> $this->_modules
 												   ,'controller'	=> $this->name
@@ -89,27 +89,27 @@ class UzletsController extends printController {
 
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-				
+
 	}
-	
+
 	public function save($modelName = null, $dataIn = array(), &$errors = array())
 	{
 		$flash = Flash::Instance();
-		
+
 		$errors = array();
-				
+
 		// delete any existing uzlet / module relationships
 		if(isset($this->_data['Uzlet']['id']) && !empty($this->_data['Uzlet']['id']))
 		{
 			$uzlet_modules = new UzletModuleCollection(DataObjectFactory::Factory('UzletModule'));
-			
+
 			$sh=new SearchHandler($uzlet_modules, false);
-			
+
 			$sh->addConstraint(new Constraint('uzlet_id', '=', $this->_data['Uzlet']['id']));
-			
+
 			$uzlet_modules->delete($sh);
 		}
-	
+
 		// apply uzlet_id to UzletModulesCollection
 		if (isset($this->_data['UzletModuleCollection']) && !empty($this->_data['UzletModuleCollection']['module_id']))
 		{
@@ -118,32 +118,32 @@ class UzletsController extends printController {
 				$this->_data['UzletModuleCollection']['uzlet_id'][$key] = '';
 			}
 		}
-		
+
 		// delete any existing calls
 		if(isset($this->_data['Uzlet']['id']) && !empty($this->_data['Uzlet']['id']))
 		{
 			$uzlet_calls = new UzletCallCollection(DataObjectFactory::Factory('UzletCall'));
-			
+
 			$sh=new SearchHandler($uzlet_calls, false);
-			
+
 			$sh->addConstraint(new Constraint('uzlet_id', '=', $this->_data['Uzlet']['id']));
-			
+
 			$uzlet_calls->delete($sh);
 		}
-		
+
 		// prepare the call field
 		if (isset($this->_data['UzletCallCollection']['Call']) && $this->_data['UzletCallCollection']['Call']!='')
 		{
-			
+
 			// split up the call field by line
-			$arr = explode("\n",$this->_data['UzletCallCollection']['Call']);
-			
+			$arr = explode("\n",(string) $this->_data['UzletCallCollection']['Call']);
+
 			foreach($arr as $key=>$value)
 			{
-				
+
 				// we're not interested in empty lines
 				$empty_test = trim($value);
-				
+
 				if(!empty($empty_test))
 				{
 					$pieces = explode(":", $value);
@@ -166,7 +166,7 @@ class UzletsController extends printController {
 		{
 			unset($this->_data['UzletCallCollection']);
 		}
-		
+
 		if(parent::save('Uzlet','',$errors))
 		{
 			sendBack();	
@@ -179,7 +179,7 @@ class UzletsController extends printController {
 
 		return true;
 	}
-		
+
 	protected function getPageName($base = null, $action = null)
 	{
 		return parent::getPageName('uzLets');
