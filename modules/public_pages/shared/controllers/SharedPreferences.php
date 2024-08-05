@@ -149,7 +149,7 @@ class SharedPreferences extends ModulePreferences
 		{
 			foreach ($permissions as $permission)
 			{
-				$modulelist[] = array('label'=>$permission['title'], 'value'=>strtolower($per->getEnum('type', $permission['type'])).','.$permission['permission']);
+				$modulelist[] = array('label'=>$permission['title'], 'value'=>strtolower((string) $per->getEnum('type', $permission['type'])).','.$permission['permission']);
 			}
 		}
 
@@ -187,9 +187,9 @@ class SharedPreferences extends ModulePreferences
 		$cc->add(new Constraint('username','=', EGS_USERNAME));
 
 		$result = $user->loadBy($cc);
-		$current_match = password_verify($current_password, $result->password);
+		$current_match = password_verify((string) $current_password, $result->password);
 
-		if($result !== FALSE && $current_match === TRUE && $new_password === $confirm_password && strlen($new_password) >= 10)
+		if($result !== FALSE && $current_match === TRUE && $new_password === $confirm_password && strlen((string) $new_password) >= 10)
 		{
 			User::updatePassword($new_password, EGS_USERNAME);
 		}
@@ -206,7 +206,6 @@ class SharedPreferences extends ModulePreferences
 	 * Get modules available to user
 	 *
 	 * @param string $username
-	 * @return void
 	 */
 	private function getUserModules($username = EGS_USERNAME)
 	{
@@ -220,11 +219,11 @@ class SharedPreferences extends ModulePreferences
 		if (!empty($roles))	{
 			$cc->add(new Constraint('roleid', 'in', '(' . implode(',', $roles) . ')'));
 		}
-		
+
 		$sh = new SearchHandler($hp, false);
 		$sh->addConstraintChain($cc);
 		$sh->setOrderby('title');
-		
+
 		return $hp->load($sh, null, RETURN_ROWS);
 	}
 }
