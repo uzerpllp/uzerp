@@ -70,7 +70,7 @@ class StitemsController extends printController
         parent::_new();
 
         $stitem = $this->_uses[$this->modeltype];
-        
+
         // Set values for comp_class when editing and existing item
         if ($stitem->comp_class !== '' && $stitem->comp_class !== null) {
             $comp_class = $stitem->comp_class;
@@ -81,7 +81,7 @@ class StitemsController extends printController
         }
 
         $sttypes = $this->getTypesByCompClass($comp_class);
-        
+
         // Revert to previous comp_class and type_code_id selections When reloading the form after a failed save
         $_POST[$this->modeltype]['comp_class'] = $comp_class;
         $_POST[$this->modeltype]['type_code_id'] = $stitem->type_code_id;
@@ -134,7 +134,7 @@ class StitemsController extends printController
 
         $data = $this->_data[$this->modeltype];
 
-        $data['item_code'] = strtoupper($data['item_code']);
+        $data['item_code'] = strtoupper((string) $data['item_code']);
 
         $update_cost = FALSE;
 
@@ -181,7 +181,7 @@ class StitemsController extends printController
                 $total_costs = count($old_costs);
 
                 for ($i = 0; $i < $total_costs; $i ++) {
-                    if (bccomp($old_costs[$i], $new_costs[$i], $stitem->cost_decimals) != 0) {
+                    if (bccomp($old_costs[$i], (string) $new_costs[$i], $stitem->cost_decimals) != 0) {
                         $update_cost = true;
                         break;
                     }
@@ -212,7 +212,7 @@ class StitemsController extends printController
         }
 
         if ((! $update_cost) && ($stitem->isLoaded())) {
-            $update_cost = (($data['uom_id'] != $stitem->uom_id) || ($data['cost_decimals'] != $stitem->cost_decimals) || ($data['comp_class'] != $stitem->comp_class) || ((strlen($data['obsolete_date']) > 0) && (fix_date($data['obsolete_date']) != $stitem->obsolete_date)));
+            $update_cost = (($data['uom_id'] != $stitem->uom_id) || ($data['cost_decimals'] != $stitem->cost_decimals) || ($data['comp_class'] != $stitem->comp_class) || ((strlen((string) $data['obsolete_date']) > 0) && (fix_date($data['obsolete_date']) != $stitem->obsolete_date)));
         }
 
         if (parent::save($this->modeltype, $data, $errors)) {
@@ -297,7 +297,7 @@ class StitemsController extends printController
 
         $original_id = $stitem->id;
 
-        $this->_data[$this->modeltype]['item_code'] = strtoupper($this->_data[$this->modeltype]['item_code']);
+        $this->_data[$this->modeltype]['item_code'] = strtoupper((string) $this->_data[$this->modeltype]['item_code']);
 
         if ($this->_data[$this->modeltype]['copy_so_product_prices'] == 'on' && ! isset($this->_data[$this->modeltype]['copy_so_products'])) {
             $errors[] = 'Cannot copy prices without product';
@@ -341,8 +341,8 @@ class StitemsController extends printController
             $hasmany = $stitem->getHasMany();
 
             foreach ($this->_data[$this->modeltype] as $key => $value) {
-                if (substr($key, 0, 5) == 'copy_' && isset($hasmany[substr($key, 5)])) {
-                    $do_name = $hasmany[substr($key, 5)]['do'];
+                if (substr((string) $key, 0, 5) == 'copy_' && isset($hasmany[substr((string) $key, 5)])) {
+                    $do_name = $hasmany[substr((string) $key, 5)]['do'];
                     $do = DataObjectFactory::Factory($do_name);
 
                     $cc = new ConstraintChain();
@@ -659,7 +659,7 @@ class StitemsController extends printController
                         'stitem_id' => $id
                     )
                 );
-            
+
             $sidebar->addList('Stucture and Operations', $sidebarlist);
         }
 
@@ -696,14 +696,14 @@ class StitemsController extends printController
                     'controller' => 'attachments',
                     'action' => 'index',
                     'entity_id' => $id,
-                    'data_model' => strtolower($this->modeltype)
+                    'data_model' => strtolower((string) $this->modeltype)
                 ),
                 'new' => array(
                     'modules' => $this->_modules,
                     'controller' => 'attachments',
                     'action' => 'new',
                     'entity_id' => $id,
-                    'data_model' => strtolower($this->modeltype)
+                    'data_model' => strtolower((string) $this->modeltype)
                 )
             )
         ));
@@ -1993,7 +1993,7 @@ class StitemsController extends printController
 		$cc->add(new Constraint('active', 'is', true));
 		$sh->addConstraintChain($cc);
 		$types->load($sh);
-	
+
 		$options = [];
 		foreach ($types as $type){
 			$options[$type->id] = $type->getIdentifierValue();
@@ -2004,7 +2004,7 @@ class StitemsController extends printController
         if (count($options) == 0) {
             $options = ['' => 'None'];
         }
-		
+
 		if (isset($this->_data['ajax'])) {
 			$this->view->set('options', $options);
 			$this->setTemplateName('select_options');
@@ -2012,7 +2012,7 @@ class StitemsController extends printController
 			return $options;
 		}
     }
-    
+
     /**
      * Sidebar action 'Produce Kit'
      * 

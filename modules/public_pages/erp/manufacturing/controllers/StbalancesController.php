@@ -40,7 +40,7 @@ class StbalancesController extends Controller {
 	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('STBalance');
-		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],$_SESSION['refererPage']['other'] ?? null);
 	}
 	
 	public function save($modelName = null, $dataIn = [], &$errors = []) : bool {

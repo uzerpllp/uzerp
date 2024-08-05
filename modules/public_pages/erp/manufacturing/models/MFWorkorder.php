@@ -10,7 +10,7 @@ class MFWorkorder extends DataObject
 {
 
 	protected $version='$Revision: 1.19 $';
-	
+
 	protected $defaultDisplayFields = array('wo_number'
 											,'order_qty'
 											,'item_code'
@@ -22,13 +22,13 @@ class MFWorkorder extends DataObject
 											,'stitem_id'
 											,'data_sheet_id'
 											);
-	
+
 	protected $hasAttachmentOutputs = ['tag' => 'workorder', 'name' => 'Work Orders', ];
-											
+
 	function __construct($tablename='mf_workorders')
 	{
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
@@ -37,9 +37,9 @@ class MFWorkorder extends DataObject
 		$this->identifierField='wo_number';
 		$this->orderby='required_by';
 		$this->orderdir='desc';
-		
+
 // Define validation
-		
+
 // Define relationships
 		$st_filter = new ConstraintChain();
         $st_filter->add(new Constraint('obsolete_date', 'is', 'NULL'));
@@ -50,11 +50,11 @@ class MFWorkorder extends DataObject
 		$this->belongsTo('MFDataSheet', 'data_sheet_id', 'data_sheet'); 
 		$this->belongsTo('SOrder', 'order_id', 'order_number', null, array('order_number', 'customer', 'person'));
 		$this->belongsTo('SOrderLine', 'orderline_id', 'order_line', null, array('line_number', 'description'));
-		
+
 		$this->hasMany('MFWOStructure', 'structureitems', 'work_order_id'); 
 		$this->hasMany('STTransaction', 'transactions', 'process_id'); 
 		$this->hasMany('POrderLine', 'purchases', 'mf_workorders_id');
-		
+
 		$this->hasOne('STItem', 'stitem_id', 'stock_item'); 
 
 // Define field formats
@@ -63,13 +63,13 @@ class MFWorkorder extends DataObject
 
 // Define system defaults
 		$this->getField('status')->setDefault('N');
-				
+
 // Define enumerated types
 		$this->setEnum('status',array('N'=>'New'
 									 ,'R'=>'Released'
 									 ,'O'=>'Open'
 									 ,'C'=>'Complete'));
-		
+
 // Define link rules including disallowing links
 		// disallow adding new structure items and transactions
 		$this->linkRules=array('structureitems'=>array('actions'=>array()
@@ -86,19 +86,19 @@ class MFWorkorder extends DataObject
 											 , 'label' => 'Outside OP Purchases'
 									  )
 							);
-									 
+
 	}
-	
+
 	static function Factory($data, &$errors = [], $do = null)
 	{
 		if (!isset($data['id']) || $data['id']=='')
 		{
-		
+
 			$generator = new MFWorkorderNumberHandler();
 			$data['wo_number'] = $generator->handle(new $do);
-		
+
 		}
-		
+
 		return parent::Factory($data, $errors, $do);
 
 	}
@@ -115,9 +115,9 @@ class MFWorkorder extends DataObject
 		{
 			$where = $field->__toString()." AND ";
 		}
-		
+
 		$where .="status!='C' AND order_qty>made_qty";
-		
+
 		if ($type=='All')
 		{
 			$query="SELECT stitem_id
@@ -138,11 +138,11 @@ class MFWorkorder extends DataObject
 						 	  , stitem
 						 	  , required_by";
 		}
-		
+
 		$query=$query." WHERE ".$where.$groupBy;
-		
+
 		$result=$db->Execute($query);
-		
+
 		if (!$result)
 		{
 			return false;
@@ -156,12 +156,12 @@ class MFWorkorder extends DataObject
 	function outstandingQty()
 	{
 		$osqty=$this->order_qty-$this->made_qty;
-		
+
 		if ($osqty<0)
 		{
 			$osqty=0;
 		}
-		
+
 		return $osqty;
 	}
 
@@ -169,16 +169,16 @@ class MFWorkorder extends DataObject
 	{
 		return InjectorClass::unserialize($this->documentation);
 	}
-	
+
 	function getUomList ($stitem_id)
 	{
 		$stitem = DataObjectFactory::Factory('STItem');
-		
+
 		if ($this->isLoaded() && empty($stitem_id))
 		{
 			$stitem_id=$this->stitem_id;
 		}
-		
+
 		if (empty($stitem_id))
 		{
 			return '';

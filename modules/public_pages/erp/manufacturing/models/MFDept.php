@@ -11,7 +11,7 @@ class MFDept extends DataObject {
 	
 	function __construct($tablename='mf_depts') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
@@ -24,7 +24,7 @@ class MFDept extends DataObject {
  		
 // Define relationships
  		$this->hasMany('MFCentre','centres','mfdept_id');
- 		
+
 // Define field formats
 
 // Define enumerated types

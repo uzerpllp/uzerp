@@ -176,7 +176,7 @@ class MfworkordersController extends ManufacturingController
 					// not extend another model
 					$model = new $document->class_name($this);
 					$docname = rand().'.pdf';
-					
+
 					$args = array(
 						'model'				=>	$worksorder,
 						'data'				=>	$data,
@@ -260,7 +260,7 @@ class MfworkordersController extends ManufacturingController
 		// We only want non-archived projects
 		$projects = Project::getLiveProjects();
 		$this->view->set('projects', $projects);
-		
+
 
 		$order_id = (empty($this->_data['order_id']))?'':$this->_data['order_id'];
 
@@ -622,7 +622,7 @@ class MfworkordersController extends ManufacturingController
 					sendTo($_SESSION['refererPage']['controller']
 						  ,$_SESSION['refererPage']['action']
 						  ,$_SESSION['refererPage']['modules']
-						  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+						  ,$_SESSION['refererPage']['other'] ?? null);
 				}
 				else
 				{
@@ -631,7 +631,7 @@ class MfworkordersController extends ManufacturingController
 					sendTo($_SESSION['refererPage']['controller']
 						  ,$_SESSION['refererPage']['action']
 						  ,$_SESSION['refererPage']['modules']
-						  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+						  ,$_SESSION['refererPage']['other'] ?? null);
 				}
 			}
 
@@ -642,7 +642,7 @@ class MfworkordersController extends ManufacturingController
 				sendTo($_SESSION['refererPage']['controller']
 					  ,$_SESSION['refererPage']['action']
 					  ,$_SESSION['refererPage']['modules']
-					  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+					  ,$_SESSION['refererPage']['other'] ?? null);
 			}
 
 			$this->view->set('id', $this->_data['id']);
@@ -655,7 +655,7 @@ class MfworkordersController extends ManufacturingController
 			sendTo($_SESSION['refererPage']['controller']
 				  ,$_SESSION['refererPage']['action']
 				  ,$_SESSION['refererPage']['modules']
-				  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+				  ,$_SESSION['refererPage']['other'] ?? null);
 		}
 	}
 
@@ -931,7 +931,7 @@ class MfworkordersController extends ManufacturingController
 		if (count($errors)==0)
 		{
 			$worksorder->status		= 'O';
-			$worksorder->made_qty	= bcadd($worksorder->made_qty, trim($data['book_qty']), 0);
+			$worksorder->made_qty	= bcadd($worksorder->made_qty, trim((string) $data['book_qty']), 0);
 
 			// Mark complete when total booking is equal or greater than the order quantity.
 			if ($worksorder->made_qty >= $worksorder->order_qty && $this->module_prefs['complete-wo-full'] === 'on') {
@@ -969,7 +969,7 @@ class MfworkordersController extends ManufacturingController
 				sendTo($_SESSION['refererPage']['controller']
 					  ,$_SESSION['refererPage']['action']
 					  ,$_SESSION['refererPage']['modules']
-					  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+					  ,$_SESSION['refererPage']['other'] ?? null);
 			}
 			else
 			{
@@ -1193,7 +1193,7 @@ class MfworkordersController extends ManufacturingController
 		// If this is a post request, check that the user
 		// has selected some documents to print
 		$request = $this->_injector->getRequest();
-		if ( strtolower($request->getMethod()) == 'post' && !isset($this->_data['doc_selection'])) {
+		if ( strtolower((string) $request->getMethod()) == 'post' && !isset($this->_data['doc_selection'])) {
 		    $flash->addError('No document selected for output');
 		    sendBack();
 		}
@@ -1326,8 +1326,8 @@ class MfworkordersController extends ManufacturingController
 		else
 		{
 // if this is Save and Add Another then need to get $_POST values to set context
-			$_stitem_id			= isset($_POST[$modeltype]['stitem_id'])?$_POST[$modeltype]['stitem_id']:$_stitem_id;
-			$_from_location_id	= isset($_POST[$modeltype]['from_whlocation_id'])?$_POST[$modeltype]['from_whlocation_id']:'';
+			$_stitem_id			= $_POST[$modeltype]['stitem_id'] ?? $_stitem_id;
+			$_from_location_id	= $_POST[$modeltype]['from_whlocation_id'] ?? '';
 		}
 
 		// store the ajax status in a different var, then unset the current one
@@ -1779,15 +1779,15 @@ class MfworkordersController extends ManufacturingController
             {
                 $file = DataObjectFactory::Factory('File');
                 $file->load($attachment->id);
-                
+
                 $db = &DB::Instance();
-                
+
                 $content =$db->BlobDecode($file->file, $file->size); 
 
                 $tpaths = $this->get_paths('123', 'pdf');
                 $fhandle = fopen($tpaths['temp_file_path'], 'w');
 
-                fwrite($fhandle, $content);
+                fwrite($fhandle, (string) $content);
                 fclose($fhandle);
 
                 $attachment_paths[] = $tpaths['temp_file_path'];

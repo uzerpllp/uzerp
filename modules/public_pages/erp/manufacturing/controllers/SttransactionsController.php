@@ -137,7 +137,7 @@ class SttransactionsController extends ManufacturingController {
 		$link='';
 		switch ($transaction->process_name) {
 			case 'D':
-				$despatchline=new SOdespatchline();
+				$despatchline=new SODespatchLine();
 				$despatchline->loadBy('despatch_number', $transaction->process_id);
 				if ($despatchline->isLoaded()) {
 					$link='"module":"despatch"
@@ -428,8 +428,8 @@ class SttransactionsController extends ManufacturingController {
 			if(!empty($this->_data['to_whlocation_id'])) { $_to_location_id=$this->_data['to_whlocation_id']; }
 		} else {
 // if this is Save and Add Another then need to get $_POST values to set context
-			$_stitem_id=isset($_POST[$this->modeltype]['stitem_id'])?$_POST[$this->modeltype]['stitem_id']:'';
-			$_from_location_id=isset($_POST[$this->modeltype]['from_whlocation_id'])?$_POST[$this->modeltype]['from_whlocation_id']:'';
+			$_stitem_id=$_POST[$this->modeltype]['stitem_id'] ?? '';
+			$_from_location_id=$_POST[$this->modeltype]['from_whlocation_id'] ?? '';
 		}
 //		echo '$_stitem_id='.$_stitem_id.'<br>';
 		// store the ajax status in a different var, then unset the current one

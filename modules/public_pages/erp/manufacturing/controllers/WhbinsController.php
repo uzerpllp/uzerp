@@ -25,9 +25,9 @@ class WhbinsController extends printController
 	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 		$errors = array();
-		
+
 		$s_data = array();
-		
+
 		$whlocation = DataObjectFactory::Factory('WHLocation');
 
 // Set context from calling module
@@ -35,25 +35,25 @@ class WhbinsController extends printController
 		{
 			$s_data['whlocation_id'] = $this->_data['whlocation_id'];
 		}
-		
+
 		$this->setSearch('whbinsSearch', 'useDefault', $s_data);
 
 		$whlocation_id = $this->search->getValue('whlocation_id');
-		
+
 		if (isset($whlocation_id))
 		{
 			$whlocation->load($whlocation_id);
 		}
-		
+
 		$this->view->set('whlocation', $whlocation);
 		$this->view->set('clickaction', 'view');
-		
+
 		parent::index(new WHBinCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebarlist = array();
-		
+
 		$sidebarlist['all_stores'] = array('tag' => 'all stores'
 										  ,'link'=>array('modules'=>$this->_modules
 														,'controller'=>'WHLocations'
@@ -76,11 +76,11 @@ class WhbinsController extends printController
 														)
 									);
 		$sidebar->addList('Show',$sidebarlist);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 		$this->view->set('page_title', $this->getPageName('Location','View Bins for'));
-		
+
 	}
 
 	public function view()
@@ -96,9 +96,9 @@ class WhbinsController extends printController
 		$transaction = $this->_uses[$this->modeltype];
 		
 		$this->view->set('transaction',$transaction);
-		
+
 		$whlocation = $this->getLocation($transaction->whlocation_id);
-		
+
 		$sidebar = new SidebarController($this->view);
 
 		$sidebarlist = $this->setGeneralSidebar($whlocation, $transaction);
@@ -152,7 +152,7 @@ class WhbinsController extends printController
 		$transaction	= $this->_uses[$this->modeltype];
 		
 		$s_data = array();
-		
+
 		if (isset($this->_data['id']))
 		{
 			$s_data['whbin_id'] = $this->_data['id'];
@@ -161,7 +161,7 @@ class WhbinsController extends printController
 		{
 			$s_data['whbin_id'] = $id = $this->_data['Search']['whbin_id'];
 		}
-			
+
 		if (isset($this->_data['stitem_id']))
 		{
 			$s_data['stitem_id'] = $this->_data['stitem_id'];
@@ -172,13 +172,13 @@ class WhbinsController extends printController
 		}
 
 		$this->setSearch('whbinsSearch', 'withinBin', $s_data);
-		
+
 		$this->view->set('transaction',$transaction);
 
 		$stbalances = new STBalanceCollection();
-		
+
 		$sh = $this->setSearchHandler($stbalances);
-		
+
 		$sh->setOrderby('stitem');
 		
 		parent::index($stbalances, $sh);
@@ -191,7 +191,7 @@ class WhbinsController extends printController
 		$this->view->set('page_title',$this->getPageName('','View Balances for'));
 		
 		$sidebar = new SidebarController($this->view);
-		
+
 		$whlocation = $this->getLocation($transaction->whlocation_id);
 		
 		$sidebarlist = $this->setGeneralSidebar($whlocation, $transaction);
@@ -199,7 +199,7 @@ class WhbinsController extends printController
 		$sidebar->addList('Show', $sidebarlist);
 
 		$sidebarlist = array();
-		
+
 		$sidebarlist['balances']= array(
 					'tag' => 'Stock Balances',
 					'link' => array('modules'=>$this->_modules
@@ -211,7 +211,7 @@ class WhbinsController extends printController
 								   ,'whbin_id'=>$id
 								   )
 							);
-		
+
 		$sidebar->addList('Reports', $sidebarlist);
 		
         $this->view->register('sidebar',$sidebar);
@@ -221,7 +221,7 @@ class WhbinsController extends printController
 	public function viewTransactions()
 	{
 		$s_data = array();
-		
+
 		if (isset($this->_data['id']))
 		{
 			$s_data['whbin_id'] = $id = $this->_data['id'];
@@ -230,7 +230,7 @@ class WhbinsController extends printController
 		{
 			$s_data['whbin_id'] = $id = $this->_data['Search']['whbin_id'];
 		}
-		
+
 		if (isset($this->_data['stitem_id']))
 		{
 			$s_data['stitem_id'] = $this->_data['stitem_id'];
@@ -239,23 +239,23 @@ class WhbinsController extends printController
 		{
 			$s_data['stitem_id'] = $this->_data['Search']['stitem_id'];
 		}
-		
+
 		if (!isset($this->_data['stitem_id']))
 		{
 			$s_data['created']['from']	= date(DATE_FORMAT,strtotime('-7 days'));
 			$s_data['created']['to']	= date(DATE_FORMAT);
 		}
-		
+
 		$this->setSearch('whbinsSearch', 'transactions', $s_data);
 		
 		$id				= $this->search->getValue('whbin_id');
 		$item			= $this->search->getValue('stitem_id');
 		$showbalances	= $this->search->getValue('balance');
-		
+
 		$bin = $this->_templateobject;
 		$bin->load($id);
 		$this->view->set('bin',$bin);
-		
+
 		$sttransactions = new STTransactionCollection();
 		
 		if (!isset($this->_data['orderby'])
@@ -269,9 +269,9 @@ class WhbinsController extends printController
 		{
 			$sh = new SearchHandler($sttransactions);
 		}
-		
+
 		$sh->extract();
-		
+
 		if (isset($this->search) && ($this->isPrintDialog() || $this->isPrinting()) )
 		{
 			if(!$this->isPrinting())
@@ -289,9 +289,9 @@ class WhbinsController extends printController
 		{
 			$sttransactions->load($sh);
 		}
-		
+
 		$this->view->set('sttransactions',$sttransactions);
-		
+
 		$this->view->set('clickaction','view');
 		$this->view->set('clickcontroller','STItems');
 		$this->view->set('linkfield','id');
@@ -303,7 +303,7 @@ class WhbinsController extends printController
 		$this->view->set('page_title',$this->getPageName('','View Transactions for'));
 		
 		$sidebar = new SidebarController($this->view);
-		
+
 		$whlocation = $this->getLocation($bin->whlocation_id);
 		
 		$sidebarlist = $this->setGeneralSidebar($whlocation, $bin);
@@ -317,18 +317,18 @@ class WhbinsController extends printController
 	protected function getLocation($whlocation_id)
 	{
 		$whlocation = DataObjectFactory::Factory('WHLocation');
-		
+
 		$whlocation->load($whlocation_id);
-		
+
 		$this->view->set('whstore', $whlocation->whstore);
-		
+
 		return $whlocation;
 	}
 
 	protected function setGeneralSidebar ($whlocation, $bin)
 	{
 		$sidebarlist = array();
-		
+
 		$sidebarlist['allStores'] = array(
 					'tag'	=> 'All Stores',
 					'link'	=> array('modules'		=> $this->_modules
@@ -352,7 +352,7 @@ class WhbinsController extends printController
 								 	,'id'			=> $bin->whlocation_id
 								 	)
 							);
-		
+
 		return $sidebarlist;
 	}
 

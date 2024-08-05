@@ -13,7 +13,7 @@ class WHBin extends DataObject {
 
 	function __construct($tablename='wh_bins') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
@@ -21,13 +21,13 @@ class WHBin extends DataObject {
 		$this->idField='id';
 		$this->identifierField="bin_code ||'-'|| description";		
 		$this->orderby='bin_code';
-		
+
  		$this->validateUniquenessOf(array('whlocation_id','bin_code'));
- 		
+
 // Define relationships
  		$this->belongsTo('WHLocation', 'whlocation_id', 'whlocation'); 
  		$this->hasMany('STBalance', 'balances', 'whbin_id'); 
- 		
+
 // Define field formats
 
 // Define enumerated types

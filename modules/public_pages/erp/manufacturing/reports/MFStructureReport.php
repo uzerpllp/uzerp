@@ -20,7 +20,7 @@ class MFStructureReport extends WOReport
     {
         $xsl = 'MF_StructureReport';
         $this->reportSetup($args, $xsl);
-        return json_decode($this->controller->generate_output($this->data, $this->options));
+        return json_decode((string) $this->controller->generate_output($this->data, $this->options));
     }
 }
 ?>

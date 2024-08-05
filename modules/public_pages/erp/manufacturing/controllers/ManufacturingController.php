@@ -36,7 +36,7 @@ class ManufacturingController extends printController {
 			sendTo($_SESSION['refererPage']['controller']
 				  ,$_SESSION['refererPage']['action']
 				  ,$_SESSION['refererPage']['modules']
-				  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+				  ,$_SESSION['refererPage']['other'] ?? null);
 		}
 		$flash->addErrors($errors);
 		$flash->addError('Failed to save '.$this->modeltype);
@@ -95,7 +95,7 @@ class ManufacturingController extends printController {
 			$_POST[$this->modeltype]['balance']='';
 			$this->refresh();
 		} else {
-			sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+			sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],$_SESSION['refererPage']['other'] ?? null);
 		}
 
 	}

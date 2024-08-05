@@ -20,6 +20,6 @@ class WOOperationsReport extends WOReport
     {
         $xsl = 'wo_operations';
         $this->reportSetup($args, $xsl);
-        return json_decode($this->controller->generate_output($this->data, $this->options));
+        return json_decode((string) $this->controller->generate_output($this->data, $this->options));
     }
 }

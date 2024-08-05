@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -138,13 +138,13 @@ class MfcentresController extends ManufacturingController
 		}
 		$db->CompleteTrans();
 		if (count($errors) == 0) {;
-			sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+			sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],$_SESSION['refererPage']['other'] ?? null);
 		} else {
 			$flash->addErrors($errors);
 			$this->_data['mfdept_id']=$this->_data[$this->modeltype]['mfdept_id'];
 			$this->refresh();
 		}
-		
+
 	}
 	
 	public function view() {

@@ -528,7 +528,7 @@ class MfstructuresController extends printController
 			$db->FailTrans();
 		}
 
-		$timestamp = strtotime(fix_date($this->_data[$this->modeltype]['start_date']));
+		$timestamp = strtotime((string) fix_date($this->_data[$this->modeltype]['start_date']));
 		// 86400 = 24 hours
 		$timestamp -= 86400;
 
@@ -658,7 +658,7 @@ class MfstructuresController extends printController
             'report' => 'ItemPreorderList'
         );
 
-        if (strtolower($status) == "dialog") {
+        if (strtolower((string) $status) == "dialog") {
             return $options;
 		}
 
@@ -682,7 +682,7 @@ class MfstructuresController extends printController
 		));
 
 		echo $this->generate_output($this->_data['print'], $options);
-		
+
 		exit();
 	}
 
@@ -871,7 +871,7 @@ class MfstructuresController extends printController
 
 		$items_list = array();
 
-		if (!preg_match('#^(\d{1,2})/(\d{1,2})/(\d{4})$#', $_date, $regs))
+		if (!preg_match('#^(\d{1,2})/(\d{1,2})/(\d{4})$#', (string) $_date, $regs))
 		{
 			$items_list = STItem::nonObsoleteItems();
 		}

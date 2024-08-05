@@ -10,7 +10,7 @@ class whlocationsSearch extends BaseSearch
 {
 
 	protected $version='$Revision: 1.10 $';
-	
+
 	public static function useDefault(&$search_data=null, &$errors=array(), $defaults=null)
 	{
 		$search = new whlocationsSearch($defaults);
@@ -30,7 +30,7 @@ class whlocationsSearch extends BaseSearch
 		$search->setSearchData($search_data,$errors);
 		return $search;
 	}
-		
+
 	public static function withinLocation(&$search_data=null, &$errors=array(), $defaults=null)
 	{
 		$search = new whlocationsSearch($defaults);
@@ -69,7 +69,7 @@ class whlocationsSearch extends BaseSearch
 		$search->setSearchData($search_data,$errors,'withinLocation');
 		return $search;
 	}
-		
+
 	public static function transactions(&$search_data=null, &$errors=array(), $defaults=null)
 	{
 		$search = new whlocationsSearch($defaults);
@@ -104,7 +104,7 @@ class whlocationsSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 		$search->setSearchData($search_data,$errors,'transactions');
 		return $search;
 	}
@@ -112,14 +112,14 @@ class whlocationsSearch extends BaseSearch
 	public function toConstraintChain()
 	{
 		$cc = new ConstraintChain();
-		
+
 		if($this->cleared)
 		{
 			return $cc;
 		}
-		
+
 		debug('BaseSearch::toConstraintChain Fields: '.print_r($this->fields, true));
-		
+
 		foreach($this->fields as $group)
 		{
 			foreach($group as $field=>$searchField)
@@ -127,18 +127,18 @@ class whlocationsSearch extends BaseSearch
 				if ($field=='balance')
 				{
 					$cc1 = new ConstraintChain();
-					
+
 					if ($searchField->getValue()=='')
 					{
 						$cc1->add(new Constraint('balance', '>', '0'));
 					}
-					
+
 					$cc->add($cc1);
 				}
 				elseif ($field!='parent_id' && $field!='search_id')
 				{
 					$c = $searchField->toConstraint();
-					
+
 					if($c!==false)
 					{
 						$cc->add($c);
@@ -147,7 +147,7 @@ class whlocationsSearch extends BaseSearch
 			}
 		}
 		debug('BaseSearch::toConstraintChain Constraints: '.print_r($cc, true));
-		
+
 		return $cc;
 	}
 }

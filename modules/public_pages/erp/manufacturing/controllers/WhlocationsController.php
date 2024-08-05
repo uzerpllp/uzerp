@@ -440,7 +440,7 @@ class WhlocationsController extends printController
 		);
 		
 		// construct the document, caputre the response
-		$response = json_decode($this->constructOutput($this->_data, $options));
+		$response = json_decode((string) $this->constructOutput($this->_data, $options));
 	
 		// output success / failure message
 		if ($response->status !== TRUE)

@@ -470,7 +470,7 @@ class STItem extends DataObject
     			$cost *= (100 / $operation->uptime_target);
 
 				$cost /= $operation->volume_target;
-				
+
 				// Divide by batch size before unit-of-measure conversion.
 			    // Batch size is in the item's UOM.
 			    if ($operation->type == 'B' && (!is_null($this->batch_size) || $this->batch_size > 0)) {
@@ -1172,7 +1172,7 @@ class STItem extends DataObject
 			}
 			$cc->add($type_cc);
 		}
-		
+
 		$cc->add(new Constraint('stitem_id', '=', $this->id));
 
 		$db = DB::Instance();
@@ -1691,7 +1691,7 @@ class STItem extends DataObject
 			$data['stitem_id'] = $this->id;
 			$data['process_name'] = 'KP';
 			$data['process_id'] = $this->id;
-			
+
 			if (MFStructure::backflush($data, $bom, $errors) !== true) {
 				// Email admin about the error(s)
 				$body = "STItem::produceKit\n"
@@ -1705,7 +1705,7 @@ class STItem extends DataObject
 				{
 					$body.=$error."\n";
 				}
-		
+
 				system_email('uzERP, Critical Error backflusing kit', $body, $errors);
 				$errors[] = 'Critical Error backflusing kit';
 			}

@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,7 +9,7 @@ class mfdeptsSearch extends BaseSearch
 {
 
 	protected $version='$Revision: 1.5 $';
-	
+
 	public static function useDefault(&$search_data=null, &$errors=array(), $defaults=null)
 	{
 		$search = new mfdeptsSearch($defaults);
@@ -29,7 +29,7 @@ class mfdeptsSearch extends BaseSearch
 		$search->setSearchData($search_data,$errors);
 		return $search;
 	}
-		
+
 }
 
 // End of mfdeptsSearch

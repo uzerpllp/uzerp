@@ -25,7 +25,7 @@ class WHLocation extends DataObject
 	function __construct($tablename = 'wh_locations')
 	{
 // Register non-persistent attributes
-		
+
 // Construct the object
 		parent::__construct($tablename);
 
@@ -33,18 +33,18 @@ class WHLocation extends DataObject
 		$this->idField			= 'id';
 		$this->identifierField	= "location ||'-'|| description";		
 		$this->orderby			= 'location';
-		
+
 // Define validation
 		$this->validateUniquenessOf(array('whstore_id','location'));
 		$this->addValidator(new fkFieldCombinationValidator('GLAccountCentre', array('glaccount_id'=>'glaccount_id', 'glcentre_id'=>'glcentre_id')));
- 		
+
 // Define relationships
  		$this->belongsTo('WHStore', 'whstore_id', 'whstore'); 
  		$this->belongsTo('GLAccount', 'glaccount_id', 'glaccount'); 
  		$this->belongsTo('GLCentre', 'glcentre_id', 'glcentre'); 
  		$this->hasMany('WHBin', 'bins', 'whlocation_id');
  		$this->hasMany('STBalance', 'balances', 'whlocation_id');
- 		
+
 // Define field formats
 
 // Define enumerated types

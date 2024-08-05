@@ -10,7 +10,7 @@ class whbinsSearch extends BaseSearch
 {
 
 	protected $version='$Revision: 1.9 $';
-	
+
 	public static function useDefault(&$search_data=null, &$errors=array(), $defaults=null)
 	{
 		$search = new whbinsSearch($defaults);
@@ -24,7 +24,7 @@ class whbinsSearch extends BaseSearch
 			'hidden'
 			);
 		$search->setSearchData($search_data,$errors);
-			
+
 // Search by Bin Id
 		$search->addSearchField(
 			'id',
@@ -34,7 +34,7 @@ class whbinsSearch extends BaseSearch
 			'basic'
 			);
 		$options = array(''=>'All');
-		
+
 		if (isset($search_data['whlocation_id']))
 		{
 			$bin = DataObjectFactory::Factory('WHBin');
@@ -43,11 +43,11 @@ class whbinsSearch extends BaseSearch
 			$bins = $bin->getAll($cc);
 			$options+=$bins;
 		}
-		
+
 		$search->setOptions('id', $options);
-		
+
 		$search->setSearchData($search_data,$errors);
-		
+
 		return $search;
 	}
 
@@ -124,7 +124,7 @@ class whbinsSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 		$search->setSearchData($search_data,$errors,'transactions');
 		return $search;
 	}
@@ -132,14 +132,14 @@ class whbinsSearch extends BaseSearch
 	public function toConstraintChain()
 	{
 		$cc = new ConstraintChain();
-		
+
 		if($this->cleared)
 		{
 			return $cc;
 		}
-		
+
 		debug('BaseSearch::toConstraintChain Fields: '.print_r($this->fields, true));
-		
+
 		foreach($this->fields as $group)
 		{
 			foreach($group as $field=>$searchField)
@@ -147,18 +147,18 @@ class whbinsSearch extends BaseSearch
 				if ($field=='balance')
 				{
 					$cc1 = new ConstraintChain();
-					
+
 					if ($searchField->getValue()=='')
 					{
 						$cc1->add(new Constraint('balance', '>', '0'));
 					}
-					
+
 					$cc->add($cc1);
 				}
 				elseif ($field!='parent_id' && $field!='search_id')
 				{
 					$c = $searchField->toConstraint();
-					
+
 					if($c!==false)
 					{
 						$cc->add($c);
@@ -167,7 +167,7 @@ class whbinsSearch extends BaseSearch
 			}
 		}
 		debug('BaseSearch::toConstraintChain Constraints: '.print_r($cc, true));
-		
+
 		return $cc;
 	}
 

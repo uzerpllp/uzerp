@@ -10,7 +10,7 @@ class sttransactionsSearch extends BaseSearch
 {
 
 	protected $version='$Revision: 1.8 $';
-	
+
 	public static function useDefault(&$search_data=null, &$errors=array(), $defaults=null)
 	{
 		$search = new sttransactionsSearch($defaults);
@@ -42,7 +42,7 @@ class sttransactionsSearch extends BaseSearch
 		$statuses = $transaction->getEnumOptions('status');
 		$options += $statuses;
 		$search->setOptions('status', $options);
-			
+
 // Search by Location
 		$search->addSearchField(
 			'whlocation_id',
@@ -56,7 +56,7 @@ class sttransactionsSearch extends BaseSearch
 		$whlocations = $whlocation->getLocationList();
 		$options += $whlocations;
 		$search->setOptions('whlocation_id', $options);
-			
+
 // Search by Process
 		$search->addSearchField(
 			'process_name',
@@ -69,7 +69,7 @@ class sttransactionsSearch extends BaseSearch
 		$statuses = $transaction->getEnumOptions('process_name');
 		$options += $statuses;
 		$search->setOptions('process_name', $options);
-					
+
 // Search by Date
 		$search->addSearchField(
 			'created',

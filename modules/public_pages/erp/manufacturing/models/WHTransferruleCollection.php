@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -26,9 +26,9 @@ class WHTransferruleCollection extends DataObjectCollection {
 		
 		$this->load($sh);
 		return $this->getAssoc();
-				
+
 	}
-		
+
 	function getToLocations($whaction_id, $from_whlocation_id)
 	{
 		

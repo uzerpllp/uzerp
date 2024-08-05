@@ -91,7 +91,7 @@ class WHtransfersController extends Controller {
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		
-		if (strtolower($this->_data['saveform'])=='cancel') {
+		if (strtolower((string) $this->_data['saveform'])=='cancel') {
 			$flash->addMessage('Action cancelled');
 			sendTo($this->name
                       ,'index'

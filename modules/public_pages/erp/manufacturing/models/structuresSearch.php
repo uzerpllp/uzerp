@@ -9,7 +9,7 @@
 class structuresSearch extends BaseSearch {
 
 	protected $version='$Revision: 1.7 $';
-	
+
 	public static function useDefault($search_data=null, &$errors=array(), $defaults=null) {
 		$search = new structuresSearch($defaults);
 // Search by Stock Item
@@ -49,7 +49,7 @@ class structuresSearch extends BaseSearch {
 		$search->setSearchData($search_data,$errors);
 		return $search;
 	}
-		
+
 }
 
 // End of structuresSearch

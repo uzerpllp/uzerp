@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -15,7 +15,7 @@ class Tree implements IteratorAggregate {
 		$this->array = $array;
 		$this->show = $show;
 	}
-	public function getIterator() {
+	public function getIterator(): Traversable {
 		$array_iterator = new RecursiveArrayIterator($this->array);
 		$mode = $this->show;
 		switch ($this->show) {
