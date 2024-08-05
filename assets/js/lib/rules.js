@@ -494,9 +494,6 @@ $(document).ready(function () {
 				highlight	: false,
 				complete	: function() {
 					check_if_table_needs_scroll_bar();	
-					
-					drag_drop_fields();
-						
 				}
 			});
 			
@@ -504,7 +501,14 @@ $(document).ready(function () {
 		
 	});
 	
+	// Set-up drag and drop on page load
 	drag_drop_fields();
+
+	// Set-up drag and drop after ajax replaces the data section
+	$(document).on('change','#included_file', function(){
+		drag_drop_fields();
+	});
+
 		
 	// breadcrumb automatic search
 	$(document).on('change', '.uz_breadcrumbs select', function () {
