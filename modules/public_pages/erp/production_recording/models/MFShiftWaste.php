@@ -18,19 +18,19 @@ class MFShiftWaste extends DataObject
 	function __construct($tablename = 'mf_shift_waste')
 	{
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
 // Set specific characteristics
 		$this->idField = 'id';
- 		
+
 // Define relationships
  		$this->belongsTo('MFShift', 'mf_shift_id', 'shift');
  		$this->belongsTo('MFCentreWasteType', 'mf_centre_waste_type_id', 'waste_type');
  		$this->hasOne('MFShift', 'mf_shift_id', 'shift_detail');
  		$this->hasOne('MFCentreWasteType', 'mf_centre_waste_type_id', 'centre_waste');
- 		
+
 // Define field formats
 
 // Define enumerated types

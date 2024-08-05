@@ -22,7 +22,7 @@ class MFShift extends DataObject
 	function __construct($tablename = 'mf_shifts')
 	{
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
@@ -33,7 +33,7 @@ class MFShift extends DataObject
 		
 		$this->identifierField='shift|| \'- \' ||shift_date|| \': \' ||mf_dept|| \': \' ||mf_centre';
  		$this->validateUniquenessOf(array('shift', 'shift_date', 'mf_dept_id', 'mf_centre_id'));
- 		
+
 // Define relationships
  		$this->belongsTo('MFDept', 'mf_dept_id', 'mf_dept');
  		$this->belongsTo('MFCentre', 'mf_centre_id', 'mf_centre'); 

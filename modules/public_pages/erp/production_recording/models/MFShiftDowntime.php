@@ -20,19 +20,19 @@ class MFShiftDowntime extends DataObject
 	function __construct($tablename = 'mf_shift_downtime')
 	{
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
 // Set specific characteristics
 		$this->idField = 'id';
- 		
+
 // Define relationships
  		$this->belongsTo('MFShift', 'mf_shift_id', 'shift');
  		$this->belongsTo('MFCentreDowntimeCode', 'mf_centre_downtime_code_id', 'downtime_code');
  		$this->hasOne('MFShift', 'mf_shift_id', 'shift_detail');
  		$this->hasOne('MFCentreDowntimeCode', 'mf_centre_downtime_code_id', 'centre_downtime');
- 		
+
 // Define field formats
 
 // Define system defaults

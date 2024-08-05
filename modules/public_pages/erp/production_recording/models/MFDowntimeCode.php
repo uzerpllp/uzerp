@@ -19,7 +19,7 @@ class MFDowntimeCode extends DataObject {
 	function __construct($tablename = 'mf_downtime_codes')
 	{
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
@@ -29,10 +29,10 @@ class MFDowntimeCode extends DataObject {
 		
 		$this->identifierField = 'downtime_code|| \'- \' ||description';
  		$this->validateUniquenessOf(array('downtime_code'));
- 		
+
 // Define relationships
  		$this->hasMany('MFCentreDowntimeCode', 'mf_centres', 'mf_downtime_code_id');
- 		
+
 // Define field formats
 
 // Define enumerated types

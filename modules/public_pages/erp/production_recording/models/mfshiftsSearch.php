@@ -10,14 +10,14 @@ class mfshiftsSearch extends BaseSearch
 {
 
 	protected $version = '$Revision: 1.3 $';
-	
+
 	public static function useDefault($search_data = null, &$errors = array(), $defaults = null)
 	{
-		
+
 		$search = new mfshiftsSearch($defaults);
-		
+
 		$mfshift = DataObjectFactory::Factory('MFShift');
-		
+
 // Search by Shift
 		$search->addSearchField(
 			'shift',
@@ -25,9 +25,9 @@ class mfshiftsSearch extends BaseSearch
 			'multi_select',
 			array()
 		);
-		
+
 		$search->setOptions('shift',$mfshift->getEnumOptions('shift'));
-		
+
 // Search by Shift Date
  		$search->addSearchField(
 			'shift_date',
@@ -36,7 +36,7 @@ class mfshiftsSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 // Search by Dept
 		$search->addSearchField(
 			'mf_dept_id',
@@ -45,13 +45,13 @@ class mfshiftsSearch extends BaseSearch
 			'',
 			'advanced'
 			);
-		
+
 		$depts = $mfshift->getAllDept();
-		
+
 		$options = array(''=>'All');
-		
+
 		$options = $options+$depts;
-		
+
 		$search->setOptions('mf_dept_id',$options);
 
 // Search by Centre
@@ -69,14 +69,14 @@ class mfshiftsSearch extends BaseSearch
 		$options=$options+$centres;
 		$search->setOptions('mf_dept_id',$options);
 */
-				
+
 		$search->setSearchData($search_data,$errors);
-		
+
 		return $search;
-		
+
 	}
 
-			
+
 }
 
 // End of mfshiftsSearch

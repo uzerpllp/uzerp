@@ -26,13 +26,13 @@ class MFShiftOutput extends DataObject
 	function __construct($tablename = 'mf_shift_outputs')
 	{
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
 // Set specific characteristics
 		$this->idField = 'id';
- 		
+
 // Define relationships
  		$this->belongsTo('MFShift', 'mf_shift_id', 'shift');
  		$this->hasOne('MFShift', 'mf_shift_id', 'shift_detail');
@@ -40,7 +40,7 @@ class MFShiftOutput extends DataObject
  		$this->belongsTo('STUom', 'uom_id', 'uom_name');
  		$this->belongsTo('MFWorkorder', 'work_order_id', 'wo_number');
  		$this->hasMany('MFShiftWaste', 'shift_waste', 'mf_shift_outputs_id');
- 		
+
 // Define field formats
 
 // Define validation

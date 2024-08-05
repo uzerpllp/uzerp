@@ -24,7 +24,7 @@ class MFWasteType extends DataObject
 	{
 		
 		// Register non-persistent attributes
-		
+
 		// Contruct the object
 		parent::__construct($tablename);
 
@@ -34,11 +34,11 @@ class MFWasteType extends DataObject
 		$this->orderby			= array('description');
 		
  		$this->validateUniquenessOf('description');
-		
+
 		// Define relationships
  		$this->belongsTo('STUom', 'uom_id', 'uom_name');
  		$this->hasMany('MFCentreWasteType', 'mf_centres', 'mf_waste_type_id');
- 		 				
+
 		// Define enumerated types
  		
 		// Define related links (empty actions/rules prevent display of related links)
