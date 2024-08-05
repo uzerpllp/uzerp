@@ -327,7 +327,7 @@ class SordersController extends printController
                 $flash->addErrors($errors);
             } else {
                 $order->save();
-                $flash->addMessage('Open ' . strtolower($order->getFormatted('type')) . ' lines cancelled');
+                $flash->addMessage('Open ' . strtolower((string) $order->getFormatted('type')) . ' lines cancelled');
             }
             $db->CompleteTrans();
         }
@@ -363,7 +363,7 @@ class SordersController extends printController
 
         parent::delete($this->modeltype);
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
     }
 
     public function _new()
@@ -425,8 +425,8 @@ class SordersController extends printController
 
             // Assume it will be a new order if the order object has no type
             $message_type = "order";
-            if (strtolower($sorder->getFormatted('type')) != '') {
-                $message_type = strtolower($sorder->getFormatted('type'));
+            if (strtolower((string) $sorder->getFormatted('type')) != '') {
+                $message_type = strtolower((string) $sorder->getFormatted('type'));
             }
 
             $flash->addError("Cannot add new {$message_type}, customer on stop");
@@ -1178,7 +1178,7 @@ class SordersController extends printController
 
     public function showProducts()
     {
-        $params = explode('=', $this->_data['id']);
+        $params = explode('=', (string) $this->_data['id']);
 
         $selectedproduct = empty($_SESSION['selectedproducts']) ? array() : $_SESSION['selectedproducts'];
 
@@ -1284,7 +1284,7 @@ class SordersController extends printController
             $line['item_description'] = $productline->product_detail->stitem;
             $line['description'] = $productline->product_detail->description;
             $line['tax_rate_id'] = $productline->product_detail->tax_rate_id;
-            $line['net_value'] = bcmul($line['order_qty'], $line['price']);
+            $line['net_value'] = bcmul((string) $line['order_qty'], (string) $line['price']);
 
             $lines_data[] = $line;
 
@@ -1472,7 +1472,7 @@ class SordersController extends printController
                             'on_order',
                             'shortfall',
                             'indicator'];
-            
+
             // output headers so that the file is downloaded rather than displayed
             header('Content-Type: text/csv; charset=utf-8');
             header('Content-Disposition: attachment; filename=item_availability.csv');
@@ -2085,9 +2085,9 @@ class SordersController extends printController
         // Use by Ajax from within eglet
         $orderlines = new SOrderLineCollection(DataObjectFactory::Factory('SOrderLine'));
 
-        $period = (isset($this->_data['period'])) ? $this->_data['period'] : '';
-        $type = (isset($this->_data['type'])) ? $this->_data['type'] : '';
-        $page = (isset($this->_data['page'])) ? $this->_data['page'] : $page = '';
+        $period = $this->_data['period'] ?? '';
+        $type = $this->_data['type'] ?? '';
+        $page = $this->_data['page'] ?? ($page = '');
 
         // prepare URL, we do this because this isn't an ordinary eglet, paging needs
         // to be handled manually, therefore we must pass the base URL through.
@@ -2130,7 +2130,7 @@ class SordersController extends printController
     public function cancel_order()
     {
         $this->checkRequest(['post'], true);
-        
+
         if (! $this->loadData()) {
             $this->dataError();
             sendBack();
@@ -2152,7 +2152,7 @@ class SordersController extends printController
         if ($order->someLinesPicked($linestatus)) {
             $final_order_status = $order->newStatus();
         }
- 
+
         $db = DB::Instance();
         $db->startTrans();
         $cancelled_lines = [];
@@ -2274,10 +2274,10 @@ class SordersController extends printController
             $productline->load($lines[$key]['productline_id']);
             $product = new SOProductlineHeader();
             $product->load($productline->productline_header_id);
-            
+
             $label_data = [];
-            $description_parts = explode('-', $lines[$key]['description'], 2);
-            $label_data[$key]['item_code'] = trim($lines[$key]['item_code']);
+            $description_parts = explode('-', (string) $lines[$key]['description'], 2);
+            $label_data[$key]['item_code'] = trim((string) $lines[$key]['item_code']);
             $label_data[$key]['item_number'] = trim($description_parts[0]);
             $label_data[$key]['item_description'] = trim($description_parts[1]);
             $label_data[$key]['customer_product_code'] = trim($productline->customer_product_code);
@@ -2312,7 +2312,7 @@ class SordersController extends printController
         );
 
         // print the labels
-        $response = json_decode($this->generate_output($data, $options));
+        $response = json_decode((string) $this->generate_output($data, $options));
 
         if ($response->status !== true) {
             $flash->addError("Failed to print labels" . ": " . $response->message);
@@ -2401,7 +2401,7 @@ class SordersController extends printController
                 $pick_from[$orderline->id] = array();
             }
         }
-        
+
         $this->view->set('action_list', $pick_from);
         $this->view->set('from_locations', $sorder->despatch_from->rules_list('from_location'));
     }
@@ -2454,7 +2454,7 @@ class SordersController extends printController
                     $next_line_number ++;
                     unset($data['id']);
                     $data['os_qty'] = $data['revised_qty'] = $data['order_qty'] = $sorderline->os_qty - $value['del_qty'];
-                    $data['net_value'] = round(bcmul($data['revised_qty'], $data['price'], 4), 2);
+                    $data['net_value'] = round(bcmul($data['revised_qty'], (string) $data['price'], 4), 2);
                     $data['twin_currency_id'] = $sorderline->twin_currency_id;
                     $data['twin_rate'] = $sorderline->twin_rate;
                     $data['base_net_value'] = round(bcdiv($data['net_value'], $data['rate'], 4), 2);
@@ -2475,7 +2475,7 @@ class SordersController extends printController
                     $sorder->net_value = bcsub($sorder->net_value, $sorderline->net_value);
                     $sorder->base_net_value = bcsub($sorder->base_net_value, $sorderline->base_net_value);
                     $sorder->twin_net_value = bcsub($sorder->twin_net_value, $sorderline->twin_net_value);
-                    $sorderline->net_value = round(bcmul($sorderline->revised_qty, $sorderline->price, 4), 2);
+                    $sorderline->net_value = round(bcmul((string) $sorderline->revised_qty, $sorderline->price, 4), 2);
                     $sorderline->base_net_value = round(bcdiv($sorderline->net_value, $sorderline->rate, 4), 2);
                     $sorderline->twin_net_value = round(bcmul($sorderline->base_net_value, $sorderline->twin_rate, 4), 2);
                     $sorder->net_value = bcadd($sorder->net_value, $sorderline->net_value);
@@ -2502,7 +2502,7 @@ class SordersController extends printController
                         }
                         $data['from_whlocation_id'] = $value['whlocation_id'];
                         $data['to_whlocation_id'] = $location_ids[$sorder_data['to_location_id']];
-                        
+
                         $stitem = new STItem();
                         $stitem->load($sorderline->stitem_id);
                         if ($stitem->comp_class == 'K') {
@@ -2518,7 +2518,7 @@ class SordersController extends printController
                                 }
                             }
                         }
-                        
+
                         // Store kit information for backflushing after picking to avoid
                         // a nested db transaction failure aborting the pick.
                         // The kit item is always picked into the target location, even if
@@ -2526,7 +2526,7 @@ class SordersController extends printController
                         // Note: backflushing does not happen if the kit is picked from a
                         // balance enabled location. For example, where a kit has been un-picked
                         // or pre-produced.
-                        
+
                         $check_location = new WHLocation();
                         $check_location->load($data['from_whlocation_id']);
                         if ($stitem->comp_class == 'K' && $check_location->isBalanceEnabled() == false) {
@@ -2580,7 +2580,7 @@ class SordersController extends printController
                         {
                             $body.=$error."\n";
                         }
-                
+
                         system_email('uzERP, Critical Error backflusing kit', $body, $errors);
                     }
                 }
@@ -2640,7 +2640,7 @@ class SordersController extends printController
                     unset($data['id']);
                     $data['status'] = $sorderline->newStatus();
                     $data['os_qty'] = $data['revised_qty'] = $data['order_qty'] = $value['del_qty'];
-                    $data['net_value'] = round(bcmul($data['revised_qty'], $data['price'], 4), 2);
+                    $data['net_value'] = round(bcmul((string) $data['revised_qty'], (string) $data['price'], 4), 2);
                     $data['twin_currency_id'] = $sorderline->twin_currency_id;
                     $data['twin_rate'] = $sorderline->twin_rate;
                     $data['base_net_value'] = round(bcdiv($data['net_value'], $data['rate'], 4), 2);
@@ -2753,7 +2753,7 @@ class SordersController extends printController
 
         foreach ($sorder->lines as $orderlines) {
             $linetax = $orderlines->calcTax($sorder->customerdetails->tax_status_id, $payment_term);
-            $tax_value = bcadd($tax_value, $linetax);
+            $tax_value = bcadd($tax_value, (string) $linetax);
             $net_value = bcadd($net_value, $orderlines->net_value);
         }
 
@@ -2763,7 +2763,7 @@ class SordersController extends printController
         $gross_value = bcadd($net_value, $tax_value);
 
         $settlement_discount = $payment_term->calcSettlementDiscount($net_value);
-        $gross_value = bcsub($gross_value, $settlement_discount);
+        $gross_value = bcsub($gross_value, (string) $settlement_discount);
 
         $this->view->set('settlement_discount', $settlement_discount);
 
@@ -3025,7 +3025,7 @@ class SordersController extends printController
                     $sldiscount = SLTransaction::Factory($discount, $errors, 'SLTransaction');
 
                     if ($sldiscount && $sldiscount->save('', $errors) && $sldiscount->saveGLTransaction($discount, $errors)) {
-                        $transactions[$sldiscount->{$sldiscount->idField}] = bcadd($discount['net_value'], 0);
+                        $transactions[$sldiscount->{$sldiscount->idField}] = bcadd((string) $discount['net_value'], 0);
                     } else {
                         $errors[] = 'Errror saving Settlement Discount : ' . $db->ErrorMsg();
                         $flash->addErrors($errors);
@@ -3079,7 +3079,7 @@ class SordersController extends printController
                 $data['printer'] = $defaultPrinter;
 
                 // call printInvoice and decode the response, output errors / messages
-                $response = json_decode($this->printInvoice($invoice, $data));
+                $response = json_decode((string) $this->printInvoice($invoice, $data));
                 if ($response->status === true) {
                     $flash->addMessage('Print Sales Invoice Completed');
                     $invoice->update($invoice->id, array(
@@ -3286,7 +3286,8 @@ class SordersController extends printController
 
         $this->_templateName = $this->getTemplateName('view_related');
         $this->view->set('clickaction', 'view');
-        $this->view->set('clickcontroller', 'stitems');
+        $this->view->set('clickmodule', ['manufacturing']);
+        $this->view->set('clickcontroller', 'STItems');
         $this->view->set('linkvaluefield', 'stitem_id');
         $this->view->set('related_collection', $related_collection);
         $this->view->set('collection', $related_collection);
@@ -3645,7 +3646,7 @@ class SordersController extends printController
             'field2' => $invoice->tax_value . ' ' . $invoice->currency
         );
         $invoice_totals[]['line'][] = array(
-            'field1' => strtoupper($invoice->getFormatted('transaction_type')) . ' TOTAL',
+            'field1' => strtoupper((string) $invoice->getFormatted('transaction_type')) . ' TOTAL',
             'field2' => $invoice->gross_value . ' ' . $invoice->currency
         );
         $extra['invoice_totals'] = $invoice_totals;
@@ -3696,7 +3697,7 @@ class SordersController extends printController
             'report' => 'SalesOrderList'
         );
 
-        if (strtolower($status) == "dialog") {
+        if (strtolower((string) $status) == "dialog") {
             return $options;
         }
 
@@ -3761,7 +3762,7 @@ class SordersController extends printController
             'email_subject' => '"'. $document_type .': ' . $order->order_number . '"'
         );
 
-        if (strtolower($status) == 'dialog') {
+        if (strtolower((string) $status) == 'dialog') {
             // show the main dialog
             // pick up the options from above, use these to shape the dialog
             return $options;
@@ -3872,9 +3873,9 @@ class SordersController extends printController
             $tax_total = $orderlines->calcTax($order->customer->tax_status_id, $payment_term);
 
             // Construct totals for generic info
-            $vat_total = bcadd($vat_total, $tax_total);
+            $vat_total = bcadd($vat_total, (string) $tax_total);
 
-            $line_gross = bcadd($orderlines->net_value, $tax_total);
+            $line_gross = bcadd($orderlines->net_value, (string) $tax_total);
 
             $gross_total = bcadd($line_gross, $gross_total);
 
@@ -3931,7 +3932,7 @@ class SordersController extends printController
             'email_subject' => '"Pro-forma: ' . $order->order_number . '"'
         );
 
-        if (strtolower($status) == "dialog") {
+        if (strtolower((string) $status) == "dialog") {
 
             // show the main dialog
             // pick up the options from above, use these to shape the dialog
@@ -4061,7 +4062,7 @@ class SordersController extends printController
 
             // Construct totals for generic info
             $net_total = bcadd($orderlines->net_value, $net_total);
-            $vat_total = bcadd($vat_total, $tax_total);
+            $vat_total = bcadd($vat_total, (string) $tax_total);
 
             // Construct array for summary info$orderlines->_data['tax_rate_id']
             if (isset($taxrate[$orderlines->tax_rate_id]['vat'])) {
@@ -4111,7 +4112,7 @@ class SordersController extends printController
             'value' => number_format($vat_total, 2, '.', '') . ' ' . $order->currency
         );
         $invoice_totals[]['line'] = array(
-            'label' => strtoupper($order->getFormatted('type')) . ' TOTAL',
+            'label' => strtoupper((string) $order->getFormatted('type')) . ' TOTAL',
             'value' => number_format($inv_total, 2, '.', '') . ' ' . $order->currency
         );
 
@@ -4167,7 +4168,7 @@ class SordersController extends printController
             'report' => 'SOPickList'
         );
 
-        if (strtolower($status) == "dialog") {
+        if (strtolower((string) $status) == "dialog") {
             return $options;
         }
 
@@ -4235,7 +4236,7 @@ class SordersController extends printController
         $extra['delivery_details']['full_address'] = implode(', ', $this->formatAddress($order->del_address));
 
         foreach($order->lines as $oline) {
-            
+
             if ($oline->stitem_id !== null) {
                 $stitem = new STItem();
                 $stitem->load($oline->stitem_id);
