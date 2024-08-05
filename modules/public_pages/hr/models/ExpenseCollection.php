@@ -8,11 +8,11 @@
 
 class ExpenseCollection extends DataObjectCollection
 {
-		
+
 	protected $version = '$Revision: 1.6 $';
-	
+
 	public $field;
-		
+
 	function __construct($do = 'Expense', $tablename = 'expenses_header_overview')
 	{
 		parent::__construct($do, $tablename);

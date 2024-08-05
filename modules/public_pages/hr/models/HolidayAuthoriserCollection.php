@@ -10,9 +10,9 @@ class HolidayAuthoriserCollection extends DataObjectCollection
 {
 
 	protected $version = '$Revision: 1.6 $';
-	
+
 	public $field;
-		
+
 	function __construct($do = 'HolidayAuthoriser', $tablename = 'holiday_authorisers_overview')
 	{
 		parent::__construct($do, $tablename);

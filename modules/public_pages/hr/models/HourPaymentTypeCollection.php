@@ -8,9 +8,9 @@
 
 class HourPaymentTypeCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.2 $';
-	
+
 	public function __construct($do = 'HourPaymentType', $tablename = 'hours_payment_types_overview')
 	{
 		parent::__construct($do, $tablename);

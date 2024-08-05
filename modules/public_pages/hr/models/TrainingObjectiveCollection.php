@@ -8,9 +8,9 @@
 
 class TrainingObjectiveCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.5 $';
-	
+
 	public function __construct($do = 'TrainingObjective')
 	{
 		parent::__construct($do);

@@ -109,13 +109,13 @@ class ExpensesController extends HrController
             $flash->addMessage('Expenses updated OK');
         }
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
     }
 
     public function delete($modelName = null)
     {
         $this->checkRequest(['post'], true);
-        
+
         if (! $this->checkParams('id')) {
             sendBack();
         }
@@ -152,7 +152,7 @@ class ExpensesController extends HrController
         $this->view->set('employees', $employee->getAll($cc, TRUE, TRUE));
 
         if (isset($this->_data['employee_id'])) {
-        
+
             $employee->load($this->_data['employee_id']);
 
             if (! $employee->isLoaded()) {
@@ -166,7 +166,7 @@ class ExpensesController extends HrController
 			$flash->addError('Employee has left');
 			sendBack();
             }
-            
+
             $this->view->set('title', ' for ' . $employee->person->getIdentifierValue());
         }
 
@@ -281,7 +281,7 @@ class ExpensesController extends HrController
         }
 
         if (parent::save($this->modeltype, '', $errors)) {
-            if (strtolower($this->_data['saveform']) == 'save and post') {
+            if (strtolower((string) $this->_data['saveform']) == 'save and post') {
                 $this->_data['id'] = $this->_data[$this->modeltype]['id'];
                 $this->post();
             } else {
@@ -428,7 +428,7 @@ class ExpensesController extends HrController
             'report' => 'expenses'
         );
 
-        if (strtolower($status) == "dialog") {
+        if (strtolower((string) $status) == "dialog") {
 
             // show the main dialog
             // pick up the options from above, use these to shape the dialog
@@ -564,7 +564,7 @@ class ExpensesController extends HrController
     public function view()
     {
         $flash = Flash::Instance();
-        
+
         if (! $this->loadData() && ! isset($this->_data['expense_number'])) {
             $this->dataError();
             sendBack();

@@ -8,9 +8,9 @@
 
 class EmployeePayPeriodCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.1 $';
-	
+
 	public function __construct($do = 'EmployeePayPeriod', $tablename = 'employee_pay_periods')
 	{
 		parent::__construct($do, $tablename);

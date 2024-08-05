@@ -8,9 +8,9 @@
 
 class IndexController extends DashboardController
 {
-	
+
 	protected $version='$Revision: 1.4 $';
-	
+
 }
 
 // End of HR:IndexController

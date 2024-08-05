@@ -10,14 +10,14 @@ class expenseSearch extends BaseSearch
 {
 
 	protected $version='$Revision: 1.4 $';
-	
+
 	protected $fields=array();
-		
-	public static function useDefault($search_data=null, &$errors, $defaults=null)
+
+	public static function useDefault($search_data = null, &$errors = [], $defaults = null)
 	{
-		
+
 		$search = new expenseSearch($defaults);
-		
+
 		// Employee Name
 		$search->addSearchField(
 			'employee',
@@ -26,7 +26,7 @@ class expenseSearch extends BaseSearch
 			'',
 			'basic'
 		);
-		
+
 		// Status
 		$search->addSearchField(
 			'status',
@@ -39,7 +39,7 @@ class expenseSearch extends BaseSearch
 		$options=array(''=>'all');
 		$options += $expense->getEnumOptions('status');
 		$search->setOptions('status',$options);
-		
+
 		// Reference
 		$search->addSearchField(
 			'our_reference',
@@ -48,7 +48,7 @@ class expenseSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 		// Description
 		$search->addSearchField(
 			'description',
@@ -57,7 +57,7 @@ class expenseSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 		// Project
 		$search->addSearchField(
 			'project_id',
@@ -71,7 +71,7 @@ class expenseSearch extends BaseSearch
 		$options=array(''=>'all');
 		$options += $projects;
 		$search->setOptions('project_id',$options);
-		
+
 		// Task
 		$search->addSearchField(
 			'task_id',
@@ -85,22 +85,22 @@ class expenseSearch extends BaseSearch
 		$options=array(''=>'all');
 		$options += $tasks;
 		$search->setOptions('task_id',$options);
-		
+
 		$search->setSearchData($search_data,$errors);
-		
+
 		return $search;
-	
+
 	}
-		
-	public static function myExpenses($search_data=null, &$errors, $defaults=null)
+
+	public static function myExpenses($search_data = null, &$errors = [], $defaults = null)
 	{
 		$search = self::useDefault($search_data, $errors, $defaults);
-		
+
 		$search->removeSearchField('employee');
-		
+
 		return $search;
 	}
-	
+
 }
 
 // End of expenseSearch

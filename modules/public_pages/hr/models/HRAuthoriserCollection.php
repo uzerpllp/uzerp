@@ -8,9 +8,9 @@
 
 class HRAuthoriserCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.1 $';
-	
+
 	public function __construct($do = 'HRAuthoriser', $tablename = 'hr_authorisers_overview')
 	{
 		parent::__construct($do, $tablename);

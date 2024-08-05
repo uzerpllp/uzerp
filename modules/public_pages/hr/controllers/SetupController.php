@@ -8,9 +8,9 @@
 
 class SetupController extends MasterSetupController
 {
-	
+
 	protected $version='$Revision: 1.10 $';
-	
+
 	protected $setup_options = array('hr_authorisers'			=> 'HRAuthoriser'
 									,'employee_grades'			=> 'EmployeeGrade'
 									,'employee_pay_frequencies'	=> 'EmployeePayFrequency'
@@ -20,7 +20,7 @@ class SetupController extends MasterSetupController
 									,'hour_payment_types'		=> 'HourPaymentType'
 									,'training_objectives'		=> 'TrainingObjective'
 									);
-	
+
 }
 
 // End of HR:SetupController

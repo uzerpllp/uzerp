@@ -10,16 +10,16 @@ class employeeSearch extends BaseSearch
 {
 
 	protected $version = '$Revision: 1.10 $';
-	
+
 	protected $fields = array();
-		
-	public static function useDefault($search_data = null, &$errors, $defaults = null)
+
+	public static function useDefault($search_data = null, &$errors = [], $defaults = null)
 	{
-		
+
 		$search = new employeeSearch($defaults);
 
 		$employee = DataObjectFactory::Factory('Employee');
-		
+
 		// Employee Name
 		$search->addSearchField(
 			'employee',
@@ -28,7 +28,7 @@ class employeeSearch extends BaseSearch
 			'',
 			'basic'
 		);
-		
+
 		// NI Number
 		$search->addSearchField(
 			'ni',
@@ -49,7 +49,7 @@ class employeeSearch extends BaseSearch
 		$options = array(''=>'All');
 		$options += $employee->getEnumOptions('gender');
 		$search->setOptions('gender', $options);
-		
+
 		// Employee Pay Basis
 		$search->addSearchField(
 			'pay_basis',
@@ -75,7 +75,7 @@ class employeeSearch extends BaseSearch
 		$options=array(''=>'all');
 		$options += $grades;
 		$search->setOptions('employee_grade_id',$options);
-		
+
 		// Department
 		$search->addSearchField(
 			'department',
@@ -86,7 +86,7 @@ class employeeSearch extends BaseSearch
 		);
 
 
-		
+
 		// Date of Leaving
 		$search->addSearchField(
 				'start_date/finished_date',
@@ -95,18 +95,18 @@ class employeeSearch extends BaseSearch
 				date(DATE_FORMAT),
 				'advanced'
 		);
-		
+
 		$search->setSearchData($search_data, $errors, 'default');
-		
+
 		return $search;
-	
+
 	}
-		
-	public static function payHistory($search_data = null, &$errors, $defaults = null)
+
+	public static function payHistory($search_data = null, &$errors = [], $defaults = null)
 	{
-		
+
 		$search = new employeeSearch($defaults);
-		
+
 		// Employee
 		$search->addSearchField(
 			'employee_id',
@@ -122,7 +122,7 @@ class employeeSearch extends BaseSearch
 		$options=array(''=>'all');
 		$options += $employees;
 		$search->setOptions('employee_id',$options);
-		
+
 		// Employee Pay Periods
 		$search->addSearchField(
 			'employee_pay_periods_id',
@@ -133,7 +133,7 @@ class employeeSearch extends BaseSearch
 		);
 		$pay_period = DataObjectFactory::Factory('EmployeePayPeriod');
 		$search->setOptions('employee_pay_periods_id', array(''=>'all') + $pay_period->getAll(null, TRUE, TRUE));
-		
+
 		// Hour Types
 		$search->addSearchField(
 			'hours_type_id',
@@ -144,18 +144,18 @@ class employeeSearch extends BaseSearch
 		);
 		$hour_type = DataObjectFactory::Factory('HourType');
 		$search->setOptions('hours_type_id', array(''=>'all') + $hour_type->getAll());
-		
+
 		$search->setSearchData($search_data, $errors, 'payHistory');
-		
+
 		return $search;
-	
+
 	}
-		
-	public static function employeePayHistory($search_data = null, &$errors, $defaults = null)
+
+	public static function employeePayHistory($search_data = null, &$errors = [], $defaults = null)
 	{
-		
+
 		$search = new employeeSearch($defaults);
-		
+
 		// Employee
 		$search->addSearchField(
 			'employee_id',
@@ -171,7 +171,7 @@ class employeeSearch extends BaseSearch
 		$options=array(''=>'all');
 		$options += $employees;
 		$search->setOptions('employee_id',$options);
-		
+
 		// Employee Pay Periods
 		$search->addSearchField(
 			'employee_pay_periods_id',
@@ -182,7 +182,7 @@ class employeeSearch extends BaseSearch
 		);
 		$pay_period = DataObjectFactory::Factory('EmployeePayPeriod');
 		$search->setOptions('employee_pay_periods_id', array(''=>'all') + $pay_period->getAll(null, TRUE, TRUE));
-		
+
 		// Hour Types
 		$search->addSearchField(
 			'hours_type_id',
@@ -193,18 +193,18 @@ class employeeSearch extends BaseSearch
 		);
 		$hour_type = DataObjectFactory::Factory('HourType');
 		$search->setOptions('hours_type_id', array(''=>'all') + $hour_type->getAll());
-		
+
 		$search->setSearchData($search_data, $errors, 'employeePayHistory');
-		
+
 		return $search;
-	
+
 	}
-		
-	public static function payPeriodHistory($search_data = null, &$errors, $defaults = null)
+
+	public static function payPeriodHistory($search_data = null, &$errors = [], $defaults = null)
 	{
-		
+
 		$search = new employeeSearch($defaults);
-		
+
 		// Employee
 		$search->addSearchField(
 			'employee_id',
@@ -220,18 +220,18 @@ class employeeSearch extends BaseSearch
 		$options=array(''=>'all');
 		$options += $employees;
 		$search->setOptions('employee_id',$options);
-		
+
 		$search->setSearchData($search_data, $errors, 'payPeriodHistory');
-		
+
 		return $search;
-	
+
 	}
-		
-	public static function payPeriods($search_data = null, &$errors, $defaults = null)
+
+	public static function payPeriods($search_data = null, &$errors = [], $defaults = null)
 	{
-		
+
 		$search = new employeeSearch($defaults);
-		
+
 		$pay_period = DataObjectFactory::Factory('EmployeePayPeriod');
 
 		// Pay Basis
@@ -245,7 +245,7 @@ class employeeSearch extends BaseSearch
 		$options = array(''=>'All');
 		$options += $pay_period->getEnumOptions('pay_basis');
 		$search->setOptions('pay_basis', $options);
-		
+
 		// Period Start Date
 		$search->addSearchField(
 			'period_start_date',
@@ -254,7 +254,7 @@ class employeeSearch extends BaseSearch
 			'',
 			'basic'
 		);
-		
+
 		// Pay Period
 		$search->addSearchField(
 			'tax_week',
@@ -263,7 +263,7 @@ class employeeSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 		// Tax Year
 		$search->addSearchField(
 			'tax_year',
@@ -280,18 +280,18 @@ class employeeSearch extends BaseSearch
 			false,
 			'advanced'
 		);
-		
+
 		$search->setSearchData($search_data, $errors, 'payPeriods');
-		
+
 		return $search;
-	
+
 	}
-	
-	public function employeePayRates($search_data = null, &$errors, $defaults = null)
+
+	public function employeePayRates($search_data = null, &$errors = [], $defaults = null)
 	{
-		
+
 		$search = new employeeSearch($defaults);
-	
+
 		// Employee
 		$search->addSearchField(
 			'employee_id',
@@ -307,7 +307,7 @@ class employeeSearch extends BaseSearch
 		$options=array(''=>'all');
 		$options += $employees;
 		$search->setOptions('employee_id',$options);
-		
+
 		// Payment Type
 		$search->addSearchField(
 			'payment_type_id',
@@ -318,7 +318,7 @@ class employeeSearch extends BaseSearch
 		);
 		$paytype = DataObjectFactory::Factory('EmployeePaymentType');
 		$search->setOptions('payment_type_id', array(''=>'All')+ $paytype->getAll());
-		
+
 		// Start Date
 		$search->addSearchField(
 			'start_date',
@@ -327,7 +327,7 @@ class employeeSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 		// Start Date
 		$search->addSearchField(
 			'end_date',
@@ -336,13 +336,13 @@ class employeeSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 		$search->setSearchData($search_data, $errors, 'employeePayRates');
-		
+
 		return $search;
-	
+
 	}
-	
+
 }
 
 // End of employeeSearch

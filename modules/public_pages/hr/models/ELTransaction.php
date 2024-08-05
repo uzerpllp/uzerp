@@ -9,7 +9,7 @@
 class ELTransaction extends LedgerTransaction {
 
 	protected $version='$Revision: 1.12 $';
-	
+
 	protected $defaultDisplayFields = array('employee'
 											,'our_reference'
 											,'transaction_date'
@@ -28,28 +28,28 @@ class ELTransaction extends LedgerTransaction {
 			'P'=>-1
 			)	
 	);
-											
+
 	function __construct($tablename='eltransactions')
 	{
-		
+
 		// Register non-persistent attributes
-		
+
 		// Contruct the object
 		parent::__construct($tablename);
 
 		// Set specific characteristics
 		$this->idField = 'id';
-		
+
 		$this->orderby = 'transaction_date';
 		$this->orderdir = 'DESC';
-		
+
 		// Define relationships
 		$this->belongsTo('Employee', 'employee_id', 'supplier');
  		$this->belongsTo('Currency', 'currency_id', 'currency');
  		$this->belongsTo('Currency', 'twin_currency_id', 'twin');
-		
+
 		// Define field formats
-		
+
 		// set formatters, more set in load() function
 
 		// Define enumerated types
@@ -60,7 +60,7 @@ class ELTransaction extends LedgerTransaction {
 								  ,'P'=>'Payment'
 								)
 						);
-		
+
 		$this->setEnum('status'
 							,array('N'=>'New'
 								  ,'O'=>'Open'
@@ -68,13 +68,13 @@ class ELTransaction extends LedgerTransaction {
 								  ,'P'=>'Paid'
 								)
 						);
- 		
+
 		// Define default values
-		
+
 		// Define field formatting
-		
+
 		// Define link rules for related items
-	
+
 	}
 
 	public function getOwner()
@@ -83,31 +83,31 @@ class ELTransaction extends LedgerTransaction {
 		// If we are here, then need access to employee
 		// by overriding any policy constraints
 		$employee->clearPolicyConstraint();
-	
+
 		$employee->load($this->employee_id);
-	
+
 		return $employee;
 	}
-	
+
 	public static function currencyAdjustment (&$data, &$errors = [])
 	{
 		$data['original_source'] = 'E';
 		$data['reference']		 = '';
 		$data['comment']		 = 'Expense Allocation Currency Adjustment';
-		
+
 		$db = DB::Instance();
-		
+
 		$db->startTrans();
-		
+
 		if (!GLTransaction::currencyAdjustment($data, $errors))
 		{
 			$db->FailTrans();
 		}
-		
+
 		return $db->CompleteTrans();
-		
+
 	}
-	
+
 }
 
 // End of ELTransaction

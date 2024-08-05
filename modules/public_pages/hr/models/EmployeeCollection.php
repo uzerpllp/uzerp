@@ -8,11 +8,11 @@
 
 class EmployeeCollection extends DataObjectCollection
 {
-	
-	protected $version = '$Revision: 1.8 $';
-	
+
+	protected $identifierField;
+
 	public $field;
-		
+
 	function __construct($do = 'Employee', $tablename = 'employeeoverview')
 	{
 		parent::__construct($do, $tablename);

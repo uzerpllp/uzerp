@@ -8,16 +8,16 @@
 
 class HourCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.6 $';
-	
+
 	public $field;
-		
+
 	function __construct($do = 'Hour', $tablename = 'hoursoverview')
 	{
 		parent::__construct($do, $tablename);
 	}
-		
+
 }
 
 // End of HourCollection

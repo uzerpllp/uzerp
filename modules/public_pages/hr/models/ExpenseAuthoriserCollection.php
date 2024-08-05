@@ -10,12 +10,12 @@ class ExpenseAuthoriserCollection extends DataObjectCollection
 {
 
 	protected $version = '$Revision: 1.6 $';
-	
+
 	public $field;
-		
+
 	function __construct($do = 'ExpenseAuthoriser', $tablename = 'expense_authorisers_overview')
 	{
-		
+
 		parent::__construct($do, $tablename);
 
 	}

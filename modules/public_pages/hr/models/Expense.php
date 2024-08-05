@@ -247,12 +247,12 @@ class Expense extends DataObject
     {
         return 'C';
     }
-    
+
     function statusAuthorised()
     {
         return 'A';
     }
-    
+
     function statusAwaitingPayment()
     {
         return 'O';
@@ -476,9 +476,9 @@ class Expense extends DataObject
 
             if (! empty($message)) {
                 $errors[] = $message;
-                
+
             }
-            
+
             $result = false;
 
             $db->FailTrans();
@@ -512,7 +512,7 @@ class Expense extends DataObject
 
         // set the correct totals back to the order header
         foreach ($totals as $field => $value) {
-            $this->$field = (empty($value)) ? 0.00 : bcadd($value, 0);
+            $this->$field = (empty($value)) ? 0.00 : bcadd((string) $value, 0);
         }
 
         return parent::save($debug);

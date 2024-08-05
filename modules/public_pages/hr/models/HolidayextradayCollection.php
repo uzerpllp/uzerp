@@ -8,16 +8,16 @@
 
 class HolidayextradayCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.5 $';
-	
+
 	public $field;
-		
+
 	function __construct($do = 'Holidayextraday')
 	{
 		parent::__construct($do);
 	}
-		
+
 }
 
 // End of HolidayextradayCollection

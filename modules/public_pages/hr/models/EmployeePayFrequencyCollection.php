@@ -8,9 +8,9 @@
 
 class EmployeePayFrequencyCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.1 $';
-	
+
 	public function __construct($do = 'EmployeePayFrequency')
 	{
 		parent::__construct($do);

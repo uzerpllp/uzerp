@@ -10,14 +10,14 @@ class holidaySearch extends BaseSearch
 {
 
 	protected $version='$Revision: 1.1 $';
-	
+
 	protected $fields=array();
-		
-	public static function useDefault($search_data=null, &$errors, $defaults=null)
+
+	public static function useDefault($search_data = null, &$errors = [], $defaults = null)
 	{
-		
+
 		$search = new holidaySearch($defaults);
-		
+
 		// Employee Name
 		$search->addSearchField(
 			'employee_id',
@@ -31,7 +31,7 @@ class holidaySearch extends BaseSearch
 		$options = [''=>'all'];
 		$options += $employees;
 		$search->setOptions('employee_id',$options);
-		
+
 		// Employee Grade
 		$search->addSearchField(
 			'employee_grade_id',
@@ -45,7 +45,7 @@ class holidaySearch extends BaseSearch
 		$options=array(''=>'all');
 		$options += $grades;
 		$search->setOptions('employee_grade_id',$options);
-		
+
 		// Department
 		$search->addSearchField(
 			'department',
@@ -54,7 +54,7 @@ class holidaySearch extends BaseSearch
 			'',
 			'basic'
 		);
-		
+
 		// Holiday Request Status
 		$request = DataObjectFactory::Factory('holidayrequest');
 		$search->addSearchField(
@@ -65,7 +65,7 @@ class holidaySearch extends BaseSearch
 				'basic'
 		);
 		$search->setOptions('status',$request->getEnumOptions('status'));
-		
+
 		// Start date
 		$search->addSearchField(
 			'start_date',
@@ -86,12 +86,12 @@ class holidaySearch extends BaseSearch
 
 
 		$search->setSearchData($search_data,$errors);
-		
+
 		return $search;
-	
+
 	}
-		
-	
+
+
 }
 
 // End of holidaySearch
