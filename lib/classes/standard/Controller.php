@@ -786,7 +786,7 @@ abstract class Controller
                 unset($this->_data['Search']['display_fields']);
             }
 
-            $_GET['search_id'] = $this->search->getValue('search_id');
+            if (empty($this->_data['search_id'])) $_GET['search_id'] = $this->search->getValue('search_id');
         }
     }
 
