@@ -10,15 +10,15 @@ class POrdersReceivedValueEGlet extends SimpleEGlet
 {
 
 	protected $version = '$Revision: 1.8 $';
-	
+
 	protected $template = 'po_received_value.tpl';
-	
+
 	function populate()
 	{
 		$poreceived = new POReceivedLineCollection();
-		
+
 		$receivedSum = $poreceived->getReceivedSum(3);
-		
+
 		$this->contents = $receivedSum;
 	}
 

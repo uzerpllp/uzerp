@@ -9,30 +9,30 @@
 class POrdersNotAcknowledgedEGlet extends SimpleListUZlet {
 
 	protected $version = '$Revision: 1.10 $';
-	
+
 	protected $template = 'porders_list.tpl';
-	
+
 	function getClassName()
 	{
 		return 'eglet double_eglet';
 	}
-	
+
 	function populate()
 	{
 		$orders = new POrderCollection();
-		
+
 		$orders->setParams();
-		
+
 		$sh = new SearchHandler($orders,false);
-		
+
 		$sh->addConstraint(new Constraint('status', '=', 'O'));
-		
+
 		$this->setSearchLimit($sh);
-		
+
 		$sh->setOrderBy('due_date');
-		
+
 		$orders->load($sh);
-		
+
 		$this->contents = $orders;
 	}
 

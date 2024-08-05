@@ -237,7 +237,7 @@ class soproductlineheadersController extends printController
         // Id must be set
         if (! isset($this->_data['id'])) {
             $flash->addError('Stock Item not supplied');
-            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
         }
 
         $stitem = DataObjectFactory::Factory('STItem');
@@ -933,7 +933,7 @@ class soproductlineheadersController extends printController
         $_prod_group_id = $this->_data['prod_group_id'];
 
         $stuom_id = $this->getUomList($_stitem_id);
-        $_selected = (isset($this->_data['stuom_id'])) ? $this->_data['stuom_id'] : '';
+        $_selected = $this->_data['stuom_id'] ?? '';
         $stuom_id = $this->buildSelect('', 'stuom_id', $stuom_id, $_selected);
         $output['stuom_id'] = array(
             'data' => $stuom_id,
@@ -941,7 +941,7 @@ class soproductlineheadersController extends printController
         );
 
         $tax_rate_id = $this->getTaxRate($_stitem_id);
-        $_selected = (isset($this->_data['tax_rate_id'])) ? $this->_data['tax_rate_id'] : '';
+        $_selected = $this->_data['tax_rate_id'] ?? '';
         $tax_rate_id = $this->buildSelect('', 'tax_rate_id', $tax_rate_id, $_selected);
         $output['tax_rate_id'] = array(
             'data' => $tax_rate_id,

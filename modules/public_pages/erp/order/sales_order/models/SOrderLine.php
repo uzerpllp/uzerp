@@ -232,7 +232,7 @@ class SOrderLine extends SPOrderLine {
 
 			if (empty($line_data['net_value']))
 			{
-				$line_data['net_value'] = bcmul($line_data['price'], $line_data['revised_qty']);
+				$line_data['net_value'] = bcmul((string) $line_data['price'], (string) $line_data['revised_qty']);
 			}
 		}
 		if($line_data['revised_qty']>0 && $line_data['price']>0)
@@ -272,8 +272,8 @@ class SOrderLine extends SPOrderLine {
 		$line_data['rate']				= $header->rate;
 		$line_data['twin_currency_id']	= $header->twin_currency_id;
 		$line_data['twin_rate']			= $header->twin_rate;
-		$line_data['base_net_value']	= bcadd(round(bcdiv($line_data['net_value'], $line_data['rate'], 4), 2), 0);
-		$line_data['twin_net_value']	= bcadd(round(bcmul($line_data['base_net_value'], $line_data['twin_rate'], 4), 2), 0);
+		$line_data['base_net_value']	= bcadd(round(bcdiv((string) $line_data['net_value'], (string) $line_data['rate'], 4), 2), 0);
+		$line_data['twin_net_value']	= bcadd(round(bcmul($line_data['base_net_value'], (string) $line_data['twin_rate'], 4), 2), 0);
 
 		if (empty($line_data['due_delivery_date']))
 		{
@@ -366,10 +366,10 @@ class SOrderLine extends SPOrderLine {
 
 		$settlement_discount = $payment_term->calcSettlementDiscount($this->net_value);
 
-		$net_value = bcsub($this->net_value, $settlement_discount);
+		$net_value = bcsub($this->net_value, (string) $settlement_discount);
 
 		//tax_value is the tax percentage of the net value
-		return round(bcmul($net_value, $tax_percentage, 4), 2);
+		return round(bcmul($net_value, (string) $tax_percentage, 4), 2);
 
 	}
 

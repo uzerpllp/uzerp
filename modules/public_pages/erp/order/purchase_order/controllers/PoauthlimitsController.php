@@ -24,7 +24,7 @@ class PoauthlimitsController extends Controller {
 		$this->view->set('clickaction', 'view');
 
 		$errors = array();
-	
+
 		$s_data = array();
 
 // Set context from calling module
@@ -32,17 +32,17 @@ class PoauthlimitsController extends Controller {
 		{
 			$s_data['username'] = $this->_data['username'];
 		}
-		
+
 		if (isset($this->_data['glcentre_id']))
 		{
 			$s_data['glcentre_id'] = $this->_data['glcentre_id'];
 		}
-		
+
 		$this->setSearch('poauthlimitsSearch', 'useDefault', $s_data);
-		
+
 		$username	 = $this->search->getValue('username');
 		$glcentre_id = $this->search->getValue('glcentre_id');
-		
+
 		parent::index(new POAuthLimitCollection($this->_templateobject));
 		
 		$sidebar = new SidebarController($this->view);
@@ -55,7 +55,7 @@ class PoauthlimitsController extends Controller {
 								 ,'action'=>'new'
 								 )
 					);
-					
+
 		if (isset($s_data['username']) && $s_data['username']!='')
 		{
 			$actions['forperson']=array(
@@ -67,7 +67,7 @@ class PoauthlimitsController extends Controller {
 									 )
 					);
 		}
-		
+
 		if (isset($s_data['glcentre_id']) && $s_data['glcentre_id']!='0')
 		{
 			$actions['foraccount']=array(
@@ -84,7 +84,7 @@ class PoauthlimitsController extends Controller {
 			'Actions',
 			$actions
 		);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		
 		$this->view->set('sidebar',$sidebar);
@@ -132,21 +132,21 @@ class PoauthlimitsController extends Controller {
 	
 	public function _new()
 	{
-		
+
 		parent::_new();
-		
+
 		$poauthlimit=$this->_uses[$this->modeltype];
-		
+
 		$default_glcentre_id	= '';
 		$default_username		= '';
-		
+
 		if (isset($_POST[$this->modeltype]))
 		{
-			
+
 			// must be re-entering following form error so preserve form data
 			$default_glcentre_id	= $_POST[$this->modeltype]['glcentre_id'];
 			$default_username		= $_POST[$this->modeltype]['username'];
-				
+
 		}
 
 // Set the username
@@ -158,40 +158,40 @@ class PoauthlimitsController extends Controller {
 		$cc->add(new Constraint('usercompanyid', '=', EGS_COMPANY_ID));
 		
 		$peoplelist = $people->getAll($cc);
-		
+
 		if (empty($default_username))
 		{
-			
+
 			// No error - set defaults depending on whether an edit or new
 			if (isset($this->_data['username']))
 			{
-				
+
 				$peoplelist			= array($this->_data['username'] => $this->_data['username']);
 				$default_username	= $this->_data['username'];
-				
+
 			}
 			elseif ($poauthlimit->isLoaded())
 			{
-				
+
 				$peoplelist			= array($poauthlimit->username => $poauthlimit->username);
 				$default_username	= $poauthlimit->username;
-				
+
 			}
 			else
 			{
-				
+
 				ksort($peoplelist);
 				$default_username = current($peoplelist);
-				
+
 			}
 		}
-		
+
 		$this->view->set('people',$peoplelist);
 
 		// Set the centre
 		if (empty($default_glcentre_id))
 		{
-			
+
 			if (isset($this->_data['glcentre_id']))
 			{
 				$default_glcentre_id=$this->_data['glcentre_id'];
@@ -200,16 +200,16 @@ class PoauthlimitsController extends Controller {
 			{
 				$default_glcentre_id=$poauthlimit->glcentre_id;
 			}
-			
+
 		}
-		
+
 		$gl_centres = $this->getCentres($default_username, $default_glcentre_id);
-		
+
 		if (empty($default_glcentre_id))
 		{
 			$default_glcentre_id = key($gl_centres);
 		}
-		
+
 		// Set the accounts list based on the centre
 		$this->view->set('glaccounts', $this->getAccounts($default_glcentre_id));
 
@@ -217,28 +217,28 @@ class PoauthlimitsController extends Controller {
 		{
 			$modules[]=$key.'='.$value;
 		}
-		
+
 		$link = implode('&', $modules) . '&controller=' . $this->name . '&action=show_auth_accounts';
 		$this->view->set('link', $link);
-		
+
 		$selected_account_ids = array();
-		
+
 		if ($poauthlimit->isLoaded())
 		{
-			
+
 			$authaccounts = new POAuthAccountCollection();
 			$sh=new SearchHandler($authaccounts, false);
 			$sh->addConstraint(new Constraint('po_auth_limit_id', '=', $poauthlimit->id));
 			$authaccounts->load($sh);
-			
+
 			foreach ($authaccounts as $authaccount) {
 				$selected_account_ids[$authaccount->glaccount_id] = true;
 			}
-			
+
 		}
-		
+
 		$accounts = new GLAccountCollection();
-		
+
 		if (!empty($selected_account_ids))
 		{
 			$sh = new SearchHandler($accounts, false);
@@ -250,33 +250,33 @@ class PoauthlimitsController extends Controller {
 		{
 			$selected_accounts[$account->id] = $account->account . ' - ' . $account->description;
 		}
-		
+
 		$this->view->set('selected_accounts', $selected_accounts);
-		
+
 	}
-	
+
 	public function show_auth_accounts ()
 	{
-		
+
 		if (isset($this->_data['id']))
 		{
-			$params=explode('=', $this->_data['id']);
+			$params=explode('=', (string) $this->_data['id']);
 		}
 		else
 		{
 			$params = array();
 		}
-		
-		$linkdata			= SESSION::Instance();
+
+		//$linkdata			= Session::Instance();
 		$selected_account	= array();
-		
+
 		if (!empty($params))
 		{
 			if (isset($selected_account[$params[0]]))
 			{
 				if (strtolower($params[1]) == 'false')
 				{
-					unset($selected_account[$params[0]]);
+					$selected_account[$params[0]]='';
 				}
 			}
 			elseif (strtolower($params[1]) == 'true')
@@ -284,9 +284,9 @@ class PoauthlimitsController extends Controller {
 				$selected_account[$params[0]] = true;
 			}
 		}
-		
+
 		$selected_accounts = new GLAccountCollection();
-		
+
 		if (!empty($selected_account))
 		{
 			$sh = new SearchHandler($selected_accounts, false);
@@ -297,9 +297,9 @@ class PoauthlimitsController extends Controller {
 		}
 		
 		$this->view->set('selected_accounts', $selected_accounts);
-		
+
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		
@@ -307,17 +307,17 @@ class PoauthlimitsController extends Controller {
 		{
 			sendBack();
 		}
-		
+
 		$flash	= Flash::Instance();
-		
+
 		$db		= DB::Instance();
 		
 		$errors	= array();
-		
+
 		$db->StartTrans();
-		
+
 		$data = $this->_data[$this->modeltype];
-		
+
 		if ($data['order_limit'] <= 0)
 		{
 			$errors['order_limit'] = 'Order Limit must be greater than zero';
@@ -328,7 +328,7 @@ class PoauthlimitsController extends Controller {
 			// delete all the current auth accounts, start with a clean slate
 			$authLimit = $this->_templateobject;
 			$authLimit->load($data['id']);
-			
+
 			if ($authLimit->isLoaded())
 			{
 				foreach ($authLimit->authAccounts as $authAccount)
@@ -336,37 +336,37 @@ class PoauthlimitsController extends Controller {
 					$authAccount->delete();
 				}
 			}
-			
+
 		}
-		
+
 		if (count($errors) === 0 && parent::save('POAuthLimit', null, $errors))
 		{
 			
 			// generate the selected accounts array, data from form is pipe delimited
-			$selected_accounts	= explode('|', $this->_data['POAuthLimit']['selected_accounts']);
+			$selected_accounts	= explode('|', (string) $this->_data['POAuthLimit']['selected_accounts']);
 			
 			$auth_id	= $this->saved_model->id;
 			$data		= array();
-			
+
 			if (!empty($selected_accounts))
 			{
-				
+
 				foreach ($selected_accounts as $key=>$account)
 				{
-					
+
 					$data['po_auth_limit_id']	= $auth_id;
 					$data['glaccount_id']		= $account;
-					
+
 					$po_auth_account = DataObject::Factory($data, $errors, 'POAuthAccount');
-					
+
 					if (!$po_auth_account || !$po_auth_account->save())
 					{
 						$flash->addError('Failed to save Account Authorisation');
 						break;
 					}
-					
+
 				}
-				
+
 			}
 			else
 			{
@@ -376,7 +376,7 @@ class PoauthlimitsController extends Controller {
 			if (count($errors)==0 && $db->CompleteTrans())
 			{
 				$flash->addMessage('Authorisation Limit saved');
-				sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+				sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
 			}
 			
 		}
@@ -389,17 +389,17 @@ class PoauthlimitsController extends Controller {
 
 	public function getAccounts($_glcentre_id = '')
 	{
-		
+
 		// Used by Ajax to return Account list after selecting the Centre
 		if(isset($this->_data['ajax']))
 		{
 			if(!empty($this->_data['glcentre_id'])) { $_glcentre_id = $this->_data['glcentre_id']; }
 		}
-		
+
 		$centre = DataObjectFactory::Factory('GLCentre');
 		$centre->load($_glcentre_id);
 		$accounts = $centre->accounts;
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('glaccounts',$accounts);
@@ -420,7 +420,7 @@ class PoauthlimitsController extends Controller {
 			if(!empty($this->_data['username'])) { $_username = $this->_data['username']; }
 			if(!empty($this->_data['glcentre_id'])) { $_glcentre_id=$this->_data['glcentre_id']; }
 		}
-		
+
 		if (!empty($_glcentre_id))
 		{
 			$gl_centre = DataObjectFactory::Factory('GLCentre');
@@ -435,7 +435,7 @@ class PoauthlimitsController extends Controller {
 		{
 			$gl_centres = POAuthLimit::getUnassignedCentres($_username);
 		}
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('options', $gl_centres);

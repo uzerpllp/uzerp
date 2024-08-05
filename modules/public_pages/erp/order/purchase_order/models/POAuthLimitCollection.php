@@ -8,8 +8,7 @@
 
 class POAuthLimitCollection extends DataObjectCollection
 {
-	
-	protected $version = '$Revision: 1.8 $';
+	protected $view;
 	
 	public $field;
 
@@ -20,25 +19,25 @@ class POAuthLimitCollection extends DataObjectCollection
 		$this->orderby	= array('username', 'cost_centre');
 		
 		$this->view		= '';
-		
+
 	}
-	
+
 	function getAuthList($account = '', $centre = '', $value = '')
 	{
 		$this->_tablename = "po_authlist";
-		
+
 		$sh = new SearchHandler($this, false);
-		
+
 		if (!empty($account))
 		{
 			$sh->addConstraint(new Constraint('glaccount_id', '=', $account));
 		}
-		
+
 		if (!empty($centre))
 		{
 			$sh->addConstraint(new Constraint('glcentre_id', '=', $centre));
 		}
-		
+
 		if (!empty($value))
 		{
 			$sh->addConstraint(new Constraint('order_limit', '>=', $value));

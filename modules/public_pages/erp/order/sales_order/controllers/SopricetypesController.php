@@ -52,7 +52,7 @@ class SopricetypesController extends Controller
 		
 		parent::delete($this->modeltype);
 		
-		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],$_SESSION['refererPage']['other'] ?? null);
 	}
 	
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
@@ -61,7 +61,7 @@ class SopricetypesController extends Controller
 		
 		if(parent::save($this->modeltype))
 		{
-			sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+			sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],$_SESSION['refererPage']['other'] ?? null);
 		}
 		else
 		{

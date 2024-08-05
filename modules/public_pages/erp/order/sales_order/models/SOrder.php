@@ -462,7 +462,7 @@ class SOrder extends SPOrder {
 		// set the correct totals back to the order header
 		foreach($totals as $field=>$value)
 		{
-			$this->$field = (empty($value))?0.00:bcadd($value,0);
+			$this->$field = (empty($value))?0.00:bcadd((string) $value,0);
 		}
 
 		return parent::save();

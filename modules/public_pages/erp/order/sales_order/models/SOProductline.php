@@ -355,7 +355,7 @@ class SOProductline extends DataObject
             return $price;
         }
 
-        $discount = bcsub(1, bcdiv($price_discount, 100, 5), 4);
+        $discount = bcsub(1, bcdiv((string) $price_discount, 100, 5), 4);
 
         return bcadd(round($price * $discount, 2), 0);
     }

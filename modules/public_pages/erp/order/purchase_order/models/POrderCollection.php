@@ -21,7 +21,7 @@ class POrderCollection extends DataObjectCollection
 
 	public function getItems (&$sh, $cc = "")
 	{
-		
+
 		if ($sh instanceof SearchHandler)
 		{
 			$DisplayFields = array('stitem_id'
@@ -29,46 +29,46 @@ class POrderCollection extends DataObjectCollection
 								  ,'uom_name'
 								  ,'on_order'
 								  );
-			
+
 			$sh->setOrderby('stitem');
-			
+
 			$sh->setFields($DisplayFields);
-			
+
 			if (!empty($cc) && ($cc instanceof ConstraintChain))
 			{
 				$sh->addConstraintChain($cc);
 			}
 		}
 		$this->_tablename = 'po_items';
-		
+
 	}
 	
 	public function getItemDates ($cc = "")
 	{
 		$sh = new SearchHandler($this,false);
-		
+
 		$DisplayFields = array('due_delivery_date'
 							  ,'stitem_id'
 							  ,'stitem'
 							  ,'uom_name'
 							  ,'on_order'
 							  );
-		
+
 		$sh->setOrderby('due_delivery_date');
-		
+
 		$sh->setFields($DisplayFields);
-		
+
 		if (!empty($cc) && ($cc instanceof ConstraintChain))
 		{
 			$sh->addConstraintChain($cc);
 		}
-		
+
 		$this->_tablename = 'po_itemdates';
-		
+
 		$this->load($sh);
-		
+
 		return $this;
-		
+
 	}
 
 }

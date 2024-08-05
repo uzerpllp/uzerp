@@ -12,14 +12,14 @@ class SOProductlineHeaderCollection extends DataObjectCollection
 	protected $version = '$Revision: 1.4 $';
 	
 	public $field;
-	
+
 	function __construct($do = 'SOProductlineHeader', $tablename = 'so_productlines_header_overview')
 	{
 		
 		parent::__construct($do, $tablename);
 		
 		$this->orderby = array('description', 'start_date');
-		
+
 	}
 	
 	function getItems(&$sh)

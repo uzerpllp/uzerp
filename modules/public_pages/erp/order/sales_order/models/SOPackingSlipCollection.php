@@ -9,21 +9,21 @@ class SOPackingSlipCollection extends DataObjectCollection
 {
 
 	protected $version = '$Revision: 1.5 $';
-	
+
 	function __construct($do = 'SOPackingSlip', $tablename = 'so_packing_slips_overview')
 	{
 		parent::__construct($do, $tablename);
-		
+
 	}
 
 	function getPackedTotals ()
 	{
 		$packed = array();
-		
+
 		foreach ($this as $packinglist)
 		{
 			$contents = unserialize(base64_decode($packinglist->contents));
-			
+
 			foreach ($contents as $key=>$qty)
 			{
 				if (isset($packed[$key]))
@@ -36,10 +36,10 @@ class SOPackingSlipCollection extends DataObjectCollection
 				}
 			}
 		}
-		
+
 		return $packed;
 	} 
-	
+
 }
 
 // End of SOPackingSlipCollection

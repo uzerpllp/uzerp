@@ -518,7 +518,7 @@ class soproductlinesController extends printController
 			$errors['effective_date']='You must specify the effective date for the price change';
 		} else {
 			$start_date=fix_date($this->_data[$this->modeltype]['effective_date']);
-			$end_date=fix_date(date(DATE_FORMAT,strtotime('-1 days',strtotime($start_date))));
+			$end_date=fix_date(date(DATE_FORMAT,strtotime('-1 days',strtotime((string) $start_date))));
 			if ($start_date<fix_date(date(DATE_FORMAT))) {
 				$flash->addWarning('Start Date is before today', 'start_date');
 			}
@@ -1345,7 +1345,7 @@ class soproductlinesController extends printController
 				$product_price=$productline->getGrossPrice();
 				$discount_percent=$productline->getPriceDiscount('', $_slmaster_id);
 				$net_price=$productline->getPrice('', '', $_slmaster_id);
-				$discount_value=bcsub($product_price, $net_price);
+				$discount_value=bcsub((string) $product_price, (string) $net_price);
 				$sales_stock = $productline->product_detail->item_detail->pickableBalance();
 
 				if (empty($_slmaster_id))
@@ -1366,7 +1366,7 @@ class soproductlinesController extends printController
 				}
 				$tax_percentage=calc_tax_percentage($productline->product_detail->tax_rate_id,$tax_status_id,$net_price);
 				$vat = bcadd(round($net_price*$tax_percentage,2),0);
-				$gross=bcadd($net_price, $vat);
+				$gross=bcadd((string) $net_price, $vat);
 			}
 			else
 			{

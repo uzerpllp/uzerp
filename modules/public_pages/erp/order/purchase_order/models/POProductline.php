@@ -10,7 +10,7 @@ class POProductline extends DataObject
 {
 
 	protected $version='$Revision: 1.21 $';
-	
+
 	protected $defaultDisplayFields = array(
 		'description',
 		'supplier',
@@ -29,22 +29,22 @@ class POProductline extends DataObject
 		'prod_group_id',
 		'productline_header_id'
 	);
-	
+
 	function __construct($tablename='po_product_lines')
 	{
-		
+
 		// Register non-persistent attributes
-		
+
 		// Contruct the object
 		parent::__construct($tablename);
-		
+
 		// Set specific characteristics
 		$this->idField			= 'id';
 		$this->identifierField	= 'description';
 		$this->orderby			= 'description';
-		
+
 		$this->setTitle('PO Product Line');
-		
+
 		// Define relationships
 		$this->belongsTo('PLSupplier', 'plmaster_id', 'supplier');
 		$this->belongsTo('Currency', 'currency_id', 'currency');
@@ -52,22 +52,22 @@ class POProductline extends DataObject
 		$this->belongsTo('GLCentre', 'glcentre_id', 'glcentre');
 		$this->belongsTo('POProductlineHeader', 'productline_header_id', 'product');
 		$this->hasOne('POProductlineHeader', 'productline_header_id', 'product_detail'); 
-		
+
 		// Define field formats
-		
+
 		// set formatters
-		
+
 		// set validators
-		
+
 		// Define enumerated types
-		
+
 		// set defaults
 		$this->getField('price')->setFormatter(new PriceFormatter());
  		$params = DataObjectFactory::Factory('GLParams');
  		$this->getField('currency_id')->setDefault($params->base_currency());
- 		
+
 		// Set link rules for 'belongs to' to appear in related view controller sidebar
-	
+
 	}
 
 	function getSupplierLines ($supplier, $productsearch = '')
@@ -80,67 +80,81 @@ class POProductline extends DataObject
 
 // Firstly , get any items specific to the customer
 		$cc = new ConstraintChain();
-		
+
 		$cc->add(new Constraint('plmaster_id', '=', $supplier));
 		$cc->add(new Constraint('stitem_id', 'is not', 'NULL'));
 		$cc->add($this->currentConstraint($productsearch));
-		
+
 		$this->identifierField = 'stitem_id';
 		$item_codes = $this->getAll($cc);
 
 // get customer specific product lines
 		$cc1 = new ConstraintChain();
 		$cc1->add(new Constraint('plmaster_id', '=', $supplier));
-		
+
 // Now get the non specific customer product lines
 		$cc2 = new ConstraintChain();
-		
+
 		$cc2->add(new Constraint('plmaster_id', 'is', 'NULL'));
-		
+
 		if (!empty($item_codes))
 		{
 // There are items specific to the customer
 // so get all the other non-customer specific items as well
 			$cc3 = new ConstraintChain();
-			
+
 			$cc3->add(new Constraint('stitem_id', 'not in', '('.implode(',', $item_codes).')'));
 			$cc3->add(new Constraint('stitem_id', 'is', 'NULL'), 'OR');
-			
+
 			$cc2->add($cc3);
 		}
 		$cc1->add($cc2, 'OR');
-		
+
 // constraint to include all other non-specific product lines
 // for items other than use in lines specific to the customer
 		$cc = new ConstraintChain();
 		$cc->add($this->currentConstraint($productsearch));
 		$cc->add($cc1);
-		
+
 		$this->identifierField	= 'description';
 		$this->orderby			= 'description';
-		
+
 		return $this->getAll($cc, TRUE, TRUE);
 
 	}
-	
+
 	function getNonSPecific ($productsearch = '')
 	{
 
 		$cc = new ConstraintChain();
-		
+
 		$cc->add(new Constraint('plmaster_id', 'is', 'NULL'));
 		$cc->add($this->currentConstraint($productsearch));
-		
+
 		return $this->getAll($cc);
-				
+
 	}
-	
+
+	function getDescription ()
+	{
+			if (!$this->price && $this->stitem_id)
+			{
+					$this->loadSTItem($this->stitem_id);
+					
+					return $this->item_detail->getIdentifier();
+			}
+			else
+			{
+					return $this->description;
+			}
+	}
+
 	function getPrice ()
 	{
 		if (!$this->price && $this->stitem_id)
 		{
 			$this->loadSTItem($this->stitem_id);
-			
+
 			return $this->item_detail->price;
 		}
 		else
@@ -148,27 +162,27 @@ class POProductline extends DataObject
 			return $this->price;
 		}
 	}
-	
+
 	public function getCentres()
 	{
 		$account = DataObjectFactory::Factory('GLAccount');
-		
+
 		$account->load($this->_data['id']);
-		
+
 		$centres = $account->getCentres();
 	}
-	
+
 	function getDefaultProductAccount ()
 	{
 		$params = DataObjectFactory::Factory('GLParams');
-		
+
 		return $params->product_account();
 	}
 
 	function getDefaultProductCentre ()
 	{
 		$params = DataObjectFactory::Factory('GLParams');
-		
+
 		return $params->product_centre();
 	}
 
@@ -178,17 +192,17 @@ class POProductline extends DataObject
 		{
 			$stitem_id = $this->stitem_id;
 		}
-		
+
 		if (empty($stitem_id))
 		{
 			$pg = DataObjectFactory::Factory('STProductgroup');
-			
+
 			return $pg->getAll();
 		}
 		else
 		{
 			$this->loadSTItem($stitem_id);
-			
+
 			return array($this->item_detail->prod_group_id=>$this->item_detail->stproductgroup);
 		}
 	}
@@ -199,7 +213,7 @@ class POProductline extends DataObject
 		{
 			$stitem_id = $this->stitem_id;
 		}
-		
+
 		if (empty($stitem_id))
 		{
 			return array();
@@ -207,7 +221,7 @@ class POProductline extends DataObject
 		else
 		{
 			$this->loadSTItem($stitem_id);
-			
+
 			return $this->item_detail->getTaxRate();
 		}
 	}
@@ -218,9 +232,9 @@ class POProductline extends DataObject
 		{
 			$stitem_id = $this->stitem_id;
 		}
-		
+
 		$this->loadSTItem($stitem_id);
-		
+
 		return $this->item_detail->getUomList();
 	}
 
@@ -230,7 +244,7 @@ class POProductline extends DataObject
 		{
 			$stitem_id = $this->stitem_id;
 		}
-		
+
 		if (empty($stitem_id))
 		{
 			return '';
@@ -238,7 +252,7 @@ class POProductline extends DataObject
 		else
 		{
 			$this->loadSTItem($stitem_id);
-			
+
 			return $this->item_detail->getIdentifierValue();
 		}
 	}
@@ -246,23 +260,23 @@ class POProductline extends DataObject
 	public function currentConstraint($productsearch = '')
 	{
 		$ccdate = new ConstraintChain();
-		
+
 		if (!empty($productsearch))
 		{
 			$ccdate->add(new Constraint('description', 'like', $productsearch.'%'));
 		}
-		
+
 		$ccdate->add(new Constraint('start_date', '<=', Constraint::TODAY));
-		
+
 		$ccend = new ConstraintChain();
 		$ccend->add(new Constraint('end_date', 'is', 'NULL'));
 		$ccend->add(new Constraint('end_date', '>=', Constraint::TODAY), 'OR');
-		
+
 		$ccdate->add($ccend);
-		
+
 		return $ccdate;
 	}
-	
+
 	/*
 	 * Private Functions
 	 */
@@ -272,7 +286,7 @@ class POProductline extends DataObject
 		{
 			return;
 		}
-		
+
 		$this->stitem_id = $stitem_id;
 	}
 

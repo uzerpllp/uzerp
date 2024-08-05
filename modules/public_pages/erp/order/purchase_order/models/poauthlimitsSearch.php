@@ -10,9 +10,9 @@ class poauthlimitsSearch extends BaseSearch
 {
 
 	protected $version = '$Revision: 1.8 $';
-	
+
 	protected $fields = array();
-	
+
 	public static function useDefault($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = new poauthlimitsSearch($defaults);
@@ -25,17 +25,17 @@ class poauthlimitsSearch extends BaseSearch
 			''
 			);
 		$people = DataObjectFactory::Factory('Usercompanyaccess');
-		
+
 		$people->idField		 = 'username';
 		$people->identifierField = 'username';
 		$people->orderby		 = 'username';
-		
+
 		$options = array('0'=>'All');
-		
+
 		$cc = new ConstraintChain();
-		
+
 		$cc->add(new Constraint('usercompanyid', '=', EGS_COMPANY_ID));
-		
+
 		$peoplelist = $people->getAll($cc);
 		$options += $peoplelist;
 		$search->setOptions('username', $options);
@@ -48,18 +48,18 @@ class poauthlimitsSearch extends BaseSearch
 			0
 			);
 		$options = array('0'=>'All');
-		
+
 		$centres = DataObjectFactory::Factory('GLCentre');
-		
+
 		$centrelist = $centres->getAll();
-		
+
 		$options += $centrelist;
 		$search->setOptions('glcentre_id',$options);
-		
+
 		$search->setSearchData($search_data,$errors);
 		return $search;
 	}
-		
+
 }
 
 // End of poauthlimitsSearch

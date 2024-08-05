@@ -7,15 +7,15 @@
  **/
 
 class SOPriceTypeCollection extends DataObjectCollection {
-	
+
 	protected $version = '$Revision: 1.4 $';
-	
+
 	public $field;
-		
+
 	function __construct($do = 'PriceType')
 	{
 		parent::__construct($do);
-			
+
 	}
 
 }

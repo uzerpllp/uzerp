@@ -9,7 +9,7 @@ class SOPackingSlip extends DataObject
 {
 
 	protected $version = '$Revision: 1.4 $';
-	
+
 	protected $defaultDisplayFields = array('order_number'
 											,'name'
 											,'tracking_code'
@@ -17,7 +17,7 @@ class SOPackingSlip extends DataObject
 											,'courier_service'
 											,'contents'
 											);
-	
+
 	function __construct($tablename = 'so_packing_slips')
 	{
 // Register non-persistent attributes
@@ -27,11 +27,11 @@ class SOPackingSlip extends DataObject
 
 // Set specific characteristics
 		$this->idField = 'id';
-		
+
 // Define relationships
  		$this->belongsTo('SOrder', 'order_id', 'order_number');
  		$this->hasOne('SOrder', 'order_id', 'order_detail');
- 		
+
 // Define field formats
 
 // Define enumerated types
@@ -39,7 +39,7 @@ class SOPackingSlip extends DataObject
 // Define system defaults
 
 	}
-	
+
 }
 
 // End of SOPackingSlip

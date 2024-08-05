@@ -10,11 +10,11 @@ class SOPriceType extends DataObject
 {
 
 	protected $version = '$Revision: 1.4 $';
-	
+
 	protected $defaultDisplayFields = array('name'
 											,'description'
 											);
-	
+
 	function __construct($tablename = 'so_price_types')
 	{
 		parent::__construct($tablename);

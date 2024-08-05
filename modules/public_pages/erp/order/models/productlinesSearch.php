@@ -10,13 +10,13 @@ class productlinesSearch extends BaseSearch
 {
 
 	protected $version = '$Revision: 1.29 $';
-	
+
 	protected $fields = array();
 
 	public static function supplierDefault($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = productlinesSearch::useDefault($search_data, $errors, 'PLSupplier', $defaults);
-		
+
 // Search by Start Date; default is to show rows current at today's date
 		$search->addSearchField(
 			'start_date/end_date',
@@ -36,14 +36,14 @@ class productlinesSearch extends BaseSearch
 			);
 
 		$cc = new ConstraintChain();
-		
+
 		$cc->add(new Constraint('comp_class', 'is', 'NULL'));
 		$cc->add(new Constraint('comp_class', 'in', "('B', 'S')"), 'OR');
-		
+
 		$search->setConstraint('comp_class', $cc);
-		
+
 		$search->setSearchData($search_data, $errors, 'PLSupplierdefaults');
-		
+
 		return $search;
 	}
 
@@ -77,7 +77,7 @@ class productlinesSearch extends BaseSearch
 			'',
 			'hidden'
 		);
-				
+
 // Only display rows where the end date is null
 		$search->addSearchField(
 			'start_date',
@@ -115,7 +115,7 @@ class productlinesSearch extends BaseSearch
 		$cc->add(new Constraint('comp_class', 'is', 'NULL'));
 		$cc->add(new Constraint('comp_class', 'in', "('B', 'S')"), 'OR');
 		$search->setConstraint('comp_class', $cc);
-		
+
 		$search->setSearchData($search_data, $errors, 'PLSupplierItems');
 		return $search;
 	}
@@ -164,7 +164,7 @@ class productlinesSearch extends BaseSearch
 		$prodgroups = $prodgroup->getAll();
 		$options += $prodgroups;
 		$search->setOptions('prod_group_id',$options);
-		
+
 // Search by Stock Item
 		$search->addSearchField(
 			'stitem',
@@ -173,7 +173,7 @@ class productlinesSearch extends BaseSearch
 			'',
 			'advanced'
 			);
-			
+
 // Search by Account
 		$search->addSearchField(
 			'glaccount_id',
@@ -205,8 +205,8 @@ class productlinesSearch extends BaseSearch
 		$search->setSearchData($search_data,$errors,'headerdefaults');
 		return $search;
 	}
-	
-	public static function useDefault($search_data = null, &$errors = array(), $do, $defaults = null)
+
+	public static function useDefault($search_data = null, &$errors = array(), $do = null, $defaults = null)
 	{
 		$search = new productlinesSearch($defaults);
 
@@ -222,7 +222,7 @@ class productlinesSearch extends BaseSearch
 // Search by Supplier/Customer
 		$field = ($do=='PLSupplier')?'plmaster_id':'slmaster_id';
 		$label = ($do=='PLSupplier')?'Supplier':'Customer';
-		
+
 		$search->addSearchField(
 			$field,
 			$label,
@@ -254,7 +254,7 @@ class productlinesSearch extends BaseSearch
 			'',
 			'advanced'
 			);
-			
+
 // Search by Price Type
 		if ($do=='SLCustomer') {
 			$search->addSearchField(
@@ -270,7 +270,7 @@ class productlinesSearch extends BaseSearch
 			$options += $pricetypes;
 			$search->setOptions('so_price_type_id',$options);
 		}
-		
+
 // Search by Account
 		$search->addSearchField(
 			'glaccount_id',
@@ -313,11 +313,11 @@ class productlinesSearch extends BaseSearch
 		$prodgroups = $prodgroup->getAll();
 		$options += $prodgroups;
 		$search->setOptions('prod_group_id',$options);
-	
+
 		return $search;
 	}
-	
-	public static function items($search_data = null, &$errors = array(), $do, $defaults = null)
+
+	public static function items($search_data = null, &$errors = array(), $do = null, $defaults = null)
 	{
 		$search = new productlinesSearch($defaults);
 
@@ -343,7 +343,7 @@ class productlinesSearch extends BaseSearch
 		$prod_groups = $prod_group->getAll();
 		$options += $prod_groups;
 		$search->setOptions('prod_group_id', $options);
-		
+
 		return $search;
 	}
 
@@ -352,9 +352,9 @@ class productlinesSearch extends BaseSearch
 		$search = productlinesSearch::useDefault($search_data, $errors, 'PLSupplier', $defaults);
 
 		$search->removeSearchField('stitem');
-		
+
 		$search->removeSearchField('prod_group_id');
-		
+
 // Search by Start Date; default is to show rows current at today's date
 		$search->addSearchField(
 			'start_date/end_date',
@@ -373,10 +373,10 @@ class productlinesSearch extends BaseSearch
 			'',
 			'hidden'
 		);
-				
+
 		$search->setSearchData($search_data, $errors, 'SLCustomerheaderlines');
 		return $search;
-		
+
 	}
 
 	public static function soheaderLines($search_data = null, &$errors = array(), $defaults = null)
@@ -384,9 +384,9 @@ class productlinesSearch extends BaseSearch
 		$search = productlinesSearch::useDefault($search_data, $errors, 'SLCustomer', $defaults);
 
 		$search->removeSearchField('stitem');
-		
+
 		$search->removeSearchField('prod_group_id');
-		
+
 // Search by Start Date; default is to show rows current at today's date
 		$search->addSearchField(
 			'start_date/end_date',
@@ -405,37 +405,37 @@ class productlinesSearch extends BaseSearch
 			'',
 			'hidden'
 		);
-				
+
 		$search->setSearchData($search_data, $errors, 'SLCustomerheaderlines');
 		return $search;
-		
+
 	}
 
 	public static function customerInvoices($search_data = null, &$errors = array(), $defaults = null)
 	{
-		
+
 		$search = productlinesSearch::invoices($search_data, $errors, 'SLCustomer', $defaults);
-		
+
 		$search->setSearchData($search_data, $errors, 'SLCustomerInvoices');
 		return $search;
-		
+
 	}
-	
+
 	public static function supplierInvoices($search_data = null, &$errors = array(), $defaults = null)
 	{
-		
+
 		$search = productlinesSearch::invoices($search_data, $errors, 'PLSupplier', $defaults);
-		
+
 		$search->setSearchData($search_data, $errors, 'PLSupplierInvoices');
 		return $search;
-		
+
 	}
-	
-	public static function invoices($search_data = null, &$errors = array(), $do, $defaults = null)
+
+	public static function invoices($search_data = null, &$errors = array(), $do = null, $defaults = null)
 	{
 
 		$search = new productlinesSearch($defaults);
-		
+
 // Search by Productline Header
 		$search->addSearchField(
 			'productline_header_id',
@@ -444,13 +444,13 @@ class productlinesSearch extends BaseSearch
 			'',
 			'hidden'
 		);
-				
+
 // Search by Supplier/Customer
 		$field = ($do=='PLSupplier')?'plmaster_id':'slmaster_id';
 		$label = ($do=='PLSupplier')?'Supplier':'Customer';
 
 		$invoice = ($do=='PLSupplier')?DataObjectFactory::Factory('PInvoice'):DataObjectFactory::Factory('SInvoice');
-		
+
 		$search->addSearchField(
 			$field,
 			$label,
@@ -487,36 +487,36 @@ class productlinesSearch extends BaseSearch
 		$options = array_merge(array(''=>'All')
 					  		  ,$invoice->getEnumOptions('status'));
 		$search->setOptions('status', $options);
-	
+
 		return $search;
-	
+
 	}
 
 	public static function customerOrders($search_data = null, &$errors = array(), $defaults = null)
 	{
-		
+
 		$search = productlinesSearch::orders($search_data, $errors, 'SLCustomer', $defaults);
-				
+
 		$search->setSearchData($search_data, $errors, 'SLCustomerOrders');
 		return $search;
-		
+
 	}
-	
+
 	public static function supplierOrders($search_data = null, &$errors = array(), $defaults = null)
 	{
-		
+
 		$search = productlinesSearch::orders($search_data, $errors, 'PLSupplier', $defaults);
-		
+
 		$search->setSearchData($search_data, $errors, 'PLSupplierOrders');
 		return $search;
-		
+
 	}
-	
-	public static function orders($search_data = null, &$errors = array(), $do, $defaults = null)
+
+	public static function orders($search_data = null, &$errors = array(), $do = null, $defaults = null)
 	{
 
 		$search = new productlinesSearch($defaults);
-		
+
 // Search by Productline Header
 		$search->addSearchField(
 			'productline_header_id',
@@ -525,13 +525,13 @@ class productlinesSearch extends BaseSearch
 			'',
 			'hidden'
 		);
-		
+
 // Search by Supplier/Customer
 		$field = ($do=='PLSupplier')?'plmaster_id':'slmaster_id';
 		$label = ($do=='PLSupplier')?'Supplier':'Customer';
 
 		$order = ($do=='PLSupplier')?DataObjectFactory::Factory('POrder'):DataObjectFactory::Factory('SOrder');
-		
+
 		$search->addSearchField(
 			$field,
 			$label,
@@ -569,9 +569,9 @@ class productlinesSearch extends BaseSearch
 		$options = array_merge(array(''=>'All')
 					  		  ,$order->getEnumOptions('status'));
 		$search->setOptions('status', $options);
-	
+
 		return $search;
-	
+
 	}
 
 }

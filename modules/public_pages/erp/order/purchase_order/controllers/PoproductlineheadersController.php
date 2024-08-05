@@ -251,7 +251,7 @@ class poproductlineheadersController extends printController
         // Id must be set
         if (! isset($this->_data['id'])) {
             $flash->addError('Stock Item not supplied');
-            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
         }
 
         $stitem = DataObjectFactory::Factory('STItem');
@@ -259,7 +259,7 @@ class poproductlineheadersController extends printController
 
         if (! $stitem->isLoaded()) {
             $flash->addError('Cannot find Stock Item');
-            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
         }
 
         $orders = self::getItemDetail($stitem);
@@ -515,7 +515,7 @@ class poproductlineheadersController extends printController
             $on_order = BCADD(sprintf('%0' . $row['decimals'] . 'f', $row['on_order']), 0, $row['decimals']);
             $orders[$key]['required'] = $required;
             $orders[$key]['on_order'] = $on_order;
-            $balance = BCSUB(BCADD($balance, $on_order, $row['decimals']), $required, $row['decimals']);
+            $balance = BCSUB(BCADD((string) $balance, $on_order, $row['decimals']), $required, $row['decimals']);
             $orders[$key]['in_stock'] = $balance;
             if ($orders[$key]['in_stock'] < 0) {
                 $orders[$key]['in_stock'] = sprintf('%0.' . $row['decimals'] . 'f', 0);
@@ -784,7 +784,7 @@ class poproductlineheadersController extends printController
                     $itemplan[$item->stitem_id]['required'] = bcadd($required, $itemplan[$item->stitem_id]['required'], $stitem->qty_decimals);
                 }
 
-                $available = bcadd($itemplan[$item->stitem_id]['on_order'], $itemplan[$item->stitem_id]['in_stock'], $stitem->qty_decimals);
+                $available = bcadd($itemplan[$item->stitem_id]['on_order'], (string) $itemplan[$item->stitem_id]['in_stock'], $stitem->qty_decimals);
 
                 $itemplan[$item->stitem_id]['shortfall'] = bcsub($itemplan[$item->stitem_id]['required'], $available, $stitem->qty_decimals);
 
@@ -993,7 +993,7 @@ class poproductlineheadersController extends printController
         $_prod_group_id = $this->_data['prod_group_id'];
 
         $stuom_id = $this->getUomList($_stitem_id);
-        $_selected = (isset($this->_data['stuom_id'])) ? $this->_data['stuom_id'] : '';
+        $_selected = $this->_data['stuom_id'] ?? '';
         $stuom_id = $this->buildSelect('', 'stuom_id', $stuom_id, $_selected);
         $output['stuom_id'] = array(
             'data' => $stuom_id,
@@ -1001,7 +1001,7 @@ class poproductlineheadersController extends printController
         );
 
         $tax_rate_id = $this->getTaxRate($_stitem_id);
-        $_selected = (isset($this->_data['tax_rate_id'])) ? $this->_data['tax_rate_id'] : '';
+        $_selected = $this->_data['tax_rate_id'] ?? '';
         $tax_rate_id = $this->buildSelect('', 'tax_rate_id', $tax_rate_id, $_selected);
         $output['tax_rate_id'] = array(
             'data' => $tax_rate_id,

@@ -26,37 +26,37 @@ class POAwaitingAuthCollection extends DataObjectCollection
 			$rec->delete();	
 		}
 	}
-	
+
 	function loadBy ($username = '', $order = '')
 	{
 		$db = DB::Instance();
-		
+
 		$sh = new SearchHandler($this, false);
-		
+
 		if (!empty($username))
 		{
 			$sh->addConstraint(new Constraint('username', '=', $username));
 		}
-		
+
 		if (!empty($order))
 		{
 			$sh->addConstraint(new Constraint('order_id', '=', $order));
 		}
-		
+
 		$this->load($sh);
 	}
-	
+
 	function getOrderList ($username = '')
 	{
 		$this->loadBy($username);
-		
+
 		$authlist = array();
-		
+
 		foreach ($this as $authority)
 		{
 			$authlist[] = $authority->order_id;
 		}
-		
+
 		return implode(',', $authlist);
 	}
 	

@@ -295,7 +295,7 @@ class PordersController extends printController
 
         parent::delete('POrder');
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
     }
 
     public function _new()
@@ -1580,7 +1580,7 @@ class PordersController extends printController
 
     public function printaction()
     {
-        if (strtolower($this->_data['printaction']) == 'printorder') {
+        if (strtolower((string) $this->_data['printaction']) == 'printorder') {
             if (! $this->loadData()) {
                 $this->dataError();
                 sendBack();
@@ -2383,7 +2383,7 @@ class PordersController extends printController
         $order_methods = $supplier->getEnumOptions('order_method');
 
         if (isset($order_methods[$supplier->order_method])) {
-            $options['default_print_action'] = strtolower($order_methods[$supplier->order_method]);
+            $options['default_print_action'] = strtolower((string) $order_methods[$supplier->order_method]);
         }
 
         $options['email_subject'] = '"Purchase Order ' . $order->order_number . '"';
@@ -2501,7 +2501,7 @@ class PordersController extends printController
         $json_response = $this->generate_output($this->_data['print'], $options);
 
         // decode response, if it was successful update the print count
-        $response = json_decode($json_response, TRUE);
+        $response = json_decode((string) $json_response, TRUE);
 
         if ($response['status'] === TRUE && $report == 'PurchaseOrder' && ! self::updateStatus($order)) {
 
@@ -2535,7 +2535,7 @@ class PordersController extends printController
             'report' => 'PurchaseOrderList'
         );
 
-        if (strtolower($status) == "dialog") {
+        if (strtolower((string) $status) == "dialog") {
             return $options;
         }
 
@@ -2580,7 +2580,7 @@ class PordersController extends printController
             'title' => prettify($this->_data['type']) . ' Purchase Orders as at ' . un_fix_date(fix_date(date(DATE_FORMAT)))
         );
 
-        if (strtolower($this->_data['lines']) == 'y') {
+        if (strtolower((string) $this->_data['lines']) == 'y') {
             $extra['showlines'] = true;
             $relationship_whitelist = array(
                 'lines'

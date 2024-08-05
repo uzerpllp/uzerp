@@ -12,7 +12,7 @@ class POProductlineCollection extends DataObjectCollection
 	protected $version='$Revision: 1.10 $';
 	
 	public $field;
-	
+
 	function __construct($do='POProductline', $tablename='po_productlines_overview')
 	{
 		parent::__construct($do, $tablename);
@@ -22,7 +22,7 @@ class POProductlineCollection extends DataObjectCollection
 	function getItems(&$sh)
 	{
 		$this->_tablename="po_productline_items";
-		
+
 		if ($sh instanceof SearchHandler)
 		{
 			$sh->setFields(array('id'
@@ -30,7 +30,7 @@ class POProductlineCollection extends DataObjectCollection
 								,'stuom_id'
 								,'uom_name'
 								,'stitem'));
-			
+
 			$sh->setOrderby('stitem');
 		}
 	}

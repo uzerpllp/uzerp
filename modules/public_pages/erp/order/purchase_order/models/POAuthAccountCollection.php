@@ -8,8 +8,7 @@
 
 class POAuthAccountCollection extends DataObjectCollection
 {
-	
-	protected $version = '$Revision: 1.5 $';
+	protected $view;
 	
 	public $field;
 
@@ -18,7 +17,6 @@ class POAuthAccountCollection extends DataObjectCollection
 		parent::__construct($do);
 	
 		$this->view = '';
-		
 	}
 		
 }
