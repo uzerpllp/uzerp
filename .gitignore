@@ -49,3 +49,9 @@ apc.php
 # Pest/php-unit
 .phpunit.result.cache
 .phpunit.cache
+
+# XMLrpc - ancient code to ignore for now.
+# If we need this, let's use postgrest ot a proper API.
+plugins/xmlrpc/**
+modules/public_pages/ticketing/models/xmlrpcTicket.php
+
