@@ -8,18 +8,18 @@
 
 class ARAnalysisCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.6 $';
-	
+
 	public $field;
-		
+
 	function __construct($do = 'ARAnalysis')
 	{
-		
+
 		parent::__construct($do);
-					
+
 	}
-		
+
 }
 
 // End of ARAnalysisCollection

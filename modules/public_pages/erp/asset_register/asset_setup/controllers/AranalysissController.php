@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -61,7 +61,7 @@ class AranalysissController extends Controller
 		parent::delete('ARAnalysis');
 		
 		sendTo($this->name,'index',$this->_modules);
-		
+
 	}
 	
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
@@ -71,7 +71,7 @@ class AranalysissController extends Controller
 		
 		if(parent::save('ARAnalysis'))
 		{
-			if (strtolower($this->_data['saveform'])=='save')
+			if (strtolower((string) $this->_data['saveform'])=='save')
 			{
 				sendTo($this->name,'index',$this->_modules);
 			}

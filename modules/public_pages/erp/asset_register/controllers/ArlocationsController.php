@@ -33,9 +33,9 @@ class ArlocationsController extends Controller
 		$sidebar = new SidebarController($this->view);
 		
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebarlist=array();
-		
+
 		$sidebarlist['showall']= array(
 							'tag'=>'View All Assets',
 							'link'=>array_merge($this->_modules
@@ -60,9 +60,9 @@ class ArlocationsController extends Controller
 													 )
 											   )
 							);
-							
+
 		$sidebar->addList('Actions',$sidebarlist);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		
 		$this->view->set('sidebar',$sidebar);
@@ -75,9 +75,9 @@ class ArlocationsController extends Controller
 		$flash = Flash::Instance();
 		
 		$flash->addError('delete is not allowed here');
-		
+
 		sendTo($this->name,'index',$this->_modules);
-		
+
 	}
 
 	public function view()
@@ -89,9 +89,9 @@ class ArlocationsController extends Controller
 			$asset->load($this->_data['id']);
 
 			$sidebar = new SidebarController($this->view);
-			
+
 			$sidebarlist=array();
-			
+
 			$sidebarlist['showall']= array(
 								'tag'=>'View All Assets',
 								'link'=>array_merge($this->_modules
@@ -100,7 +100,7 @@ class ArlocationsController extends Controller
 													 )
 											   )
 								);
-								
+
 			$sidebarlist['viewtrans']= array(
 								'tag'=>'View All Transactions',
 								'link'=>array_merge($this->_modules
@@ -109,7 +109,7 @@ class ArlocationsController extends Controller
 														 )
 												   )
 								);
-								
+
 			$sidebarlist['new']= array(
 								'tag'=>'New Transaction',
 								'link'=>array_merge($this->_modules
@@ -118,19 +118,19 @@ class ArlocationsController extends Controller
 													 )
 											   )
 								);
-								
+
 			$sidebar->addList('Actions',$sidebarlist);
-			
+
 			$this->view->register('sidebar',$sidebar);
-			
+
 			$this->view->set('sidebar',$sidebar);
-			
+
 		}
 		else
 		{
 			sendTo($this->name,'index',$this->_modules);
 		}
-		
+
 	}
 
 	protected function getPageName($base=null,$action=null)

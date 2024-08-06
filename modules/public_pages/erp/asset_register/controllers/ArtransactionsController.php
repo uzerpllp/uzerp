@@ -76,7 +76,7 @@ class ArtransactionsController extends Controller
 		$flash->addError('delete is not allowed here');
 		
 		sendTo($this->name,'index',$this->_modules);
-		
+
 	}
 	
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
@@ -84,15 +84,15 @@ class ArtransactionsController extends Controller
 		
 		$flash=Flash::Instance();
 		
-		if (strtolower($this->_data['saveform'])=='cancel')
+		if (strtolower((string) $this->_data['saveform'])=='cancel')
 		{
 			$flash->addMessage('Action cancelled');
 			sendTo($this->name,'index',$this->_modules);
 		}
-		
+
 		if(parent::save('ARTransaction'))
 		{
-			if (strtolower($this->_data['saveform'])=='save')
+			if (strtolower((string) $this->_data['saveform'])=='save')
 			{
 				sendTo($this->name,'index',$this->_modules);
 			}

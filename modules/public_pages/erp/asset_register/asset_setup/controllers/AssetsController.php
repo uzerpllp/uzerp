@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -58,7 +58,7 @@ class AssetsController extends Controller
 		$flash->addError('delete is not allowed here');
 		
 		sendTo($this->name,'index',$this->_modules);
-		
+
 	}
 	
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void

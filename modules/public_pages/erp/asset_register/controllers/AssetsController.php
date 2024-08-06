@@ -65,9 +65,9 @@ class AssetsController extends printController
 		$flash->addError('delete is not allowed here');
 		
 		sendTo($this->name,'index',$this->_modules);
-		
+
 	}
-	
+
 	public function depreciation ()
 	{
 		
@@ -87,7 +87,7 @@ class AssetsController extends printController
 		{
 			assetHandling::depreciateAll($errors);
 		}
-		
+
 		if (count($errors)>0)
 		{
 			$flash->addErrors($errors);
@@ -97,7 +97,7 @@ class AssetsController extends printController
 		{
 			$db->CompleteTrans();
 		}
-		
+
 		if (isset($this->_data['id']))
 		{
 			sendTo($this->name, 'view', $this->_modules, array('id'=>$this->_data['id']));
@@ -106,7 +106,7 @@ class AssetsController extends printController
 		{
 			sendTo($this->name, 'index', $this->_modules);
 		}
-			
+
 	}
 
 	public function disposal ()
@@ -140,16 +140,16 @@ class AssetsController extends printController
 				$this->view->set('disposal_value', 0);
 				$this->view->set('asset', $asset);
 			}
-			
+
 		}
 		else
 		{
 			$flash->addError('Asset Disposal failed - no asset selected');
 			sendTo($this->name,'index',$this->_modules);
 		}
-		
+
 	}
-	
+
 	public function savedisposal ()
 	{
 		
@@ -159,18 +159,18 @@ class AssetsController extends printController
 		{
 			$data=$this->_data['Asset'];
 		}
-				
+
 		if (isset($data['id']))
 		{
 			
 			$id = $data['id'];
 			
-			if (strtolower($this->_data['saveform'])=='cancel')
+			if (strtolower((string) $this->_data['saveform'])=='cancel')
 			{
 				$flash->addMessage('Action cancelled');
 				sendTo($this->name, 'view', $this->_modules, array('id'=>$id));
 			}
-			
+
 			$db = DB::Instance();
 			
 			$errors = array();
@@ -194,34 +194,34 @@ class AssetsController extends printController
 			{
 				$db->CompleteTrans();
 			}
-			
+
 			sendTo($this->name, 'view', $this->_modules, array('id'=>$id));
-			
+
 		}
-		
+
 		sendTo($this->name, 'view', $this->_modules);
-		
+
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		$flash = Flash::Instance();
 
 		$db = DB::Instance();
 		$db->StartTrans();
-		
+
 		$errors = array();
-		
+
 		assetHandling::save($this->_data['Asset'], $errors);
-		
+
 		if (count($errors)===0 && $db->CompleteTrans()) { 
-			if (strtolower($this->_data['saveform'])=='save') {
+			if (strtolower((string) $this->_data['saveform'])=='save') {
 				sendTo($this->name, 'index', $this->_modules);
 			} else {
 				sendTo($this->name, 'new', $this->_modules);
 			}
 		}
-		
+
 		$db->FailTrans();
 		$flash->addErrors($errors);
 		$this->_data['id'] = '';
@@ -247,10 +247,10 @@ class AssetsController extends printController
 													 )
 											   )
 							);
-							
+
 			$this->sidebarAll($sidebarlist);
 			$sidebar->addList('Actions',$sidebarlist);
-			
+
 			$sidebarlist=array();
 			$sidebarlist['viewtrans']= array(
 							'tag'=>'View Transactions',
@@ -261,7 +261,7 @@ class AssetsController extends printController
 													 )
 											   )
 							);
-							
+
 			if (is_null($asset->disposal_date))
 			{
 				$sidebarlist['disposal']= array(
@@ -274,7 +274,7 @@ class AssetsController extends printController
 												   )
 								);
 			}
-			
+
 			if (is_null($asset->disposal_date) && $asset->wd_value>0)
 			{
 				$sidebarlist['depreciation']= array(
@@ -287,9 +287,9 @@ class AssetsController extends printController
 												   )
 								);
 			}
-			
+
 			$sidebar->addList('This Asset',$sidebarlist);
-			
+
 			$this->view->register('sidebar',$sidebar);
 			$this->view->set('sidebar',$sidebar);
 		}
@@ -297,12 +297,12 @@ class AssetsController extends printController
 		{
 			sendTo($this->name,'index',$this->_modules);
 		}
-		
+
 	}
 
 	protected function sidebarAll (&$sidebarlist=array())
 	{
-		
+
 		$sidebarlist['viewtrans']= array(
 							'tag'=>'View All Transactions',
 							'link'=>array_merge($this->_modules
@@ -311,7 +311,7 @@ class AssetsController extends printController
 													 )
 											   )
 							);
-							
+
 		$sidebarlist['newasset']= array(
 							'tag'=>'New Asset',
 							'link'=>array_merge($this->_modules
@@ -320,7 +320,7 @@ class AssetsController extends printController
 													 )
 											   )
 							);
-							
+
 		$sidebarlist['depreciation']= array(
 							'tag'=>'Run Depreciation',
 							'link'=>array_merge($this->_modules
@@ -329,10 +329,10 @@ class AssetsController extends printController
 													 )
 											   )
 							);
-							
-		
+
+
 	}
-	
+
 	protected function getPageName($base=null,$action=null)
 	{
 		return parent::getPageName((empty($base)?'Assets':$base), $action);

@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -24,7 +24,7 @@ class IndexController extends DashboardController
 			$flash = Flash::Instance();
 			$flash->addError('GL Support is not enabled');
 		}
-		
+
 		parent::index();
 	
 	}

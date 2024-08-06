@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -61,7 +61,7 @@ class ArlocationsController extends Controller
 		parent::delete('ARLocation');
 		
 		sendTo($this->name,'index',$this->_modules);
-		
+
 	}
 	
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
@@ -70,7 +70,7 @@ class ArlocationsController extends Controller
 		
 		if(parent::save('ARLocation'))
 		{
-			if (strtolower($this->_data['saveform'])=='save')
+			if (strtolower((string) $this->_data['saveform'])=='save')
 			{
 				sendTo($this->name,'index',$this->_modules);
 			}

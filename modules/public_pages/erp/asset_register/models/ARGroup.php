@@ -10,7 +10,7 @@ class ARGroup extends DataObject
 {
 
 	protected $version = '$Revision: 1.7 $';
-	
+
 	function __construct($tablename='ar_groups')
 	{
 
@@ -23,32 +23,32 @@ class ARGroup extends DataObject
 											,'asset_depreciation_account'
 											,'depreciation_charge_account'
 											,'disposals_account');
-		
+
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
-		
+
 // Set specific characteristics		
 		$this->idField='id';
-		
+
 		$db = DB::Instance();
-		
+
 		$this->identifierField = array('description', $db->qstr('-').' as c1', 'depn_term', $db->qstr('years').' as c2');
-		
+
 		$this->identifierFieldJoin = ' ';
-		
+
 // Define validation
 		$this->validateUniquenessOf(array('description', 'depn_term')); 
-		
+
 // Define relationships
 		$this->belongsTo('GLAccount', 'asset_cost_glaccount_id', 'asset_cost_account');
  		$this->belongsTo('GLAccount', 'asset_depreciation_glaccount_id', 'asset_depreciation_account');
  		$this->belongsTo('GLAccount', 'depreciation_charge_glaccount_id', 'depreciation_charge_account');
  		$this->belongsTo('GLAccount', 'disposals_glaccount_id', 'disposals_account');
-		
+
 // Define field formats		
- 		
+
 // Define enumerated types
  		$this->setEnum('depn_method'
 					  ,array('E'=>'Economic Life Table'

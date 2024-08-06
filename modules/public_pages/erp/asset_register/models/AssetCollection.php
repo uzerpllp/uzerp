@@ -8,18 +8,18 @@
 
 class AssetCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.6 $';
-	
+
 	public $field;
-		
+
 	function __construct($do = 'Asset', $tablename = 'assetsoverview')
 	{
-		
+
 		parent::__construct($do, $tablename);
-			
+
 	}
-		
+
 }
 
 // End of AssetCollection

@@ -9,9 +9,9 @@
 class assetsSearch extends BaseSearch {
 
 	protected $version='$Revision: 1.4 $';
-	
+
 	public static function useDefault($search_data=null, &$errors=array(), $defaults=null) {
-		
+
 		$search = new assetsSearch($defaults);
 
 		$trans = DataObjectFactory::Factory('ARTransaction');
@@ -56,7 +56,7 @@ class assetsSearch extends BaseSearch {
 		$suppliers = $supplier->getAll(null, false, true);
 		$options += $suppliers;
 		$search->setOptions('plmaster_id',$options);
-		
+
 // Search by Group
 		$search->addSearchField(
 			'argroup_id',
@@ -92,7 +92,7 @@ class assetsSearch extends BaseSearch {
 		$ar_analysiss = $ar_analysis->getAll();
 		$options += $ar_analysiss;
 		$search->setOptions('aranalysis_id',$options);
-		
+
 // Search by Purchase Date
 		$search->addSearchField(
 			'purchase_date',
@@ -101,17 +101,17 @@ class assetsSearch extends BaseSearch {
 			'',
 			'advanced'
 		);
-		
+
 		$search->setSearchData($search_data,$errors);
 		return $search;
 	}
-		
+
 	public static function transactions($search_data=null, &$errors=array(), $defaults=null) {
-		
+
 		$search = new assetsSearch($defaults);
 
 		$trans = DataObjectFactory::Factory('ARTransaction');
-		
+
 // Search by Transaction Date
 		$search->addSearchField(
 			'transaction_date',
@@ -120,7 +120,7 @@ class assetsSearch extends BaseSearch {
 			'',
 			'basic'
 		);
-		
+
 // Search by Asset
 		$search->addSearchField(
 				'armaster_id',
@@ -134,7 +134,7 @@ class assetsSearch extends BaseSearch {
 		$assets  = $asset->getAll();
 		$options+= $assets;
 		$search->setOptions('armaster_id', $options);
-		
+
 // Search by Transaction Type
 		$search->addSearchField(
 				'transaction_type',
@@ -170,7 +170,7 @@ class assetsSearch extends BaseSearch {
 		$search->setSearchData($search_data, $errors);
 		return $search;
 	}
-		
+
 }
 
 // End of assetsSearch

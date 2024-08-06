@@ -8,18 +8,18 @@
 
 class ARLocationCollection extends DataObjectCollection
 {
-	
+
 	protected $version='$Revision: 1.6 $';
-	
+
 	public $field;
-		
+
 	function __construct($do = 'ARLocation', $tablename = 'ar_locationsoverview')
 	{
-		
+
 		parent::__construct($do, $tablename);
-			
+
 	}
-		
+
 }
 
 // End of ARLocationCollection
