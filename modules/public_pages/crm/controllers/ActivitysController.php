@@ -53,7 +53,7 @@ class ActivitysController extends printController
 
         parent::delete($this->modeltype);
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
     }
 
     public function _new($followup = FALSE)
@@ -155,7 +155,7 @@ class ActivitysController extends printController
             }
 
             // Return to the refering page, e.g. when adding an activity from the contacts module
-            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+            sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
         } else {
             $this->refresh();
         }
@@ -265,5 +265,3 @@ class ActivitysController extends printController
         $this->view->set('sidebar', $sidebar);
     }
 }
-?>
-

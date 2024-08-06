@@ -7,9 +7,9 @@
  **/
 class Opportunity extends DataObject
 {
-	
+
 	protected $version = '$Revision: 1.9 $';
-	
+
 	protected $defaultDisplayFields = array('name'		=> 'Name'
 										   ,'company'	=> 'Company'
 										   ,'person'	=> 'Person'
@@ -19,23 +19,23 @@ class Opportunity extends DataObject
 										   ,'enddate'	=> 'End'
 										   ,'assigned'	=> 'Assigned To'
 										   );
-	
+
 	protected $linkRules;
-										   
+
 	function __construct($tablename = 'opportunities')
 	{
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
-		
+
 // Set specific characteristics
 		$this->idField			= 'id';
 		$this->identifierField	= array('name','company');
 		$this->orderby			= 'lower(name)';
-		
+
 		$this->view='';
-		
+
 // Define relationships
 		$this->belongsTo('Opportunitystatus', 'status_id', 'status');
 		$this->belongsTo('Campaign', 'campaign_id', 'campaign');
@@ -55,25 +55,25 @@ class Opportunity extends DataObject
 		$this->hasMany('Hour','hours');
 		$this->hasMany('opportunitynote','notes');
 		$this->hasMany('opportunityattachment','attachments');
-  		
+
 // Define field formats
 		$this->getField('cost')->setFormatter(new PriceFormatter());
 		$this->getField('value')->setFormatter(new PriceFormatter());
 
 // Define enumerated types
 		$numbers = array();
-		
+
 		for($i=0; $i<=100; $i+=5)
 			$numbers[$i] = $i;
-		
+
 		$this->setEnum('probability', $numbers);
-		
+
 // Define link rules for sidebar related view
 		$this->linkRules = array('projects' => array('actions' => array('link')
 													,'rules'=>array())
 							); 		
 	}
-	
+
 	public function getAll(ConstraintChain $cc=null, $ignore_tree=false, $use_collection=false, $limit='')
 	{
 		return parent::getAll($cc, $ignore_tree, true, $limit);

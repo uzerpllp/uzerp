@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -7,19 +7,19 @@
  **/
 
 class CRMCalendar extends DataObject {
-	
+
 	protected $version = '$Revision: 1.1 $';
-	
+
 	protected $defaultDisplayFields = array('title' => 'Title');
-	
+
 	function __construct($tablename = 'crm_calendars')
 	{
-	
+
 		parent::__construct($tablename);
-	
+
 		$this->idField = 'id';
 		$this->identifierField = 'title';
-		
+
 		$this->setEnum(
 			'colour',
 			array(
@@ -46,9 +46,9 @@ class CRMCalendar extends DataObject {
 				'#8D6F47'
 			)
 		);
-		
+
 		$this->belongsTo('CRMCalendarEvent', 'crm_calendar_id', 'crm_calendar');
-		
+
 	}
 
 }

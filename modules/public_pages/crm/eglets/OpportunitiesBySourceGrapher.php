@@ -1,16 +1,16 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **/
 class OpportunitiesBySourceGrapher extends SimpleGraphEGlet {
-	
+
 	protected $version='$Revision: 1.3 $';
-	
+
 	function populate() {
-		
+
 		$query='select s.name, COALESCE(sum(o.cost), 0.0) AS piplinecost FROM opportunitysource s LEFT OUTER JOIN opportunities o ON (s.id=o.source_id
 		AND o.usercompanyid='.EGS_COMPANY_ID.
 		' AND extract(\'month\' FROM o.enddate)=extract(\'month\' FROM now())
@@ -19,25 +19,25 @@ class OpportunitiesBySourceGrapher extends SimpleGraphEGlet {
 		$db			= &DB::Instance();
 		$result		= $db->GetAssoc($query);
 		$options	= array();
-		
+
 		foreach($result as $name => $cost) {
 			$data['x'][] = $name;
 			$data['y'][] = (float) $cost;
 		}
-		
+
 		$options['seriesList'][] = array(
 			'label'			=> '',
 			'legendEntry'	=> FALSE,
 			'data'			=> $data
 		);
-		
+
 		$options['type']		= 'bar';
 		$options['identifier']	= __CLASS__;
-		
+
 		$this->contents = json_encode($options);
-		
+
 	}
-	
+
 }
 
 // end of OpportunitiesBySourceGrapher.php

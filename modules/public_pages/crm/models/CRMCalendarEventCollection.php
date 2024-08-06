@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -8,15 +8,15 @@
 
 class CRMCalendarEventCollection extends DataObjectCollection {
 
-	protected $version = '$Revision: 1.1 $';
-	
+	protected $identifierField;
+
 	function __construct($do = 'CRMCalendarEvent', $tablename = 'crm_calendar_events_overview')
 	{
-	
+
 		parent::__construct($do, $tablename);
 
 		$this->identifierField = 'title';
-		
+
 	}
 
 }

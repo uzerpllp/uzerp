@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,47 +9,47 @@
 class CrmcalendarsController extends printController {
 
 	protected $version = '$Revision: 1.9 $';
-	
+
 	protected $_templateobject;
 
 	public function __construct($module = null, $action = null)
 	{
-	
+
 		parent::__construct($module, $action);
-		
+
 		$this->_templateobject = new CRMCalendar();
 		$this->uses($this->_templateobject);
 
 	}
-	
+
 	// calendar view, not calendar index
 	public function index($collection = null, $sh = '', &$c_query = null)
 	{
-		
+
 		// build a list of calendars for the sidebar
 		$calendars = new CRMCalendarCollection($this->_templateobject);
 		$sh = new SearchHandler($calendars, FALSE);
 		$sh->setOrderby('title', 'ASC');
 		$calendars->load($sh);
-		
+
 		$output_calendars = array();
-		
+
 		foreach ($calendars as $calendar)
 		{
-		
+
 			$output_calendars[$calendar->id] = array(
 				'title'	=> $calendar->title,
 				'class'	=> str_replace("#", "", $calendar->colour)
 			);
-			
+
 		}
-		
+
 		$this->view->set('calendars', $output_calendars);
 		$this->view->set('dialog_calendars', $this->get_editable_calendars());
-		
+
 		// sidebar
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -63,28 +63,28 @@ class CrmcalendarsController extends printController {
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 		parent::index(new CRMCalendarCollection($this->_templateobject));
-				
+
 	}
-	
+
 	public function view_calendars()
 	{
-		
+
 		// when an item is clicked go the the view action
 		$this->view->set('clickaction', 'view');
-				
+
 		parent::index(new CRMCalendarCollection($this->_templateobject));
-		
+
 		// parent::index is going to set the template to index, we need it to be view_calendars
 		$this->_templateName = $this->getTemplateName('view_calendars');
-		
+
 		// set sidebar
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -98,7 +98,7 @@ class CrmcalendarsController extends printController {
 				)
 			)
 		);
-		
+
 		$sidebar->addList(
 			'Calendar',
 			array(
@@ -112,23 +112,23 @@ class CrmcalendarsController extends printController {
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 	}
-	
+
 	// view calendar
 	public function view()
 	{
-		
+
 		$calendar = $this->_templateobject;
 		$calendar->load($this->_data['id']);
-		
+
 		$this->view->set('model', $calendar);
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -149,7 +149,7 @@ class CrmcalendarsController extends printController {
 				)
 			)
 		);
-		
+
 		$sidebar->addList(
 			'Calendar',
 			array(
@@ -164,7 +164,7 @@ class CrmcalendarsController extends printController {
 				)
 			)
 		);
-		
+
 		$sidebar->addList(
 			'Events',
 			array(
@@ -179,31 +179,31 @@ class CrmcalendarsController extends printController {
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-	
+
 	}
-	
+
 	// new / edit calendar
 	public function _new()
 	{
-	
+
 		$calendar = $this->_templateobject;
-		
+
 		$colours = $calendar->getEnumOptions('colour');
 		$this->view->set('colours', $colours);
-		
+
 		if ($this->_data['action'] == 'edit')
 		{ 
 			$calendar->load($this->_data['id']);
 		}
-		
+
 		$this->view->set('model', $calendar);
-		
+
 		// set sidebar
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -224,19 +224,19 @@ class CrmcalendarsController extends printController {
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar', $sidebar);
 		$this->view->set('sidebar', $sidebar);
-		
+
 	}
-	
+
 	// save calendar
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
-	
+
 		$flash	= Flash::Instance();
 		$errors	= array();
-		
+
 		$calendar = $this->_templateobject;
 
 		if (!isset($this->_data['CRMCalendar']['colour']))
@@ -244,7 +244,7 @@ class CrmcalendarsController extends printController {
 			$colours = $calendar->getEnumOptions('colour');
 			$this->_data['CRMCalendar']['colour'] = $colours[array_rand($colours)];
 		}
-	
+
 		if (parent::save('CRMCalendar', '', $errors))
 		{
 			sendBack();
@@ -253,29 +253,29 @@ class CrmcalendarsController extends printController {
 		{
 			sendBack();
 		}
-		
+
 	}
-	
+
 	public function get_editable_calendars()
 	{
-		
+
 		$output_calendars = array();
-	
+
 		// build a list of calendars for the sidebar
 		$calendars = new CRMCalendarCollection($this->_templateobject);
-		
+
 		$sh = new SearchHandler($calendars, FALSE);
 		$sh->setOrderby('title', 'ASC');
-		
+
 		$calendars->load($sh);
-		
+
 		foreach ($calendars as $calendar)
 		{
 			$output_calendars[$calendar->id] = $calendar->title;	
 		}
-	
+
 		return $output_calendars;
-	
+
 	}
 
 }
