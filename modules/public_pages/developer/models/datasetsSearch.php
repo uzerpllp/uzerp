@@ -10,19 +10,19 @@ class datasetsSearch extends BaseSearch
 {
 
 	protected $version = '$Revision: 1.1 $';
-	
+
 	protected $fields = array();
-	
+
 	public static function useDefault($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = new datasetsSearch($defaults);
-		
+
 		$search->setSearchData($search_data, $errors);
 
 		return $search;
-	
+
 	}
-	
+
 	public function setSearchFields($dataset)
 	{
 		$field_types = array('character varying'	=> 'contains'
@@ -32,7 +32,7 @@ class datasetsSearch extends BaseSearch
 							,'int4'					=> 'equal'
 							,'int8'					=> 'equal'
 							,'numeric'				=> 'equal');
-		
+
 		foreach ($dataset->fields as $field)
 		{
 			if ($field->searchable == 't')
