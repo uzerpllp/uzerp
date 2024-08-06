@@ -10,10 +10,10 @@ class customerServicesSearch extends BaseSearch
 {
 
 	protected $version='$Revision: 1.8 $';
-	
-	public static function useDefault($search_data=null,&$errors=array(),$customerservice)
+
+	public static function useDefault($search_data = null,&$errors = [], CustomerServiceCollection $customerservice = null)
 	{
-		
+
 		$search = new customerServicesSearch();
 // Search by Product Group
 		$search->addSearchField(
@@ -50,7 +50,7 @@ class customerServicesSearch extends BaseSearch
 		$options = array('' => 'All');
 		$options += $customerservice->periodList();
 		$search->setOptions('start', $options);
-			
+
 // Search by End Period
 		$search->addSearchField(
 			'end',
@@ -60,16 +60,16 @@ class customerServicesSearch extends BaseSearch
 			'advanced'
 		);
 		$search->setOptions('end', $options);
-			
+
 		$search->setSearchData($search_data,$errors);
-		
+
 		return $search;
-		
+
 	}
-		
-	public static function failureCodes($search_data=null,&$errors=array(),$customerservice)
+
+	public static function failureCodes($search_data = null,&$errors = [], CustomerServiceCollection $customerservice = null)
 	{
-		
+
 		$search = new customerServicesSearch();
 // Search by Failure Code
 		$search->addSearchField(
@@ -79,7 +79,7 @@ class customerServicesSearch extends BaseSearch
 			'All',
 			'basic'
 		);
-		
+
 		$failurecodes=new CSFailureCode();
 		$options=array(''=>'All');
 		$options+=$failurecodes->getAll();
@@ -96,7 +96,7 @@ class customerServicesSearch extends BaseSearch
 		$options = array('' => 'All');
 		$options += $customerservice->periodList();
 		$search->setOptions('start', $options);
-			
+
 // Search by End Period
 		$search->addSearchField(
 			'end',
@@ -106,11 +106,11 @@ class customerServicesSearch extends BaseSearch
 			'advanced'
 		);
 		$search->setOptions('end', $options);
-			
+
 		$search->setSearchData($search_data,$errors,'failureCodes');
-		
+
 		return $search;
-		
+
 	}
 
 }

@@ -5,7 +5,7 @@
  *
  *	Released under GPLv3 license; see LICENSE.
  **/
-class CustomerServicesController extends PrintController
+class CustomerServicesController extends printController
 {
 
     protected $version = '$Revision: 1.19 $';
@@ -99,7 +99,7 @@ class CustomerServicesController extends PrintController
             'end'
         );
         // if failure code is 'any' remove it from the search, we've got other criteria to search by...
-        if (isset($this->_data['cs_failurecode_id']) && strtolower($this->_data['cs_failurecode_id']) === 'any') {
+        if (isset($this->_data['cs_failurecode_id']) && strtolower((string) $this->_data['cs_failurecode_id']) === 'any') {
 
             // don't let the standard search do anything with the cs_failurecode_id field
             unset($s_data['cs_failurecode_id']);
@@ -194,7 +194,7 @@ class CustomerServicesController extends PrintController
         $this->view->set('num_pages', $customerservice->num_pages);
         $this->view->set('cur_page', $customerservice->cur_page);
 
-        $this->view->set(strtolower($customerservice->getModelName()) . 's', $customerservice);
+        $this->view->set(strtolower((string) $customerservice->getModelName()) . 's', $customerservice);
 
         $sidebar = new SidebarController($this->view);
 

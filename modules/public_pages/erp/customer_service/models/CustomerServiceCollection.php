@@ -42,7 +42,7 @@ class CustomerServiceCollection extends DataObjectCollection
 		}
 		else
 		{
-			$startdate = fix_date(date(DATE_FORMAT, strtotime("-12 months", strtotime($enddate))));
+			$startdate = fix_date(date(DATE_FORMAT, strtotime("-12 months", strtotime((string) $enddate))));
 		}
 		
 		if (isset($search['end']) && !empty($search['end']))
@@ -107,13 +107,13 @@ class CustomerServiceCollection extends DataObjectCollection
 		$periods	= array();
 		$enddate	= fix_date(date(DATE_FORMAT));
 		$startdate	= fix_date('01/' . date('m/Y'));
-		$startdate	= fix_date(date(DATE_FORMAT, strtotime("-12 months", strtotime($startdate))));
+		$startdate	= fix_date(date(DATE_FORMAT, strtotime("-12 months", strtotime((string) $startdate))));
 		
 		while ($startdate < $enddate)
 		{
-			$period				= date('Y/m', strtotime($startdate));
+			$period				= date('Y/m', strtotime((string) $startdate));
 			$periods[$period]	= $period;
-			$startdate			= fix_date(date(DATE_FORMAT,strtotime("+1 months", strtotime($startdate))));
+			$startdate			= fix_date(date(DATE_FORMAT,strtotime("+1 months", strtotime((string) $startdate))));
 		}
 		
 		return $periods;
@@ -124,7 +124,7 @@ class CustomerServiceCollection extends DataObjectCollection
 	{
 		
 		$enddate	= fix_date('01/' . date('m/Y'));
-		$startdate	= fix_date(date(DATE_FORMAT, strtotime("-12 months", strtotime($enddate))));
+		$startdate	= fix_date(date(DATE_FORMAT, strtotime("-12 months", strtotime((string) $enddate))));
 		$enddate	= fix_date(date(DATE_FORMAT));
 		
 		$this->_tablename='customer_service_summary';
@@ -147,7 +147,7 @@ class CustomerServiceCollection extends DataObjectCollection
 
 		for ($i = 0; $i < 13; $i++)
 		{
-			$date = date('Y/m', strtotime("+" . $i . " months", strtotime($startdate)));
+			$date = date('Y/m', strtotime("+" . $i . " months", strtotime((string) $startdate)));
 			$this->customerorders['previous'][$date]['ontime']			= 0;
 			$this->customerorders['previous'][$date]['infull']			= 0;
 			$this->customerorders['previous'][$date]['ontime_infull']	= 0;
