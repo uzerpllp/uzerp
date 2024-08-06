@@ -9,7 +9,7 @@
 class PinvoicesController extends printController {
 
 	protected $version='$Revision: 1.57 $';
-	
+
 	protected $_templateobject;
 	protected $settlement_discount;
 
@@ -23,7 +23,7 @@ class PinvoicesController extends printController {
 	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'view');
 		$errors=array();
-	
+
 		$s_data=array();
 
 // Set context from calling module
@@ -36,15 +36,15 @@ class PinvoicesController extends printController {
 		if (isset($this->_data['purchase_order_number'])) {
 			$s_data['purchase_order_number']=$this->_data['purchase_order_number'];
 		}
-		
+
 		$this->setSearch('pinvoicesSearch', 'useDefault', $s_data);
 
 		parent::index(new PInvoiceCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$actions = array();
-		
+
 		foreach ($this->_templateobject->getEnumOptions('transaction_type') as $key=>$description)
 		{
 			$actions['new'.$description]=array(
@@ -56,7 +56,7 @@ class PinvoicesController extends printController {
 					'tag'=>'new '.$description
 			);
 		}
-		
+
 		$actions['printinvoices']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -64,7 +64,7 @@ class PinvoicesController extends printController {
 								 ),
 					'tag'=>'post invoices'
 				);
-		
+
 		$actions['invoice_from_grn']=array(
 					'link'=>array('module'=>'purchase_order'
 								 ,'controller'=>'porders'
@@ -72,11 +72,11 @@ class PinvoicesController extends printController {
 								 ),
 					'tag'=>'create_invoice_from_GRN'
 				);
-		
+
 		$sidebar->addList('Actions', $actions);
-		
+
 		$reports = array();
-		
+
 		$reports['newinvoices']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -87,7 +87,7 @@ class PinvoicesController extends printController {
 								 ),
 					'tag'=>'Unposted Invoices'
 				);
-		
+
 		$reports['queryinvoices']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -98,7 +98,7 @@ class PinvoicesController extends printController {
 								 ),
 					'tag'=>'Query Invoices'
 				);
-		
+
 		$reports['alloverdueinvoices']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -109,7 +109,7 @@ class PinvoicesController extends printController {
 								 ),
 					'tag'=>'All Overdue invoices'
 				);
-		
+
 		$reports['overdueinvoices']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -121,7 +121,7 @@ class PinvoicesController extends printController {
 								 ),
 					'tag'=>'Overdue invoices Not in Query'
 				);
-		
+
 		$reports['daybook']=array(
 					'link'=>array('modules'=>$this->_modules
 								 ,'controller'=>$this->name
@@ -132,33 +132,33 @@ class PinvoicesController extends printController {
 								 ),
 					'tag'=>'Day Book (uses current Search Settings)'
 				);
-		
+
 		$sidebar->addList('Reports', $reports);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
 
 	public function clone_invoice(){
 		$flash = Flash::Instance();
-		
+
 		$errors = array();
-		
+
 		if (!isset($this->_data) || !$this->loadData()) {
 			$this->dataError();
 			sendBack();
 		}	
-		
+
 		$invoice = $this->_uses[$this->modeltype];
-		
+
 		if (!$invoice->isLoaded())
 		{
 			$flash->addError('Error loading invoice details');
 			sendBack();
 		}
-		
+
 		$data[$this->modeltype] = array();
-		
+
 		foreach ($invoice->getFields() as $fieldname=>$field)
 		{
 			switch ($fieldname)
@@ -184,14 +184,14 @@ class PinvoicesController extends printController {
 					$data[$this->modeltype][$fieldname] = $invoice->$fieldname;
 			}
 		}
-		
+
 		if (!empty($this->_data['transaction_type']))
 		{
 			$data[$this->modeltype]['transaction_type'] = $this->_data['transaction_type'];
 		}
-		
+
 		$line_count = 0;
-		
+
 		foreach ($invoice->lines as $invoiceline)
 		{
 			$modelname = get_class($invoiceline);
@@ -240,15 +240,15 @@ class PinvoicesController extends printController {
 			}
 			$line_count++;
 		}
-		
+
 		$result = $invoice->save_model($data);
 		if ($result!==FALSE)
 		{
 			sendTo($this->name, 'view', $this->_modules, array($invoice->idField=>$result['internal_id']));
 		}
-		
+
 		sendBack();
-		
+
 	}
 
 	public function view()
@@ -261,9 +261,9 @@ class PinvoicesController extends printController {
 			$this->dataError();
 			sendBack();
 		}
-		
+
 		$invoice=$this->_uses[$this->modeltype];
-		
+
 		if (!$invoice->isLoaded())
 		{
 			if (isset($this->_data['order_number']))
@@ -278,30 +278,30 @@ class PinvoicesController extends printController {
 				$cc->add(new Constraint('invoice_number','=',$this->_data['invoice_number']));
 				$invoice->loadBy($cc);
 			}
-			
+
 			if (!$invoice->isLoaded())
 			{
 				$flash->addError('Failed to find invoice');
 				sendBack();
 			}
 		}
-		
+
 		$transaction_type_desc = $invoice->getFormatted('transaction_type');
-		
+
 		$this->view->set('transaction_type_desc', $transaction_type_desc);
-		
+
 		$invoice->setTitle($transaction_type_desc);
-		
+
 		$porders = $invoice->getOrderNumbers();
 
 		$this->view->set('porders', $porders);
-		
+
 		$id = $invoice->id;
 
 		$sidebar = new SidebarController($this->view);
-		
+
 		$actions = array();
-		
+
 		$actions['allsupplier'] = array(
 					'link'	=> array('module'		=> 'purchase_ledger'
 									,'controller'	=> 'PLSuppliers'
@@ -309,7 +309,7 @@ class PinvoicesController extends printController {
 									),
 					'tag'	=> 'view all suppliers'
 				);
-		
+
 		$actions['allInvoices'] = array(
 					'link'	=> array('modules'		=> $this->_modules
 									,'controller'	=> $this->name
@@ -317,7 +317,7 @@ class PinvoicesController extends printController {
 									),
 					'tag'	=> 'view all invoices'
 				);
-		
+
 		foreach ($invoice->getEnumOptions('transaction_type') as $key=>$description)
 		{
 			$actions['new'.$description] = array(
@@ -329,7 +329,7 @@ class PinvoicesController extends printController {
 					'tag'	=> 'new '.$description
 			);
 		}
-		
+
 		$actions['invoice_from_grn']=array(
 					'link'	=> array('module'		=> 'purchase_order'
 									,'controller'	=> 'porders'
@@ -337,14 +337,14 @@ class PinvoicesController extends printController {
 									),
 					'tag'	=> 'create_invoice_from_GRN'
 				);
-		
+
 		$sidebar->addList(
 			'Actions',
 			$actions
 		);
-				
+
 		$actions = array();
-		
+
 		$actions['supplierInvoices'] = array(
 					'link'	=> array('modules'		=> $this->_modules
 									,'controller'	=> $this->name
@@ -353,7 +353,7 @@ class PinvoicesController extends printController {
 									),
 					'tag'	=> 'view supplier invoices'
 				);
-		
+
 		$actions['supplierOrders'] = array(
 					'link'	=> array('module'		=> 'purchase_order'
 									,'controller'	=> 'porders'
@@ -362,7 +362,7 @@ class PinvoicesController extends printController {
 									),
 					'tag'	=> 'view supplier orders'
 				);
-		
+
 		foreach ($invoice->getEnumOptions('transaction_type') as $key=>$description)
 		{
 			if($key=='C' || empty($porders))
@@ -378,7 +378,7 @@ class PinvoicesController extends printController {
 				);
 			}
 		}
-		
+
 		$actions['invoice_from_grn'] = array(
 					'link'	=> array('module'		=> 'purchase_order'
 									,'controller'	=> 'porders'
@@ -387,14 +387,14 @@ class PinvoicesController extends printController {
 									),
 					'tag'	=> 'create_invoice_from_GRN'
 				);
-		
+
 		$sidebar->addList(
 			$invoice->supplier,
 			$actions
 		);
-				
+
 		$actions = array();
-		
+
 		foreach ($invoice->getEnumOptions('transaction_type') as $key=>$description)
 		{
 			if($key=='C' || empty($porders))
@@ -410,7 +410,7 @@ class PinvoicesController extends printController {
 				);
 			}
 		}
-		
+
 		if ($invoice->status == 'N')
 		{
 			$actions['edit'] = array(
@@ -430,7 +430,7 @@ class PinvoicesController extends printController {
 						'tag'	=> 'add_lines'
 					);
 		}
-		
+
 		if($invoice->onQuery())
 		{
 			$actions['query'] = array(
@@ -442,7 +442,7 @@ class PinvoicesController extends printController {
 					'tag'	=> 'Take '.$invoice->getFormatted('transaction_type').' off Query'
 				);
 		}
-		
+
 		if($invoice->hasBeenPostednotPaid())
 		{
 			$actions['changeduedate'] = array(
@@ -462,7 +462,7 @@ class PinvoicesController extends printController {
 					'tag'	=> 'Put '.$invoice->getFormatted('transaction_type').' on Query'
 				);
 		}
-		
+
 		if(!$invoice->hasBeenPosted() && $invoice->lines->count() > 0 && $invoice->transaction_type != 'T')
 		{
 			$actions['post'] = array(
@@ -474,7 +474,7 @@ class PinvoicesController extends printController {
 					'tag'	=> 'post '.$invoice->getFormatted('transaction_type')
 				);
 		}
-							
+
 		if($invoice->status != 'N')
 		{
 			$actions['viewGLtransaction'] = array(
@@ -488,7 +488,7 @@ class PinvoicesController extends printController {
 					'tag'	=> 'View GL transaction'
 				);
 		}			
-		
+
 		if ($invoice->grn_lines->count()>0)
 		{
 				$actions['viewgrn'] = array(
@@ -500,12 +500,12 @@ class PinvoicesController extends printController {
 					'tag'	=> 'View Goods Received Note'
 				);
 		}
-		
+
 		$sidebar->addList(
 			'This Invoice',
 			$actions
 		);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
@@ -513,14 +513,14 @@ class PinvoicesController extends printController {
 	public function _new()
 	{
 		parent::_new();
-		
+
 		$pinvoice = $this->_uses[$this->modeltype];
-		
+
 // get supplier list
 		if ($pinvoice->isLoaded() && $pinvoice->net_value!=0)
 		{
 			$suppliers = array($pinvoice->plmaster_id=>$pinvoice->supplier);
-				
+
 			if ($this->settlement_discount == 0 && $pinvoice->transaction_type == 'I')
 			{
 				$pinvoice->settlement_discount = $pinvoice->getSettlementDiscount();
@@ -529,7 +529,7 @@ class PinvoicesController extends printController {
 		else
 		{
 			$suppliers = $this->getOptions($this->_templateobject, 'plmaster_id', 'getOptions', 'getOptions', array('use_collection'=>true));
-			
+
 			if (!$pinvoice->isLoaded())
 			{
 				if (isset($this->_data['transaction_type']))
@@ -542,15 +542,15 @@ class PinvoicesController extends printController {
 				}
 			}
 		}
-		
+
 		if (!is_null($pinvoice->transaction_type))
 		{
 			$transaction_type_desc = $pinvoice->getFormatted('transaction_type');
 			$this->view->set('transaction_type_desc', $transaction_type_desc);
 		}
-		
+
 		$this->_templateobject->setTitle('Purchase '.$transaction_type_desc);
-		
+
 // get the default/current selected supplier
 		if (isset($this->_data['plmaster_id']))
 		{
@@ -568,43 +568,43 @@ class PinvoicesController extends printController {
 				$defaultsupplier=$pinvoice->plmaster_id;
 			}
 		}
-		
+
 		if (empty($defaultsupplier))
 		{
 			$defaultsupplier=key($suppliers);
 		}
-		
+
 		if (!$pinvoice->isLoaded())
 		{
 			$pinvoice->plmaster_id=$defaultsupplier;
 		}
-		
+
 		$this->view->set('selected_supplier', $defaultsupplier);
-		
+
 		// get Purchase Invoice Notes for default customer or first in customer
 		$this->getNotes($defaultsupplier);
-		
+
 		// This bit allows for projects and tasks to be linked 
 		if (!$pinvoice->isLoaded() && !empty($this->_data['project_id']))
 		{
 			$pinvoice->project_id = $this->_data['project_id'];
 		}
-		
+
 		// We only want non-archived projects
         $projects = Project::getLiveProjects();
         $this->view->set('projects', $projects);
 
         // Now get tasks for the selected project
 		$this->view->set('tasks', $this->getTaskList($pinvoice->project_id));
-			
+
 	}
-	
+
 	public function delete($modelName = null){
 		$flash = Flash::Instance();
 		parent::delete('PInvoice');
-		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+		sendTo($_SESSION['refererPage']['controller'],$_SESSION['refererPage']['action'],$_SESSION['refererPage']['modules'],$_SESSION['refererPage']['other'] ?? null);
 	}
-	
+
 	public function change_due_date () {
 		$pinvoice=$this->_uses['PInvoice'];
 		$pinvoice->load($this->_data['id']);
@@ -618,7 +618,7 @@ class PinvoicesController extends printController {
 			$errors=array();
 			$db=DB::Instance();
 			$db->StartTrans();
-			
+
 			$data=$this->_data['PInvoice'];
 			$pinvoice=DataObject::Factory($data, $errors, 'PInvoice');
 			if ($pinvoice && count($errors)==0 && $pinvoice->save()) {
@@ -650,11 +650,11 @@ class PinvoicesController extends printController {
 		}
 		sendTo($this->name,'index',$this->_modules);
 	}
-	
+
 	public function toggleQueryStatus() {
 
 		$flash = Flash::Instance();
-		
+
 		if (!$this->loadData()) {
 			$this->dataError();
 			sendBack();
@@ -664,13 +664,13 @@ class PinvoicesController extends printController {
 			$flash->addError('Failed to find invoice');
 			sendBack();
 		}
-		
+
 		$id = $this->_data['id'];
-		
+
 		$db=DB::Instance();
 		$db->StartTrans();
 		$errors=array();
-		
+
 		if ($pinvoice->status=='Q') {
 			$pinvoice->status='O';
 			$status='taking '.$pinvoice->getFormatted('transaction_type').' off query';
@@ -681,7 +681,7 @@ class PinvoicesController extends printController {
 		if (!$pinvoice->save()) {
 			$errors[]='Failed to amend '.$pinvoice->getFormatted('transaction_type');
 		}
-		
+
 		$pltrans=DataObjectFactory::Factory('PLTransaction');
 		$cc=new ConstraintChain();
 		$cc->add(new Constraint('transaction_type', '=', $pinvoice->transaction_type));
@@ -705,33 +705,33 @@ class PinvoicesController extends printController {
 		sendTo($this->name,'view',$this->_modules,array('id'=>$this->_data['id']));
 
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
-		
+
 		if (!$this->checkParams($this->modeltype)) {
 			sendBack();
 		}
-		
+
 		$flash=Flash::Instance();
 		$errors=array();
-		
+
 		$data = $this->_data;
 		$header = $data[$this->modeltype];
-		
+
 		if (isset($header['id']) && $header['id']!='') {
 			$action='updated';
 		} else {
 			$action='added';
 		}
-		
+
 		$trans_type = $this->_uses[$this->modeltype]->getEnum('transaction_type', $header['transaction_type']);
-		
+
 		$invoice = PInvoice::Factory($header, $errors);
 
 		$result=false;
 		if (count($errors)==0 && $invoice) {
 			$result = $invoice->save();
-				
+
 			if(($result) && ($data['saveform']=='Save and Post')) {
 		// reload the invoice to refresh the dependencies
 				$invoice->load($invoice->id);
@@ -740,13 +740,13 @@ class PinvoicesController extends printController {
 				}
 			}
 		}
-			
+
 		if($result!==FALSE) {
 			$flash->addMessage($trans_type.' '.$action.' successfully');
 			sendTo($this->name, 'view', $this->_modules, array('id'=>$invoice->id));
 		}
 		$errors[]='Error saving '.$trans_type;
-		
+
 		$flash->addErrors($errors);
 		if (isset($header['id']) && $header['id']!='') {
 			$this->_data['id']=$header['id'];
@@ -756,7 +756,7 @@ class PinvoicesController extends printController {
 		}
 		$this->refresh();
 	}
-	
+
 	public function postInvoice() {
 		$flash=Flash::Instance();
 		$errors=array();
@@ -776,7 +776,7 @@ class PinvoicesController extends printController {
 	public function selectinvoices() {
 		$this->view->set('clickaction', 'view');
 		$errors=array();
-	
+
 		$s_data=array();
 
 // Set context from calling module
@@ -784,17 +784,17 @@ class PinvoicesController extends printController {
 			$s_data['slmaster_id']=$this->_data['slmaster_id'];
 		}
 		$s_data['status']='N';
-		
+
 		$this->setSearch('pinvoicesSearch', 'useDefault', $s_data);
 
 		$collection = new PInvoiceCollection($this->_templateobject);
 		$sh = $this->setSearchHandler($collection);
-		
+
 		$sh->addConstraint(new Constraint('line_count', '>', '0'));
 		$sh->addConstraint(new Constraint('transaction_type', '!=', 'T'));
-		
+
 		parent::index($collection, $sh);
-		
+
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList(
 			'Actions',
@@ -827,18 +827,18 @@ class PinvoicesController extends printController {
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 		$this->view->set('page_title',$this->getPageName('','Post'));
-		
+
 	}
 
 	public function batchprocess() {
-		
+
 		$flash = Flash::Instance();
-		
+
 		if (isset($this->_data['cancel'])) {
 			$flash->addMessage('Posting of Purchase Invoices/Credit Notes Canceled');
 			sendBack();
 		}
-		
+
 		$errors=array();
 		if (isset($this->_data['PInvoices']['selected'])) {
 			$pinvoices=$this->_data['PInvoices'];
@@ -854,45 +854,45 @@ class PinvoicesController extends printController {
 		} else {
 			$errors[]='No invoices selected for posting';
 		}
-		
+
 		if (count($errors)>0) {
 			$flash->addErrors($errors);
 		} else {
 			$flash->addMessage('Posting of Purchase Invoices/Credit Notes Completed');
 		}
-		
+
 		sendTo($this->name,'index',$this->_modules);
-		
+
 	}
-	
+
 	public function getNotes($_supplier_id='')
 	{
 // Used by Ajax to return Notes after selecting the Supplier
 		if(!empty($this->_data['supplier_id'])) { $_supplier_id=$this->_data['supplier_id']; }
-		
+
 		$notes=new PartyNoteCollection();
-		
+
 		if ((!empty($_supplier_id)))
 		{
 			$supplier=DataObjectFactory::Factory('PLSupplier');
-			
+
 			$supplier->load($_supplier_id);
-			
+
 			$sh=new SearchHandler($notes, false);
-			
+
 			$sh->setFields(array('id','lastupdated','note'));
-			
+
 			$sh->setOrderby('lastupdated','DESC');
-			
+
 			$sh->addConstraint(new Constraint('note_type', '=', $this->module));
 			$sh->addConstraint(new Constraint('party_id', '=', $supplier->companydetail->party_id));
-			
+
 			$notes->load($sh);
 		}
-		
+
 		$this->view->set('no_ordering',true);
 		$this->view->set('collection', $notes);
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->setTemplateName('datatable_inline');
@@ -901,22 +901,22 @@ class PinvoicesController extends printController {
 		{
 			return $this->view->fetch('datatable_inline');
 		}
-				
+
 	}
-	
+
 	/* output functions */
 	public function printInvoicelist($status='generate') {
-		
+
 		/*
 		 * The sales version of this invoice never shows any lines
 		 */
-		
+
 		// this function is very extensive, and thus we'll remove the max_execution_time
 		set_time_limit(0);
-		
+
 		// construct title
 		$title=$this->_data['type'].' Purchase Invoices';
-		
+
 		// build options array
 		$options=array('type'		=>	array('pdf'=>'',
 											  'xml'=>''
@@ -930,13 +930,13 @@ class PinvoicesController extends printController {
 					   'report'		=>	'InvoiceList'
 				);
 
-		  	
-		if(strtolower($status)=="dialog") {
+
+		if(strtolower((string) $status)=="dialog") {
 			return $options;
 		}
-		
+
 		$invoices = new PInvoiceCollection($this->_templateobject);
-		
+
 		// load the model
 		switch ($this->_data['type']) {
 			case ('New'):
@@ -1000,7 +1000,7 @@ class PinvoicesController extends printController {
 				$sh->setOrderby('invoice_date');
 				break;
 		}
-		
+
 		$invoices->load($sh);
 
 		$totals=array('base_net'=>0
@@ -1011,16 +1011,16 @@ class PinvoicesController extends printController {
 			$totals['base_tax']+=$invoice->base_tax_value;
 			$totals['base_gross']+=$invoice->base_gross_value;
 		}
-		
+
 		$params=DataObjectFactory::Factory('glparams');
 		$base_currency=$params->base_currency_symbol();
-		
+
 		foreach($totals as $key => $value) {
 			$totals[$key]=$base_currency.sprintf('%0.2f',$value);
 		}
-		
+
 		$extra=array('totals'=>$totals,'title'=>$title);
-		
+
 		// generate the xml and add it to the options array
 		$options['xmlSource']=$this->generateXML(array('model'=>$invoices,
 													   'extra'=>$extra,
@@ -1031,7 +1031,7 @@ class PinvoicesController extends printController {
 		// execute the print output function, echo the returned json for jquery
 		echo $this->constructOutput($this->_data['print'],$options);
 		exit;
-				
+
 	}
 
 	protected function getPageName($base=null,$action=null) {
@@ -1039,22 +1039,22 @@ class PinvoicesController extends printController {
 	}
 
 	public function getTaskList($_project_id='')	{
-	
+
 		if(isset($this->_data['ajax']))
 		{
 			if(!empty($this->_data['project_id'])) { $_project_id = $this->_data['project_id']; }
 		}
-		
+
 		$tasks = $this->getOptions($this->_templateobject, 'task_id', '', '', '', array('project_id' => $_project_id));
-			
+
 		if(isset($this->_data['ajax']))
 		{
 			echo $tasks;
 			exit;
 		}
-		
+
 		return $tasks;
-	
+
 	}
 
 

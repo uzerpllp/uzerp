@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -21,7 +21,7 @@ class SinvoicelinesController extends Controller {
 	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'edit');
 		parent::index(new SInvoiceLineCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList(
 			'Actions',
@@ -75,10 +75,10 @@ class SinvoicelinesController extends Controller {
 		$flash=Flash::Instance();
 
 		parent::_new();
-		
+
 // Get the invoice Line Object - if loaded, this is an edit
 		$sinvoiceline = $this->_uses[$this->modeltype];
-		
+
 		if (!$sinvoiceline->isLoaded()) {
 			if (empty($this->_data['invoice_id'])) {
 				$flash->addError('No Sales invoice supplied');
@@ -88,9 +88,9 @@ class SinvoicelinesController extends Controller {
 		}
 		$sinvoice=new SInvoice();
 		$sinvoice->load($sinvoiceline->invoice_id);
-		
+
 		$_slmaster_id=$sinvoice->slmaster_id;
-		
+
 		if (isset($this->_data[$this->modeltype])) {
 		// We've had an error so refresh the page
 			$_slmaster_id=$this->_data['SInvoice']['slmaster_id'];
@@ -136,13 +136,13 @@ class SinvoicelinesController extends Controller {
 		$this->view->set('glcentre_options', $this->getCentre($_glaccount_id, $_productline_id));
 		$this->view->set('taxrate_options', $data['tax_rate_id']);
 		$this->view->set('sinvoice', $sinvoice);
-		
+
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		$errors=array();
-		
+
 		$data=$this->_data['SInvoiceLine'];
 		if (empty($data['invoice_id']))
 		{
@@ -205,10 +205,10 @@ class SinvoicelinesController extends Controller {
 	}
 
 	public function CustomerServiceSummary () {
-		
+
 	}
 
-	
+
 // Private Functions
 	private function buildProductLines($customer='', $productsearch='') {
 // return the Product Lines list for a Customer
@@ -259,17 +259,17 @@ class SinvoicelinesController extends Controller {
 		}
 		return $data;
 	}
-	
+
 	public function getTaxRate() {
-		
+
 		$tax_rate_list = array();
 		$tax_rates = DataObjectFactory::Factory('TaxRate');
 		$tax_rate_list=$tax_rates->getAll();
 		return $tax_rate_list;
 	}
-	
+
 	public function getUomList() {
-		
+
 		$uom_list=array();
 		$uom=DataObjectFactory::Factory('STuom');
 		$uom_list=array(''=>'None');
@@ -277,17 +277,17 @@ class SinvoicelinesController extends Controller {
 		return $uom_list;
 
 	}
-	
+
 // Ajax stuff!
 	public function getProductLines($_slmaster_id='',$_product_search='',$_limit='') {
 // Used by Ajax to return Product Lines list after selecting the Customer
-		
+
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['slmaster_id'])) { $_slmaster_id=$this->_data['slmaster_id']; }
 			if(!empty($this->_data['product_search'])) { $_product_search=$this->_data['product_search']; }
 			if(!empty($this->_data['limit'])) { $_limit=$this->_data['limit']; }
 		}
-		
+
 		$productlist=$this->buildProductLines($_slmaster_id, $_product_search);
 		if (!empty($_limit) && count($productlist)>$_limit) {
 			$productlist=array(''=>'Refine Search - List > '.$_limit);
@@ -296,7 +296,7 @@ class SinvoicelinesController extends Controller {
 				unset($productlist['']);
 			}
 		}
-		
+
 		if(isset($this->_data['ajax'])) {
 			$this->view->set('options',$productlist);
 			$this->setTemplateName('select_options');
@@ -307,12 +307,12 @@ class SinvoicelinesController extends Controller {
 
 	public function getCentre($_glaccount_id='', $_productline_id='') {
 // Used by Ajax to return Centre list after selecting the Product
-	
+
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['glaccount_id'])) { $_glaccount_id=$this->_data['glaccount_id']; }
 			if(!empty($this->_data['productline_id'])) { $_productline_id=$this->_data['productline_id']; }
 		}
-		
+
 		$account_list = array();
 		if ($_productline_id > 0) {
 			$product = new SOProductline;
@@ -325,7 +325,7 @@ class SinvoicelinesController extends Controller {
 			$account->load($_glaccount_id);
 			$centre_list = $account->getCentres();
 		}
-				
+
 		if(isset($this->_data['ajax'])) {
 			$this->view->set('options',$centre_list);
 			$this->view->set('model', $this->_templateobject);
@@ -335,18 +335,18 @@ class SinvoicelinesController extends Controller {
 			return $centre_list;
 		}
 	}
-	
+
 	public function getCentres($_glaccount_id='') {
-	
+
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['glaccount_id'])) { $_id=$this->_data['glaccount_id']; }
 		}
-		
+
 		// Used by Ajax to return Centre list after selecting the Account
 		$account = DataObjectFactory::Factory('GLAccount');
 		$account->load($_glaccount_id);
 		$centres = $account->getCentres();
-		
+
 		if(isset($this->_data['ajax'])) {
 			$this->view->set('options',$centres);
 			$this->setTemplateName('select_options');
@@ -354,7 +354,7 @@ class SinvoicelinesController extends Controller {
 			return $centres;
 		}
 	}
-		
+
 
 	/* consolodation functions */
 	public function getLineData() {
@@ -362,13 +362,13 @@ class SinvoicelinesController extends Controller {
 		// we do this because we don't want the functions we all to get confused
 		$ajax = isset($this->_data['ajax']);
 		unset($this->_data['ajax']);
-		
+
 		// set vars
 		$_productline_id=$this->_data['productline_id'];
 		$_slmaster_id=$this->_data['slmaster_id'];
 
 		$data=$this->getProductLineData($_productline_id, $_slmaster_id);
-		
+
 		$data['stuom_id']=$this->buildSelect('', 'stuom_id', $data['stuom_id']);
 		$data['glaccount_id']=$this->buildSelect('', 'glaccount_id', $data['glaccount_id']);
 		$data['tax_rate_id']=$this->buildSelect('', 'tax_rate_id', $data['tax_rate_id']);
@@ -376,12 +376,12 @@ class SinvoicelinesController extends Controller {
 		foreach ($data as $field=>$values) {
 			$output[$field]=array('data'=>$values,'is_array'=>is_array($values));
 		}
-			
+
 		// could we return the data as an array here? save having to re use it in the new / edit?
 		// do a condition on $ajax, and return the array if false
 		$this->view->set('data',$output);
 		$this->setTemplateName('ajax_multiple');
-		
+
 	}
 
 	protected function getPageName($base=null, $action=null) {

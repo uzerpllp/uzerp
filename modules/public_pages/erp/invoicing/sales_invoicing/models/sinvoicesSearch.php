@@ -10,13 +10,13 @@ class sinvoicesSearch extends BaseSearch
 {
 
 	protected $version = '$Revision: 1.15 $';
-	
+
 	protected $fields = array();
-	
+
 	public static function useDefault($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = new sinvoicesSearch($defaults);
-		
+
 		$invoice = DataObjectFactory::Factory('SInvoice');
 
 		// Search by Status
@@ -30,7 +30,7 @@ class sinvoicesSearch extends BaseSearch
 		$options = array_merge(array(''=>'All')
 					  		,$invoice->getEnumOptions('status'));
 		$search->setOptions('status', $options);
-	
+
 		// Search by Printed
 		$search->addSearchField(
 			'date_printed',
@@ -43,7 +43,7 @@ class sinvoicesSearch extends BaseSearch
 						,'Null'		=> 'Not Printed'
 						,'Not Null'	=> 'Printed');
 		$search->setOptions('date_printed', $options);	
-					
+
 		// Search by SL Analysis
 		$search->addSearchField(
 			'sl_analysis_id',
@@ -56,7 +56,7 @@ class sinvoicesSearch extends BaseSearch
 		$options = array('0'=>'All');
 		$options += $slanalysis->getAll();
 		$search->setOptions('sl_analysis_id', $options);
-			
+
 		// Search by Invoice Date
 		$search->addSearchField(
 			'invoice_date',
@@ -65,7 +65,7 @@ class sinvoicesSearch extends BaseSearch
 			'',
 			'basic'
 		);
-		
+
 		// Search by Customer
 		$search->addSearchField(
 			'slmaster_id',
@@ -115,7 +115,7 @@ class sinvoicesSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-			
+
 		// Search by Transaction Type
 		$search->addSearchField(
 			'transaction_type',
@@ -135,7 +135,7 @@ class sinvoicesSearch extends BaseSearch
 	public static function sinvoicePrintPost($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = new sinvoicesSearch($defaults);
-		
+
 		$invoice = DataObjectFactory::Factory('SInvoice');
 
 		// Search by Status
@@ -148,7 +148,7 @@ class sinvoicesSearch extends BaseSearch
 			);
 		$options = $invoice->getEnumOptions('status');
 		$search->setOptions('status', $options);
-	
+
 		// Search by Printed
 		$search->addSearchField(
 			'date_printed',
@@ -161,7 +161,7 @@ class sinvoicesSearch extends BaseSearch
 						,'Null'		=> 'Not Printed'
 						,'Not Null'	=> 'Printed');
 		$search->setOptions('date_printed', $options);	
-			
+
 		// Search by Invoice Date
 		$search->addSearchField(
 			'invoice_date',
@@ -170,7 +170,7 @@ class sinvoicesSearch extends BaseSearch
 			'',
 			'basic'
 		);
-		
+
 		// Search by Customer
 		$search->addSearchField(
 			'slmaster_id',
@@ -220,7 +220,7 @@ class sinvoicesSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-			
+
 		// Search by Transaction Type
 		$search->addSearchField(
 			'transaction_type',
@@ -237,12 +237,12 @@ class sinvoicesSearch extends BaseSearch
 		$search->setSearchData($search_data, $errors);
 		return $search;
 	}
-		
+
 	public static function invoices($search_data = null, &$errors = array(), $defaults = null)
 	{
 
 		$search = new sinvoicesSearch($defaults);
-		
+
 // Name
 		$search->addSearchField(
 			'slmaster_id',
@@ -256,7 +256,7 @@ class sinvoicesSearch extends BaseSearch
 		$customers = $customer->getAll(null, false, true, '', '');
 		$options += $customers;
 		$search->setOptions('slmaster_id', $options);
-			
+
 // Print Count
 		$search->addSearchField(
 			'print_count',
@@ -265,7 +265,7 @@ class sinvoicesSearch extends BaseSearch
 			0,
 			'hidden'
 		);
-		
+
 // Status
 		$search->addSearchField(
 			'status',
@@ -284,13 +284,13 @@ class sinvoicesSearch extends BaseSearch
 			'hidden',
 			false
 		);
-		
+
 // Execute Search
 		$search->setSearchData($search_data, $errors, 'invoices');
 		return $search;
-		
+
 	}
-	
+
 }
 
 // End of sinvoicesSearch

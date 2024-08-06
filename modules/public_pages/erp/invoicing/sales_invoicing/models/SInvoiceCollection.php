@@ -38,13 +38,13 @@ class SInvoiceCollection extends DataObjectCollection
 		
 		$startmonth		= fix_date('01/'.date('m/Y'));
 		$currentmonth	= date('Y/m');
-		$startdate		= fix_date(date(DATE_FORMAT, strtotime("-12 months", strtotime($startmonth))));
+		$startdate		= fix_date(date(DATE_FORMAT, strtotime("-12 months", strtotime((string) $startmonth))));
 		$today			= fix_date(date(DATE_FORMAT));
 		$enddate		= $today;
 		$lastweekend	= fix_date(date(DATE_FORMAT, strtotime("last sunday")));
-		$lastweekstart	= fix_date(date(DATE_FORMAT, strtotime("-6 days", strtotime($lastweekend))));
+		$lastweekstart	= fix_date(date(DATE_FORMAT, strtotime("-6 days", strtotime((string) $lastweekend))));
 		$thisweekend	= fix_date(date(DATE_FORMAT, strtotime("next sunday")));
-		$thisweekstart	= fix_date(date(DATE_FORMAT, strtotime("-6 days", strtotime($thisweekend))));
+		$thisweekstart	= fix_date(date(DATE_FORMAT, strtotime("-6 days", strtotime((string) $thisweekend))));
 		
 		$glperiod = DataObjectFactory::Factory('GLPeriod');
 		
@@ -56,9 +56,9 @@ class SInvoiceCollection extends DataObjectCollection
 		
 		for ($i=11; $i>=0; $i--)
 		{
-			$date=date('Y/m',strtotime("+".$i." months",strtotime($startdate)));
-			$this->customerorders['previous'][$date]['start_date']	= fix_date(date(DATE_FORMAT,strtotime("+".$i." months",strtotime($startdate))));
-			$this->customerorders['previous'][$date]['end_date']	= fix_date(date(DATE_FORMAT,strtotime("+".($i+1)." months",strtotime($startdate))-1));;
+			$date=date('Y/m',strtotime("+".$i." months",strtotime((string) $startdate)));
+			$this->customerorders['previous'][$date]['start_date']	= fix_date(date(DATE_FORMAT,strtotime("+".$i." months",strtotime((string) $startdate))));
+			$this->customerorders['previous'][$date]['end_date']	= fix_date(date(DATE_FORMAT,strtotime("+".($i+1)." months",strtotime((string) $startdate))-1));;
 			$this->customerorders['previous'][$date]['value']		= '0.00';
 		}
 
@@ -106,15 +106,15 @@ class SInvoiceCollection extends DataObjectCollection
 
 			foreach ($this as $invoice)
 			{
-				$value=bcmul($invoice->value, $multipliers[$transaction_type]);
+				$value=bcmul($invoice->value, (string) $multipliers[$transaction_type]);
 				
 				if ($invoice->id==$currentmonth)
 				{
-					$this->customerorders['current']['this_month_to_date']['value'] = bcadd($value, $this->customerorders['current']['this_month_to_date']['value']);
+					$this->customerorders['current']['this_month_to_date']['value'] = bcadd($value, (string) $this->customerorders['current']['this_month_to_date']['value']);
 				}
 				else
 				{
-					$this->customerorders['previous'][$invoice->id]['value'] = bcadd($value, $this->customerorders['previous'][$invoice->id]['value']);
+					$this->customerorders['previous'][$invoice->id]['value'] = bcadd($value, (string) $this->customerorders['previous'][$invoice->id]['value']);
 				}
 			}
 			$this->clear();
@@ -127,9 +127,9 @@ class SInvoiceCollection extends DataObjectCollection
 			$cc->add(new Constraint('invoice_date', 'between', "'".$lastweekstart."' and '".$lastweekend."'"));
 			$cc->add(new Constraint('transaction_type', '=', $transaction_type));
 			
-			$value = bcmul($current->getSum('base_net_value', $cc), $multipliers[$transaction_type]);
+			$value = bcmul((string) $current->getSum('base_net_value', $cc), (string) $multipliers[$transaction_type]);
 			
-			$this->customerorders['current']['last_week']['value'] = bcadd($value,$this->customerorders['current']['last_week']['value']);
+			$this->customerorders['current']['last_week']['value'] = bcadd($value,(string) $this->customerorders['current']['last_week']['value']);
 		}
 		
 		foreach ($transaction_types as $transaction_type=>$transaction_type_title)
@@ -139,9 +139,9 @@ class SInvoiceCollection extends DataObjectCollection
 			$cc->add(new Constraint('invoice_date', 'between', "'".$thisweekstart."' and '".$thisweekend."'"));
 			$cc->add(new Constraint('transaction_type', '=', $transaction_type));
 			
-			$value = bcmul($current->getSum('base_net_value', $cc), $multipliers[$transaction_type]);
+			$value = bcmul((string) $current->getSum('base_net_value', $cc), (string) $multipliers[$transaction_type]);
 			
-			$this->customerorders['current']['this_week']['value'] = bcadd($value,$this->customerorders['current']['this_week']['value']);
+			$this->customerorders['current']['this_week']['value'] = bcadd($value,(string) $this->customerorders['current']['this_week']['value']);
 		}		
 
 		foreach ($transaction_types as $transaction_type=>$transaction_type_title)
@@ -151,9 +151,9 @@ class SInvoiceCollection extends DataObjectCollection
 			$cc->add(new Constraint('invoice_date', '=', $db->qstr(fix_date(date(DATE_FORMAT)))));
 			$cc->add(new Constraint('transaction_type', '=', $transaction_type));
 			
-			$value = bcmul($current->getSum('base_net_value', $cc), $multipliers[$transaction_type]);
+			$value = bcmul((string) $current->getSum('base_net_value', $cc), (string) $multipliers[$transaction_type]);
 			
-			$this->customerorders['current']['today']['value'] = bcadd($value,$this->customerorders['current']['today']['value']);
+			$this->customerorders['current']['today']['value'] = bcadd($value,(string) $this->customerorders['current']['today']['value']);
 		}		
 		
 		foreach ($transaction_types as $transaction_type=>$transaction_type_title)
@@ -163,9 +163,9 @@ class SInvoiceCollection extends DataObjectCollection
 			$cc->add(new Constraint('invoice_date', 'between', "'".$yearstart."' and '".$thisweekend."'"));
 			$cc->add(new Constraint('transaction_type', '=', $transaction_type));
 			
-			$value = bcmul($current->getSum('base_net_value', $cc), $multipliers[$transaction_type]);
+			$value = bcmul((string) $current->getSum('base_net_value', $cc), (string) $multipliers[$transaction_type]);
 			
-			$this->customerorders['current']['year_to_date']['value'] = bcadd($value,$this->customerorders['current']['year_to_date']['value']);
+			$this->customerorders['current']['year_to_date']['value'] = bcadd($value,(string) $this->customerorders['current']['year_to_date']['value']);
 		}		
 		
 		return $this->customerorders;

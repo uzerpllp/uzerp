@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -20,7 +20,7 @@ class PinvoicelinesController extends printController {
 	public function index($collection = null, $sh = '', &$c_query = null){
 		$this->view->set('clickaction', 'edit');
 		parent::index(new PInvoiceLineCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList(
 			'Actions',
@@ -67,16 +67,16 @@ class PinvoicelinesController extends printController {
 		$this->_data['invoice_id']=$this->_data['PInvoiceLine']['invoice_id'];
 		$this->refresh();
 	}
-	
+
 	public function _new() {
 
 		$flash=Flash::Instance();
 
 		parent::_new();
-		
+
 // Get the Purchase Invoice Line Object - if loaded, this is an edit
 		$pinvoiceline = $this->_uses[$this->modeltype];
-		
+
 		if (!$pinvoiceline->isLoaded()) {
 			if (empty($this->_data['invoice_id'])) {
 				$flash->addError('No Purchase Invoice supplied');
@@ -87,7 +87,7 @@ class PinvoicelinesController extends printController {
 		}
 		$pinvoice=DataObjectFactory::Factory('Pinvoice');
 		$pinvoice->load($pinvoiceline->invoice_id);
-		
+
 		if (isset($this->_data[$this->modeltype])) {
 		// We've had an error so refresh the page
 			$pinvoiceline->line_number=$this->_data['PInvoiceLine']['line_number'];
@@ -105,13 +105,13 @@ class PinvoicelinesController extends printController {
 		$this->view->set('glcentre_options', $this->getCentres($_glaccount_id));
 		$this->view->set('taxrate_options', $this->getTaxRate());
 		$this->view->set('pinvoice', $pinvoice);
-		
+
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 		$flash=Flash::Instance();
 		$errors=array();
-		
+
 		$data=$this->_data['PInvoiceLine'];
 		if (empty($data['invoice_id']))
 		{
@@ -183,7 +183,7 @@ class PinvoicelinesController extends printController {
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('control', '=', 'FALSE'));
 		$account_list = $account->getAll($cc);
-		
+
 		if(isset($this->_data['ajax'])) {
 			$this->view->set('options',$account_list);
 			$this->setTemplateName('select_options');
@@ -198,7 +198,7 @@ class PinvoicelinesController extends printController {
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['id'])) { $_id=$this->_data['id']; }
 		}
-		
+
 		$account = DataObjectFactory::Factory('GLAccount');
 		$account->load($_id);
 		$centres = $account->getCentres();
@@ -217,7 +217,7 @@ class PinvoicelinesController extends printController {
 		$tax_rate_list = array();
 		$tax_rate = DataObjectFactory::Factory('TaxRate');
 		$tax_rate_list=$tax_rate->getAll();
-	
+
 		if(isset($this->_data['ajax'])) {
 			$this->view->set('options',$tax_rate_list);
 			$this->setTemplateName('select_options');
@@ -225,11 +225,11 @@ class PinvoicelinesController extends printController {
 			return $tax_rate_list;
 		}
 	}
-	
+
 	protected function getPageName($base=null, $action=null) {
 		return parent::getPageName((!empty($base))?$base:'purchase_invoice_line',$action);
 	}
-	
+
 }
 
 // End of PinvoicelinesController

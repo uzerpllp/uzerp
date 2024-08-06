@@ -20,7 +20,7 @@ class SInvoiceLineCollection extends DataObjectCollection {
 
 	function getTopSales($top=10, $type='customer') {
 		$startdate=fix_date('01/'.date('m/Y'));
-		$enddate=fix_date(date(DATE_FORMAT,strtotime("-1 days",strtotime("+1 months",strtotime($startdate)))));
+		$enddate=fix_date(date(DATE_FORMAT,strtotime("-1 days",strtotime("+1 months",strtotime((string) $startdate)))));
 		
 		$fields=array();
 		switch ($type) {

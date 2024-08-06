@@ -664,7 +664,7 @@ class SinvoicesController extends printController
 
         parent::delete($this->modeltype);
 
-        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+        sendTo($_SESSION['refererPage']['controller'], $_SESSION['refererPage']['action'], $_SESSION['refererPage']['modules'], $_SESSION['refererPage']['other'] ?? null);
     }
 
     public function change_due_date()
@@ -1158,12 +1158,12 @@ class SinvoicesController extends printController
             sendback();
         }
         sendTo($this->name, 'index', $this->_modules);
-        
+
     }
 
     public function printaction()
     {
-        if (strtolower($this->_data['printaction']) == 'printinvoice') {
+        if (strtolower((string) $this->_data['printaction']) == 'printinvoice') {
             if (! $this->loadData()) {
                 $this->dataError();
                 sendBack();
@@ -1240,7 +1240,7 @@ class SinvoicesController extends printController
         $this->_data['id'] = $_invoice_id;
         $this->_data['print'] = $_print_params;
 
-        $response = json_decode($this->printInvoice(), true);
+        $response = json_decode((string) $this->printInvoice(), true);
 
         // bit paranoid about the data array being contaminated
         unset($this->_data['id'], $this->_data['print']);
@@ -1272,7 +1272,7 @@ class SinvoicesController extends printController
                 'view' => ''
             )
         );
-        
+
         // Don't go and get the model from the construct, we need to fresh model to prevent the first object from repeating n times
         $invoice = DataObjectFactory::Factory('SInvoice');
         $invoice->load($this->_data['id']);
@@ -1281,10 +1281,10 @@ class SinvoicesController extends printController
         $invoice_number = $invoice->invoice_number;
 
         $customer = $this->getCustomer($invoice->slmaster_id);
-        if (strtolower($this->_data['printaction']) == 'printinvoice') {
+        if (strtolower((string) $this->_data['printaction']) == 'printinvoice') {
             $invoice_methods = $customer->getEnumOptions('invoice_method');
             if (isset($invoice_methods[$customer->invoice_method])) {
-                $options['default_print_action'] = strtolower($invoice_methods[$customer->invoice_method]);
+                $options['default_print_action'] = strtolower((string) $invoice_methods[$customer->invoice_method]);
             }
             $options['email_subject'] = '"Sales Invoice, No: ' . $invoice_number . '"';
             $options['email'] = $customer->email_invoice();
@@ -1308,7 +1308,7 @@ class SinvoicesController extends printController
         if (empty($options['replyto']) || !is_string($options['replyto'])) {
             $options['replyto'] = $user->email;
         }
-        
+
         // Set the XSL:FO template to be used
         $invoice_layout = 'SalesInvoice';
 
@@ -1328,12 +1328,12 @@ class SinvoicesController extends printController
             // is not available in the controller's data.
             $options['email_subject'] = 'Sales Invoice, No: ' . $invoice_number . (is_null($invoice->ext_reference) ? '' : ' Your Ref: ' . $invoice->ext_reference);
         }
-        
+
         $options['report'] = $invoice_layout;
         $options['filename'] = 'SInv' . $invoice_number;
 
         // if we're dealing with the dialog, just return the options...
-        if (strtolower($status) == 'dialog') {
+        if (strtolower((string) $status) == 'dialog') {
             return $options;
         }
 
@@ -1420,7 +1420,7 @@ class SinvoicesController extends printController
             // get the delivery address
             $delivery_address = $invoice->customer . ", " . $invoice->getDeliveryAddress()->fulladdress;
             $extra['delivery_address'] = $delivery_address;
-            
+
             // get the VAT number associated with the delivery address
             $ship = DataObjectFactory::Factory('PartyAddress');
             $ship->load($invoice->del_partyaddress_id);
@@ -1461,7 +1461,7 @@ class SinvoicesController extends printController
                 'field2' => $invoice->tax_value . ' ' . $invoice->currency
             );
             $invoice_totals[]['line'][] = array(
-                'field1' => strtoupper($invoice->getFormatted('transaction_type')) . ' TOTAL',
+                'field1' => strtoupper((string) $invoice->getFormatted('transaction_type')) . ' TOTAL',
                 'field2' => $invoice->gross_value . ' ' . $invoice->currency
             );
             $extra['invoice_totals'] = $invoice_totals;
@@ -1493,7 +1493,7 @@ class SinvoicesController extends printController
             $json_response = $this->generate_output($this->_data['print'], $options);
 
             // decode response, if it was successful update the print count
-            $response = json_decode($json_response);
+            $response = json_decode((string) $json_response);
             if ($response->status === true) {
                 $invoice->update($this->_data['id'], array(
                     'date_printed',
@@ -1546,7 +1546,7 @@ class SinvoicesController extends printController
             'report' => 'InvoiceList'
         );
 
-        if (strtolower($status) == "dialog") {
+        if (strtolower((string) $status) == "dialog") {
             return $options;
         }
 
