@@ -56,7 +56,7 @@ class HasreportsController extends Controller {
 		$sh->extract();
 		$sh->addConstraint(new Constraint('roleid','=', $id));
 		$collection->load($sh);
-		$this->view->set(strtolower($collection->getModelName()).'s',$collection);
+		$this->view->set(strtolower((string) $collection->getModelName()).'s',$collection);
 		$this->view->set('num_pages',$collection->num_pages);
 		$this->view->set('cur_page',$collection->cur_page);
 	}

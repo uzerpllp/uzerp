@@ -362,7 +362,7 @@ class UsersController extends printController
 
         $injector = $this->_injector;
         $authentication = $injector->Instantiate('LoginHandler');
-        
+
         // Remove MFA data from the User object
         $authentication->validator->ResetEnrollment($user, $errors);
         if ($errors) {
@@ -390,7 +390,7 @@ class UsersController extends printController
             $this->_data['for_module'] = 'shared';
         }
 
-        $classname = ucfirst($this->_data['for_module']) . 'Preferences';
+        $classname = ucfirst((string) $this->_data['for_module']) . 'Preferences';
         $module = new $classname(true, 'ManagedUserPreferences', $user->username);
 
         $this->view->set('templateCode', $module->generateTemplate());
@@ -415,7 +415,7 @@ class UsersController extends printController
 
         $user = $this->_uses[$this->modeltype];
 
-        $classname = ucfirst($this->_data['__moduleName']) . 'Preferences';
+        $classname = ucfirst((string) $this->_data['__moduleName']) . 'Preferences';
         $module = new $classname(true, 'ManagedUserPreferences', $user->username);
 
         $preferenceNames = $module->getPreferenceNames();

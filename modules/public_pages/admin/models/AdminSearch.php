@@ -8,12 +8,12 @@
 
 class AdminSearch extends BaseSearch
 {
-	
+
 	protected $version='$Revision: 1.8 $';
-	
+
 	protected $fields=array();
-		
-	public static function HasRole($search_data=null, &$errors, $defaults=null)
+
+	public static function HasRole($search_data = null, &$errors = [], $defaults = null)
 	{
 		$search = new AdminSearch($defaults);
 
@@ -30,8 +30,8 @@ class AdminSearch extends BaseSearch
 		$users = $user->getAll();
 		$options += $users;
 		$search->setOptions('username', $options);
-		
-		
+
+
 // Search by Role
 		$search->addSearchField(
 			'roleid',
@@ -45,12 +45,12 @@ class AdminSearch extends BaseSearch
 		$roles = $role->getAll();
 		$options += $roles;
 		$search->setOptions('roleid', $options);
-		
+
 		$search->setSearchData($search_data,$errors,'HasRole');
 		return $search;
 	}
-	
-	public static function HasPermission($search_data=null, &$errors, $defaults=null)
+
+	public static function HasPermission($search_data = null, &$errors = [], $defaults = null)
 	{
 		$search = new AdminSearch($defaults);
 
@@ -67,8 +67,8 @@ class AdminSearch extends BaseSearch
 		$permissions = $permission->getAll();
 		$options += $permissions;
 		$search->setOptions('permissionsid', $options);
-		
-		
+
+
 // Search by Role
 		$search->addSearchField(
 			'roleid',
@@ -82,12 +82,12 @@ class AdminSearch extends BaseSearch
 		$roles = $role->getAll();
 		$options += $roles;
 		$search->setOptions('roleid', $options);
-		
+
 		$search->setSearchData($search_data,$errors,'HasPermission');
 		return $search;
 	}
-	
-	public static function CompanyRole($search_data=null, &$errors, $defaults=null)
+
+	public static function CompanyRole($search_data = null, &$errors = [], $defaults = null)
 	{
 		$search = new AdminSearch($defaults);
 
@@ -104,8 +104,8 @@ class AdminSearch extends BaseSearch
 		$companies = $company->getAll();
 		$options += $companies;
 		$search->setOptions('company_id', $options);
-		
-		
+
+
 // Search by Role
 		$search->addSearchField(
 			'role_id',
@@ -119,15 +119,15 @@ class AdminSearch extends BaseSearch
 		$roles = $role->getAll();
 		$options += $roles;
 		$search->setOptions('role_id', $options);
-		
+
 		$search->setSearchData($search_data,$errors,'CompanyRole');
 		return $search;
 	}
-	
-	public static function ObjectRole($search_data=null, &$errors, $defaults=null)
+
+	public static function ObjectRole($search_data = null, &$errors = [], $defaults = null)
 	{
 		$search = new AdminSearch($defaults);
-		
+
 		if (isset($search_data['object_type'])) {
 			$objecttype=$search_data['object_type'];
 // Search by Object
@@ -146,7 +146,7 @@ class AdminSearch extends BaseSearch
 		} else {
 			$objecttype='';
 		}
-		
+
 // Search by Role
 		$search->addSearchField(
 			'role_id',
@@ -160,15 +160,15 @@ class AdminSearch extends BaseSearch
 		$roles = $role->getAll();
 		$options += $roles;
 		$search->setOptions('role_id', $options);
-		
+
 		$search->setSearchData($search_data,$errors,'ObjectRole');
 		return $search;
 	}
-	
-	public static function Users($search_data=null, &$errors, $defaults=null)
+
+	public static function Users($search_data = null, &$errors = [], $defaults = null)
 	{
 		$search = new AdminSearch($defaults);
-		
+
 		// Search by User
 		$search->addSearchField(
 			'username',
@@ -177,7 +177,7 @@ class AdminSearch extends BaseSearch
 			'',
 			'basic'
 		);
-		
+
 		// Search by User
 		$search->addSearchField(
 			'person_id',
@@ -189,18 +189,18 @@ class AdminSearch extends BaseSearch
 		$person = DataObjectFactory::Factory('User');
 		$options = array('' => 'All');
 		$cc = new ConstraintChain();
-		
+
 		$person->idField	= 'person_id';
 		$person->identifierField	= 'person';
-		
+
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('person_id', 'is not', 'NULL'));
-		
+
 		$people = $person->getAll($cc, FALSE, TRUE);
 		$options += $people;
 		$search->setOptions('person_id', $options);
-		
-		
+
+
 		// Search by Access Enabled
 		$search->addSearchField(
 			'access_enabled',
@@ -212,12 +212,12 @@ class AdminSearch extends BaseSearch
 		$search->setOptions('access_enabled', array(''		=> 'All'
 												   ,'TRUE'	=> 'True'
 												   ,'FALSE'	=> 'False'));
-		
+
 		$search->setSearchData($search_data, $errors, 'Users');
-		
+
 		return $search;
 	}
-	
+
 }
 
 // End of AdminSearch

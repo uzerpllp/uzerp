@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -9,7 +9,7 @@ class Role extends DataObject
 {
 
 	protected $version='$Revision: 1.13 $';
-	
+
 	function __construct($tablename='roles')
 	{
 		$this->defaultDisplayFields = array('name'=>'Permission Name','description'=>'Description');
@@ -60,39 +60,39 @@ class Role extends DataObject
 				break;
 			}
 		}
-		
+
 		if (count($errors)>0)
 		{
 			$db->CompleteTrans();
 			return false;
 		}
-		
+
 		return $db->CompleteTrans();
-		
+
 	}
-	
+
 	public function setAdmin($module_ids)
 	{
-		
+
 		$db = DB::Instance();
 		$db->StartTrans();
-		
+
 		$query = "delete from module_admins where role_id=".$db->qstr($this->id);
 		$db->Execute($query);
-		
+
 		foreach ($module_ids as $key=>$admin)
 		{
 			$query = "insert into module_admins(role_id,module_name) values (".$db->qstr($this->id).",".$db->qstr($key).")";
 			$db->Execute($query);
 		}
-		
+
 		return $db->CompleteTrans();
-		
+
 	}
 
 	public static function setUsers($role, $users, &$errors=array())
 	{
-		
+
 		if(!$role instanceof Role)
 		{
 			$roleid=$role;
@@ -103,13 +103,13 @@ class Role extends DataObject
 				return false;
 			}
 		}
-		
+
 		$db=DB::Instance();
 		$db->StartTrans();
-		
+
 		$query="delete from hasrole where roleid=".$db->qstr($role->id);
 		$db->Execute($query);
-		
+
 		foreach($users as $user)
 		{
 			$ob = DataObject::Factory(array('roleid'=>$role->id, 'username'=>$user), $errors, 'HasRole');
@@ -118,46 +118,46 @@ class Role extends DataObject
 				$ob->save();
 			}
 		}
-		
+
 		$db->CompleteTrans();
-		
+
 	}
-	
+
 	public function getPermissions()
 	{
-		$permission = new hasPermission();
+		$permission = new HasPermission();
 		$permission->identifierField = 'permissionsid';
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('roleid', '=', $this->{$this->idField}));
 		return $permission->getAll($cc);
 	}
-	
+
 	public function getReports()
 	{
-		$report = new hasReport();
+		$report = new HasReport();
 		$report->identifierField = 'description';
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('role_id', '=', $this->{$this->idField}));
 		return $report->getAll($cc, null, TRUE);
 	}
-	
+
 	public function getRoles()
 	{
-		$role = new hasRole();
+		$role = new HasRole();
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('roleid', '=', $this->{$this->idField}));
 		return $role->getAll($cc);
 	}
-	
+
 	public function getUsers()
 	{
-		$report = new hasRole();
+		$report = new HasRole();
 		$report->identifierField = 'username';
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('roleid', '=', $this->{$this->idField}));
 		return $report->getAll($cc);
 	}
-	
+
 }
 
 // End of Role

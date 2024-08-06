@@ -8,18 +8,17 @@
 
 class HasRoleCollection extends DataObjectCollection
 {
-	
-	protected $version = '$Revision: 1.6 $';
-	
+
+	protected $identifierField;
 	public $field;
-		
+
 	function __construct($do = 'HasRole', $tablename = 'hasrolesoverview')
 	{
 		parent::__construct($do, $tablename);
-			
+
 		$this->identifierField='roleid';
 	}
-		
+
 }
 
 // End of HasRoleCollection

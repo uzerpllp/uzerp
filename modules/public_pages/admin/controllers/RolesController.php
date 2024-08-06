@@ -10,27 +10,27 @@ class RolesController extends Controller
 {
 
 	protected $version='$Revision: 1.19 $';
-	
+
 	protected $_templateobject;
 
 	public function __construct($module=null,$action=null)
 	{
-		
+
 		parent::__construct($module, $action);
-		
+
 		$this->_templateobject = DataObjectFactory::Factory('Role');
-		
+
 		$this->uses($this->_templateobject);
-		
+
 	}
 
 	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
 		parent::index(new RoleCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -40,34 +40,34 @@ class RolesController extends Controller
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('clickaction', 'view');
 		$this->view->set('sidebar',$sidebar);
-		
+
 	}
 
 	public function delete($modelName = null)
 	{
-		
+
 		$flash = Flash::Instance();
-		
+
 		parent::delete('Role');
-		
+
 		sendTo('Roles','index',array('admin'));
-		
+
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
-		
+
 		$flash=Flash::Instance();
-		
+
 		$errors=array();
-		
+
 		$db = DB::Instance();
 		$db->StartTrans();	
-		
+
 		if(isset($this->_data['permission']))
 		{
 			$permissions=$this->_data['permission'];
@@ -77,7 +77,7 @@ class RolesController extends Controller
 		{
 			$permissions=array();
 		}
-		
+
 		if(isset($this->_data['admin']))
 		{
 			$admin=$this->_data['admin'];
@@ -87,7 +87,7 @@ class RolesController extends Controller
 		{
 			$admin=array();
 		}
-		
+
 		if(parent::save('Role'))
 		{
 			$role = $this->saved_model;
@@ -103,17 +103,17 @@ class RolesController extends Controller
 				sendTo('Roles','index', array('admin'));
 			}
 		}
-		
+
 	//	$db->FailTrans();
 	//	$db->CompleteTrans();
-	
+
 		$this->refresh();
-		
+
 	}
 
 	public function _new()
 	{
-		
+
 		parent::_new();
 
 		$role = $this->_uses['Role'];
@@ -123,19 +123,19 @@ class RolesController extends Controller
 
 		$companypermissions = DataObjectFactory::Factory('Companypermission');
 		$modulepermissions = $companypermissions->getAll();
-		
+
 // Note: If no company permissions have been defined ($modulepermissions is empty)
 //       then all permissions will be displayed; i.e. default is to allow access to
 //       all permissions if no company permissions override
 
 		$permissions = new PermissionCollection(DataObjectFactory::Factory('Permission'));
-		
+
 		$this->view->set('items',$permissions->getPermissionTree($modulepermissions));
-		
+
 		$this->view->set('permissions_tree',$this->getTemplateName('permissions_tree'));
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -150,11 +150,11 @@ class RolesController extends Controller
 		if ($role->isLoaded())
 		{
 			$hasrole = DataObjectFactory::Factory('hasRole');
-			
+
 			$this->view->set('current_users', $hasrole->getUsers($role->{$role->idField}));
-			
+
 			$this->view->set('current',$role->getPermissions());
-			
+
 			$sidebar->addList(
 				'Actions',
 				array(
@@ -172,20 +172,20 @@ class RolesController extends Controller
 		{
 			$this->view->set('current',array());
 		}
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('clickaction', 'view');
 		$this->view->set('sidebar',$sidebar);
-		
+
 	}
 
 	private function addSidebar($role)
 	 {
-	 	
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$roleid=$role->{$role->idField};
-		
+
 		$sidebar->addList(
 			'Actions',
 			array(
@@ -218,55 +218,55 @@ class RolesController extends Controller
 				)
 			)
 		);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
-		
+
 	}
-	
+
 	public function view()
 	{
-		
+
 		$flash=Flash::Instance();
-		
+
 		if (!$this->loadData())
 		{
 			sendBack();
 		}
-			
+
 		$role=$this->_uses['Role'];
 
 		if($role===false)
 		{
 			sendBack();
 		}
-		
+
 		$this->addSidebar($role);	
-		
+
 		$moduleadmin = DataObjectFactory::Factory('ModuleAdmin');
 		$moduleadmins = $moduleadmin->getModuleName($role->{$role->idField});
 		$this->view->set('moduleadmin',$moduleadmins);
-		
+
 		$this->view->set('no_ordering',true);
 		$this->view->set('reports',$role->getReports());
 		$this->view->set('users',$role->getUsers());
 		$companypermissions = DataObjectFactory::Factory('Companypermission');
 		$modulepermissions = $companypermissions->getAll();
-		
+
 // Note: If no company permissions have been defined ($modulepermissions is empty)
 //       then all permissions will be displayed; i.e. default is to allow access to
 //       all permissions if no company permissions override
 
 		$permissions = new PermissionCollection(DataObjectFactory::Factory('Permission'));
-		
+
 		$this->view->set('items',$permissions->getPermissionTree($modulepermissions));
-		
+
 		$this->view->set('permissions_tree',$this->getTemplateName('permissions_tree'));
 		$this->view->set('current',$role->getPermissions());
 		$this->view->set('view',true);
-		
+
 	}
-	
+
 }
 
 // End of RolesController
