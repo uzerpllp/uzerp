@@ -16,28 +16,28 @@ class DataMappingDetail extends DataObject {
 	
 	function __construct($tablename='data_mapping_details') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
-		
+
 // Set specific characteristics
 		$this->idField='id';
 		$this->identifierField='external_code';
-		
+
 // Define relationships
 //		$this->belongsTo('DataMapping', 'data_mapping_id', 'data_mapping');
 //		$this->hasOne('DataMapping', 'data_mapping_id', 'data_map');
 		$this->hasOne('DataMappingRule', 'data_mapping_rule_id', 'data_map_rule');
 		$this->belongsTo('DataMappingDetail', 'parent_id', 'parent');
-		
+
 		$this->hasOne('DataMappingDetail', 'parent_id', 'parent_detail');
-		
+
 		$this->actsAsTree('parent_id');
-		
+
 // Define enumerated types
 
 // Define system defaults
-		
+
 // Define field formats		
 		
 	}

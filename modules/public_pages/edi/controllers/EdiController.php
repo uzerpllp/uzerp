@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -7,24 +7,24 @@
  **/
 
 class EdiController extends printController {
-	
+
 	protected $version='$Revision: 1.9 $';
-	
+
 	public function delete($modelName = null){
-		
+
 		if (!$this->CheckParams($this->_templateobject->idField)) {
 			sendBack();
 		}
 
 		parent::delete($this->modeltype);
-		
+
 		sendTo($this->name,'index',$this->_modules
 			  ,$this->getOtherParams());
 
 	}
 
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
-		
+
 		if (!$this->CheckParams($this->modeltype)) {
 			sendBack();
 		}
@@ -34,20 +34,20 @@ class EdiController extends printController {
 			sendTo($_SESSION['refererPage']['controller']
 				  ,$_SESSION['refererPage']['action']
 				  ,$_SESSION['refererPage']['modules']
-				  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+				  ,$_SESSION['refererPage']['other'] ?? null);
 		}
-		
+
 		$flash->addErrors($errors);
 		$this->refresh();
-		
+
 	}
 
 	public function save_model ($modelName, $dataIn=array(), &$errors=array(), &$warnings=array(), $duplicates='') {
 		// Need to define error array here due to too many nested levels
-		
+
 		$flash=Flash::Instance();
 		$edi_errors = array();
-		
+
 		if ($duplicates != 'R')
 		{
 			// Do not reject duplicates - so check if record exists
@@ -87,7 +87,7 @@ class EdiController extends printController {
 		}
 
 		$result = parent::save($modelName, $dataIn, $edi_errors);
-		
+
 		if (count($edi_errors)>0)
 		{
 			// Add the Identifier Values to the errors to identify the data in error
@@ -105,9 +105,9 @@ class EdiController extends printController {
 				$errors[] = $error;
 			}
 		}
-		
+
 		return $result;
-		
+
 	}
 
 }

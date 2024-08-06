@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -22,13 +22,13 @@ class WebEdi extends EDIInterface {
 	protected $name;
 	protected $type;
 
-	
+
 	function getFileList (&$errors=array()) {
-		
+
 		$filelist=array();
 		if ($this->direction=='IN') {
-			
-			switch (strtoupper($this->transfer_type)) {
+
+			switch (strtoupper((string) $this->transfer_type)) {
 				case 'HTTP':
 					$url = $this->transfer_type.'://'.$this->root_location.'/list_orders.php?user_id='.$this->username.'&magic_key='.$this->password.'&mode=new';
 					$external_list = file_get_contents($url);
@@ -49,7 +49,7 @@ class WebEdi extends EDIInterface {
 						asort($filelist);
 					}
 					break;
-					
+
 				default:
 					$errors[]=$this->transfer_type.' transfer type not supported';
 			}
@@ -63,7 +63,7 @@ class WebEdi extends EDIInterface {
 			&& !is_null($this->process_function)
 			&& method_exists($this->process_model, $this->process_function))
 		{
-			if (strtolower($this->process_model) == strtolower(get_class($this)))
+			if (strtolower((string) $this->process_model) == strtolower(get_class($this)))
 			{
 				$model=$this;
 			}
@@ -79,16 +79,16 @@ class WebEdi extends EDIInterface {
 		}
 		return $extractlist;
 	}
-	
+
 	function getFile ($logdata, $download=true, &$errors=array()) {
 
 		$external_name	= $logdata['external_id'];
 		$filename		= $logdata['name'];
-		
+
 		// Override the download - always get it
 		$download=true;
-		
-		switch (strtoupper($this->transfer_type)) {
+
+		switch (strtoupper((string) $this->transfer_type)) {
 			case 'HTTP':
 				$filepath = DATA_ROOT.'company'.EGS_COMPANY_ID.DIRECTORY_SEPARATOR.$this->working_folder.DIRECTORY_SEPARATOR.$filename;		
 				$url = $this->transfer_type.'://'.$this->root_location.'/get_order.php?magic_key='.$this->password.'&'.$this->external_identifier_field.'='.$external_name;
@@ -107,29 +107,29 @@ class WebEdi extends EDIInterface {
 			default:
 				$errors[]=$this->transfer_type.' transfer type not supported';
 		}
-		
+
 		if ($download)
 		{
-			
+
 			$logdata['action'] = 'D';
 			$this->writeLog($logdata, $errors);
-			
+
 			$logdata['action'] = 'AI';
 			$this->writeLog($logdata, $errors);
-		
+
 		}
-		
+
 		if (count($errors)>0) {
 			return false;
 		} else {
 			return true;
 		}
-				
+
 	}
 
 	function sendFile ($filename, &$errors=array()) {
-		
-		switch (strtoupper($this->transfer_type)) {
+
+		switch (strtoupper((string) $this->transfer_type)) {
 			case 'HTTP':
 				$filepath = DATA_ROOT.'company'.EGS_COMPANY_ID.DIRECTORY_SEPARATOR.$this->working_folder.DIRECTORY_SEPARATOR.$filename;
 				$handle=fopen($filepath, 'r');
@@ -155,23 +155,23 @@ class WebEdi extends EDIInterface {
 			default:
 				$errors[]=$this->transfer_type.' transfer type not supported';
 		}
-		
+
 		$logdata['name'] = $filename;
 		$logdata['action'] = 'S';
 		$this->writeLog($logdata, $errors);
-		
+
 		if (count($errors)>0) {
 			return false;
 		} else {
 			return true;
 		}
-		
+
 	}
 
 	function exportFile ($filename, $data, &$errors=array()) {
 		$defdetail=new DataDefinitionDetail();
 		$defdetail->loadBy(array('data_definition_id', 'element'), array($this->id, $this->name));
-		
+
 		if (!$defdetail->isLoaded()) {
 			$errors[]='Cannot find Data Definition for '.$this->name;
 			return false;
@@ -182,7 +182,7 @@ class WebEdi extends EDIInterface {
 		} else {
 			$model=new $defdetail->data_map->internal_type;
 		}
-		
+
 		if ($model instanceof DataObject) {
 			$model->load($data);
 //			if ($model->isLoaded() && $model->isField('print_count')) {
@@ -246,23 +246,23 @@ class WebEdi extends EDIInterface {
 			default:
 				$errors[]=$this->type.' data type not supported';
 		}
-		
+
 		$handle = fopen(DATA_ROOT.'company'.EGS_COMPANY_ID.DIRECTORY_SEPARATOR.$this->working_folder.DIRECTORY_SEPARATOR.$filename, 'w');		
-		if (!$handle || !fwrite($handle, $data)) {
+		if (!$handle || !fwrite($handle, (string) $data)) {
 			$errors[]='Error writing '.$filename.' to '.$this->working_folder;
 		}
 
 		$logdata['name']=$filename;
 		$logdata['action']='E';
 		$this->writeLog($logdata, $errors);
-		
+
 		if (count($errors)>0) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public function getInvoiceExportList ($_definition_id='') {
 		$invoice=new SInvoice();
 		$collection=new SInvoiceCollection($invoice);
@@ -285,9 +285,9 @@ class WebEdi extends EDIInterface {
 //		echo 'cc='.$cc->__toString().'<br>';
 		return $invoice->getAll($cc,false,true);
 	}
-	
+
 // Private functions
-	
+
 }
 
 // End of WebEdi

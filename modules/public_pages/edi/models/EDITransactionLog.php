@@ -22,21 +22,21 @@ class EDITransactionLog extends DataObject {
 	
 	function __construct($tablename='edi_transactions_log') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
-		
+
 // Set specific characteristics
 		$this->idField='id';
 		$this->identifierField='name';
 		$this->orderby=array('created', 'name');
 		$this->orderdir=array('DESC', 'ASC');
-		
+
 // Define relationships
 		$this->belongsTo('ExternalSystem', 'external_system_id', 'external_system');
 		$this->belongsTo('DataDefinition', 'data_definition_id', 'data_definition');
 		$this->hasOne('DataDefinition', 'data_definition_id', 'data_definition_data');
-		
+
 // Define enumerated types
 		$this->setEnum('action',array('AD'=>'Awaiting Download'
 									 ,'D'=>'Download'
@@ -45,16 +45,16 @@ class EDITransactionLog extends DataObject {
 									 ,'E'=>'Export'
 									 ,'I'=>'Import'
 									 ,'S'=>'Send'));
-		
+
 		$this->setEnum('status',array('N'=>'Not Started'
 									 ,'V'=>'Validated'
 									 ,'X'=>'Cancelled'
 									 ,'E'=>'Failed'
 									 ,'C'=>'Complete'));
-		
+
 // Define system defaults
 		$this->getField('status')->setDefault('N');
-		
+
 // Define field formats		
 	
 	}

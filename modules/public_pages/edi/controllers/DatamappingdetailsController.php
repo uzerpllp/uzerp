@@ -132,7 +132,7 @@ class DatamappingdetailsController extends EdiController {
 //		elseif (!is_null($datamappingrule->parent_id)) {
 			// Get the list of parent options
 			// from the parent mapping details via the parent mapping rule
-			$parentmappingrule= new datamappingrule();
+			$parentmappingrule= new DataMappingRule();
 			$parentmappingrule->load($datamappingrule->parent_id);
 			$parent_options=array();
 			foreach ($parentmappingrule->data_translations as $parent_detail) {
@@ -280,11 +280,11 @@ class DatamappingdetailsController extends EdiController {
 		$flash=Flash::Instance();
 		$errors=array();
 		
-		if(controller::save($this->modeltype, '', $errors)) {
+		if(Controller::save($this->modeltype, '', $errors)) {
 			sendTo($_SESSION['refererPage']['controller']
 				  ,$_SESSION['refererPage']['action']
 				  ,$_SESSION['refererPage']['modules']
-				  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+				  ,$_SESSION['refererPage']['other'] ?? null);
 		}
 		
 		$flash->addErrors($errors);

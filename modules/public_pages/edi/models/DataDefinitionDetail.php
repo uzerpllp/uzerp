@@ -20,10 +20,10 @@ class DataDefinitionDetail extends DataObject {
 	
 	function __construct($tablename='data_definition_details') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
-		
+
 // Set specific characteristics
 		$this->idField='id';
 		$this->identifierField='element';
@@ -36,13 +36,13 @@ class DataDefinitionDetail extends DataObject {
 		$this->belongsTo('DataMapping', 'data_mapping_id', 'data_mapping');
 		$this->hasOne('DataMapping', 'data_mapping_id', 'data_map');
 		$this->belongsTo('DataMappingRule', 'data_mapping_rule_id', 'data_mapping_rule');
-		
+
 		$this->hasMany('DataDefinitionDetail', 'sub_definition', 'parent_id');
-		
+
 // Define enumerated types
 
 // Define system defaults
-		
+
 // Define field formats		
 		
 	}
