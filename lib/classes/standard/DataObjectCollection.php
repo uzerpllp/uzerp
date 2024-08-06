@@ -388,10 +388,8 @@ class DataObjectCollection implements Iterator, Countable {
 		if ($query_array['perpage'] == 0)
 		{
 			$this->num_pages = 1;
-		}
-		else
-		{
-			$this->num_pages = ceil($num_records / $query_array['perpage']);
+		} elseif ($num_records != "0" && !empty($query_array['perpage'])) {
+				$this->num_pages = ceil($num_records / $query_array['perpage']);
 		}
 
 		if ($sh instanceof SearchHandler)
