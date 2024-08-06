@@ -8,18 +8,18 @@
 
 class PLPaymentCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.1 $';
-	
+
 	public $field;
-	
+
 	function __construct($do='PLPayment', $tablename='pl_payments_overview')
 	{
-		
+
 		parent::__construct($do, $tablename);
-		
+
 	}
-	
+
 }
 
 // End of PLPaymentCollection

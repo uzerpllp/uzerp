@@ -10,13 +10,13 @@ class gltransactionsSearch extends BaseSearch
 {
 
 	protected $version='$Revision: 1.13 $';
-	
+
 	public static function useDefault($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = new gltransactionsSearch($defaults);
 
 		$trans = DataObjectFactory::Factory('GLTransaction');
-		
+
 // Search by Account
 		$search->addSearchField(
 			'glaccount_id',
@@ -47,7 +47,7 @@ class gltransactionsSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 // Search by Period
 		if (!isset($search_data['clear']) && (isset($search_data['transaction_date']) || isset($defaults['search_id'])))
 		{
@@ -104,12 +104,12 @@ class gltransactionsSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
-		
+
+
 		$search->setSearchData($search_data,$errors);
 		return $search;
 	}
-		
+
 }
 
 // End of gltransactionsSearch

@@ -8,15 +8,15 @@
 
 class GLUnpostedTransactionCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.1 $';
-	
+
 	public $field;
-	
+
 	function __construct($do = 'GLUnpostedTransaction', $tablename = 'gl_unposted_transactions_overview')
 	{
 		parent::__construct($do, $tablename);
-			
+
 	}
 
 }

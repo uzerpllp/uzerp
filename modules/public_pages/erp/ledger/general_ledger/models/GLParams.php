@@ -9,14 +9,14 @@
 class GLParams extends DataObject {
 
 	protected $version = '$Revision: 1.13 $';
-	
+
 //	protected $defaultDisplayFields=array('paramdesc'=>'Description'
 //										 ,'display_value'=>'Value'
 //										 );
-	
+
 // Array containing currently loaded parameter values
 	protected $_params = array(); 
-	
+
 // List of parameters currently supported
 	public $accruals_control_account = "Accruals Control Account";
 	public $ar_pl_suspense_account = "Asset Purchases Suspense GL Account";
@@ -44,18 +44,18 @@ class GLParams extends DataObject {
 	public $vat_postponed = "VAT Postponed Account";
 	public $vat_reverse_charge = "VAT Reverse Charge Account";
 	public $intrastat_net_mass = "UoM for Intrastat Net Mass";
-	
+
 // Array containing 'soft' fk references
 	protected $_dataSources = array();
-	
+
 	function __construct($tablename = 'gl_params')
 	{
 		parent::__construct($tablename);
-		
+
 		$this->idField			= 'id';
 		$this->identifierField	= 'paramdesc || \' - \' || paramvalue';	
 		$this->orderby			= 'paramdesc';
-		
+
 		$this->validateUniquenessOf(array('paramdesc'));
 
 		$this->setEnum('paramdesc',array($this->accruals_control_account=>$this->accruals_control_account
@@ -86,12 +86,12 @@ class GLParams extends DataObject {
 										,$this->vat_reverse_charge => $this->vat_reverse_charge
 										)
 						);
-		
+
 // This defines the 'soft' foreign key links for the parameter description
 // Overrides DataObject::hasMany
 		$control_account = new ConstraintChain();
 		$control_account->add(new Constraint('control', 'is', TRUE));
-		
+
 		$this->GLParamsHasMany('Currency', $this->base_currency, 'currency');
 		$this->GLParamsHasMany('Currency', $this->twin_currency, 'currency');
 		$this->GLParamsHasMany('GLCentre', $this->balance_sheet_cost_centre, 'cost_centre');
@@ -116,7 +116,7 @@ class GLParams extends DataObject {
 		$this->GLParamsHasMany('GLCentre', $this->ar_disposals_proceeds_centre, 'cost_centre');
 		$this->GLParamsHasMany('GLAccount', $this->expenses_control_account, 'account', $control_account);
 		$this->GLParamsHasMany('STuom', $this->intrastat_net_mass, 'uom_name');
-		
+
 		if(!defined('EGS_COMPANY_ID'))
 			return false;
  	}
@@ -126,14 +126,14 @@ class GLParams extends DataObject {
 // Overrides the DataObject::hasMany to support 'soft' fk links for GL parameters
 		$this->_dataSources[$name]['model'] = $do;
 		$this->_dataSources[$name]['field'] = $fkfield;
-		
+
 		if (!empty($cc))
 		{
 			$this->_dataSources[$name]['cc'] = $cc;
 		}
-		
+
    	}
-  	
+
 	public function getParam($name)
 	{
 // If the value has not already been retrieved
@@ -144,7 +144,7 @@ class GLParams extends DataObject {
 			if ($this->paramdesc<>$name)
 			{
 				$this->loadBy('paramdesc', $name);
-				
+
 				if ($this->isLoaded())
 				{
 					if (isset($this->_dataSources[$name]))
@@ -158,7 +158,7 @@ class GLParams extends DataObject {
 				}
 			}
 		}
-		
+
 		if(isset($this->_params[$name]))
 		{
 			return $this->_params[$name];
@@ -177,13 +177,13 @@ class GLParams extends DataObject {
 		{
 			$name = $this->paramdesc;
 		}
-		
+
 		if (isset($this->_dataSources[$name]['model']))
 		{
 			$do = $this->_dataSources[$name]['model'];
-			
+
 			$select = DataObjectFactory::Factory($do);
-			
+
 			if (isset($this->_dataSources[$name]['cc']) && ($this->_dataSources[$name]['cc'] instanceof ConstraintChain))
 			{
 				return $select->getAll($this->_dataSources[$name]['cc']);
@@ -198,7 +198,7 @@ class GLParams extends DataObject {
 			return array();
 		}
 	}
-	
+
 	public function getValue($name)
 	{
 // Gets the value for the specified FK table/field
@@ -210,49 +210,49 @@ class GLParams extends DataObject {
 		else
 		{
 			$do = $this->_dataSources[$name]['model'];
-			
+
 			$field = $this->_dataSources[$name]['field'];
-			
+
 			if (!is_null($this->paramvalue_id) || !empty($this->paramvalue_id))
 			{
 				$result = DataObjectFactory::Factory($do);
-				
+
 				$result->load($this->paramvalue_id);
-				
+
 				if($result) {
 					return $result->$field;
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public function load($clause,$override=false, $return = \FALSE)
 	{
 		parent::load($clause,$override=false);
-		
+
 		if ($this->isLoaded())
 		{
 			$value = $this->getValue($this->paramdesc);
-			
+
 			$this->addField('display_value', new DataField('display_value', $value));
 			$this->getField('display_value')->ignoreField=true;
 		}
-		
+
 		return $this;
 	}
-	
+
 	public function valueType($name)
 	{
 		if (isset($this->_dataSources[$name]))
 		{
 			return 'paramvalue_id';
 		}
-		
+
 		return 'paramvalue';
 	}
-	
+
 	public function validValue($name, $value)
 	{
 // Checks that the supplied value exists in the FK table/field
@@ -263,56 +263,56 @@ class GLParams extends DataObject {
 		else
 		{
 			$do = $this->_dataSources[$name]['model'];
-			
+
 			$field = $this->_dataSources[$name]['field'];
-			
+
 			if ($value!==false)
 			{
 				$result = DataObjectFactory::Factory($do);
-				
+
 				$result =$result->loadBy($field, $value);
-				
+
 				if($result) {
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public function accruals_control_account (){
 		return $this->getParam($this->accruals_control_account);
 	}
-	
+
 	public function base_currency (){
 		return $this->getParam($this->base_currency);
 	}
-	
+
 	public function base_currency_symbol () {
 		$currency = DataObjectFactory::Factory('Currency');
-		
+
 		$currency->load($this->base_currency());
-		
+
 		return $currency->symbol;
 	}
-	
+
 	public function twin_currency () {
 		return $this->getParam($this->twin_currency);
 	}
-	
+
 	public function balance_sheet_cost_centre () {
 		return $this->getParam($this->balance_sheet_cost_centre);
 	}
-	
+
 	public function contras_control_account () {
 		return $this->getParam($this->contras_control_account);
 	}
-	
+
 	public function number_of_weeks_in_year () {
 		return $this->getParam($this->number_of_weeks_in_year);
 	}
-	
+
 	public function number_of_periods_in_year () {
 		return $this->getParam($this->number_of_periods_in_year);
 	}
@@ -320,23 +320,23 @@ class GLParams extends DataObject {
 	public function pl_account_centre () {
 		return $this->getParam($this->pl_account_centre);
 	}
-	
+
 	public function purchase_ledger_control_account () {
 		return $this->getParam($this->purchase_ledger_control_account);
 	}
-	
+
 	public function retained_profits_account () {
 		return $this->getParam($this->retained_profits_account);
 	}
-	
+
 	public function sales_ledger_control_account () {
 		return $this->getParam($this->sales_ledger_control_account);
 	}
-	
+
 	public function vat_input () {
 		return $this->getParam($this->vat_input);
 	}
-	
+
 	public function vat_output () {
 		return $this->getParam($this->vat_output);
 	}
@@ -344,7 +344,7 @@ class GLParams extends DataObject {
 	public function vat_control_account () {
 		return $this->getParam($this->vat_control_account);
 	}
-	
+
 	public function eu_acquisitions () {
 		return $this->getParam($this->vat_eu_acquisitions);
 	}
@@ -352,7 +352,7 @@ class GLParams extends DataObject {
 	public function vat_postponed_account () {
 		return $this->getParam($this->vat_postponed);
 	}
-	
+
 	public function vat_reverse_charge_account () {
 		return $this->getParam($this->vat_reverse_charge);
 	}
@@ -364,43 +364,43 @@ class GLParams extends DataObject {
 	public function product_account () {
 		return $this->getParam($this->product_account);
 	}
-	
+
 	public function product_centre () {
 		return $this->getParam($this->product_centre);
 	}
-	
+
 	public function ar_pl_suspense_account () {
 		return $this->getParam($this->ar_pl_suspense_account);
 	}
-	
+
 	public function ar_pl_suspense_centre () {
 		return $this->getParam($this->ar_pl_suspense_centre);
 	}
-	
+
 	public function ar_disposals_proceeds_account () {
 		return $this->getParam($this->ar_disposals_proceeds_account);
 	}
-	
+
 	public function ar_disposals_proceeds_centre () {
 		return $this->getParam($this->ar_disposals_proceeds_centre);
 	}
-	
+
 	public function expenses_control_account () {
 		return $this->getParam($this->expenses_control_account);
 	}
-	
+
 	public function intrastat_net_mass () {
 		return $this->getParam($this->intrastat_net_mass);
 	}
-	
+
 	public function unassignedParams ()
 	{
 		$this->idField = 'paramdesc';
-		
+
 		$rows = $this->GetAll();
 
 		$unassigned = array();
-		
+
 		foreach ($this->getEnumOptions('paramdesc') as $option)
 		{
 			if (!isset($rows[$option]))
@@ -408,9 +408,9 @@ class GLParams extends DataObject {
 				$unassigned[$option] = $option;
 			}
 		}
-		
+
 		return $unassigned;
-		
+
 	}
 }
 

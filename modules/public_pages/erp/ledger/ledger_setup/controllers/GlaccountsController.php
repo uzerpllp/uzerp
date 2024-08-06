@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -24,7 +24,7 @@ class GlaccountsController extends LedgerController
 	{
 
 		$this->setSearch('glaccountsSearch', 'useDefault');
-		
+
 		$this->view->set('clickaction', 'view');
 		parent::index(new GLAccountCollection($this->_templateobject));
 		
@@ -49,15 +49,15 @@ class GlaccountsController extends LedgerController
 	public function _new()
 	{
 		parent::_new();
-		
+
 		$account = $this->_uses[$this->modeltype];
-		
+
 		$centres = new GLCentre();
 		$centres_list = $centres->getAll();
 		$this->view->set('centres', $centres_list);
-		
+
 		$this->view->set('actypes',$account->getEnumOptions('actype'));
-		
+
 		if ($account->isLoaded())
 		{
 			$this->view->set('selected_centres', $account->getCentreIds());
@@ -68,9 +68,9 @@ class GlaccountsController extends LedgerController
 			$this->view->set('selected_centres', array());
 			$this->view->set('selected_actype', '');
 		}
-		
+
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		if (!$this->CheckParams($this->modeltype))
@@ -144,7 +144,7 @@ class GlaccountsController extends LedgerController
 		{
 			$errors[]='Failed to save GL Account';
 		}
-		
+
 		$db->FailTrans();
 		$flash->addErrors($errors);
 		$this->refresh();

@@ -15,15 +15,15 @@ class TaxStatus extends DataObject
 									   'eu_tax',
 									   'postponed_vat_accounting' => 'PVA',
 									   'reverse_charge'];
-	
+
 	function __construct($tablename='tax_statuses')
 	{
 		parent::__construct($tablename);
 		$this->idField='id';
 		$this->identifierField = 'description';
-		 
+
 		$this->validateUniquenessOf('description');
-		
+
 	}
 
 	/**

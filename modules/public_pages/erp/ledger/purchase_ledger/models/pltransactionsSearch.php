@@ -11,13 +11,13 @@ class pltransactionsSearch extends BaseSearch
 
 	protected $version = '$Revision: 1.17 $';
 	protected $fields = array();
-	
+
 	public static function useDefault($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = new pltransactionsSearch($defaults);
 
 		$pltrans = DataObjectFactory::Factory('PLTransaction');
-		
+
 // Search by Customer
 		$search->addSearchField(
 			'plmaster_id',
@@ -31,7 +31,7 @@ class pltransactionsSearch extends BaseSearch
 		$suppliers	= $supplier->getAll(null, false, true);
 		$options	+=$suppliers;
 		$search->setOptions('plmaster_id',$options);
-		
+
 // Search by Invoice Number
 		$search->addSearchField(
 			'our_reference',
@@ -67,7 +67,7 @@ class pltransactionsSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 // Search by Transaction Type
 		$search->addSearchField(
 			'transaction_type',
@@ -79,7 +79,7 @@ class pltransactionsSearch extends BaseSearch
 		$options=array_merge(array(''=>'All')
 						  	,$pltrans->getEnumOptions('transaction_type'));
 		$search->setOptions('transaction_type',$options);
-		
+
 // Search by Status
 		$search->addSearchField(
 			'status',
@@ -91,21 +91,21 @@ class pltransactionsSearch extends BaseSearch
 		$options=array_merge(array(''=>'All')
 						  	,$pltrans->getEnumOptions('status'));
 		$search->setOptions('status',$options);
-		
+
 		$search->setSearchData($search_data,$errors);
-		
+
 		return $search;
 	}
 
 	public static function payments($search_data = null,&$errors = array(), $defaults = null)
 	{
 		$search = new pltransactionsSearch($defaults);
-		
+
 		$search->account('basic');
 		$search->currency('basic', TRUE);
 		$search->payment_type('basic', TRUE);
 		$search->payment_date();
-		
+
 		// Search by Status
 		$search->addSearchField(
 				'status',
@@ -114,12 +114,12 @@ class pltransactionsSearch extends BaseSearch
 				array(),
 				'advanced'
 		);
-		
+
 		$options = array(''=>'All');
 		$status = DataObjectFactory::Factory('PLPayment');
 		$options += $status->getEnumOptions('status');
 		$search->setOptions('status',$options);
-		
+
 		// Search by Reference
 		$search->addSearchField(
 				'reference',
@@ -128,42 +128,42 @@ class pltransactionsSearch extends BaseSearch
 				'',
 				'advanced'
 		);
-		
+
 		$search->setSearchData($search_data,$errors,'payments');
-		
+
 		return $search;
-		
+
 	}
-	
+
 	public static function select_payments($search_data = null,&$errors = array(), $defaults = null)
 	{
 		$search = new pltransactionsSearch($defaults);
-		
+
 		$search->supplier();
 		$search->currency('basic');
 		$search->payment_type('basic');
 		$search->due_date('basic');
-		
+
 		$search->setSearchData($search_data,$errors,'select_payments');
-		
+
 		return $search;
-		
+
 	}
-	
+
 	public static function paymentsSummary($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = new pltransactionsSearch($defaults);
-		
+
 		$search->supplier();
 		$search->currency();
 		$search->payment_type();
-		
+
 		$search->setSearchData($search_data,$errors,'paymentsSummary');
-		
+
 		return $search;
-		
+
 	}
-	
+
 	private function account($group = 'advanced', $all = FALSE)
 	{
 	// Search by Currency
@@ -174,13 +174,13 @@ class pltransactionsSearch extends BaseSearch
 			'',
 			$group
 		);
-		
+
 		$account = DataObjectFactory::Factory('CBAccount');
 		$options = array(''=>'All');
 		$options += $account->getAll();
 		$this->setOptions('cb_account_id',$options);
 	}
-	
+
 	private function currency($group = 'advanced', $all = FALSE)
 	{
 	// Search by Currency
@@ -191,7 +191,7 @@ class pltransactionsSearch extends BaseSearch
 			'',
 			$group
 		);
-		
+
 		if ($all)
 		{
 			$options = array(''=>'All');
@@ -204,7 +204,7 @@ class pltransactionsSearch extends BaseSearch
 		$options += $currency->getAll();
 		$this->setOptions('currency_id',$options);
 	}
-	
+
 	private function due_date($group = 'advanced') {
 	// Search by Due Date
 		$this->addSearchField(
@@ -215,7 +215,7 @@ class pltransactionsSearch extends BaseSearch
 			$group
 		);
 	}
-	
+
 	private function ext_reference($group = 'advanced')
 	{
 	// Search by Customer Reference
@@ -227,7 +227,7 @@ class pltransactionsSearch extends BaseSearch
 			$group
 		);
 	}
-	
+
 	private function our_reference($group = 'advanced')
 	{
 	// Search by Our Reference
@@ -240,7 +240,7 @@ class pltransactionsSearch extends BaseSearch
 		);
 
 	}
-	
+
 	private function payment_date($group = 'advanced') {
 	// Search by Due Date
 		$this->addSearchField(
@@ -251,7 +251,7 @@ class pltransactionsSearch extends BaseSearch
 			$group
 		);
 	}
-	
+
 	private function payment_type($group = 'advanced', $all = FALSE)
 	{
 	// Search by Currency
@@ -263,7 +263,7 @@ class pltransactionsSearch extends BaseSearch
 			$group
 		);
 		$paymenttype = DataObjectFactory::Factory('PaymentType');
-		
+
 		if ($all)
 		{
 			$options = array(''=>'All');
@@ -274,12 +274,12 @@ class pltransactionsSearch extends BaseSearch
 		}
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('method_id', 'is not', 'NULL'));
-		
+
 		$options += $paymenttype->getAll($cc);
 		$this->setOptions('payment_type_id',$options);
-		
+
 	}
-	
+
 	private function status($group = 'advanced')
 	{
 	// Search by Status
@@ -298,7 +298,7 @@ class pltransactionsSearch extends BaseSearch
 
 	private function supplier($group = 'advanced')
 	{
-	
+
 	// Search by Supplier
 		$this->addSearchField(
 			'plmaster_id',
@@ -313,7 +313,7 @@ class pltransactionsSearch extends BaseSearch
 		$options	+=$suppliers;
 		$this->setOptions('plmaster_id',$options);
 	}
-	
+
 	private function transaction_date($group = 'advanced')
 	{
 	// Search by Transaction Date
@@ -325,11 +325,11 @@ class pltransactionsSearch extends BaseSearch
 			$group
 		);
 	}
-	
+
 	private function transaction_type($group = 'advanced')
 	{
 		$pltrans = DataObjectFactory::Factory('PLTransaction');
-		
+
 		// Search by Transaction Type
 		$this->addSearchField(
 			'transaction_type',
@@ -340,10 +340,10 @@ class pltransactionsSearch extends BaseSearch
 			);
 		$options=array_merge(array(''=>'All')
 						  	,$pltrans->getEnumOptions('transaction_type'));
-				
+
 		$this->setOptions('transaction_type',$options);
 	}
-	
+
 }
 
 // End of pltransactionsSearch

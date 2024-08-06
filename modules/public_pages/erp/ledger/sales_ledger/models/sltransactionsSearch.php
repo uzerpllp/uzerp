@@ -17,7 +17,7 @@ class sltransactionsSearch extends BaseSearch
 		$search = new sltransactionsSearch($defaults);
 
 		$sltrans = DataObjectFactory::Factory('SLTransaction');
-		
+
 // Search by Customer
 		$search->addSearchField(
 			'slmaster_id',

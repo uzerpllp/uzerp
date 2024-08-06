@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -8,14 +8,14 @@
 class SLDiscount extends DataObject {
 
 	protected $version='$Revision: 1.8 $';
-	
+
 	protected $defaultDisplayFields = array('customer'
 										   ,'product_group'
 										   ,'discount_percentage');
-											
+
 	function __construct($tablename='sl_discounts') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
@@ -24,7 +24,7 @@ class SLDiscount extends DataObject {
 		$this->identifierField = array('customer', 'product_group');
 
 		$this->orderby=array('customer' ,'product_group');
-		
+
 // Define relationships
 		$this->belongsTo('SLCustomer', 'slmaster_id', 'customer');
 
@@ -33,14 +33,14 @@ class SLDiscount extends DataObject {
 		$this->belongsTo('STProductgroup', 'prod_group_id', 'product_group', $pg_filter);
 
 // Define enumerated types
-				
+
 // Define system defaults
-				
+
 // Define validation
 		$this->validateUniquenessOf(array('slmaster_id', 'prod_group_id')); 
-	
+
 	}
-	
+
 	static function getDiscount ($slmaster, $prod_group) {
 		$cc=new ConstraintChain();
 		$cc->add(new Constraint('slmaster_id', '=', $slmaster));
@@ -53,10 +53,10 @@ class SLDiscount extends DataObject {
 			return 0;
 		}
 	}
-	
+
 	static function unassignedProductGroups($_slmaster_id = '')
 	{
-		
+
 		if (empty($_slmaster_id))
 		{
 			$current_prod_groups = array();
@@ -65,31 +65,31 @@ class SLDiscount extends DataObject {
 		{
 			$cc=new ConstraintChain();
 			$cc->add(new Constraint('slmaster_id', '=', $_slmaster_id));
-			
+
 			$sldiscount=new SLDiscount();
 			$sldiscount->identifierField = 'prod_group_id';
 			$sldiscount->orderby = 'prod_group_id';
 			$current_prod_groups = $sldiscount->getAll($cc);
 		}
-		
+
 		$cc=new ConstraintChain();
-		
+
 		$prodgroup = new STProductgroup();
-		
+
 		if (count($current_prod_groups)>0)
 		{
 			$cc->add(new Constraint($prodgroup->idField, 'not in', '('.implode(',', $current_prod_groups).')'));
 		}
-		
+
 		return $prodgroup->getAll($cc);
-		
+
 	}
-	
+
 	function getIdentifierValue()
 	{
 		return 'SL Discount for '.$this->customer;
 	}
-	
+
 }
 
 // End of SLDiscount

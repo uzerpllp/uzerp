@@ -27,9 +27,9 @@ class PeriodicpaymentsController extends LedgerController
 	{
 
 		$errors = array();
-		
+
 		$s_data = array();
-		
+
 // Set context from calling module
 		if (isset($this->_data['cbaccount_id'])) {
 			$s_data['cbaccount_id'] = $this->_data['cbaccount_id'];
@@ -48,15 +48,15 @@ class PeriodicpaymentsController extends LedgerController
 		}
 
 		$this->setSearch('PeriodicPaymentsSearch', 'useDefault', $s_data);
-		
+
 		$this->view->set('clickaction', 'edit');
-		
+
 		parent::index(new PeriodicPaymentCollection($this->_templateobject));		
-		
+
 		$sidebar = new SidebarController($this->view);
-		
+
 		$sidebarlist = array();
-		
+
 		$sidebarlist['new']= array(
 							'tag'	=> 'New Payment',
 							'link'	=> array('modules'		=> $this->_modules
@@ -64,9 +64,9 @@ class PeriodicpaymentsController extends LedgerController
 											,'action'		=> 'new'
 											)
 				);
-		
+
 		$sidebar->addList('Actions',$sidebarlist);
-		
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
@@ -76,13 +76,13 @@ class PeriodicpaymentsController extends LedgerController
 		parent::_new();
 
 		$gl_account = DataObjectFactory::Factory('GLAccount');
-		
+
 		$gl_accounts = $gl_account->getAll();
-		
+
 		$this->view->set('gl_accounts',$gl_accounts);
-		
+
 		$pp = $this->_uses[$this->modeltype];
-		
+
 		if (isset($_POST[$this->modeltype]['source']))
 		{
 			$default_source = $_POST[$this->modeltype]['source'];
@@ -99,11 +99,11 @@ class PeriodicpaymentsController extends LedgerController
 			$sources		= $pp->getEnumOptions('source');
 			$default_source	= key($sources);
 		}
-		
+
 		$companies = $this->getCompanies($default_source);
-		
+
 		$this->view->set('companies',$companies);
-		
+
 		if (isset($_POST[$this->modeltype]['company_id']))
 		{
 			$default_company_id = $_POST[$this->modeltype]['company_id'];
@@ -116,13 +116,13 @@ class PeriodicpaymentsController extends LedgerController
 		{
 			$default_company_id = key($companies);
 		}
-		
+
 		$this->view->set('people', $this->getPeople($default_company_id));
-		
+
 		$cb_account = DataObjectFactory::Factory('CBAccount');
-		
+
 		$cb_accounts = $cb_account->getAll();
-		
+
 		if (isset($_POST[$this->modeltype]['cb_account_id']))
 		{
 			$default_cb_account_id = $_POST[$this->modeltype]['cb_account_id'];
@@ -137,7 +137,7 @@ class PeriodicpaymentsController extends LedgerController
 			
 			$default_cb_account_id = $cb_account->{$cb_account->idField};
 		}
-		
+
 		$this->view->set('cb_account_id', $default_cb_account_id);
 		
 		if ($pp->isLoaded())
@@ -148,7 +148,7 @@ class PeriodicpaymentsController extends LedgerController
 		{
 			$this->view->set('currency', $this->getCurrencyId($default_company_id, $default_cb_account_id, $default_source));
 		}	
-		
+
 		if (isset($_POST[$this->modeltype]['glaccount_id']))
 		{
 			$default_glaccount_id = $_POST[$this->modeltype]['glaccount_id'];
@@ -161,22 +161,22 @@ class PeriodicpaymentsController extends LedgerController
 		{
 			$default_glaccount_id = key($gl_accounts);
 		}
-		
+
 		$this->view->set('gl_centres', $this->getCentres($default_glaccount_id));
 
 	}
 	
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
-		
+
 		if (!$this->CheckParams($this->modeltype))
 		{
 			sendBack();
 		}
-		
+
 		$flash=Flash::Instance();
 		$errors = array();
-		
+
 		$data = $this->_data[$this->modeltype];
 		
 		if (empty($data['id']))
@@ -218,10 +218,10 @@ class PeriodicpaymentsController extends LedgerController
 			}
 			if (empty($data['gross_value']) || $data['gross_value']==0)
 			{
-				$data['gross_value'] = bcadd($data['net_value'], $data['tax_value']);
+				$data['gross_value'] = bcadd((string) $data['net_value'], (string) $data['tax_value']);
 			}
 		}
-		
+
 		if(count($errors)===0 && parent::save_model($this->modeltype, $data))
 		{
 			sendTo($this->name, 'index', $this->_modules);
@@ -258,9 +258,9 @@ class PeriodicpaymentsController extends LedgerController
 				break;
 		}
 		return $companylist;
-				
+
 	}
-	
+
 	public function getCompanyList ($_id = '')
 	{
 // Used by Ajax to return list of Companies after selecting the periodic payment source
@@ -273,9 +273,9 @@ class PeriodicpaymentsController extends LedgerController
 		{
 			if(!empty($this->_data['id'])) { $_id = $this->_data['id']; }
 		}
-		
+
 		$companies = $this->getCompanies($_id);
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('options',$companies);
@@ -285,7 +285,7 @@ class PeriodicpaymentsController extends LedgerController
 		{
 			return $companies;
 		}
-		
+
 	}
 
 	public function getCurrencyId ($_company_id = '', $_cbaccount_id = '', $_source = '')
@@ -354,23 +354,23 @@ class PeriodicpaymentsController extends LedgerController
 		{
 			if(!empty($this->_data['company_id'])) { $_company_id=$this->_data['company_id']; }
 		}
-		
+
 		$company = DataObjectFactory::Factory('Company');
-		
+
 		$company->load($_company_id);
-		
+
 		$people = $company->getPeople();
-		
+
 		if(isset($this->_data['ajax']))
 		{
 			$this->view->set('options',$people);
 			$this->setTemplateName('select_options');
 		}
-		
+
 		return $people;
-		
+
 	}
-	
+
 	protected function getPageName($base = null, $action = null)
 	{
 		return parent::getPageName((empty($base)?'periodic_payments':$base), $action);

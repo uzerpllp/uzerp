@@ -8,17 +8,17 @@
 
 class SLCustomerCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.11 $';
-	
+
 	public $field;
 
 	public $agedBalances=array();
-	
+
 	function __construct($do='SLCustomer', $tablename='slmaster_overview')
 	{
 		parent::__construct($do, $tablename);
-		
+
 	}
 
 }

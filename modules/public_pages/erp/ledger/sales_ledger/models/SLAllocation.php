@@ -18,20 +18,20 @@ class SLAllocation extends DataObject {
 
 	function __construct($tablename='sl_allocation_details') {
 // Register non-persistent attributes
-		
+
 // Contruct the object
 		parent::__construct($tablename);
 
 // Set specific characteristics
 		$this->idField='id';
-		
+
 // Define relationships
 		$this->belongsTo('SLTransaction','sl_transaction_id','transaction');
-		
+
 // Define field formats
 
 // Define system defaults
-		
+
 // Define enumerated types
 		
 	}

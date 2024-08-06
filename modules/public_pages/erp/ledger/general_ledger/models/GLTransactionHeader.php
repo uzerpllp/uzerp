@@ -221,7 +221,7 @@ class GLTransactionHeader extends DataObject
 			{
 				$transaction['glperiods_id'] = $this->accrual_period_id;
 				$transaction['comment'] = 'Reverse '.$transaction['comment'];
-				$transaction['value'] = bcmul($transaction['value'], -1);
+				$transaction['value'] = bcmul((string) $transaction['value'], -1);
 
 				$gltransaction = GLTransaction::Factory($transaction, $errors);
 

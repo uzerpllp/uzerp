@@ -8,15 +8,15 @@
 
 class GLTransactionCollection extends DataObjectCollection
 {
-	
+
 	protected $version = '$Revision: 1.12 $';
-	
+
 	public $field;
-	
+
 	function __construct($do = 'GLTransaction', $tablename = 'gltransactionsoverview')
 	{
 		parent::__construct($do, $tablename);
-		
+
 		$this->orderby = array('glperiod', 'account', 'cost_centre');
 
 	}
@@ -26,7 +26,7 @@ class GLTransactionCollection extends DataObjectCollection
 		if (count($glperiod_ids) > 0)
 		{
 			$glperiods = implode(', ', $glperiod_ids);
-			
+
 			// Set data source
 			switch ($data['box'])
 			{
@@ -50,12 +50,12 @@ class GLTransactionCollection extends DataObjectCollection
 						$this->_tablename = 'gl_taxeupurchases';
 						break;
 			}
-		
+
 		// Set constraints
 			$cc = new ConstraintChain;
-			
+
 			$cc->add(new Constraint('glperiods_id', ' IN', '('.$glperiods.')'));
-			
+
 			switch ($data['box'])
 			{
 				// VAT output
@@ -81,7 +81,7 @@ class GLTransactionCollection extends DataObjectCollection
 					$cc->add(new Constraint('glaccount_id', '=', $control_accounts['vat_input']));
 					break;
 			}
-			
+
 			if (isset($data['page']))
 			{
 				$sh = new SearchHandler($this, true);
@@ -90,15 +90,15 @@ class GLTransactionCollection extends DataObjectCollection
 			{
 				$sh = new SearchHandler($this, false);
 			}
-			
+
 			if ($sum)
 			{
 				$fields = array('1');
-				
+
 				$sh->setGroupBy($fields);
-				
+
 				$sh->setOrderby($fields);
-				
+
 				// Set aggregate field	
 				switch ($data['box'])
 				{
@@ -154,24 +154,24 @@ class GLTransactionCollection extends DataObjectCollection
 						$fields[] = 'net';
 						break;
 				}
-				
+
 				$sh->setOrderby(array('transaction_date', 'docref'));
-				
+
 				if ($paging)
 				{
 					$sh->extract();
 				}
-				
+
 			}
-			
+
 			$sh->setFields($fields);
-			
+
 			$sh->addConstraintChain($cc);
-			
+
 			$this->load($sh);
 		}
 	}
-	
+
 }
 
 // End of GLTransactionCollection

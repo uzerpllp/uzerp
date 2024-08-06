@@ -8,14 +8,14 @@
 
 class PLSupplierSearch extends BaseSearch
 {
-	
+
 	protected $version = '$Revision: 1.10 $';
-	
+
 	protected $fields = array();
-	
+
 	public static function useDefault($search_data = null, &$errors = array())
 	{
-		
+
 		// Name
 		$search = new PLSupplierSearch();
 		$search->addSearchField(
@@ -23,7 +23,7 @@ class PLSupplierSearch extends BaseSearch
 			'name_contains',
 			'contains'
 		);
-		
+
 		// Search by Active/Inactive Status
 		$search->addSearchField(
 			'date_inactive',
@@ -36,7 +36,7 @@ class PLSupplierSearch extends BaseSearch
 						,'not null'	=> 'Inactive'
 						,'null'		=> 'Active');
 		$search->setOptions('date_inactive', $options);
-		
+
 		// Currency
 		$search->addSearchField(
 			'currency_id',
@@ -50,7 +50,7 @@ class PLSupplierSearch extends BaseSearch
 		$options=array(''=>'All');
 		$options+=$currency_list;
 		$search->SetOptions('currency_id',$options);
-		
+
 		// Remittance
 		$search->addSearchField(
 			'remittance_advice',
@@ -63,7 +63,7 @@ class PLSupplierSearch extends BaseSearch
 					  ,'TRUE'=>'Yes'
 					  ,'FALSE'=>'No');
 		$search->setOptions('remittance_advice',$options);
-		
+
 		// Order Method
 		$search->addSearchField(
 			'order_method',
@@ -78,7 +78,7 @@ class PLSupplierSearch extends BaseSearch
 				  ,'E'=>'Email'
 				  ,'D'=>'EDI');
 		$search->setOptions('order_method',$options);
-		
+
 		// Payment Type
 		$search->addSearchField(
 			'payment_type_id',
@@ -91,7 +91,7 @@ class PLSupplierSearch extends BaseSearch
 		$options = array(''=>'All');
 		$options +=$payment_type->getAll();
 		$search->setOptions('payment_type_id',$options);
-		
+
 		// Payment Terms
 		$search->addSearchField(
 			'payment_term_id',
@@ -106,7 +106,7 @@ class PLSupplierSearch extends BaseSearch
 		asort($options);
 		$options=array(''=>'All')+$options;
 		$search->setOptions('payment_term_id',$options);
-		
+
 		// Execute Search
 		$search->setSearchData($search_data,$errors);
 		return $search;

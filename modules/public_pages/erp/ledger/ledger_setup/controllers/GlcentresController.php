@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -22,12 +22,12 @@ class GlcentresController extends LedgerController
 
 	public function index($collection = null, $sh = '', &$c_query = null)
 	{
-		
+
 		$this->setSearch('glcentresSearch', 'useDefault');
-		
+
 		$this->view->set('clickaction', 'view');
 		parent::index(new GLCentreCollection($this->_templateobject));
-		
+
 		$sidebar = new SidebarController($this->view);
 		$sidebar->addList(
 			'Actions',
@@ -52,7 +52,7 @@ class GlcentresController extends LedgerController
 
 		$accounts = new GLAccount();
 		$this->view->set('accounts', $accounts->getAll());
-		
+
 		$centre=$this->_uses[$this->modeltype];
 		if ($centre->isLoaded())
 		{
@@ -63,7 +63,7 @@ class GlcentresController extends LedgerController
 			$this->view->set('selected_accounts', array());
 		}
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void
 	{
 		if (!$this->CheckParams($this->modeltype))

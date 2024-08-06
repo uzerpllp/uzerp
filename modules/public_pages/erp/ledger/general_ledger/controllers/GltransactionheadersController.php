@@ -26,9 +26,9 @@ class GltransactionheadersController extends printController
 	public function index($collection = null, $sh = '', &$c_query = null)
 	{
 
-		$id = (isset($this->_data['id']))?$this->_data['id']:0;
+		$id = $this->_data['id'] ?? 0;
 
-		$type = (isset($this->_data['transtype']))?$this->_data['transtype']:'';
+		$type = $this->_data['transtype'] ?? '';
 
 		$errors = array();
 
@@ -278,9 +278,9 @@ class GltransactionheadersController extends printController
 			$this->view->set('clickaction', 'edit');
 
 			$values = $header->transactionValue();
-			$this->view->set('credits', number_format(bcmul($values['credits'], -1), 2));
-			$this->view->set('debits', number_format(bcadd($values['debits'] ,0), 2));
-			$this->view->set('difference', number_format(bcadd($values['credits'], $values['debits']), 2));
+			$this->view->set('credits', number_format(bcmul((string) $values['credits'], -1), 2));
+			$this->view->set('debits', number_format(bcadd((string) $values['debits'] ,0), 2));
+			$this->view->set('difference', number_format(bcadd((string) $values['credits'], (string) $values['debits']), 2));
 		}
 		else
 		{
@@ -640,7 +640,7 @@ class GltransactionheadersController extends printController
 
 				if ($reversal)
 				{
-					$row['value'] = bcmul($row['value'], -1);
+					$row['value'] = bcmul((string) $row['value'], -1);
 				}
 
 				$result = DataObject::Factory($row, $errors, $header->unpostedTransactionFactory());

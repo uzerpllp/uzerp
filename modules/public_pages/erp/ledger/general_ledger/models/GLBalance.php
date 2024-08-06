@@ -53,79 +53,79 @@ class GLBalance extends DataObject
 	{
 
 		$current = 0;
-		
+
 		$balance = DataObjectFactory::Factory('GLBalance');
-		
+
 		$cc = new ConstraintChain();
-		
+
 		$cc->add(new Constraint('glaccount_id', '=', $this->glaccount_id));
 		$cc->add(new Constraint('glcentre_id', '=', $this->glcentre_id));
 		$cc->add(new Constraint('glperiods_id', '=', $glperiods_id));
-		
+
 		$balance->loadBy($cc);
-		
+
 		if ($balance)
 		{
 			$current = $balance->value;
 		}
-		
+
 		return $current;
 	}
-	
+
 	function getCurrentBudget ($glperiods_id)
 	{
 		$current_budget = 0;
-		
+
 		$budget = DataObjectFactory::Factory('GLBudget');
-		
+
 		$cc = new ConstraintChain();
-		
+
 		$cc->add(new Constraint('glaccount_id', '=', $this->glaccount_id));
 		$cc->add(new Constraint('glcentre_id', '=', $this->glcentre_id));
 		$cc->add(new Constraint('glperiods_id', '=', $glperiods_id));
-		
+
 		$budget->loadBy($cc);
-		
+
 		if ($budget)
 		{
 			$current_budget = $budget->value;
 		}
-		
+
 		return $current_budget;
 	}
-	
+
 	function getYTDBudget ($glperiods_id)
 	{
 		#echo("GLBalence::getCurrent ".$glperiods_id);
 		$ytd_budget = 0;
-		
+
 		$period = DataObjectFactory::Factory('GLPeriod');
-		
+
 		$periods = array();
-		
+
 		if ($period->load($glperiods_id))
 		{
 			$periods = $period->getIdsYTD($period->period, $period->year);
 		}
-		
+
 		$budget = DataObjectFactory::Factory('GLBudget');
-		
+
 		$cc = new ConstraintChain();
-		
+
 		$cc->add(new Constraint('glaccount_id', '=', $this->glaccount_id));
 		$cc->add(new Constraint('glcentre_id', '=', $this->glcentre_id));
-		
+
 		$periodsYTD = '('.implode(',', $periods).')';
-		
+
 		$cc->add(new Constraint('glperiods_id', 'in', $periodsYTD));
-					
+
 		$budget->loadBy($cc);
-		
+
 		if ($budget)
 		{
 			$ytd_budget = $budget->value;
 		}
-		
+
 		return $ytd_budget;
 	}
 
@@ -143,21 +143,21 @@ class GLBalance extends DataObject
 		{
 			$cc->add(new Constraint('glperiods_id', '=', $periods));
 		}
-		
+
 		// constrain glaccount_id
 		if($glaccount_id!='')
 		{
 			$cc->add(new Constraint('glaccount_id', '=', $glaccount_id));
 		}		
-		
+
 		// constrain glcentre_id
 		if($glcentre_id!='')
 		{
 			$cc->add(new Constraint('glcentre_id', '=', $glcentre_id));
 		}
-		
+
 		return parent::getSum('value', $cc, 'gl_balances');
-	
+
 	}
 	
 	public function load ($clause, $override = FALSE, $return = FALSE)
@@ -170,11 +170,11 @@ class GLBalance extends DataObject
 			{
 				if ($this->value<0)
 				{
-					$this->credit	= bcmul($this->value, -1);
+					$this->credit	= bcmul((string) $this->value, -1);
 				}
 				else
 				{
-					$this->debit	= bcadd($this->value, 0);
+					$this->debit	= bcadd((string) $this->value, 0);
 				}
 			}
 		}

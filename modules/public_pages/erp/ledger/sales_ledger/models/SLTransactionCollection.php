@@ -68,11 +68,11 @@ class SLTransactionCollection extends DataObjectCollection {
 		foreach ($this as $agedcreditors) {
 			$total=bcadd($total, $agedcreditors->value);
 			if ($agedcreditors->age>$this->agedMonths) {
-				$this->agedBalances[$this->agedMonths]['value']=BCADD($this->agedBalances[$this->agedMonths]['value'], $agedcreditors->value, 2);
+				$this->agedBalances[$this->agedMonths]['value']=BCADD((string) $this->agedBalances[$this->agedMonths]['value'], $agedcreditors->value, 2);
 			} elseif ($agedcreditors->age<0) {
-				$this->agedBalances[-1]['value']=BCADD($this->agedBalances[-1]['value'], $agedcreditors->value, 2);
+				$this->agedBalances[-1]['value']=BCADD((string) $this->agedBalances[-1]['value'], $agedcreditors->value, 2);
 			} else {
-				$this->agedBalances[$agedcreditors->age]['value']=BCADD($this->agedBalances[$agedcreditors->age]['value'], $agedcreditors->value, 2);
+				$this->agedBalances[$agedcreditors->age]['value']=BCADD((string) $this->agedBalances[$agedcreditors->age]['value'], $agedcreditors->value, 2);
 			}
 		}
 		$this->agedBalances[$this->agedMonths+2]['title']='Total';

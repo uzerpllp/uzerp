@@ -592,7 +592,6 @@ class SlcustomersController extends LedgerController
                 if ($e->getCode == 1) {
                     $db->FailTrans();
                 }
-                
             }
 
             $db->CompleteTrans();
@@ -659,15 +658,14 @@ class SlcustomersController extends LedgerController
         $errors = array();
         $result = false;
         $data = $this->_data['SLTransaction'];
-        
         $gl_account = DataObjectFactory::Factory('GLAccount');
         $allowed_accounts = $gl_account->nonControlAccounts();
-        
         $post_allowed = array_key_exists($data['glaccount_id'], $allowed_accounts);
+
         if (!$post_allowed){
             $errors[] = 'Cannot post journal to a control account';
         }
-        
+
         if ($this->checkParams('SLTransaction') && $post_allowed) {
             if ($data['net_value'] != 0) {
                 $customer = $this->getCustomer($data['slmaster_id']);
@@ -839,13 +837,13 @@ class SlcustomersController extends LedgerController
         foreach ($this->_data['SLTransaction'] as $id => $data) {
             if (isset($data['allocate'])) {
                 // using bcadd to format value
-                $transactions[$id] = bcadd($data['os_value'], 0);
-                $allocated_total = bcadd($allocated_total, $data['os_value']);
+                $transactions[$id] = bcadd((string) $data['os_value'], 0);
+                $allocated_total = bcadd($allocated_total, (string) $data['os_value']);
             }
 
             // Save settlement discount if present?
             if ($data['settlement_discount'] > 0 && isset($data['include_discount'])) {
-                $transactions[$id] = bcadd($data['settlement_discount'], $transactions[$id]);
+                $transactions[$id] = bcadd((string) $data['settlement_discount'], $transactions[$id]);
                 // Create GL Journal for settlement discount
 
                 // TODO: Check if need to create a SL transaction for the discount
@@ -877,7 +875,7 @@ class SlcustomersController extends LedgerController
                 $sldiscount = SLTransaction::Factory($discount, $errors, 'SLTransaction');
 
                 if ($sldiscount && $sldiscount->save('', $errors) && $sldiscount->saveGLTransaction($discount, $errors)) {
-                    $transactions[$sldiscount->{$sldiscount->idField}] = bcadd($discount['net_value'], 0);
+                    $transactions[$sldiscount->{$sldiscount->idField}] = bcadd((string) $discount['net_value'], 0);
                 } else {
                     $errors[] = 'Errror saving SL Transaction Discount : ' . $db->ErrorMsg();
                     $flash->addErrors($errors);
@@ -1044,15 +1042,15 @@ class SlcustomersController extends LedgerController
             $contras_sessionobject->updatePageData($id, $data, $errors);
         }
 
-        $contra_total = (isset($this->_data['contra_total'])) ? $this->_data['contra_total'] : '0.00';
+        $contra_total = $this->_data['contra_total'] ?? '0.00';
 
         $contra_sum = 0;
 
         foreach ($contras_sessionobject->getPageData($errors) as $id => $data) {
             if (isset($data['contra']) && $data['contra'] == 'on') {
                 // using bcadd to format value
-                $transactions[$id] = bcadd($data['os_value'], 0);
-                $contra_sum = bcadd($contra_sum, $data['os_value']);
+                $transactions[$id] = bcadd((string) $data['os_value'], 0);
+                $contra_sum = bcadd($contra_sum, (string) $data['os_value']);
             }
         }
 
@@ -1232,15 +1230,13 @@ class SlcustomersController extends LedgerController
             $cbaccount = CBAccount::getPrimaryAccount();
             $customer->cb_account_id = $cbaccount->{$cbaccount->idField};
         }
-        
+
         $taxstatus = new TaxStatus();
         $taxstatuses = $taxstatus->get_customer_tax_statuses();
 
         $this->view->set('f_taxstatuses', $taxstatuses);
-
         $this->view->set('bank_account', $customer->cb_account_id);
         $this->view->set('bank_accounts', $this->getbankAccounts($customer->id));
-        
         $this->view->set('billing_addresses', $customer->getInvoiceAddresses());
         $this->view->set('despatch_actions', WHAction::getDespatchActions());
     }
@@ -1300,7 +1296,7 @@ class SlcustomersController extends LedgerController
          *
          * Otherwise we're probably printing via the
          */
-        if (strtolower($this->_data['printaction']) == 'print_customer_statement') {
+        if (strtolower((string) $this->_data['printaction']) == 'print_customer_statement') {
             if ($this->loadData()) {
                 $customer = $this->_uses[$this->modeltype];
                 $this->view->set('email', $customer->email_statement());
@@ -1315,7 +1311,7 @@ class SlcustomersController extends LedgerController
         $this->_data['id'] = $_customer_id;
         $this->_data['print'] = $_print_params;
 
-        $response = json_decode($this->printStatement(), true);
+        $response = json_decode((string) $this->printStatement(), true);
 
         // bit paranoid about the data array being contaminated
         unset($this->_data['id'], $this->_data['print']);
@@ -1350,7 +1346,7 @@ class SlcustomersController extends LedgerController
 
         // Emailing a statement directly from the ledger customer or via an output batch.
         // Set the reply-to address, etc.
-        if ((strtolower($this->_data['printaction']) == 'printstatement' || $this->_data['print']['printaction'] == 'email') && ! is_null($customer->email_statement())) {
+        if ((strtolower((string) $this->_data['printaction']) == 'printstatement' || $this->_data['print']['printaction'] == 'email') && ! is_null($customer->email_statement())) {
             $options['default_print_action'] = 'email';
             $options['email'] = $customer->email_statement();
             $options['email_subject'] = 'Account Statement from ' . SYSTEM_COMPANY;
@@ -1368,14 +1364,14 @@ class SlcustomersController extends LedgerController
                 $person->load($user->person_id);
                 $options['replyto'] = $person->email->contactmethod->contact;
             }
-    
+
             if (empty($options['replyto']) || !is_string($options['replyto'])) {
                 $options['replyto'] = $user->email;
             }
         }
 
         // if we're dealing with the dialog, just return the options...
-        if (strtolower($status) == 'dialog') {
+        if (strtolower((string) $status) == 'dialog') {
             return $options;
         }
 
@@ -1439,7 +1435,7 @@ class SlcustomersController extends LedgerController
         $json_response = $this->generate_output($this->_data['print'], $options);
 
         // decode response, if it was successful update the print count
-        $response = json_decode($json_response, true);
+        $response = json_decode((string) $json_response, true);
         if ($response['status'] === true) {
             if (! $customer->update($customer->id, 'last_statement_date', fix_date(date(DATE_FORMAT)))) {
                 // if we cannot update the date, update json_responce with an error
@@ -1762,7 +1758,7 @@ class SlcustomersController extends LedgerController
             $this->_data['ajax_call'] = '';
         }
 
-        $fields = explode(',', $this->_data['fields']);
+        $fields = explode(',', (string) $this->_data['fields']);
 
         $customer = $this->getCustomer($this->_data['id']);
 

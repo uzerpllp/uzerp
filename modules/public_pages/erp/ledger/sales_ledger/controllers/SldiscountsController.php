@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -16,16 +16,16 @@ class SldiscountsController extends LedgerController {
 		$this->_templateobject = new SLDiscount();
 		$this->uses($this->_templateobject);
 	}
-	
+
 	public function index($collection = null, $sh = '', &$c_query = null){
-		
+
 // Search
 		$errors=array();
 		$s_data=array();
 
 		$this->setSearch('SLDiscountSearch', 'useDefault', $s_data);
 // End of search
-		
+
 		$this->view->set('clickaction', 'edit');
 		$this->view->set('orderby', 'id');
 
@@ -43,29 +43,29 @@ class SldiscountsController extends LedgerController {
 				)
 			)
 		);
-		
-	
+
+
 		$this->view->register('sidebar',$sidebar);
 		$this->view->set('sidebar',$sidebar);
 	}
 
 	public function _new() {
-		
+
 		parent::_new();
-		
+
 		$sldiscount = $this->_uses[$this->modeltype];
-		
+
 		if (!$sldiscount->isLoaded() && isset($this->_data['slmaster_id']))
 		{
 			$sldiscount->slmaster_id = $this->_data['slmaster_id'];
 		}
-		
+
 		$customers=$this->getOptions($this->_templateobject, 'slmaster_id', 'getOptions', 'getOptions', array('use_collection'=>true));
 		$this->view->set('customers', $customers);
-		
+
 		$this->view->set('prod_groups', $this->getProductGroups($sldiscount->slmaster_id));
 	}
-	
+
 	public function save($modelName = null, $dataIn = [], &$errors = []) : void {
 
 // set context for 'Save and Add Another'
@@ -77,7 +77,7 @@ class SldiscountsController extends LedgerController {
 		{
 			$this->context=array('slmaster_id'=>'');
 		}
-		
+
 		parent::save();
 
 	}
@@ -88,7 +88,7 @@ class SldiscountsController extends LedgerController {
 	protected function getPageName($base=null,$action=null) {
 		return parent::getPageName((empty($base)?'sales_ledger_discounts':$base), $action);
 	}	
-	
+
 
 /*
  * Ajax functions
@@ -99,9 +99,9 @@ class SldiscountsController extends LedgerController {
 		if(isset($this->_data['ajax'])) {
 			if(!empty($this->_data['slmaster_id'])) { $_slmaster_id=$this->_data['slmaster_id']; }
 		}
-		
+
 		$prod_groups = SLDiscount::unassignedProductGroups($_slmaster_id);
-		
+
 		if(isset($this->_data['ajax'])) {
 			$this->view->set('options',$prod_groups);
 			$this->setTemplateName('select_options');

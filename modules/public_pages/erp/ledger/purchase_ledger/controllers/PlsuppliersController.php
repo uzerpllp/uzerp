@@ -367,15 +367,15 @@ class PlsuppliersController extends LedgerController
 			if (isset($data['allocate']))
 			{
 				// using bcadd to format value
-				$transactions[$id]	= bcadd($data['os_value'], 0);
-				$allocated_total	= bcadd($allocated_total, $data['os_value']);
+				$transactions[$id]	= bcadd((string) $data['os_value'], 0);
+				$allocated_total	= bcadd($allocated_total, (string) $data['os_value']);
 			}
 
 			// Save settlement discount if present?
 			if ($data['settlement_discount']>0 && isset($data['include_discount']))
 			{
 				// Add back the settlement discount to the transaction value
-				$transactions[$id]	= bcadd($data['settlement_discount'], $transactions[$id]);
+				$transactions[$id]	= bcadd((string) $data['settlement_discount'], $transactions[$id]);
 				// Create GL Journal for settlement discount
 
 				// TODO: Check if need to create a PL transaction for the discount
@@ -408,7 +408,7 @@ class PlsuppliersController extends LedgerController
 
 				if ($pldiscount && $pldiscount->save('', $errors) && $pldiscount->saveGLTransaction($discount, $errors))
 				{
-					$transactions[$pldiscount->{$pldiscount->idField}]	= bcadd($discount['net_value'], 0);
+					$transactions[$pldiscount->{$pldiscount->idField}]	= bcadd((string) $discount['net_value'], 0);
 				}
 				else
 				{
@@ -605,7 +605,7 @@ class PlsuppliersController extends LedgerController
 			$contras_sessionobject->updatePageData($id, $data, $errors);
 		}
 
-		$contra_total = (isset($this->_data['contra_total']))?$this->_data['contra_total']:'0.00';
+		$contra_total = $this->_data['contra_total'] ?? '0.00';
 
 		$contra_sum = 0;
 
@@ -614,8 +614,8 @@ class PlsuppliersController extends LedgerController
 			if (isset($data['contra']) && $data['contra'] == 'on')
 			{
 				// using bcadd to format value
-				$transactions[$id]	= bcadd($data['os_value'], 0);
-				$contra_sum			= bcadd($contra_sum, $data['os_value']);
+				$transactions[$id]	= bcadd((string) $data['os_value'], 0);
+				$contra_sum			= bcadd($contra_sum, (string) $data['os_value']);
 			}
 
 		}
@@ -1351,7 +1351,7 @@ class PlsuppliersController extends LedgerController
 		}
 		$cbaccount = DataObjectFactory::Factory('CBAccount');
 		$cbaccounts = $cbaccount->getAll($cc);
-		
+
 		if(isset($this->_data['ajax'])) {
 			$this->view->set('options',$cbaccounts);
 			$this->setTemplateName('select_options');
@@ -1445,7 +1445,7 @@ class PlsuppliersController extends LedgerController
 	{
 	// this function will only ever be called via an AJAX request, no paramters needed
 
-		$fields = explode(',',$this->_data['fields']);
+		$fields = explode(',',(string) $this->_data['fields']);
 
 		$supplier = $this->getSupplier();
 
@@ -1775,7 +1775,7 @@ class PlsuppliersController extends LedgerController
 					   'report'		=>	'PL_SuggestedPayments'
 				);
 
-		if(strtolower($status)=="dialog")
+		if(strtolower((string) $status)=="dialog")
 		{
 			return $options;
 		}

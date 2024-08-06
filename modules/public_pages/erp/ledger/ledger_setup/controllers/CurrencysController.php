@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -72,9 +72,9 @@ class CurrencysController extends LedgerController
 		parent::_new();
 		
 		$currency = $this->_uses[$this->modeltype];
-		
+
 		$glaccounts=$glaccounts->getAll();
-	
+
 		if (isset($_POST[$this->modeltype]['writeoff_glaccount_id']))
 		{
 			$default_glaccount_id=$_POST[$this->modeltype]['writeoff_glaccount_id'];
@@ -91,9 +91,9 @@ class CurrencysController extends LedgerController
 		{
 			$default_glaccount_id=key($glaccounts);
 		}
-		
+
 		$this->view->set('glcentres',$this->getCentres($default_glaccount_id));
-		
+
 	}
 	
 }

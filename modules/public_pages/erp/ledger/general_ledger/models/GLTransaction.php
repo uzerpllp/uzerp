@@ -252,9 +252,9 @@ class GLTransaction extends DataObject
 
             if (! is_null($this->value)) {
                 if ($this->value < 0) {
-                    $this->credit = bcmul($this->value, - 1);
+                    $this->credit = bcmul((string) $this->value, - 1);
                 } else {
-                    $this->debit = bcadd($this->value, 0);
+                    $this->debit = bcadd((string) $this->value, 0);
                 }
             }
         }
@@ -270,7 +270,7 @@ class GLTransaction extends DataObject
 
         $gl_data = array();
         $gl_data['glperiods_id'] = $glperiod->id;
-        $gl_data['value'] = bcadd($value, 0);
+        $gl_data['value'] = bcadd((string) $value, 0);
 
         $selfObj = new self;
         $selfObj->setTwinCurrency($gl_data);
@@ -448,7 +448,7 @@ class GLTransaction extends DataObject
 
             if ($line['rate'] != 1) {
                 // Convert to base value
-                $gl_data['value'] = round(bcmul($line['rate'], $gl_data['value'], 4), 2);
+                $gl_data['value'] = round(bcmul((string) $line['rate'], (string) $gl_data['value'], 4), 2);
             }
 
             $selfObj = new self;
@@ -496,9 +496,9 @@ class GLTransaction extends DataObject
                 $gl_data['value'] = 0;
 
                 if ($line['debit'] > 0) {
-                    $gl_data['value'] = BCADD($line['debit'], 0);
+                    $gl_data['value'] = BCADD((string) $line['debit'], 0);
                 } elseif ($line['credit'] > 0) {
-                    $gl_data['value'] = BCMUL($line['credit'], - 1);
+                    $gl_data['value'] = BCMUL((string) $line['credit'], - 1);
                 }
 
                 $gl_data['glperiods_id'] = $glperiod['id'];
@@ -971,12 +971,12 @@ class GLTransaction extends DataObject
 
         // Write Net contra entry
         $gl_data['docref'] = $db->GenID('gl_transactions_docref_seq');
-        $gl_data['value'] = bcmul($net, - 1);
+        $gl_data['value'] = bcmul((string) $net, - 1);
         $selfObj->setTwinCurrency($gl_data);
         $gl_transactions[] = GLTransaction::Factory($gl_data, $errors);
 
         // Write Vat control entry
-        $gl_data['value'] = bcmul($vat, - 1);
+        $gl_data['value'] = bcmul((string) $vat, - 1);
         $gl_data['glaccount_id'] = $gl_data['vat_account'];
         $glparams = DataObjectFactory::Factory('GLParams');
         $gl_data['glcentre_id'] = $glparams->balance_sheet_cost_centre();
@@ -1005,13 +1005,13 @@ class GLTransaction extends DataObject
         $gl_transactions[] = GLTransaction::Factory($gl_data, $errors, true);
 
         // Write VAT control entry
-        $gl_data['value'] = bcmul($vat, - 1);
+        $gl_data['value'] = bcmul((string) $vat, - 1);
         $selfObj->setTwinCurrency($gl_data);
         $gl_transactions[] = GLTransaction::Factory($gl_data, $errors, true);
 
         return $gl_transactions;
     }
-    
+
     public static function makeEuTax($transaction, &$errors = array())
     {
         $mult = self::$multipliers[$transaction['source']][$transaction['type']];
@@ -1031,8 +1031,8 @@ class GLTransaction extends DataObject
             $errors[] = 'Balance Sheet Cost Centre Code not found';
         }
 
-        $eu_tax_element['value'] = bcmul($mult, $eu_tax_element['value']);
-        $eu_tax_element['twinvalue'] = bcmul($mult, $eu_tax_element['twinvalue']);
+        $eu_tax_element['value'] = bcmul((string) $mult, (string) $eu_tax_element['value']);
+        $eu_tax_element['twinvalue'] = bcmul((string) $mult, (string) $eu_tax_element['twinvalue']);
 
         $eu_tax_elements = array();
         $eu_tax_elements[] = GLTransaction::Factory($eu_tax_element, $errors);
@@ -1071,8 +1071,8 @@ class GLTransaction extends DataObject
             $errors[] = 'Balance Sheet Cost Centre Code not found';
         }
 
-        $rc_tax_element['value'] = bcmul($mult, $rc_tax_element['value']);
-        $rc_tax_element['twinvalue'] = bcmul($mult, $rc_tax_element['twinvalue']);
+        $rc_tax_element['value'] = bcmul((string) $mult, (string) $rc_tax_element['value']);
+        $rc_tax_element['twinvalue'] = bcmul((string) $mult, (string) $rc_tax_element['twinvalue']);
 
         $rc_tax_elements = array();
         $rc_tax_elements[] = GLTransaction::Factory($rc_tax_element, $errors);
@@ -1176,7 +1176,7 @@ class GLTransaction extends DataObject
                 }
 
                 if (isset($total[$transline->glperiods_id])) {
-                    $total[$transline->glperiods_id] = bcadd($total[$transline->glperiods_id], $transline->value);
+                    $total[$transline->glperiods_id] = bcadd((string) $total[$transline->glperiods_id], $transline->value);
                 } else {
                     $total[$transline->glperiods_id] = $transline->value;
                 }
@@ -1243,7 +1243,7 @@ class GLTransaction extends DataObject
 
         if ($glbalance !== false) {
             $data['id'] = $glbalance->id;
-            $data['value'] = bcadd($data['value'], $glbalance->value);
+            $data['value'] = bcadd((string) $data['value'], $glbalance->value);
         }
 
         $newerrors = array();
@@ -1276,7 +1276,7 @@ class GLTransaction extends DataObject
 
         $data['twin_currency_id'] = $twin_currency->id;
         $data['twin_rate'] = $twin_currency->rate;
-        $data['twinvalue'] = round(bcmul($twin_currency->rate, $data['value'], 4), 2);
+        $data['twinvalue'] = round(bcmul($twin_currency->rate, (string) $data['value'], 4), 2);
     }
 
     /**

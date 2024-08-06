@@ -1,5 +1,5 @@
 <?php
- 
+
 /** 
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
@@ -8,21 +8,21 @@
 class GLAccountCentre extends DataObject {
 
 	protected $version='$Revision: 1.8 $';
-	
+
 	function __construct($tablename='gl_account_centres')
 	{
 // Register non-persistent attributes
-		
+
 // Construct the object
 		parent::__construct($tablename);
-		
+
 // Set specific characteristics
 		$this->identifierField = 'glaccount ||\'/\'|| glcentre';		
-		
+
 // Set ordering attributes
-		
+
 // Define validation
-		
+
 // Define relationships
 		$this->belongsTo('GLAccount','glaccount_id','glaccount');
 		$this->belongsTo('GLCentre','glcentre_id','glcentre');
@@ -34,25 +34,25 @@ class GLAccountCentre extends DataObject {
 		$this->hasMany('POrderLine', 'po_lines', 'glaccount_centre_id', NULL, FALSE);
 		$this->hasMany('SInvoiceLine', 'si_lines', 'glaccount_centre_id', NULL, FALSE);
 		$this->hasMany('SOrderLine', 'so_lines', 'glaccount_centre_id', NULL, FALSE);
-				
+
 // Define field formats
-		
+
 // Define enumerated types
-		
+
 // Define system defaults
-		
+
 // Define related item rules
-	
+
 	}
- 	
+
 	public static function getAccountCentreId($_glaccount_id = '', $_glcentre_id = '', &$errors=array())
 	{
 		if (!empty($_glaccount_id) && !empty($_glcentre_id))
 		{
-		
+
 			$accountcentre=new GLAccountCentre;
 			$accountcentre->loadBy(array('glaccount_id', 'glcentre_id'), array($_glaccount_id, $_glcentre_id));
-		
+
 			if ($accountcentre->isLoaded())
 			{
 				return $accountcentre->id;
@@ -64,9 +64,9 @@ class GLAccountCentre extends DataObject {
 
 			return '';
 		}
-	
+
 	}
-	
+
 }
 
 // End of GLAccountCentre

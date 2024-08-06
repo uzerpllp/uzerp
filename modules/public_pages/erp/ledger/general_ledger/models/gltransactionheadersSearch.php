@@ -10,13 +10,13 @@ class gltransactionheadersSearch extends BaseSearch
 {
 
 	protected $version='$Revision: 1.2 $';
-	
+
 	public static function useDefault($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = new gltransactionheadersSearch($defaults);
 
 		$trans = DataObjectFactory::Factory('GLTransactionHeader');
-		
+
 // Search by Transaction Date
 		$search->addSearchField(
 			'transaction_date',
@@ -25,7 +25,7 @@ class gltransactionheadersSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 // Search by Period
 		if (!isset($search_data['clear']) && (isset($search_data['transaction_date']) || isset($defaults['search_id'])))
 		{
@@ -82,7 +82,7 @@ class gltransactionheadersSearch extends BaseSearch
 			'',
 			'advanced'
 		);
-		
+
 // Search by Reference
 		$search->addSearchField(
 				'reference',
@@ -91,7 +91,7 @@ class gltransactionheadersSearch extends BaseSearch
 				'',
 				'advanced'
 		);
-		
+
 // Search by Comment
 		$search->addSearchField(
 				'comment',
@@ -100,7 +100,7 @@ class gltransactionheadersSearch extends BaseSearch
 				'',
 				'advanced'
 		);
-		
+
 // Search by Accrual
 		$search->addSearchField(
 				'accrual',
@@ -109,11 +109,11 @@ class gltransactionheadersSearch extends BaseSearch
 				'',
 				'advanced'
 		);
-		
+
 		$search->setSearchData($search_data,$errors);
 		return $search;
 	}
-		
+
 }
 
 // End of gltransactionheadersSearch
