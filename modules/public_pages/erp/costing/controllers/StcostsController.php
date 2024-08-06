@@ -313,7 +313,7 @@ class StcostsController extends printController {
 					   'report'		=>	'CostSheet'
 				);
 
-		if(strtolower($status)=="dialog")
+		if(strtolower((string) $status)=="dialog")
 		{
 			return $options;
 		}
