@@ -761,7 +761,7 @@ class SodespatchlinesController extends printController
 
         $customer_items = new SOProductline();
         $options = $customer_items->getCustomerLines($label_data[0]['slcustomer-id']);
-        
+
         if (isset($_SESSION['pallet-form-data'])) {
             $this->view->set('form_data', $_SESSION['pallet-form-data']);
         }
@@ -804,8 +804,8 @@ class SodespatchlinesController extends printController
         $extra['header']['pallet_counter'] = sprintf('%06s', abs(intval($this->_data['pallet-counter'])));
         $extra['header']['items'] = abs(intval($this->_data['items']));
         $extra['header']['count'] = sprintf('%04s', abs(intval($this->_data['count'])));
-        $extra['header']['batch'] = strtoupper($this->_data['batchlot']);
-        
+        $extra['header']['batch'] = strtoupper((string) $this->_data['batchlot']);
+
         $productline = new SOProductline();
         $productline->load($this->_data['item']);
         if ($productline->slmaster_id == null) {
@@ -838,7 +838,7 @@ class SodespatchlinesController extends printController
             );
             exit();
         }
-        
+
         $extra['header']['gtin'] = $gtin;
         $extra['header']['pallet_type'] = $pallet_data['pallet-type'];
 
@@ -855,7 +855,7 @@ class SodespatchlinesController extends printController
         $cd = $ceil-$sum;
 
         $extra['header']['sscc'] = "{$pallet_data['GINC']}{$extra['header']['pallet_counter']}{$cd}";
-        
+
         $extra['header']['print_date'] = un_fix_date(fix_date(date(DATE_FORMAT)));
         $extra['header']['print_time'] = date("H:i:s");
 
@@ -923,7 +923,7 @@ class SodespatchlinesController extends printController
             'report' => 'DespatchNote'
         );
 
-        if (strtolower($status) == "dialog") {
+        if (strtolower((string) $status) == "dialog") {
             return $options;
         }
 

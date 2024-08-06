@@ -10,9 +10,9 @@ class sodespatchSearch extends BaseSearch
 {
 
 	protected $version = '$Revision: 1.8 $';
-	
+
 	protected $fields = array();
-	
+
 	public static function useDefault($search_data = null, &$errors = array(), $defaults = null)
 	{
 		$search = new sodespatchSearch($defaults);
@@ -95,11 +95,11 @@ class sodespatchSearch extends BaseSearch
 					  ,'X'=>'Cancelled'
 					);
 		$search->setOptions('status',$options);
-		
+
 		$search->setSearchData($search_data,$errors);
 		return $search;
 	}
-		
+
 }
 
 // End of sodespatchSearch

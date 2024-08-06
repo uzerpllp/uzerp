@@ -154,9 +154,9 @@ class SodespatcheventsController extends printController {
 				$output_events[]=array('id'=>$value['id'],
 								'title'=>$value['title'],
 								'allDay'=>false,
-								'start'=>strtotime($value['start_time']),	
-								'end'=>strtotime($value['end_time']),
-								'className'=>$colours[strtolower($value['status'])],
+								'start'=>strtotime((string) $value['start_time']),	
+								'end'=>strtotime((string) $value['end_time']),
+								'className'=>$colours[strtolower((string) $value['status'])],
 								'editable'=>$editable
 						  );
 			}
@@ -199,7 +199,7 @@ class SodespatcheventsController extends printController {
 		// I'm sure there's a better way to format these dates... 
 		switch($this->_data['type']) {
 			case "drop":
-				$data['start_time']=un_fix_date(date('o-m-d H:i:s', strtotime("+".$this->_data['day']." day",strtotime("+".$this->_data['minute']." minute",strtotime($data['start_time'])))),true);
+				$data['start_time']=un_fix_date(date('o-m-d H:i:s', strtotime("+".$this->_data['day']." day",strtotime("+".$this->_data['minute']." minute",strtotime((string) $data['start_time'])))),true);
 				$data['end_time']=un_fix_date(date('o-m-d H:i:s', strtotime("+".$this->_data['day']." day",strtotime("+".$this->_data['minute']." minute",strtotime($data['end_time'])))),true);
 				break;
 			case "resize":

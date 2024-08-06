@@ -1,5 +1,5 @@
 <?php
- 
+
 /**
  *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
  *
@@ -9,7 +9,7 @@ class SODespatchLine extends DataObject
 {
 
 	protected $version='$Revision: 1.11 $';
-	
+
 	protected $defaultDisplayFields = array('despatch_number'
 											,'order_number'
 											,'order_id'
@@ -25,20 +25,20 @@ class SODespatchLine extends DataObject
 											,'invoice_id'
 	                                        ,'description'
 											);
-	
+
 	function __construct($tablename='so_despatchlines')
 	{
-		
+
 		// Register non-persistent attributes
-		
+
 		// Contruct the object
 		parent::__construct($tablename);
-		
+
 		// Set specific characteristics
 		$this->idField='id';
 		$this->orderby=array('despatch_number','orderline_id');
 		$this->orderdir='DESC';
-		
+
 		// Define relationships
 		$this->belongsTo('SOrder', 'order_id', 'order_number');
  		$this->belongsTo('SOrderLine', 'orderline_id', 'order_line');
@@ -48,13 +48,13 @@ class SODespatchLine extends DataObject
  		$this->belongsTo('STItem', 'stitem_id', 'stitem');
  		$this->hasOne('WHAction', 'despatch_action', 'despatch_from');
  		$this->hasOne('SOrderLine', 'orderline_id', 'order_line_detail');
- 		
+
 		// Define field formats
-		
+
 		// Define formatters
-		
+
 		// Define validation
- 		
+
 		// Define enumerated types
  		$this->setEnum('status'
 							,array('N'=>'New'
@@ -62,13 +62,13 @@ class SODespatchLine extends DataObject
 								  ,'X'=>'Cancelled'
 								)
 						);
-		
+
 		// Define rules for related items links
-	
+
 		// Define system defaults
-	
+
 	}
-	
+
 	/*
 	 * createDespatchNote - Create a despatch note from the provided data
 	 *
@@ -84,18 +84,18 @@ class SODespatchLine extends DataObject
 		$db=DB::Instance();
 		$db->startTrans();
 		$result = TRUE;
-		
+
 		foreach ($data as $header)
 		{
-			
+
 			$generator = new DespatchNoteNumberHandler();
 			$despatch_number = $generator->handle(new SODespatchLine());
-			
+
 			foreach ($header as $line)
 			{
 				$line['despatch_number']=$despatch_number;
 				$saveline=SODespatchLine::Factory($line,$errors,'SODespatchLine');
-				
+
 				if ($saveline)
 				{
 					$result=$saveline->save();
@@ -105,10 +105,10 @@ class SODespatchLine extends DataObject
 						break;
 					}
 				}
-				
+
 				$orderline=new SOrderLine();
 				$orderline->load($line['orderline_id']);
-				
+
 				if ($orderline->isLoaded())
 				{
 					if (!is_null($orderline->delivery_note))
@@ -135,23 +135,23 @@ class SODespatchLine extends DataObject
 				}
 			}
 		}
-		
+
 		if (count($errors) > 0)
 		{
 			$db->FailTrans();
 			$result = FALSE;
 		}
-		
+
 		$db->completeTrans();
-        
+
 		if (count($data) == 1)
 		{
 		  return $saveline->id;
 		}
-		
+
 		return $result;
 	}
-	
+
 	/**
 	 * Build the line
 	 *
@@ -171,17 +171,17 @@ class SODespatchLine extends DataObject
 				$despatchline['orderline_id']=$orderline->id;
 				$despatchline['slmaster_id']=$order->slmaster_id;
 				$despatchline['stuom_id']=$orderline->stuom_id;
-		
+
 				if ($orderline->stitem_id)
 				{
 					$despatchline['stitem_id']=$orderline->stitem_id;
 				}
-		
+
 				if ($orderline->productline_id)
 				{
 					$despatchline['productline_id']=$orderline->productline_id;
 				}
-		
+
 				$despatchline['despatch_qty']=$orderline->os_qty;
 				$despatchline['despatch_date']=date(DATE_FORMAT);
 				$despatchline['despatch_action']=$order->despatch_action;
@@ -190,22 +190,22 @@ class SODespatchLine extends DataObject
 				$stitem->load($orderline->stitem_id);
 				$param=new GLParams();
 				$net_mass_uom_id=$param->intrastat_net_mass();
-		
+
 				if ($stitem->isLoaded() && !empty($net_mass_uom_id))
 				{
 					$despatchline['net_mass']=$stitem->convertToUoM($despatchline['stuom_id'], $net_mass_uom_id, $despatchline['despatch_qty']);
 				}
 			}
 		}
-		
+
 		if (empty($despatchline['net_mass']) || $despatchline['net_mass']===false)
 		{
 			$despatchline['net_mass']=0;
 		}
-		
+
 		return $despatchline;
 	}
-	
+
 	public static function getItems ($cc="")
 	{
 		$db=&DB::Instance();
@@ -224,7 +224,7 @@ class SODespatchLine extends DataObject
 			   " GROUP BY stitem_id";
 		$result= $db->Execute($query);
 		return $result->getRows();
-		
+
 	}
 
 	public function getStockBalance()
@@ -235,7 +235,7 @@ class SODespatchLine extends DataObject
     		$balance=new STBalance();
     		return $balance->getStockBalance($this->stitem_id,$locations);
 		}
-    	
+
 		return 0;
 	}
 
@@ -243,23 +243,23 @@ class SODespatchLine extends DataObject
 	{
 		return $this->order_line->description;
 	}
-	
+
 
 	public function newStatus()
 	{
 		return 'N';
 	}
-		
+
 	public function despatchStatus()
 	{
 		return 'D';
 	}
-		
+
 	public function cancelStatus()
 	{
 		return 'X';
 	}
-		
+
 }
 
 // End of SODespatchLine
