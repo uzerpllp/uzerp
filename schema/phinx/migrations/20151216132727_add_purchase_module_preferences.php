@@ -33,8 +33,8 @@ class AddPurchaseModulePreferences extends AbstractMigration
         $table->save();
 
         // Add permission
-        $module_component_id = $this->fetchRow("SELECT id FROM module_components WHERE name = 'setupcontroller' AND module_id = ${module['id']}");
-        $permission_parent_id = $this->fetchRow("SELECT id FROM permissions WHERE permission = 'purchase_order' AND title = 'Purchasing Setup' AND module_id = ${module['id']}");
+        $module_component_id = $this->fetchRow("SELECT id FROM module_components WHERE name = 'setupcontroller' AND module_id = {$module['id']}");
+        $permission_parent_id = $this->fetchRow("SELECT id FROM permissions WHERE permission = 'purchase_order' AND title = 'Purchasing Setup' AND module_id = {$module['id']}");
 
         $permission_data = array(
             array(
@@ -45,7 +45,6 @@ class AddPurchaseModulePreferences extends AbstractMigration
                 'display' => TRUE,
                 'parent_id' => $permission_parent_id['id'],
                 'createdby' => 'admin',
-                'title' => 'PO Module Preferences',
                 'module_id' => $module['id'],
                 'component_id' => $module_component_id['id']
             )

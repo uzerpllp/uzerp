@@ -33,7 +33,7 @@ class AddManufactringSettings extends AbstractMigration
         $table->save();
 
         // Add permission
-        $module_component_id = $this->fetchRow("SELECT id FROM module_components WHERE name = 'setupcontroller' AND module_id = ${module['id']}");
+        $module_component_id = $this->fetchRow("SELECT id FROM module_components WHERE name = 'setupcontroller' AND module_id = {$module['id']}");
         $permission_root_id = $this->fetchRow("SELECT id FROM permissions WHERE permission = 'manufacturing_setup' AND title = 'Manufacturing Setup'");
 
         $table = $this->table('permissions');

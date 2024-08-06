@@ -52,8 +52,8 @@ class SoCostsAddModuleComponentsAndPermissions extends UzerpMigration
         $table->save();
 
         // Add permission
-        $module_component_id = $this->fetchRow("SELECT id FROM module_components WHERE name = 'socostscontroller' AND module_id = ${module['id']}");
-        $permission_parent_id = $this->fetchRow("SELECT id FROM permissions WHERE permission = 'costing' AND title = 'Costing' AND module_id = ${module['id']}");
+        $module_component_id = $this->fetchRow("SELECT id FROM module_components WHERE name = 'socostscontroller' AND module_id = {$module['id']}");
+        $permission_parent_id = $this->fetchRow("SELECT id FROM permissions WHERE permission = 'costing' AND title = 'Costing' AND module_id = {$module['id']}");
 
         $permission_data = array(
             array(

@@ -37,7 +37,7 @@ class AddSorderModulePreferences extends UzerpMigration
         $table->save();
 
         // Add permission
-        $module_component_id = $this->fetchRow("SELECT id FROM module_components WHERE name = 'setupcontroller' AND module_id = ${module['id']}");
+        $module_component_id = $this->fetchRow("SELECT id FROM module_components WHERE name = 'setupcontroller' AND module_id = {$module['id']}");
         $permission_root_id = $this->fetchRow("SELECT id FROM permissions WHERE permission = 'logistics' AND title = 'Logistics Setup'");
 
         $table = $this->table('permissions');

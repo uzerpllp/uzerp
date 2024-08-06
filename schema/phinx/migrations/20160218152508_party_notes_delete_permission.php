@@ -18,8 +18,8 @@ class PartyNotesDeletePermission extends AbstractMigration
     {
         // Add permission
         $module = $this->fetchRow("SELECT id FROM modules WHERE name = 'contacts'");
-        $module_component_id = $this->fetchRow("SELECT id FROM module_components WHERE name = 'partynotescontroller' AND module_id = ${module['id']}");
-        $permission_parent_id = $this->fetchRow("SELECT id FROM permissions WHERE permission = 'partynotes' AND title = 'Party Notes' AND module_id = ${module['id']}");
+        $module_component_id = $this->fetchRow("SELECT id FROM module_components WHERE name = 'partynotescontroller' AND module_id = {$module['id']}");
+        $permission_parent_id = $this->fetchRow("SELECT id FROM permissions WHERE permission = 'partynotes' AND title = 'Party Notes' AND module_id = {$module['id']}");
 
         $permission_data = array(
             array(
