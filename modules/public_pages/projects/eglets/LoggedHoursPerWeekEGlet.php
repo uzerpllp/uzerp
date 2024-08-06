@@ -8,7 +8,7 @@
 class LoggedHoursPerWeekEGlet extends SimpleGraphEGlet
 {
 
-	protected $timeframe;
+	protected $timeframe='week';
 
 	function populate() {
 		self::checkSetup();
