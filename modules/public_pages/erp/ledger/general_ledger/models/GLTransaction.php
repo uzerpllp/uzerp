@@ -262,7 +262,7 @@ class GLTransaction extends DataObject
         return $this;
     }
 
-    public function makeFromAsset(Asset $asset, $value, $type, &$errors = array())
+    public static function makeFromAsset(Asset $asset, $value, $type, &$errors = array())
     {
         $glperiod = DataObjectFactory::Factory('GLPeriod');
 
@@ -335,7 +335,7 @@ class GLTransaction extends DataObject
         return $gl_transactions;
     }
 
-    public function makeFromAssetTransaction(ARTransaction $ar_trans, Asset $asset, &$errors = array())
+    public static function makeFromAssetTransaction(ARTransaction $ar_trans, Asset $asset, &$errors = array())
     {
         $transdate = $ar_trans->transaction_date;
 
