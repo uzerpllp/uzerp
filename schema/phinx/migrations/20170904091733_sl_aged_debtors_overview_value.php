@@ -12,7 +12,7 @@ class SlAgedDebtorsOverviewValue extends UzerpMigration
     {
         $view_name = 'sl_aged_debtors_overview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW sl_aged_debtors_overview AS
  SELECT (((s.slmaster_id::text || '-'::text) || s.our_reference::text) || '-'::text) || s.transaction_type::text AS id,
     s.slmaster_id,
@@ -29,7 +29,7 @@ CREATE OR REPLACE VIEW sl_aged_debtors_overview AS
     s.usercompanyid, s.our_reference, s.transaction_type
   ORDER BY s.customer, s.slmaster_id, date_part('year'::text, age(('now'::text::date - 1)::timestamp with time zone,
     s.transaction_date::timestamp with time zone)) * 12::double precision + date_part('month'::text, age(('now'::text::date - 1)::timestamp with time zone, s.transaction_date::timestamp with time zone));
-VIEW;
+VIEW_WRAP;
 
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

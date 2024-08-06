@@ -12,7 +12,7 @@ class MfoperationOverviewColumnChanges extends UzerpMigration
     {
         $view_name = 'mf_operationsoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW mf_operationsoverview AS 
 SELECT o.id,
     o.op_no,
@@ -58,7 +58,7 @@ SELECT o.id,
     JOIN mf_centres c ON o.mfcentre_id = c.id
     JOIN mf_resources r ON o.mfresource_id = r.id
     LEFT JOIN po_product_lines_header ppl ON ppl.id = o.po_productline_header_id;
-VIEW;
+VIEW_WRAP;
 
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -69,7 +69,7 @@ VIEW;
     {
         $view_name = 'mf_operationsoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW mf_operationsoverview AS 
 SELECT o.id,
     o.op_no,
@@ -106,7 +106,7 @@ SELECT o.id,
     JOIN st_uoms u ON o.volume_uom_id = u.id
     JOIN mf_centres c ON o.mfcentre_id = c.id
     JOIN mf_resources r ON o.mfresource_id = r.id;
-VIEW;
+VIEW_WRAP;
 
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

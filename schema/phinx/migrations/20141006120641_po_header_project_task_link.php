@@ -12,7 +12,7 @@ class PoHeaderProjectTaskLink extends AbstractMigration
     
     	// SQL statements to create the replacement views
     	
-    	$poheaderoverview = <<<'VIEW'
+    	$poheaderoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_headeroverview AS
  SELECT po.id,
     po.order_number,
@@ -66,10 +66,10 @@ CREATE OR REPLACE VIEW po_headeroverview AS
    LEFT JOIN users pa ON po.authorised_by::text = pa.username::text
    LEFT JOIN projects p ON po.project_id = p.id
    LEFT JOIN addressoverview da ON po.del_address_id = da.id
-VIEW;
+VIEW_WRAP;
     
     
-    	$poproductorders = <<<'VIEW'
+    	$poproductorders = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_product_orders AS
  SELECT ph.id,
     ph.order_number,
@@ -110,7 +110,7 @@ CREATE OR REPLACE VIEW po_product_orders AS
    FROM po_headeroverview ph
    JOIN po_lines pl ON ph.id = pl.order_id
    JOIN po_product_lines ppl ON ppl.id = pl.productline_id
-VIEW;
+VIEW_WRAP;
     
     	// Drop affected views to enable tables to be modified
     	$this->query('DROP VIEW po_product_orders');
@@ -139,7 +139,7 @@ VIEW;
     public function down()
     {
     
-    	$poheaderoverview = <<<'VIEW'
+    	$poheaderoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_headeroverview AS
  SELECT po.id,
     po.order_number,
@@ -192,10 +192,10 @@ CREATE OR REPLACE VIEW po_headeroverview AS
    LEFT JOIN users pa ON po.authorised_by::text = pa.username::text
    LEFT JOIN projects p ON po.project_id = p.id
    LEFT JOIN addressoverview da ON po.del_address_id = da.id
-VIEW;
+VIEW_WRAP;
     
     
-    	$poproductorders = <<<'VIEW'
+    	$poproductorders = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_product_orders AS
  SELECT ph.id,
     ph.order_number,
@@ -236,7 +236,7 @@ CREATE OR REPLACE VIEW po_product_orders AS
    FROM po_headeroverview ph
    JOIN po_lines pl ON ph.id = pl.order_id
    JOIN po_product_lines ppl ON ppl.id = pl.productline_id
-VIEW;
+VIEW_WRAP;
     	
     	$this->query('DROP VIEW po_product_orders');
     	$this->query('DROP VIEW po_headeroverview');

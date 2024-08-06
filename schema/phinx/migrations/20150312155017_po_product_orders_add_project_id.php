@@ -20,7 +20,7 @@ class PoProductOrdersAddProjectId extends AbstractMigration
     public function up()
     {
 
-        $po_product_orders = <<<'VIEW'
+        $po_product_orders = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_product_orders AS 
  SELECT ph.id,
     ph.order_number,
@@ -62,7 +62,7 @@ CREATE OR REPLACE VIEW po_product_orders AS
    FROM po_headeroverview ph
      JOIN po_lines pl ON ph.id = pl.order_id
      JOIN po_product_lines ppl ON ppl.id = pl.productline_id;
-VIEW;
+VIEW_WRAP;
 
         // Drop and recreate the view
         $this->query('DROP VIEW po_product_orders');
@@ -75,7 +75,7 @@ VIEW;
      */
     public function down()
     {
-        $po_product_orders = <<<'VIEW'
+        $po_product_orders = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_product_orders AS 
  SELECT ph.id,
     ph.order_number,
@@ -116,7 +116,7 @@ CREATE OR REPLACE VIEW po_product_orders AS
    FROM po_headeroverview ph
      JOIN po_lines pl ON ph.id = pl.order_id
      JOIN po_product_lines ppl ON ppl.id = pl.productline_id;
-VIEW;
+VIEW_WRAP;
 
         // Drop and recreate the view
         $this->query('DROP VIEW po_product_orders');

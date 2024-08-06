@@ -15,7 +15,7 @@ class SoHeaderOverviewProject extends AbstractMigration
 
     public function up()
     {
-        $soheaderoverview = <<<'VIEW'
+        $soheaderoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_headeroverview AS
  SELECT so.id,
     so.order_number,
@@ -72,7 +72,7 @@ CREATE OR REPLACE VIEW so_headeroverview AS
    LEFT JOIN addressoverview da ON so.del_address_id = da.id
    LEFT JOIN addressoverview ia ON so.inv_address_id = ia.id
    LEFT JOIN projects prj ON so.project_id = prj.id;
-VIEW;
+VIEW_WRAP;
 
         $this->query("select deps_save_and_drop_dependencies('public', 'so_headeroverview')");
         $this->query('DROP VIEW so_headeroverview');
@@ -86,7 +86,7 @@ VIEW;
      */
     public function down()
     {
-        $soheaderoverview = <<<'VIEW'
+        $soheaderoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_headeroverview AS
  SELECT so.id,
     so.order_number,
@@ -139,7 +139,7 @@ CREATE OR REPLACE VIEW so_headeroverview AS
    LEFT JOIN wh_actions wa ON so.despatch_action = wa.id
    LEFT JOIN addressoverview da ON so.del_address_id = da.id
    LEFT JOIN addressoverview ia ON so.inv_address_id = ia.id;
-VIEW;
+VIEW_WRAP;
 
         $this->query("select deps_save_and_drop_dependencies('public', 'so_headeroverview')");
         $this->query('DROP VIEW so_headeroverview');

@@ -13,7 +13,7 @@ class DjjobQueue extends UzerpMigration
     {
         $jobs = $this->table('jobs');
         $jobs->addColumn('handler', 'string')
-        ->addColumn('queue', 'string', ['limit' => 255], 'default', 'default')
+        ->addColumn('queue', 'string', ['limit' => 255])
         ->addColumn('attempts', 'integer', ['default' => 0])
         ->addColumn('run_at', 'datetime', ['null' => true])
         ->addColumn('locked_at', 'datetime', ['null' => true])

@@ -18,7 +18,7 @@ class VatAdjustmentOverview extends UzerpMigration
     public function up()
     {
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW vat_adjustment_overview AS 
 select
 	va.id,
@@ -38,7 +38,7 @@ select
 	va.lastupdated
 from vat_adjustment va
 join vat_return vr on vr.id = va.vat_return_id;
-VIEW;
+VIEW_WRAP;
         $this->query($view);
         $this->query("ALTER TABLE {$this->view_name} OWNER TO \"{$view_owner}\"");
     }

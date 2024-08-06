@@ -221,7 +221,7 @@ class PorderScheduleReportDef extends AbstractMigration
 UPDOC;
         $date = new DateTime();
         $update_time = $date->format('Y-m-d H:i:s.u');
-        $result = $this->query("INSERT INTO report_definitions (name, definition, lastupdated, alteredby, usercompanyid) VALUES ('PurchaseOrderSchedule', '${xsl}', '${update_time}', 'phinx', '1')");
+        $result = $this->query("INSERT INTO report_definitions (name, definition, lastupdated, alteredby, usercompanyid) VALUES ('PurchaseOrderSchedule', '{$xsl}', '{$update_time}', 'phinx', '1')");
     }
     
     public function down()

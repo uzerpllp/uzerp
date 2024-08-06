@@ -23,7 +23,7 @@ class SoProductOrdersAddProjectId extends UzerpMigration
      */
     public function up()
     {
-        $so_product_orders = <<<'VIEW'
+        $so_product_orders = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_product_orders AS
  SELECT sh.id,
     sh.order_number,
@@ -65,7 +65,7 @@ CREATE OR REPLACE VIEW so_product_orders AS
    FROM so_headeroverview sh
      JOIN so_lines sl ON sh.id = sl.order_id
      JOIN so_product_lines spl ON spl.id = sl.productline_id;
-VIEW;
+VIEW_WRAP;
 
         $this->query('DROP VIEW so_product_orders');
         $this->query($so_product_orders);
@@ -78,7 +78,7 @@ VIEW;
      */
     public function down()
     {
-        $so_product_orders = <<<'VIEW'
+        $so_product_orders = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_product_orders AS
  SELECT sh.id,
     sh.order_number,
@@ -118,7 +118,7 @@ CREATE OR REPLACE VIEW so_product_orders AS
    FROM so_headeroverview sh
      JOIN so_lines sl ON sh.id = sl.order_id
      JOIN so_product_lines spl ON spl.id = sl.productline_id;
-VIEW;
+VIEW_WRAP;
 
         $this->query('DROP VIEW so_product_orders');
         $this->query($so_product_orders);

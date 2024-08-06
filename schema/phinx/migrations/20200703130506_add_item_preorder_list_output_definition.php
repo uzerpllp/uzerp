@@ -285,7 +285,7 @@ DOC;
 </data>    
 TEST;
 
-        $rows = $this->query("INSERT INTO report_definitions (name, definition, test_xml, usercompanyid) VALUES ('ItemPreorderList', '${template}', '${test_xml}', 1)");
+        $rows = $this->query("INSERT INTO report_definitions (name, definition, test_xml, usercompanyid) VALUES ('ItemPreorderList', '{$template}', '{$test_xml}', 1)");
     }
 
     public function down()

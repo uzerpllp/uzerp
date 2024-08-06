@@ -12,7 +12,7 @@ class UserPasswordHashUpgrade extends UzerpMigration
 
 
 
-    public function down()
+    public function down(): never
     {
         file_put_contents('php://stderr', ' ** Migration cannot be rolled back, usernames have already been re-hashed' . PHP_EOL);
         exit;
@@ -26,7 +26,7 @@ class UserPasswordHashUpgrade extends UzerpMigration
      */
     public function up()
     {
-        $useroverview = <<<'VIEW'
+        $useroverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW useroverview AS
  SELECT u.username,
     u.password,
@@ -43,9 +43,9 @@ CREATE OR REPLACE VIEW useroverview AS
      LEFT JOIN company c ON u.lastcompanylogin = c.id
      LEFT JOIN user_company_access uca ON u.username::text = uca.username::text
      LEFT JOIN person p ON u.person_id = p.id;
-VIEW;
+VIEW_WRAP;
 
-        $hasrolesoverview = <<<'VIEW'
+        $hasrolesoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW hasrolesoverview AS
  SELECT hasrole.roleid,
     hasrole.username,
@@ -57,7 +57,7 @@ CREATE OR REPLACE VIEW hasrolesoverview AS
    FROM hasrole
      JOIN roles ON roles.id = hasrole.roleid
      JOIN users ON users.username::text = hasrole.username::text;
-VIEW;
+VIEW_WRAP;
 
         // drop dependent views
         $this->query('DROP VIEW useroverview');
@@ -72,9 +72,9 @@ VIEW;
         // in the users and po_authlimits table
         $rows = $this->fetchAll('SELECT * FROM users');
         foreach ($rows as $row){
-            if (substr($row['password'], 0, 1) !== '$') {
+            if (!str_starts_with((string) $row['password'], '$')) {
                 $md5hash = $row['password'];
-                $newhash = password_hash($md5hash, PASSWORD_DEFAULT);
+                $newhash = password_hash((string) $md5hash, PASSWORD_DEFAULT);
                 $this->query("UPDATE users SET username='" . $row['username'] ."', password='" . $newhash .
                                     "' WHERE username='" . $row['username'] . "';");
             }

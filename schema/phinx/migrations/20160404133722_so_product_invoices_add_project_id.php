@@ -23,7 +23,7 @@ class SoProductInvoicesAddProjectId extends UzerpMigration
      */
     public function up()
     {
-        $so_product_invoices = <<<'VIEW'
+        $so_product_invoices = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_product_invoices AS
  SELECT sh.id,
     sh.invoice_number,
@@ -85,7 +85,7 @@ CREATE OR REPLACE VIEW so_product_invoices AS
    FROM si_headeroverview sh
      JOIN si_lines sl ON sh.id = sl.invoice_id
      JOIN so_product_lines spl ON spl.id = sl.productline_id;
-VIEW;
+VIEW_WRAP;
 
         $this->query('DROP VIEW so_product_invoices');
         $this->query($so_product_invoices);
@@ -98,7 +98,7 @@ VIEW;
      */
     public function down()
     {
-        $so_product_invoices = <<<'VIEW'
+        $so_product_invoices = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_product_invoices AS
  SELECT sh.id,
     sh.invoice_number,
@@ -158,7 +158,7 @@ CREATE OR REPLACE VIEW so_product_invoices AS
    FROM si_headeroverview sh
      JOIN si_lines sl ON sh.id = sl.invoice_id
      JOIN so_product_lines spl ON spl.id = sl.productline_id;
-VIEW;
+VIEW_WRAP;
 
         $this->query('DROP VIEW so_product_invoices');
         $this->query($so_product_invoices);

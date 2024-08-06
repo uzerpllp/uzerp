@@ -9,7 +9,7 @@ class WarehouseLocationsOverview77 extends AbstractMigration
      */
     public function up()
     {
-		$wh_locationsoverview = <<<'VIEW'
+		$wh_locationsoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW wh_locationsoverview AS 
  SELECT l.id,
     l.location,
@@ -34,7 +34,7 @@ CREATE OR REPLACE VIEW wh_locationsoverview AS
      JOIN wh_stores s ON l.whstore_id = s.id
      LEFT JOIN gl_accounts a ON l.glaccount_id = a.id
      LEFT JOIN gl_centres c ON l.glcentre_id = c.id;
-VIEW;
+VIEW_WRAP;
 
 		$this->query("select deps_save_and_drop_dependencies('public', 'wh_locationsoverview')");
 		$this->query('DROP VIEW wh_locationsoverview');
@@ -48,7 +48,7 @@ VIEW;
      */
     public function down()
     {
-		$wh_locationsoverview = <<<'VIEW'
+		$wh_locationsoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW wh_locationsoverview AS 
  SELECT l.id,
     l.location,
@@ -73,7 +73,7 @@ CREATE OR REPLACE VIEW wh_locationsoverview AS
      JOIN wh_stores s ON l.whstore_id = s.id
      JOIN gl_accounts a ON l.glaccount_id = a.id
      JOIN gl_centres c ON l.glcentre_id = c.id;
-VIEW;
+VIEW_WRAP;
 
 		$this->query("select deps_save_and_drop_dependencies('public', 'wh_locationsoverview')");
 		$this->query('DROP VIEW wh_locationsoverview');

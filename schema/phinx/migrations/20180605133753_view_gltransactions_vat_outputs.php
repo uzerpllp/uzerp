@@ -12,7 +12,7 @@ class ViewGltransactionsVatOutputs extends AbstractMigration
     {
         $view_name = 'gltransactions_vat_outputs';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW gltransactions_vat_outputs AS 
 SELECT tr1.id,
     tr1.docref,
@@ -111,7 +111,7 @@ SELECT tr1.id,
     JOIN gl_accounts a ON a.id = tr1.glaccount_id
     JOIN taxrates tx ON tx.id = 1
     WHERE tr1.source::text = 'V'::text AND tr1.type::text = 'J'::text;
-VIEW;
+VIEW_WRAP;
 
         $this->query($view);
         $this->query("ALTER TABLE {$view_name} OWNER TO \"{$view_owner}\"");

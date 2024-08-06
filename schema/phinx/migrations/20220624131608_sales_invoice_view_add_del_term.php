@@ -9,7 +9,7 @@ class SalesInvoiceViewAddDelTerm extends UzerpMigration
     {
         $view_name = 'si_headeroverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.si_headeroverview
 AS
 SELECT si.id,
@@ -101,7 +101,7 @@ SELECT si.id,
     LEFT JOIN addressoverview ad ON si.del_address_id = ad.id
     LEFT JOIN projects prj ON si.project_id = prj.id
     LEFT JOIN sy_delivery_terms dterms ON dterms.id = si.delivery_term_id;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -114,7 +114,7 @@ VIEW;
     {
         $view_name = 'si_headeroverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.si_headeroverview
 AS
 SELECT si.id,
@@ -201,7 +201,7 @@ SELECT si.id,
     LEFT JOIN addressoverview a ON si.inv_address_id = a.id
     LEFT JOIN addressoverview ad ON si.del_address_id = ad.id
     LEFT JOIN projects prj ON si.project_id = prj.id;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

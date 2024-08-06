@@ -8,7 +8,7 @@ class PoPlannedOverview extends UzerpMigration
     {
         $view_name = 'po_plannedoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.po_plannedoverview AS 
 SELECT
 po_planned.id,
@@ -27,7 +27,7 @@ po_planned.delivery_date,
 po_planned.qty,
 po_planned.product_group_desc
 FROM po_planned;
-VIEW;
+VIEW_WRAP;
 
         $this->query($view);
         $this->query("ALTER TABLE {$view_name} OWNER TO \"{$view_owner}\"");

@@ -9,7 +9,7 @@ class SoHeaderOverviewAddDeliveryPartyInfo extends UzerpMigration
     {
         $view_name = 'so_headeroverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.so_headeroverview
 AS
 SELECT so.id,
@@ -72,7 +72,7 @@ SELECT so.id,
     LEFT JOIN addressoverview ia ON so.inv_address_id = ia.id
     LEFT JOIN partyaddressoverview dpao on dpao.id = so.del_partyaddress_id
     LEFT JOIN projects prj ON so.project_id = prj.id;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -84,7 +84,7 @@ VIEW;
     {
         $view_name = 'so_headeroverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.so_headeroverview
 AS
 SELECT so.id,
@@ -142,7 +142,7 @@ SELECT so.id,
     LEFT JOIN addressoverview da ON so.del_address_id = da.id
     LEFT JOIN addressoverview ia ON so.inv_address_id = ia.id
     LEFT JOIN projects prj ON so.project_id = prj.id;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

@@ -22,7 +22,7 @@ class SiHeaderOverviewProject extends AbstractMigration
      */
     public function up()
     {
-	 	$siheadersoverview = <<<'VIEW'
+	 	$siheadersoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW si_headeroverview AS 
  SELECT si.id,
     si.invoice_number,
@@ -105,7 +105,7 @@ CREATE OR REPLACE VIEW si_headeroverview AS
    JOIN syterms syt ON si.payment_term_id = syt.id
    LEFT JOIN addressoverview a ON si.inv_address_id = a.id
    LEFT JOIN projects prj ON si.project_id = prj.id;
-VIEW;
+VIEW_WRAP;
 
 
 
@@ -123,7 +123,7 @@ VIEW;
      */
     public function down()
     {
-	 	$siheadersoverview = <<<'VIEW'
+	 	$siheadersoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW si_headeroverview AS 
  SELECT si.id,
     si.invoice_number,
@@ -203,7 +203,7 @@ CREATE OR REPLACE VIEW si_headeroverview AS
    JOIN syterms syt ON si.payment_term_id = syt.id
    LEFT JOIN addressoverview a ON si.inv_address_id = a.id
  
-VIEW;
+VIEW_WRAP;
 
 
 

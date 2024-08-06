@@ -9,7 +9,7 @@ class SoLinesOverviewAddCustomerProductCode extends UzerpMigration
     {
         $view_name = 'so_linesoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.so_linesoverview
 AS
 SELECT sl.id,
@@ -79,7 +79,7 @@ SELECT sl.id,
     LEFT JOIN st_items i ON i.id = sl.stitem_id
     LEFT JOIN so_product_lines spl ON spl.id = sl.productline_id
     LEFT JOIN so_product_lines_header sph ON sph.id = spl.productline_header_id;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -91,7 +91,7 @@ VIEW;
     {
         $view_name = 'so_linesoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.so_linesoverview
 AS
 SELECT sl.id,
@@ -160,7 +160,7 @@ SELECT sl.id,
     LEFT JOIN st_items i ON i.id = sl.stitem_id
     LEFT JOIN so_product_lines spl ON spl.id = sl.productline_id
     LEFT JOIN so_product_lines_header sph ON sph.id = spl.productline_header_id;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

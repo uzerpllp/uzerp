@@ -16,7 +16,7 @@ class SolinesOverviewNote extends UzerpMigration
      */
     public function up()
     {
-        $so_linesoverview = <<<'VIEW'
+        $so_linesoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_linesoverview AS
  SELECT sl.id,
     sl.order_id,
@@ -81,7 +81,7 @@ CREATE OR REPLACE VIEW so_linesoverview AS
      LEFT JOIN st_uoms uom ON sl.stuom_id = uom.id
      LEFT JOIN st_items i ON i.id = sl.stitem_id
      LEFT JOIN so_productlines_overview spl ON spl.id = sl.productline_id;
-VIEW;
+VIEW_WRAP;
         
         $this->query("select deps_save_and_drop_dependencies('public', 'so_linesoverview')");
         $this->query('DROP VIEW so_linesoverview');
@@ -93,7 +93,7 @@ VIEW;
     
     public function down()
     {
-        $so_linesoverview = <<<'VIEW'
+        $so_linesoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_linesoverview AS
  SELECT sl.id,
     sl.order_id,
@@ -157,7 +157,7 @@ CREATE OR REPLACE VIEW so_linesoverview AS
      LEFT JOIN st_uoms uom ON sl.stuom_id = uom.id
      LEFT JOIN st_items i ON i.id = sl.stitem_id
      LEFT JOIN so_productlines_overview spl ON spl.id = sl.productline_id;
-VIEW;
+VIEW_WRAP;
     
         $this->query("select deps_save_and_drop_dependencies('public', 'so_linesoverview')");
         $this->query('DROP VIEW so_linesoverview');

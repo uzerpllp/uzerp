@@ -15,7 +15,7 @@ class StTypeCodesOverviewAddCompClass extends UzerpMigration
     {
         $view_name = 'st_typecodes_overview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.st_typecodes_overview
 AS
 SELECT tc.id,
@@ -41,7 +41,7 @@ FROM st_typecodes tc
     LEFT JOIN wh_actions a2 ON a2.id = tc.complete_action_id
     LEFT JOIN wh_actions a3 ON a3.id = tc.issue_action_id
     LEFT JOIN wh_actions a4 ON a4.id = tc.return_action_id;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -53,7 +53,7 @@ VIEW;
     {
         $view_name = 'st_typecodes_overview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.st_typecodes_overview
 AS
 SELECT tc.id,
@@ -74,7 +74,7 @@ FROM st_typecodes tc
     LEFT JOIN wh_actions a1 ON a1.id = tc.backflush_action_id
     LEFT JOIN wh_actions a2 ON a2.id = tc.complete_action_id
     LEFT JOIN wh_actions a3 ON a3.id = tc.issue_action_id;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

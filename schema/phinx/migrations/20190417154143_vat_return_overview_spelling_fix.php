@@ -16,7 +16,7 @@ class VatReturnOverviewSpellingFix extends UzerpMigration
     public function up()
     {
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW vat_return_overview AS 
 select
 	vr.id,
@@ -43,7 +43,7 @@ select
 from vat_return vr
 join gl_periods glp on glp.year = vr.year and vr.tax_period = glp.tax_period
 group by 1,2,3,4,5;
-VIEW;
+VIEW_WRAP;
         $this->query("DROP VIEW {$this->view_name}");
         $this->query($view);
         $this->query("ALTER TABLE {$this->view_name} OWNER TO \"{$view_owner}\"");
@@ -52,7 +52,7 @@ VIEW;
     public function down()
     {
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW vat_return_overview AS 
 select
 	vr.id,
@@ -79,7 +79,7 @@ select
 from vat_return vr
 join gl_periods glp on glp.year = vr.year and vr.tax_period = glp.tax_period
 group by 1,2,3,4,5;
-VIEW;
+VIEW_WRAP;
         $this->query("DROP VIEW {$this->view_name}");
         $this->query($view);
         $this->query("ALTER TABLE {$this->view_name} OWNER TO \"{$view_owner}\"");

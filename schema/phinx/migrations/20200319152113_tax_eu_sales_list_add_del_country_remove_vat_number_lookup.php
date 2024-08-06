@@ -9,7 +9,7 @@ class TaxEuSalesListAddDelCountryRemoveVatNumberLookup extends UzerpMigration
     {
         $view_name = 'tax_eu_saleslist';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.tax_eu_saleslist
 AS
 SELECT si.id,
@@ -93,7 +93,7 @@ SELECT si.id,
     JOIN tax_statuses ts ON si.tax_status_id = ts.id
     JOIN syterms syt ON si.payment_term_id = syt.id
     WHERE ts.eu_tax = true;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -105,7 +105,7 @@ VIEW;
     {
         $view_name = 'tax_eu_saleslist';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
         CREATE OR REPLACE VIEW public.tax_eu_saleslist
         AS
         SELECT si.id,
@@ -185,7 +185,7 @@ VIEW;
             JOIN tax_statuses ts ON si.tax_status_id = ts.id
             JOIN syterms syt ON si.payment_term_id = syt.id
             WHERE ts.eu_tax = true;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

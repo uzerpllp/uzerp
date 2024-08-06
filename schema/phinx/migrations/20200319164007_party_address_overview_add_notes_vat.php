@@ -9,7 +9,7 @@ public function up()
 {
     $view_name = 'partyaddressoverview';
     $view_owner = 'www-data';
-    $view = <<<'VIEW'
+    $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.partyaddressoverview
 AS
 SELECT p.id,
@@ -37,7 +37,7 @@ SELECT p.id,
     FROM partyaddress p
     JOIN address a ON p.address_id = a.id
     JOIN countries c ON c.code = a.countrycode;
-VIEW;
+VIEW_WRAP;
     $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
     $this->query("DROP VIEW {$view_name}");
     $this->query($view);
@@ -49,7 +49,7 @@ public function down()
 {
     $view_name = 'partyaddressoverview';
     $view_owner = 'www-data';
-    $view = <<<'VIEW'
+    $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.partyaddressoverview
 AS
 SELECT p.id,
@@ -76,7 +76,7 @@ p.usercompanyid
 FROM partyaddress p
     JOIN address a ON p.address_id = a.id
     JOIN countries c ON c.code = a.countrycode;
-VIEW;
+VIEW_WRAP;
     $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
     $this->query("DROP VIEW {$view_name}");
     $this->query($view);

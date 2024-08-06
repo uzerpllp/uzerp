@@ -18,7 +18,7 @@ class SoCostsOverview extends UzerpMigration
      {
          $view_name = 'so_costsoverview';
          $view_owner = 'www-data';
-         $view = <<<VIEW
+         $view = <<<VIEW_WRAP
 CREATE VIEW so_costsoverview AS
 SELECT c.id,
 c.product_header_id,
@@ -35,7 +35,7 @@ c.usercompanyid,
 ph.description AS soproduct
 FROM so_costs c
 JOIN so_product_lines_header ph ON c.product_header_id = ph.id
-VIEW;
+VIEW_WRAP;
 
          $this->query($view);
          $this->query("ALTER TABLE {$view_name} OWNER TO \"{$view_owner}\"");

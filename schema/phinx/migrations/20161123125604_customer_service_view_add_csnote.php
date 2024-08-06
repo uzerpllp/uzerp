@@ -14,7 +14,7 @@ class CustomerServiceViewAddCsnote extends UzerpMigration
      */
     public function up()
     {
-        $cs_view = <<<'VIEW'
+        $cs_view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW customer_service AS
  SELECT sd.id,
     sd.despatch_number,
@@ -48,7 +48,7 @@ CREATE OR REPLACE VIEW customer_service AS
      JOIN st_items st ON st.id = sd.stitem_id
      JOIN st_productgroups pg ON pg.id = st.prod_group_id
   WHERE sd.status::text = 'D'::text;
-VIEW;
+VIEW_WRAP;
 
         $this->query("select deps_save_and_drop_dependencies('public', 'customer_service')");
         $this->query('DROP VIEW customer_service');
@@ -60,7 +60,7 @@ VIEW;
 
     public function down()
     {
-        $cs_view = <<<'VIEW'
+        $cs_view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW customer_service AS
  SELECT sd.id,
     sd.despatch_number,
@@ -93,7 +93,7 @@ CREATE OR REPLACE VIEW customer_service AS
      JOIN st_items st ON st.id = sd.stitem_id
      JOIN st_productgroups pg ON pg.id = st.prod_group_id
   WHERE sd.status::text = 'D'::text;
-VIEW;
+VIEW_WRAP;
 
         $this->query("select deps_save_and_drop_dependencies('public', 'customer_service')");
         $this->query('DROP VIEW customer_service');

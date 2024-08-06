@@ -16,7 +16,7 @@ class SoItemOrdersNonstock extends UzerpMigration
      */
     public function up()
     {
-        $so_itemorders = <<<'VIEW'
+        $so_itemorders = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_itemorders AS
  SELECT sl.id,
     sl.order_id,
@@ -70,7 +70,7 @@ CREATE OR REPLACE VIEW so_itemorders AS
      JOIN so_headeroverview sh ON sh.id = sl.order_id
      JOIN so_productlines_overview spl ON spl.id = sl.productline_id
   WHERE sl.productline_id IS NOT NULL AND spl.not_despatchable IS NOT TRUE AND (sl.status::text = ANY (ARRAY['N'::character varying::text, 'R'::character varying::text]));
-VIEW;
+VIEW_WRAP;
         
         $this->query("select deps_save_and_drop_dependencies('public', 'so_itemorders')");
         $this->query('DROP VIEW so_itemorders');
@@ -82,7 +82,7 @@ VIEW;
 
     public function down()
     {
-        $so_itemorders = <<<'VIEW'
+        $so_itemorders = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_itemorders AS
  SELECT sl.id,
     sl.order_id,
@@ -135,7 +135,7 @@ CREATE OR REPLACE VIEW so_itemorders AS
      JOIN st_uoms u ON u.id = sl.stuom_id
      JOIN so_headeroverview sh ON sh.id = sl.order_id
   WHERE sl.stitem_id IS NOT NULL AND (sl.status::text = ANY (ARRAY['N'::character varying::text, 'R'::character varying::text]));
-VIEW;
+VIEW_WRAP;
         
         $this->query("select deps_save_and_drop_dependencies('public', 'so_itemorders')");
         $this->query('DROP VIEW so_itemorders');

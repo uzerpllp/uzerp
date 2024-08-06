@@ -16,7 +16,7 @@ class CompanyAddressOverviewUseConcatWs extends UzerpMigration
     {
         $view_name = 'companyaddressoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.companyaddressoverview
 AS
 SELECT ca.id,
@@ -40,7 +40,7 @@ SELECT ca.id,
     FROM companyaddress ca
     JOIN company c ON c.party_id = ca.party_id
     JOIN countries co ON ca.countrycode = co.code;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -52,7 +52,7 @@ VIEW;
     {
         $view_name = 'companyaddressoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.companyaddressoverview
 AS
 SELECT ca.id,
@@ -76,7 +76,7 @@ SELECT ca.id,
     FROM companyaddress ca
     JOIN company c ON c.party_id = ca.party_id
     JOIN countries co ON ca.countrycode = co.code;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

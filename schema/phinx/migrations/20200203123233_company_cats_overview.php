@@ -12,7 +12,7 @@ class CompanyCatsOverview extends UzerpMigration
     {
         $view_name = 'companies_in_categories_overview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.companies_in_categories_overview
 AS
 SELECT cic.company_id,
@@ -34,7 +34,7 @@ SELECT cic.company_id,
     JOIN contact_categories cc ON cc.id = cic.category_id
     JOIN companyoverview c ON c.id = cic.company_id
     WHERE c.is_lead is false;
-VIEW;
+VIEW_WRAP;
 
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
@@ -47,7 +47,7 @@ VIEW;
     {
         $view_name = 'companies_in_categories_overview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.companies_in_categories_overview
 AS
 SELECT cic.company_id,
@@ -63,7 +63,7 @@ SELECT cic.company_id,
     FROM companies_in_categories cic
     JOIN contact_categories cc ON cc.id = cic.category_id
     JOIN company c ON c.id = cic.company_id;
-VIEW;
+VIEW_WRAP;
 
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");

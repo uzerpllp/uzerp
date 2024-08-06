@@ -11,7 +11,7 @@ class EmployeeOverviewAddPersonalEmail extends UzerpMigration
     {
         $view_name = 'employeeoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
         CREATE OR REPLACE VIEW employeeoverview AS 
         SELECT ee.id,
            ee.person_id,
@@ -51,7 +51,7 @@ class EmployeeOverviewAddPersonalEmail extends UzerpMigration
             JOIN person p ON p.id = ee.person_id
             JOIN employee_pay_frequencies epf ON epf.id = ee.pay_frequency_id
             LEFT JOIN employee_grades eg ON eg.id = ee.employee_grade_id;
-VIEW;
+VIEW_WRAP;
 
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");

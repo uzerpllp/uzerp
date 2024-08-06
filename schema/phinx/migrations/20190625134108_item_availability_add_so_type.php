@@ -10,7 +10,7 @@ class ItemAvailabilityAddSoType extends UzerpMigration
     public function up()
     {
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.so_items AS
 SELECT sl.stitem_id,
     sl.usercompanyid,
@@ -25,7 +25,7 @@ SELECT sl.stitem_id,
     JOIN so_header sh on sh.id = sl.order_id
     WHERE sl.stitem_id IS NOT NULL AND (sl.status::text = ANY (ARRAY['N'::text, 'R'::text, 'S'::text]))
     GROUP BY sl.stitem_id, ((i.item_code::text || ' - '::text) || i.description::text), u.uom_name, i.prod_group_id, sl.usercompanyid, sh.type;
-VIEW;
+VIEW_WRAP;
     $this->query("select deps_save_and_drop_dependencies('public', '{$this->view_name}')");
     $this->query("DROP VIEW {$this->view_name}");
     $this->query($view);
@@ -36,7 +36,7 @@ VIEW;
     public function down()
     {
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.so_items AS
 SELECT sl.stitem_id,
     sl.usercompanyid,
@@ -49,7 +49,7 @@ SELECT sl.stitem_id,
     JOIN st_uoms u ON sl.stuom_id = u.id
     WHERE sl.stitem_id IS NOT NULL AND (sl.status::text = ANY (ARRAY['N'::text, 'R'::text, 'S'::text]))
     GROUP BY sl.stitem_id, ((i.item_code::text || ' - '::text) || i.description::text), u.uom_name, i.prod_group_id, sl.usercompanyid;
-VIEW;
+VIEW_WRAP;
     $this->query("select deps_save_and_drop_dependencies('public', '{$this->view_name}')");
     $this->query("DROP VIEW {$this->view_name}");
     $this->query($view);

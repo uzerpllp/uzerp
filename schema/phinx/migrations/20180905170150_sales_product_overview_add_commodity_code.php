@@ -10,7 +10,7 @@ class SalesProductOverviewAddCommodityCode extends UzerpMigration
      */
     public function up()
     {
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE OR REPLACE VIEW so_productlines_header_overview AS
 SELECT plh.id,
 plh.stitem_id,
@@ -52,7 +52,7 @@ FROM so_product_lines_header plh
     JOIN taxrates tax ON plh.tax_rate_id = tax.id
     JOIN gl_accounts gla ON plh.glaccount_id = gla.id
     JOIN gl_centres glc ON plh.glcentre_id = glc.id;
-VIEW;
+VIEW_WRAP;
 
         $viewname = 'so_productlines_header_overview';
         $this->query("select deps_save_and_drop_dependencies('public', '{$viewname}')");
@@ -64,7 +64,7 @@ VIEW;
 
     public function down()
     {
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE OR REPLACE VIEW so_productlines_header_overview AS
 SELECT plh.id,
 plh.stitem_id,
@@ -105,7 +105,7 @@ FROM so_product_lines_header plh
     JOIN taxrates tax ON plh.tax_rate_id = tax.id
     JOIN gl_accounts gla ON plh.glaccount_id = gla.id
     JOIN gl_centres glc ON plh.glcentre_id = glc.id;
-VIEW;
+VIEW_WRAP;
 
         $viewname = 'so_productlines_header_overview';
         $this->query("select deps_save_and_drop_dependencies('public', '{$viewname}')");

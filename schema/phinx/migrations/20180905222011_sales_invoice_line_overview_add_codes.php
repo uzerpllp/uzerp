@@ -9,7 +9,7 @@ class SalesInvoiceLineOverviewAddCodes extends UzerpMigration
      * Add EAN number and commodity code
      */
     public function up() {
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE OR REPLACE VIEW si_linesoverview AS 
 SELECT sl.id,
 sl.invoice_id,
@@ -70,7 +70,7 @@ LEFT JOIN st_uoms uom ON sl.stuom_id = uom.id
 LEFT JOIN st_items i ON i.id = sl.stitem_id
 LEFT JOIN so_product_lines spl ON spl.id = sl.productline_id
 LEFT JOIN so_product_lines_header sph ON sph.id = spl.productline_header_id
-VIEW;
+VIEW_WRAP;
 
         $viewname = 'si_linesoverview';
         $this->query("select deps_save_and_drop_dependencies('public', '{$viewname}')");
@@ -81,7 +81,7 @@ VIEW;
     }
 
     public function down() {
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE OR REPLACE VIEW si_linesoverview AS 
 SELECT sl.id,
 sl.invoice_id,
@@ -138,7 +138,7 @@ FROM si_lines sl
     LEFT JOIN so_header soh ON sl.sales_order_id = soh.id
     LEFT JOIN st_uoms uom ON sl.stuom_id = uom.id
     LEFT JOIN st_items i ON i.id = sl.stitem_id;
-VIEW;
+VIEW_WRAP;
 
     $viewname = 'si_linesoverview';
     $this->query("select deps_save_and_drop_dependencies('public', '{$viewname}')");

@@ -9,7 +9,7 @@ class WorkOrderOverviewStart extends UzerpMigration
     {
         $view_name = 'mf_workordersoverview';
         $view_owner = 'www-data';
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE VIEW public.mf_workordersoverview AS 
 SELECT w.id,
     w.order_qty,
@@ -44,7 +44,7 @@ SELECT w.id,
     JOIN st_items s ON w.stitem_id = s.id
     LEFT JOIN so_headeroverview soh ON w.order_id = soh.id
     LEFT JOIN so_lines sol ON w.orderline_id = sol.id
-VIEW;
+VIEW_WRAP;
 
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
@@ -57,7 +57,7 @@ VIEW;
     {
         $view_name = 'mf_workordersoverview';
         $view_owner = 'www-data';
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE VIEW public.mf_workordersoverview AS 
 SELECT w.id,
     w.order_qty,
@@ -91,7 +91,7 @@ SELECT w.id,
     JOIN st_items s ON w.stitem_id = s.id
     LEFT JOIN so_headeroverview soh ON w.order_id = soh.id
     LEFT JOIN so_lines sol ON w.orderline_id = sol.id
-VIEW;
+VIEW_WRAP;
 
 $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
 $this->query("DROP VIEW {$view_name}");

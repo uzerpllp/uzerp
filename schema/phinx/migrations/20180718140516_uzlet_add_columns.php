@@ -15,7 +15,7 @@ class UzletAddColumns extends AbstractMigration
     public function down()
     {
         // Drop and recreate the collection view
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE VIEW uzlet_modules_overview AS 
 SELECT u.id,
 u.name,
@@ -34,7 +34,7 @@ m.name AS module
 FROM uzlets u
 LEFT JOIN uzlet_modules um ON u.id = um.uzlet_id
 LEFT JOIN modules m ON m.id = um.module_id;
-VIEW;
+VIEW_WRAP;
         
         $this->query('DROP VIEW uzlet_modules_overview');
         $this->query($view);
@@ -56,7 +56,7 @@ VIEW;
         $table->save();
 
         // Update the collection view
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE VIEW uzlet_modules_overview AS 
 SELECT u.id,
 u.name,
@@ -77,7 +77,7 @@ m.name AS module
 FROM uzlets u
 LEFT JOIN uzlet_modules um ON u.id = um.uzlet_id
 LEFT JOIN modules m ON m.id = um.module_id;
-VIEW;
+VIEW_WRAP;
 
         $this->query('DROP VIEW uzlet_modules_overview');
         $this->query($view);

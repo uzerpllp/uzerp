@@ -315,7 +315,7 @@ class ReportDefinitionProFormaInvoice extends AbstractMigration
 UPDOC;
         $date = new DateTime();
         $update_time = $date->format('Y-m-d H:i:s.u');
-        $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='${update_time}', alteredby='phinx' WHERE name='SOProFormaInvoice'");
+        $rows = $this->query("UPDATE report_definitions SET definition='{$xsl}', lastupdated='{$update_time}', alteredby='phinx' WHERE name='SOProFormaInvoice'");
     }
 
     /**
@@ -612,7 +612,7 @@ UPDOC;
 </xsl:stylesheet>
 DOWNDOC;
 
-        $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='2011-05-13 11:54:55.507923', alteredby='phinx' WHERE name='SOProFormaInvoice'");
+        $rows = $this->query("UPDATE report_definitions SET definition='{$xsl}', lastupdated='2011-05-13 11:54:55.507923', alteredby='phinx' WHERE name='SOProFormaInvoice'");
     }
 }
 

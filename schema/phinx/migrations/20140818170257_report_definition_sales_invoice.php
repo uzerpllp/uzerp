@@ -400,7 +400,7 @@ class ReportDefinitionSalesInvoice extends AbstractMigration
 UPDOC;
         $date = new DateTime();
         $update_time = $date->format('Y-m-d H:i:s.u');
-        $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='${update_time}', alteredby='phinx' WHERE name='SalesInvoice'");
+        $rows = $this->query("UPDATE report_definitions SET definition='{$xsl}', lastupdated='{$update_time}', alteredby='phinx' WHERE name='SalesInvoice'");
     }
 
     /**
@@ -788,7 +788,7 @@ UPDOC;
 	</xsl:template>
 </xsl:stylesheet>
 DOWNDOC;
-        $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='2013-01-14 17:20:46.891186', alteredby='phinx' WHERE name='SalesInvoice'");
+        $rows = $this->query("UPDATE report_definitions SET definition='{$xsl}', lastupdated='2013-01-14 17:20:46.891186', alteredby='phinx' WHERE name='SalesInvoice'");
     }
 }
 

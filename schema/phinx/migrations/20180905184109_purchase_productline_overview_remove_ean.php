@@ -10,7 +10,7 @@ class PurchaseProductlineOverviewRemoveEan extends UzerpMigration
      */
     public function up()
     {
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE OR REPLACE VIEW po_productlines_overview AS 
 SELECT pl.id,
     pl.glaccount_id,
@@ -52,7 +52,7 @@ SELECT pl.id,
     JOIN cumaster cur ON pl.currency_id = cur.id
     JOIN gl_accounts gla ON pl.glaccount_id = gla.id
     JOIN gl_centres glc ON pl.glcentre_id = glc.id;
-VIEW;
+VIEW_WRAP;
 
         $viewname = 'po_productlines_overview';
         $this->query("select deps_save_and_drop_dependencies('public', '{$viewname}')");
@@ -67,7 +67,7 @@ VIEW;
      */
     public function down()
     {
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE OR REPLACE VIEW po_productlines_overview AS 
 SELECT pl.id,
     pl.glaccount_id,
@@ -110,7 +110,7 @@ SELECT pl.id,
     JOIN cumaster cur ON pl.currency_id = cur.id
     JOIN gl_accounts gla ON pl.glaccount_id = gla.id
     JOIN gl_centres glc ON pl.glcentre_id = glc.id;
-VIEW;
+VIEW_WRAP;
 
         $viewname = 'po_productlines_overview';
         $this->query("select deps_save_and_drop_dependencies('public', '{$viewname}')");

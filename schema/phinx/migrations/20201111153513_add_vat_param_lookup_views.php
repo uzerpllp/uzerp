@@ -17,22 +17,22 @@ class AddVatParamLookupViews extends UzerpMigration
     {
         $view_name = ['glparams_vat_pv', 'glparams_vat_rc'];
         $view_owner = 'www-data';
-        $view1 = <<<'VIEW'
+        $view1 = <<<'VIEW_WRAP'
     CREATE OR REPLACE VIEW glparams_vat_pv AS
     SELECT p.paramvalue_id,
         p.usercompanyid
         FROM gl_params p
         WHERE p.paramdesc::text = 'VAT Postponed Account'::text;
 
-VIEW;
+VIEW_WRAP;
     
-    $view2 = <<<'VIEW'
+    $view2 = <<<'VIEW_WRAP'
     CREATE OR REPLACE VIEW glparams_vat_rc AS
     SELECT p.paramvalue_id,
         p.usercompanyid
         FROM gl_params p
         WHERE p.paramdesc::text = 'VAT Reverse Charge Account'::text;
-VIEW;
+VIEW_WRAP;
 
         $this->query($view1);
         $this->query($view2);

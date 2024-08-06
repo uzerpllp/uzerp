@@ -22,7 +22,7 @@ class ProjectsAddKeyContact extends AbstractMigration
      */
     public function up()
     {
-		$projectsoverview = <<<'VIEW'
+		$projectsoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW projectsoverview AS 
  SELECT pr.id,
     pr.name,
@@ -66,7 +66,7 @@ CREATE OR REPLACE VIEW projectsoverview AS
    LEFT JOIN project_phases ph ON pr.phase_id = ph.id
    LEFT JOIN users u ON pr.person_id = u.person_id
    LEFT JOIN person kc ON pr.key_contact_id = kc.id;
-VIEW;
+VIEW_WRAP;
 
 		$this->query("select deps_save_and_drop_dependencies('public', 'projectsoverview')");
 		$this->query('DROP VIEW projectsoverview');
@@ -80,7 +80,7 @@ VIEW;
      */
     public function down()
     {
-		$projectsoverview = <<<'VIEW'
+		$projectsoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW projectsoverview AS 
  SELECT pr.id,
     pr.name,
@@ -122,7 +122,7 @@ CREATE OR REPLACE VIEW projectsoverview AS
    LEFT JOIN project_work_types wt ON pr.work_type_id = wt.id
    LEFT JOIN project_phases ph ON pr.phase_id = ph.id
    LEFT JOIN users u ON pr.person_id = u.person_id;
-VIEW;
+VIEW_WRAP;
 
 		$this->query("select deps_save_and_drop_dependencies('public', 'projectsoverview')");
 		$this->query('DROP VIEW projectsoverview');

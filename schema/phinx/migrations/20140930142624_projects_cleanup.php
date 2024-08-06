@@ -6,7 +6,7 @@ class ProjectsCleanup extends AbstractMigration
 {
 
     //Cache keys to be cleaned on migration/rollback
-    var $cache_keys = array(
+    public $cache_keys = array(
     'uzerp[searches][admin][project_equipment_overview_]',
     'uzerp[searches][admin][projectsoverview_]',
     'uzerp[table_fields][project_categories]',
@@ -48,7 +48,7 @@ class ProjectsCleanup extends AbstractMigration
     {
  	
         // SQL statements to create the replacement views
-        $resource_templates_overview = <<<'VIEW'
+        $resource_templates_overview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW resource_templates_overview AS 
  SELECT rt.id,
     rt.name,
@@ -66,9 +66,9 @@ CREATE OR REPLACE VIEW resource_templates_overview AS
    LEFT JOIN person p ON rt.person_id = p.id
    LEFT JOIN mf_resources rm ON rt.mfresource_id = rm.id
    LEFT JOIN resource_types ry ON rt.resource_type_id = ry.id;
-VIEW;
+VIEW_WRAP;
 
-        $hoursoverview = <<<'VIEW'
+        $hoursoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW hoursoverview AS 
  SELECT h.id,
     h.start_time,
@@ -101,9 +101,9 @@ CREATE OR REPLACE VIEW hoursoverview AS
    LEFT JOIN tasks t ON t.id = h.task_id
    LEFT JOIN tickets k ON k.id = h.ticket_id
    LEFT JOIN opportunities o ON o.id = h.opportunity_id;
-VIEW;
+VIEW_WRAP;
 
-        $task_hours_overview = <<<'VIEW'
+        $task_hours_overview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW task_hours_overview AS 
  SELECT (h.start_time || ' '::text) || h.person_id AS id,
     t.id AS task_id,
@@ -120,9 +120,9 @@ CREATE OR REPLACE VIEW task_hours_overview AS
      JOIN person u ON u.id = h.person_id
      JOIN project_resources r ON r.person_id = h.person_id AND r.task_id = t.id
      JOIN mf_resources m ON m.id = r.resource_id
-VIEW;
+VIEW_WRAP;
 
-        $project_hours_overview = <<<'VIEW'
+        $project_hours_overview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW project_hours_overview AS 
  SELECT (h.start_time || ' '::text) || h.person_id AS id,
     p.id AS project_id,
@@ -140,9 +140,9 @@ CREATE OR REPLACE VIEW project_hours_overview AS
      JOIN person u ON u.id = h.person_id
      JOIN project_resources r ON r.person_id = h.person_id AND r.project_id = p.id
      JOIN mf_resources m ON m.id = r.resource_id
-VIEW;
+VIEW_WRAP;
 
-        $opportunitiesoverview = <<<'VIEW'
+        $opportunitiesoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW opportunitiesoverview AS 
  SELECT o.id,
     o.status_id,
@@ -185,9 +185,9 @@ CREATE OR REPLACE VIEW opportunitiesoverview AS
    LEFT JOIN opportunitysource os ON o.source_id = os.id
    LEFT JOIN opportunitytype ot ON o.type_id = ot.id
    LEFT JOIN opportunitystatus ON o.status_id = opportunitystatus.id;
-VIEW;
+VIEW_WRAP;
 
-        $projectsoverview = <<<'VIEW'
+        $projectsoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW projectsoverview AS 
  SELECT pr.id,
     pr.name,
@@ -229,8 +229,8 @@ CREATE OR REPLACE VIEW projectsoverview AS
    LEFT JOIN project_work_types wt ON pr.work_type_id = wt.id
    LEFT JOIN project_phases ph ON pr.phase_id = ph.id
    LEFT JOIN users u ON pr.person_id = u.person_id
-VIEW;
-        $poheaderoverview = <<<'VIEW'
+VIEW_WRAP;
+        $poheaderoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_headeroverview AS
  SELECT po.id,
     po.order_number,
@@ -283,10 +283,10 @@ CREATE OR REPLACE VIEW po_headeroverview AS
    LEFT JOIN users pa ON po.authorised_by::text = pa.username::text
    LEFT JOIN projects p ON po.project_id = p.id
    LEFT JOIN addressoverview da ON po.del_address_id = da.id
-VIEW;
+VIEW_WRAP;
 
 
-        $poproductorders = <<<'VIEW'
+        $poproductorders = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_product_orders AS 
  SELECT ph.id,
     ph.order_number,
@@ -327,7 +327,7 @@ CREATE OR REPLACE VIEW po_product_orders AS
    FROM po_headeroverview ph
    JOIN po_lines pl ON ph.id = pl.order_id
    JOIN po_product_lines ppl ON ppl.id = pl.productline_id
-VIEW;
+VIEW_WRAP;
 
         // Drop affected views to enable tables to be modified
         $this->query('DROP VIEW resource_templates_overview');
@@ -393,7 +393,7 @@ VIEW;
     */
     public function down()
     {
-        $resource_templates_overview = <<<'VIEW'
+        $resource_templates_overview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW resource_templates_overview AS 
  SELECT rt.id,
     rt.name,
@@ -409,9 +409,9 @@ CREATE OR REPLACE VIEW resource_templates_overview AS
    FROM resource_templates rt
      LEFT JOIN person p ON rt.person_id = p.id
      LEFT JOIN resource_types ry ON rt.resource_type_id = ry.id
-VIEW;
+VIEW_WRAP;
 
-        $hoursoverview = <<<'VIEW'
+        $hoursoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW hoursoverview AS 
  SELECT h.id,
     h.start_time,
@@ -445,9 +445,9 @@ CREATE OR REPLACE VIEW hoursoverview AS
      LEFT JOIN tasks t ON t.id = h.task_id
      LEFT JOIN tickets k ON k.id = h.ticket_id
      LEFT JOIN opportunities o ON o.id = h.opportunity_id
-VIEW;
+VIEW_WRAP;
 
-        $task_hours_overview = <<<'VIEW'
+        $task_hours_overview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW task_hours_overview AS 
  SELECT (h.start_time || ' '::text) || h.person_id AS id,
     t.id AS task_id,
@@ -464,9 +464,9 @@ CREATE OR REPLACE VIEW task_hours_overview AS
      JOIN person u ON u.id = h.person_id
      JOIN project_resources r ON r.person_id = h.person_id AND r.task_id = t.id
      JOIN mf_resources m ON m.id = r.resource_id
-VIEW;
+VIEW_WRAP;
 
-        $project_hours_overview = <<<'VIEW'
+        $project_hours_overview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW project_hours_overview AS 
  SELECT (h.start_time || ' '::text) || h.person_id AS id,
     p.id AS project_id,
@@ -483,9 +483,9 @@ CREATE OR REPLACE VIEW project_hours_overview AS
      JOIN person u ON u.id = h.person_id
      JOIN project_resources r ON r.person_id = h.person_id AND r.project_id = p.id
      JOIN mf_resources m ON m.id = r.resource_id
-VIEW;
+VIEW_WRAP;
 
-        $opportunitiesoverview = <<<'VIEW'
+        $opportunitiesoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW opportunitiesoverview AS 
  SELECT o.id,
     o.status_id,
@@ -527,9 +527,9 @@ CREATE OR REPLACE VIEW opportunitiesoverview AS
      LEFT JOIN opportunitysource os ON o.source_id = os.id
      LEFT JOIN opportunitytype ot ON o.type_id = ot.id
      LEFT JOIN opportunitystatus ON o.status_id = opportunitystatus.id
-VIEW;
+VIEW_WRAP;
 
-$projectsoverview = <<<'VIEW'
+$projectsoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW projectsoverview AS 
  SELECT pr.id,
     pr.name,
@@ -570,9 +570,9 @@ CREATE OR REPLACE VIEW projectsoverview AS
      LEFT JOIN project_work_types wt ON pr.work_type_id = wt.id
      LEFT JOIN project_phases ph ON pr.phase_id = ph.id
      LEFT JOIN users u ON pr.person_id = u.person_id
-VIEW;
+VIEW_WRAP;
 
-        $poheaderoverview = <<<'VIEW'
+        $poheaderoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_headeroverview AS 
  SELECT po.id,
     po.order_number,
@@ -624,10 +624,10 @@ CREATE OR REPLACE VIEW po_headeroverview AS
    LEFT JOIN users pa ON po.authorised_by::text = pa.username::text
    LEFT JOIN projects p ON po.project_id = p.id
    LEFT JOIN addressoverview da ON po.del_address_id = da.id
-VIEW;
+VIEW_WRAP;
         
         
-        $poproductorders = <<<'VIEW'
+        $poproductorders = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_product_orders AS 
  SELECT ph.id,
     ph.order_number,
@@ -668,7 +668,7 @@ CREATE OR REPLACE VIEW po_product_orders AS
    FROM po_headeroverview ph
    JOIN po_lines pl ON ph.id = pl.order_id
    JOIN po_product_lines ppl ON ppl.id = pl.productline_id
-VIEW;
+VIEW_WRAP;
         
         
         $this->query('DROP VIEW resource_templates_overview');

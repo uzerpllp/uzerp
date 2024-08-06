@@ -12,7 +12,7 @@ class MfCentreOverviewAddAvailableQty extends UzerpMigration
     {
         $view_name = 'mf_centresoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.mf_centresoverview AS 
 SELECT c.id,
     c.work_centre,
@@ -29,7 +29,7 @@ SELECT c.id,
     d.dept AS mfdept
     FROM mf_centres c
     JOIN mf_depts d ON c.mfdept_id = d.id;
-VIEW;
+VIEW_WRAP;
 
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
@@ -45,7 +45,7 @@ VIEW;
     {
         $view_name = 'mf_centresoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.mf_centresoverview AS 
 SELECT c.id,
     c.work_centre,
@@ -61,7 +61,7 @@ SELECT c.id,
     d.dept AS mfdept
     FROM mf_centres c
     JOIN mf_depts d ON c.mfdept_id = d.id;
-VIEW;
+VIEW_WRAP;
 
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");

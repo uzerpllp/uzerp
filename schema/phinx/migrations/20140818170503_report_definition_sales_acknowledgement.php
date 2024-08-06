@@ -219,7 +219,7 @@ class ReportDefinitionSalesAcknowledgement extends AbstractMigration
 UPDOC;
         $date = new DateTime();
         $update_time = $date->format('Y-m-d H:i:s.u');
-        $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='${update_time}', alteredby='phinx' WHERE name='SOacknowledgement'");
+        $rows = $this->query("UPDATE report_definitions SET definition='{$xsl}', lastupdated='{$update_time}', alteredby='phinx' WHERE name='SOacknowledgement'");
     }
 
     /**
@@ -427,7 +427,7 @@ UPDOC;
 	</xsl:template>
 </xsl:stylesheet>
 DOWNDOC;
-        $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='2014-06-24 12:55:45', alteredby='phinx' WHERE name='SOacknowledgement'");
+        $rows = $this->query("UPDATE report_definitions SET definition='{$xsl}', lastupdated='2014-06-24 12:55:45', alteredby='phinx' WHERE name='SOacknowledgement'");
     }
 }
 

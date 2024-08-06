@@ -10,7 +10,7 @@ class PurchaseInvoiceLineOverviewAddCodes extends UzerpMigration
      */
     public function up()
     {
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE OR REPLACE VIEW pi_linesoverview AS
 SELECT pl.id,
 pl.invoice_id,
@@ -67,7 +67,7 @@ LEFT JOIN po_header poh ON pl.purchase_order_id = poh.id
 LEFT JOIN st_items i ON i.id = pl.stitem_id
         LEFT JOIN po_product_lines ppl ON ppl.id = pl.productline_id
         LEFT JOIN po_product_lines_header pph ON pph.id = ppl.productline_header_id;
-VIEW;
+VIEW_WRAP;
 
         $viewname = 'pi_linesoverview';
         $this->query("select deps_save_and_drop_dependencies('public', '{$viewname}')");
@@ -79,7 +79,7 @@ VIEW;
 
     public function down()
     {
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE OR REPLACE VIEW pi_linesoverview AS 
 SELECT pl.id,
 pl.invoice_id,
@@ -133,7 +133,7 @@ JOIN plmaster plm ON ph.plmaster_id = plm.id
 JOIN company c ON plm.company_id = c.id
 LEFT JOIN po_header poh ON pl.purchase_order_id = poh.id
 LEFT JOIN st_items i ON i.id = pl.stitem_id;
-VIEW;
+VIEW_WRAP;
 
         $viewname = 'pi_linesoverview';
         $this->query("select deps_save_and_drop_dependencies('public', '{$viewname}')");

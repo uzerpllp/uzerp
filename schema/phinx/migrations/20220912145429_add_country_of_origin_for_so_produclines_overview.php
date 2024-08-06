@@ -14,7 +14,7 @@ final class AddCountryOfOriginForSoProduclinesOverview extends UzerpMigration
     {
         $view_name = 'so_productlines_header_overview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
         CREATE OR REPLACE VIEW public.so_productlines_header_overview
         AS
         SELECT plh.id,
@@ -59,7 +59,7 @@ final class AddCountryOfOriginForSoProduclinesOverview extends UzerpMigration
             JOIN gl_accounts gla ON plh.glaccount_id = gla.id
             JOIN gl_centres glc ON plh.glcentre_id = glc.id
             LEFT JOIN countries ON countries.code = plh.country_of_origin;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -71,7 +71,7 @@ VIEW;
     {
         $view_name = 'so_productlines_header_overview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
         CREATE OR REPLACE VIEW public.so_productlines_header_overview
         AS
         SELECT plh.id,
@@ -114,7 +114,7 @@ VIEW;
             JOIN taxrates tax ON plh.tax_rate_id = tax.id
             JOIN gl_accounts gla ON plh.glaccount_id = gla.id
             JOIN gl_centres glc ON plh.glcentre_id = glc.id;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

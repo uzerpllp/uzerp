@@ -19,7 +19,7 @@ class PoProductInvoicesAddProjectId extends AbstractMigration
      */
     public function up()
     {
-        $po_product_invoices = <<<'VIEW'
+        $po_product_invoices = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_product_invoices AS 
  SELECT ph.id,
     ph.invoice_number,
@@ -68,7 +68,7 @@ CREATE OR REPLACE VIEW po_product_invoices AS
    FROM pi_headeroverview ph
      JOIN pi_lines pl ON ph.id = pl.invoice_id
      JOIN po_product_lines ppl ON ppl.id = pl.productline_id;
-VIEW;
+VIEW_WRAP;
 
         // Drop and recreate the view
         $this->query('DROP VIEW po_product_invoices');
@@ -81,7 +81,7 @@ VIEW;
      */
     public function down()
     {
-        $po_product_invoices = <<<'VIEW'
+        $po_product_invoices = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_product_invoices AS 
  SELECT ph.id,
     ph.invoice_number,
@@ -128,7 +128,7 @@ CREATE OR REPLACE VIEW po_product_invoices AS
    FROM pi_headeroverview ph
      JOIN pi_lines pl ON ph.id = pl.invoice_id
      JOIN po_product_lines ppl ON ppl.id = pl.productline_id;
-VIEW;
+VIEW_WRAP;
 
         // Drop and recreate the view
         $this->query('DROP VIEW po_product_invoices');

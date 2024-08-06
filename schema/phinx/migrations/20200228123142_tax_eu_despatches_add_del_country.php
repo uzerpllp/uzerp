@@ -16,7 +16,7 @@ class TaxEuDespatchesAddDelCountry extends UzerpMigration
     {
         $view_name = 'tax_eu_despatches';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.tax_eu_despatches
 AS
 SELECT sod.id,
@@ -56,7 +56,7 @@ SELECT sod.id,
     LEFT JOIN partyaddress ON party.id = partyaddress.party_id AND partyaddress.main
     LEFT JOIN address ON address.id = partyaddress.address_id
     LEFT JOIN countries ON address.countrycode = countries.code
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -68,7 +68,7 @@ VIEW;
     {
         $view_name = 'tax_eu_despatches';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.tax_eu_despatches
 AS
 SELECT sod.id,
@@ -105,7 +105,7 @@ SELECT sod.id,
     LEFT JOIN partyaddress ON party.id = partyaddress.party_id AND partyaddress.main
     LEFT JOIN address ON address.id = partyaddress.address_id
     LEFT JOIN countries ON address.countrycode = countries.code
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

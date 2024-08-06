@@ -14,7 +14,7 @@ class PoSoLinkOverview extends UzerpMigration
      */
     public function up()
     {
-        $po_headeroverview = <<<'VIEW'
+        $po_headeroverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_headeroverview AS
  SELECT po.id,
     po.order_number,
@@ -69,7 +69,7 @@ CREATE OR REPLACE VIEW po_headeroverview AS
      LEFT JOIN users pa ON po.authorised_by::text = pa.username::text
      LEFT JOIN projects p ON po.project_id = p.id
      LEFT JOIN addressoverview da ON po.del_address_id = da.id;
-VIEW;
+VIEW_WRAP;
         
         $this->query("select deps_save_and_drop_dependencies('public', 'po_headeroverview')");
         $this->query('DROP VIEW po_headeroverview');
@@ -84,7 +84,7 @@ VIEW;
      */
     public function down()
     {
-        $po_headeroverview = <<<'VIEW'
+        $po_headeroverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_headeroverview AS
  SELECT po.id,
     po.order_number,
@@ -138,7 +138,7 @@ CREATE OR REPLACE VIEW po_headeroverview AS
      LEFT JOIN users pa ON po.authorised_by::text = pa.username::text
      LEFT JOIN projects p ON po.project_id = p.id
      LEFT JOIN addressoverview da ON po.del_address_id = da.id;
-VIEW;
+VIEW_WRAP;
         
         $this->query("select deps_save_and_drop_dependencies('public', 'po_headeroverview')");
         $this->query('DROP VIEW po_headeroverview');

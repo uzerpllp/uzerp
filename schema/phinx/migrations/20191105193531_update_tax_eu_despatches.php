@@ -10,7 +10,7 @@ class UpdateTaxEuDespatches extends UzerpMigration
     public function up()
     {
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
         CREATE OR REPLACE VIEW public.tax_eu_despatches
         AS
         SELECT sod.id,
@@ -49,7 +49,7 @@ class UpdateTaxEuDespatches extends UzerpMigration
             LEFT JOIN countries ON address.countrycode = countries.code
         ORDER BY sod.despatch_date, c.name, sol.item_description;
 
-VIEW;
+VIEW_WRAP;
     $this->query("select deps_save_and_drop_dependencies('public', '{$this->view_name}')");
     $this->query("DROP VIEW {$this->view_name}");
     $this->query($view);
@@ -60,7 +60,7 @@ VIEW;
     public function down()
     {
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
     CREATE OR REPLACE VIEW public.tax_eu_despatches
         AS
         SELECT sod.id,
@@ -83,7 +83,7 @@ VIEW;
         LEFT JOIN st_uoms uom ON sod.stuom_id = uom.id
         LEFT JOIN sy_delivery_terms sdt ON soh.delivery_term_id = sdt.id
     ORDER BY sod.despatch_date, c.name, sol.item_description;
-VIEW;
+VIEW_WRAP;
     $this->query("select deps_save_and_drop_dependencies('public', '{$this->view_name}')");
     $this->query("DROP VIEW {$this->view_name}");
     $this->query($view);

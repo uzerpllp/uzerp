@@ -218,7 +218,7 @@ class FixSalesOrderAckPrint extends AbstractMigration
 
         $date = new DateTime();
         $update_time = $date->format('Y-m-d H:i:s.u');
-        $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='${update_time}', alteredby='2014.3.1' WHERE name='SOacknowledgement'");
+        $rows = $this->query("UPDATE report_definitions SET definition='{$xsl}', lastupdated='{$update_time}', alteredby='2014.3.1' WHERE name='SOacknowledgement'");
     }
 
     /**
@@ -425,7 +425,7 @@ class FixSalesOrderAckPrint extends AbstractMigration
 	</xsl:template>
 </xsl:stylesheet>';
 
-        $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='2011-04-07 12:30:23', alteredby=NULL WHERE name='SOacknowledgement'");
+        $rows = $this->query("UPDATE report_definitions SET definition='{$xsl}', lastupdated='2011-04-07 12:30:23', alteredby=NULL WHERE name='SOacknowledgement'");
     }
     
 }

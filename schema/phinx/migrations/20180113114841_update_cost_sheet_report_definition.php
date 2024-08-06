@@ -510,6 +510,6 @@ REPORT;
 
         $date = new DateTime();
         $update_time = $date->format('Y-m-d H:i:s.u');
-        $rows = $this->query("UPDATE report_definitions SET definition='${xsl}', lastupdated='${update_time}', alteredby='admin' WHERE name='CostSheet'");
+        $rows = $this->query("UPDATE report_definitions SET definition='{$xsl}', lastupdated='{$update_time}', alteredby='admin' WHERE name='CostSheet'");
     }
 }

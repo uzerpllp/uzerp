@@ -12,7 +12,7 @@ class PiHeaderProjectTaskLink extends AbstractMigration
     	
 // SQL statements to create the replacement views
     	
-    	$piheaderoverview = <<<'VIEW'
+    	$piheaderoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW pi_headeroverview AS 
  SELECT pi.id,
     pi.invoice_number,
@@ -68,10 +68,10 @@ CREATE OR REPLACE VIEW pi_headeroverview AS
    JOIN cumaster twc ON pi.twin_currency_id = twc.id
    JOIN syterms syt ON pi.payment_term_id = syt.id
    LEFT JOIN projects p ON pi.project_id = p.id;
-VIEW;
+VIEW_WRAP;
     
     
-    	$poproductinvoices = <<<'VIEW'
+    	$poproductinvoices = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_product_invoices AS 
  SELECT ph.id,
     ph.invoice_number,
@@ -119,7 +119,7 @@ CREATE OR REPLACE VIEW po_product_invoices AS
    JOIN pi_lines pl ON ph.id = pl.invoice_id
    JOIN po_product_lines ppl ON ppl.id = pl.productline_id;
 
-VIEW;
+VIEW_WRAP;
     
     	// Drop affected views to enable tables to be modified
     	$this->query('DROP VIEW po_product_invoices');
@@ -152,7 +152,7 @@ VIEW;
      */
     public function down()
     {
-		$piheaderoverview = <<<'VIEW'
+		$piheaderoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW pi_headeroverview AS 
  SELECT pi.id,
     pi.invoice_number,
@@ -204,10 +204,10 @@ CREATE OR REPLACE VIEW pi_headeroverview AS
    JOIN cumaster cum ON pi.currency_id = cum.id
    JOIN cumaster twc ON pi.twin_currency_id = twc.id
    JOIN syterms syt ON pi.payment_term_id = syt.id;
-VIEW;
+VIEW_WRAP;
     
     
-    	$poproductinvoices = <<<'VIEW'
+    	$poproductinvoices = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW po_product_invoices AS 
  SELECT ph.id,
     ph.invoice_number,
@@ -254,7 +254,7 @@ CREATE OR REPLACE VIEW po_product_invoices AS
    FROM pi_headeroverview ph
    JOIN pi_lines pl ON ph.id = pl.invoice_id
    JOIN po_product_lines ppl ON ppl.id = pl.productline_id;
-VIEW;
+VIEW_WRAP;
     	
     	$this->query('DROP VIEW po_product_invoices');
     	$this->query('DROP VIEW pi_headeroverview');

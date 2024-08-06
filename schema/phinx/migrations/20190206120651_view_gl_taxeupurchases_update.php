@@ -20,7 +20,7 @@ class ViewGlTaxeupurchasesUpdate extends UzerpMigration
     {
         $view_name = 'gl_taxeupurchases';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW gl_taxeupurchases AS 
 SELECT
     row_number() OVER () AS id,
@@ -55,7 +55,7 @@ SELECT
     JOIN gl_periods glp ON glp.id = tr1.glperiods_id
     WHERE tr1.source::text = 'P'::text AND (tr1.type::text = 'I'::text AND tr1.value > 0::numeric OR tr1.type::text = 'C'::text AND tr1.value < 0::numeric)
     order by 1;
-VIEW;
+VIEW_WRAP;
 
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -94,7 +94,7 @@ VIEW;
     {
         $view_name = 'gl_taxeupurchases';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW gl_taxeupurchases AS 
 SELECT tr1.id,
     tr1.docref,
@@ -124,7 +124,7 @@ SELECT tr1.id,
     JOIN tax_statuses ts ON ts.id = pih.tax_status_id AND ts.eu_tax = true
     WHERE tr1.source::text = 'P'::text AND (tr1.type::text = 'I'::text AND tr1.value > 0::numeric OR tr1.type::text = 'C'::text AND tr1.value < 0::numeric)
     order by 1;
-VIEW;
+VIEW_WRAP;
 
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

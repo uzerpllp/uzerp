@@ -12,7 +12,7 @@ class AddressOverviewDistinct extends UzerpMigration
     {
         $view_name = 'addressoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.addressoverview
 AS
 SELECT DISTINCT a.id,
@@ -34,7 +34,7 @@ SELECT DISTINCT a.id,
     FROM address a
     JOIN partyaddress pa ON pa.address_id = a.id
     JOIN countries co ON a.countrycode = co.code;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -46,7 +46,7 @@ VIEW;
     {
         $view_name = 'addressoverview';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW public.addressoverview
 AS
 SELECT a.id,
@@ -68,7 +68,7 @@ SELECT a.id,
     FROM address a
     JOIN partyaddress pa ON pa.address_id = a.id
     JOIN countries co ON a.countrycode = co.code;
-VIEW;
+VIEW_WRAP;
         $this->query("select deps_save_and_drop_dependencies('public', '{$view_name}')");
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

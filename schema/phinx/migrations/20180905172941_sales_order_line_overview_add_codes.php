@@ -7,7 +7,7 @@ class SalesOrderLineOverviewAddCodes extends UzerpMigration
 {
     public function up()
     {
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE OR REPLACE VIEW so_linesoverview AS 
 SELECT sl.id,
 sl.order_id,
@@ -75,7 +75,7 @@ FROM so_lines sl
     LEFT JOIN st_items i ON i.id = sl.stitem_id
     LEFT JOIN so_product_lines spl ON spl.id = sl.productline_id
     LEFT JOIN so_product_lines_header sph ON sph.id = spl.productline_header_id;
-VIEW;
+VIEW_WRAP;
 
         $viewname = 'so_linesoverview';
         $this->query("select deps_save_and_drop_dependencies('public', '{$viewname}')");
@@ -87,7 +87,7 @@ VIEW;
 
     public function down()
     {
-        $view = <<<VIEW
+        $view = <<<VIEW_WRAP
 CREATE OR REPLACE VIEW so_linesoverview AS 
 SELECT sl.id,
 sl.order_id,
@@ -152,7 +152,7 @@ JOIN gl_centres glc ON sl.glcentre_id = glc.id
 LEFT JOIN st_uoms uom ON sl.stuom_id = uom.id
 LEFT JOIN st_items i ON i.id = sl.stitem_id
 LEFT JOIN so_productlines_overview spl ON spl.id = sl.productline_id;
-VIEW;
+VIEW_WRAP;
 
         $viewname = 'so_linesoverview';
         $this->query("select deps_save_and_drop_dependencies('public', '{$viewname}')");

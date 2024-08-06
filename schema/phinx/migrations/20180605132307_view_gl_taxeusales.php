@@ -11,7 +11,7 @@ class ViewGlTaxeusales extends AbstractMigration
     {
         $view_name = 'gl_taxeusales';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW gl_taxeusales AS 
 SELECT tr1.id,
     tr1.docref,
@@ -40,7 +40,7 @@ SELECT tr1.id,
     JOIN company c ON slm.company_id = c.id
     JOIN tax_statuses ts ON ts.id = sih.tax_status_id AND ts.eu_tax = true
     WHERE tr1.source::text = 'S'::text AND (tr1.type::text = 'I'::text AND tr1.value <= 0::numeric OR tr1.type::text = 'C'::text AND tr1.value >= 0::numeric);
-VIEW;
+VIEW_WRAP;
 
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);
@@ -54,7 +54,7 @@ VIEW;
     {
         $view_name = 'gl_taxeusales';
         $view_owner = 'www-data';
-        $view = <<<'VIEW'
+        $view = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW gl_taxeusales AS 
 SELECT tr1.id,
     tr1.docref,
@@ -75,7 +75,7 @@ SELECT tr1.id,
     JOIN si_header sih ON sih.invoice_number = tr1.docref::integer
     JOIN tax_statuses ts ON ts.id = sih.tax_status_id AND ts.eu_tax = true
     WHERE tr1.source::text = 'S'::text AND (tr1.type::text = 'I'::text AND tr1.value <= 0::numeric OR tr1.type::text = 'C'::text AND tr1.value >= 0::numeric);
-VIEW;
+VIEW_WRAP;
 
         $this->query("DROP VIEW {$view_name}");
         $this->query($view);

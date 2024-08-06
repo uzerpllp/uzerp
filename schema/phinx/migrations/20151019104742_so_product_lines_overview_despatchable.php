@@ -16,7 +16,7 @@ class SoProductLinesOverviewDespatchable extends UzerpMigration
      */
     public function up()
     {
-        $so_productlines_overview = <<<'VIEW'
+        $so_productlines_overview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_productlines_overview AS
  SELECT pl.id,
     pl.currency_id,
@@ -62,7 +62,7 @@ CREATE OR REPLACE VIEW so_productlines_overview AS
      JOIN gl_accounts gla ON pl.glaccount_id = gla.id
      JOIN gl_centres glc ON pl.glcentre_id = glc.id
      LEFT JOIN so_price_types pt ON pl.so_price_type_id = pt.id;
-VIEW;
+VIEW_WRAP;
         
         $this->query("select deps_save_and_drop_dependencies('public', 'so_productlines_overview')");
         $this->query('DROP VIEW so_productlines_overview');
@@ -74,7 +74,7 @@ VIEW;
 
     public function down()
     {
-        $so_productlines_overview = <<<'VIEW'
+        $so_productlines_overview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_productlines_overview AS
  SELECT pl.id,
     pl.currency_id,
@@ -119,6 +119,6 @@ CREATE OR REPLACE VIEW so_productlines_overview AS
      JOIN gl_accounts gla ON pl.glaccount_id = gla.id
      JOIN gl_centres glc ON pl.glcentre_id = glc.id
      LEFT JOIN so_price_types pt ON pl.so_price_type_id = pt.id;
-VIEW;
+VIEW_WRAP;
     }
 }

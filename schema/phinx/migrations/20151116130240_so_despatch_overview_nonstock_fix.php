@@ -14,7 +14,7 @@ class SoDespatchOverviewNonstockFix extends UzerpMigration
      */
     public function up()
     {
-        $so_despatchoverview = <<<'VIEW'
+        $so_despatchoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_despatchoverview AS
  SELECT sd.id,
     sd.despatch_number,
@@ -44,7 +44,7 @@ CREATE OR REPLACE VIEW so_despatchoverview AS
      JOIN so_lines sol ON sd.orderline_id = sol.id
      JOIN company c ON sl.company_id = c.id
      JOIN st_uoms u ON u.id = sd.stuom_id;
-VIEW;
+VIEW_WRAP;
         
         $this->query("select deps_save_and_drop_dependencies('public', 'so_despatchoverview')");
         $this->query('DROP VIEW so_despatchoverview');
@@ -56,7 +56,7 @@ VIEW;
     
     public function down()
     {
-        $so_despatchoverview = <<<'VIEW'
+        $so_despatchoverview = <<<'VIEW_WRAP'
 CREATE OR REPLACE VIEW so_despatchoverview AS
  SELECT sd.id,
     sd.despatch_number,
@@ -84,7 +84,7 @@ CREATE OR REPLACE VIEW so_despatchoverview AS
      JOIN slmaster sl ON sl.id = sd.slmaster_id
      JOIN company c ON sl.company_id = c.id
      JOIN st_uoms u ON u.id = sd.stuom_id;
-VIEW;
+VIEW_WRAP;
     
         $this->query("select deps_save_and_drop_dependencies('public', 'so_despatchoverview')");
         $this->query('DROP VIEW so_despatchoverview');

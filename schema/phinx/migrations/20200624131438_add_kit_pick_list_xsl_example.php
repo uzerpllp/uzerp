@@ -459,7 +459,7 @@ $test_xml = <<<'TEST'
 </data>
 TEST;
 
-        $rows = $this->query("INSERT INTO report_definitions (name, definition, test_xml, usercompanyid) VALUES ('SOPickList_SALESKIT_example', '${template}', '${test_xml}', 1)");
+        $rows = $this->query("INSERT INTO report_definitions (name, definition, test_xml, usercompanyid) VALUES ('SOPickList_SALESKIT_example', '{$template}', '{$test_xml}', 1)");
     }
 
     public function down()
