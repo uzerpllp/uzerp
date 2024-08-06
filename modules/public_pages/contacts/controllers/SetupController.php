@@ -24,7 +24,7 @@ class SetupController extends MasterSetupController
         'company_statuses' => 'CompanyStatus',
         'company_types' => 'CompanyType',
     ];
-    
+
     #[\Override]
     protected function registerPreference()
     {

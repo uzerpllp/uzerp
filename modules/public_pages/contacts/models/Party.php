@@ -113,11 +113,11 @@ class Party extends DataObject
         $cc->add(new Constraint('party_id', '=', $this->party_id));
 
         if (! empty($title)) {
-            $cc->add(new Constraint('lower(title)', '=', strtolower($title)));
+            $cc->add(new Constraint('lower(title)', '=', strtolower((string) $title)));
         }
 
         if (! empty($note_type)) {
-            $cc->add(new Constraint('lower(note_type)', '=', strtolower($note_type)));
+            $cc->add(new Constraint('lower(note_type)', '=', strtolower((string) $note_type)));
         } else {
             $cc->add(new Constraint('note_type', '=', 'contacts'));
         }

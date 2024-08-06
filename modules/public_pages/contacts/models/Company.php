@@ -80,7 +80,7 @@ class Company extends Party
         // Make an acronym based on the name
         $letters = [];
 
-        $words = explode(' ', $companyname);
+        $words = explode(' ', (string) $companyname);
 
         $len = 1;
 
@@ -115,7 +115,7 @@ class Company extends Party
         $cc->add(new Constraint('company_id', '=', $this->id));
 
         if (! empty($_person)) {
-            $cc->add(new Constraint("lower(surname) || ', ' || lower(firstname)", 'like', strtolower($_person) . '%'));
+            $cc->add(new Constraint("lower(surname) || ', ' || lower(firstname)", 'like', strtolower((string) $_person) . '%'));
         }
 
         $person->identifierField = "surname || ', ' || firstname";
