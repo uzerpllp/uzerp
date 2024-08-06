@@ -7,18 +7,18 @@
  **/
 
 class EngineeringResourceCollection extends DataObjectCollection {
-	
-	protected $version = '$Revision: 1.2 $';
-	
+
+	protected $identifierField;
+
 	public $field;
-		
+
 	function __construct($do = 'EngineeringResource', $tablename = 'eng_resources_overview')
 	{
 		parent::__construct($do, $tablename);
-			
+
 		$this->identifierField = 'id';
 	}
-	
+
 }
 
 // End of EngineeringResourceCollection

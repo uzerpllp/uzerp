@@ -10,21 +10,21 @@ class EngineeringSearch extends BaseSearch
 {
 
 	protected $version='$Revision: 1.4 $';
-	
+
 	protected $fields=array();
-		
-	public static function workNotes($search_data=null, &$errors, $defaults=null)
+
+	public static function workNotes($search_data = null, &$errors = [], $defaults = null)
 	{
-		
+
 		$search = new EngineeringSearch($defaults);
-		
+
 		// Search by Title
 		$search->addSearchField(
 			'title',
 			'title',
 			'contains'
 			);
-		
+
 		// Search by Note
 		$search->addSearchField(
 			'note',
@@ -33,7 +33,7 @@ class EngineeringSearch extends BaseSearch
 			'',
 			'advanced'
 			);
-		
+
 		// Search by Work Schedule
 		$search->addSearchField(
 			'work_schedule_id',
@@ -51,26 +51,26 @@ class EngineeringSearch extends BaseSearch
 		$search->setSearchData($search_data, $errors, 'workNotes');
 		return $search;
 	}
-	
-	public static function workSchedules($search_data=null, &$errors, $defaults=null)
+
+	public static function workSchedules($search_data = null, &$errors = [], $defaults = null)
 	{
-		
+
 		$search = new EngineeringSearch($defaults);
-		
+
 		// Search on Job Number
 		$search->addSearchField(
 			'job_no',
 			'job_number',
 			'equal'
 		);
-		
+
 		// Search on Job Number
 		$search->addSearchField(
 			'description',
 			'description',
 			'contains'
 		);
-		
+
 		// Search on Status
 		$search->addSearchField(
 			'status',
@@ -83,7 +83,7 @@ class EngineeringSearch extends BaseSearch
 		$statuses = $project->getEnumOptions('status');
 		$options += $statuses;
 		$search->setOptions('status', $options);
-		
+
 		// Search on Work Centre
 		$search->addSearchField(
 			'centre_id',
@@ -115,7 +115,7 @@ class EngineeringSearch extends BaseSearch
 		$search->setSearchData($search_data, $errors, workSchedules);
 		return $search;
 	}
-	
+
 }
 
 // End of EngineeringSearch
