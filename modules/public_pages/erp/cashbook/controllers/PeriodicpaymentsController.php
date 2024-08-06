@@ -137,7 +137,7 @@ class PeriodicpaymentsController extends printController {
 					if (isset($set['net_value'])) {
 						$data['net_value']	= $set['net_value'];
 						$data['tax_value']	= $set['tax_value'];
-						$data['value']		= bcadd($data['net_value'], $data['tax_value']);
+						$data['value']		= bcadd((string) $data['net_value'], (string) $data['tax_value']);
 					}
 					
 					if (isset($set['gross_value'])) {
@@ -149,9 +149,9 @@ class PeriodicpaymentsController extends printController {
 					{
 						if ($pp->source=='CP')
 						{
-							$data['net_value']	= bcmul($data['net_value'], -1);
-							$data['tax_value']	= bcmul($data['tax_value'], -1);
-							$data['value']		= bcmul($data['value'], -1);
+							$data['net_value']	= bcmul((string) $data['net_value'], -1);
+							$data['tax_value']	= bcmul((string) $data['tax_value'], -1);
+							$data['value']		= bcmul((string) $data['value'], -1);
 						}
 						
 						CBTransaction::saveCashPayment($data, $errors);
@@ -216,7 +216,7 @@ class PeriodicpaymentsController extends printController {
 			sendTo($_SESSION['refererPage']['controller']
 				  ,$_SESSION['refererPage']['action']
 				  ,$_SESSION['refererPage']['modules']
-				  ,isset($_SESSION['refererPage']['other']) ? $_SESSION['refererPage']['other'] : null);
+				  ,$_SESSION['refererPage']['other'] ?? null);
 		}
 		else
 		{

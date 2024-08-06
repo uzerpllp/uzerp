@@ -140,7 +140,7 @@ class CbtransactionsController extends printController
         $transaction->transaction_date = fix_date(date(DATE_FORMAT));
 
         if ($transaction->net_value < 0) {
-            $transaction->net_value = bcmul($transaction->net_value, - 1);
+            $transaction->net_value = bcmul((string) $transaction->net_value, - 1);
             $transaction->tax_value = bcmul($transaction->tax_value, - 1);
             $transaction->gross_value = bcmul($transaction->gross_value, - 1);
         }
@@ -205,8 +205,8 @@ class CbtransactionsController extends printController
         }
 
         if ($data['type'] == 'P' || $data['type'] == 'RR') {
-            $data['net_value'] = bcmul($data['net_value'], - 1);
-            $data['tax_value'] = bcmul($data['tax_value'], - 1);
+            $data['net_value'] = bcmul((string) $data['net_value'], - 1);
+            $data['tax_value'] = bcmul((string) $data['tax_value'], - 1);
         }
 
         if (CBTransaction::saveCashPayment($data, $errors)) {
@@ -479,14 +479,14 @@ class CbtransactionsController extends printController
             $cc1->add(new Constraint('date_inactive', 'is', 'NULL'));
             $cc1->add(new Constraint('date_inactive', '>', fix_date(date(DATE_FORMAT))), 'OR');
             $cc->add($cc1);
-            
+
             $co_options = $companies->getAll($cc);
             $this->view->set('co_options', $co_options);
 
             $p_options = $this->getCompanyPeople($this->_data['CBTransaction']['company_id']);
             $this->view->set('p_options', $p_options);
         }
-        
+
         $this->view->set('gl_accounts', $gl_accounts);
         $this->view->set('gl_centres', $gl_centres);
         $this->view->set('currencies', $currencies);
@@ -526,7 +526,7 @@ class CbtransactionsController extends printController
      * Return an options array containing people
      *
      * @param string $_id  Company (contact) id
-     * @return array  or json response
+     * @return mixed  array or set json response
      */
     public function getCompanyPeople($_id = '')
     {
@@ -541,7 +541,7 @@ class CbtransactionsController extends printController
         $cc = new ConstraintChain();
         $cc->add(new Constraint('end_date', 'is', 'NULL'));
         $cc->add(new Constraint('end_date', '>', fix_date(date(DATE_FORMAT))), 'OR');
-        
+
         // Not associated with a Company
         if (empty($_id)) {
             $cc1 = new ConstraintChain();
@@ -553,12 +553,13 @@ class CbtransactionsController extends printController
             $cc1->add(new Constraint('company_id', '=', $_id));
             $cc->add($cc1);
         }
-        
+
         $p_options = $people->getAll($cc1);
 
         if (isset($this->_data['ajax'])) {
             $this->view->set('options', $p_options);
             $this->setTemplateName('select_options');
+            return;
         } else {
             return $p_options;
         }

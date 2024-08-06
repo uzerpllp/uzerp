@@ -188,8 +188,8 @@ class CBTransaction extends DataObject
         $from_values = $data;
         $to_values = $data;
 
-        $from_values['net_value'] = bcmul($from_values['net_value'], - 1);
-        $from_values['tax_value'] = bcmul($from_values['tax_value'], - 1);
+        $from_values['net_value'] = bcmul((string) $from_values['net_value'], - 1);
+        $from_values['tax_value'] = bcmul((string) $from_values['tax_value'], - 1);
 
         $from_values['glaccount_id'] = $to_values['control_glaccount_id'] = $to_account->glaccount_id;
         $from_values['glcentre_id'] = $to_values['control_glcentre_id'] = $to_account->glcentre_id;
@@ -224,30 +224,30 @@ class CBTransaction extends DataObject
             LedgerTransaction::setCurrency($from_values);
         } else {
             // to_values in base currency so copy and negate into from_values
-            $from_values['gross_value'] = bcadd($from_values['net_value'], $from_values['tax_value']);
-            $from_values['base_net_value'] = bcmul($to_values['base_net_value'], - 1);
-            $from_values['base_tax_value'] = bcmul($to_values['base_tax_value'], - 1);
-            $from_values['base_gross_value'] = bcmul($to_values['base_gross_value'], - 1);
-            $from_values['twin_net_value'] = bcmul($to_values['twin_net_value'], - 1);
-            $from_values['twin_tax_value'] = bcmul($to_values['twin_tax_value'], - 1);
-            $from_values['twin_gross_value'] = bcmul($to_values['twin_gross_value'], - 1);
+            $from_values['gross_value'] = bcadd((string) $from_values['net_value'], (string) $from_values['tax_value']);
+            $from_values['base_net_value'] = bcmul((string) $to_values['base_net_value'], - 1);
+            $from_values['base_tax_value'] = bcmul((string) $to_values['base_tax_value'], - 1);
+            $from_values['base_gross_value'] = bcmul((string) $to_values['base_gross_value'], - 1);
+            $from_values['twin_net_value'] = bcmul((string) $to_values['twin_net_value'], - 1);
+            $from_values['twin_tax_value'] = bcmul((string) $to_values['twin_tax_value'], - 1);
+            $from_values['twin_gross_value'] = bcmul((string) $to_values['twin_gross_value'], - 1);
             $from_values['twin_currency_id'] = $to_values['twin_currency_id'];
             $from_values['twin_rate'] = $to_values['twin_rate'];
         }
 
         // Now need to ensure the base and twin are equal on both sets of data
         if ($from_values['base_net_value'] != $to_values['base_net_value']) {
-            $from_values['base_net_value'] = bcadd(round(bcsub($from_values['base_net_value'], $to_values['base_net_value']) / 2, 2), 0);
-            $from_values['base_tax_value'] = bcadd(round(bcsub($from_values['base_tax_value'], $to_values['base_tax_value']) / 2, 2), 0);
-            $from_values['base_gross_value'] = bcadd($from_values['base_net_value'], $from_values['base_tax_value']);
-            $to_values['base_net_value'] = bcmul($from_values['base_net_value'], - 1);
-            $to_values['base_tax_value'] = bcmul($from_values['base_tax_value'], - 1);
+            $from_values['base_net_value'] = bcadd(round(bcsub((string) $from_values['base_net_value'], (string) $to_values['base_net_value']) / 2, 2), 0);
+            $from_values['base_tax_value'] = bcadd(round(bcsub((string) $from_values['base_tax_value'], (string) $to_values['base_tax_value']) / 2, 2), 0);
+            $from_values['base_gross_value'] = bcadd((string) $from_values['base_net_value'], $from_values['base_tax_value']);
+            $to_values['base_net_value'] = bcmul((string) $from_values['base_net_value'], - 1);
+            $to_values['base_tax_value'] = bcmul((string) $from_values['base_tax_value'], - 1);
             $to_values['base_gross_value'] = bcmul($from_values['base_gross_value'], - 1);
-            $from_values['twin_net_value'] = bcadd(round(bcsub($from_values['twin_net_value'], $to_values['twin_net_value']) / 2, 2), 0);
-            $from_values['twin_tax_value'] = bcadd(round(bcsub($from_values['twin_tax_value'], $to_values['twin_tax_value']) / 2, 2), 0);
-            $from_values['twin_gross_value'] = bcadd($from_values['twin_net_value'], $from_values['base_tax_value']);
-            $to_values['twin_net_value'] = bcmul($from_values['twin_net_value'], - 1);
-            $to_values['twin_tax_value'] = bcmul($from_values['twin_tax_value'], - 1);
+            $from_values['twin_net_value'] = bcadd(round(bcsub((string) $from_values['twin_net_value'], (string) $to_values['twin_net_value']) / 2, 2), 0);
+            $from_values['twin_tax_value'] = bcadd(round(bcsub((string) $from_values['twin_tax_value'], (string) $to_values['twin_tax_value']) / 2, 2), 0);
+            $from_values['twin_gross_value'] = bcadd((string) $from_values['twin_net_value'], (string) $from_values['base_tax_value']);
+            $to_values['twin_net_value'] = bcmul((string) $from_values['twin_net_value'], - 1);
+            $to_values['twin_tax_value'] = bcmul((string) $from_values['twin_tax_value'], - 1);
             $to_values['twin_gross_value'] = bcmul($from_values['twin_gross_value'], - 1);
         }
 
@@ -423,7 +423,7 @@ class CBTransaction extends DataObject
     /*
      * Private Functions
      */
-    private function convertValues(&$data, $type)
+    private static function convertValues(&$data, $type)
     {
         if (empty($data['rate'])) {
             $data['rate'] = 1;
@@ -432,12 +432,12 @@ class CBTransaction extends DataObject
         $data['tax_value'] = self::convertCurrency($data['tax_value'], $data['rate'], $type);
     }
 
-    private function convertCurrency($value, $rate, $type)
+    private static function convertCurrency($value, $rate, $type)
     {
         if ($type == 'D') {
-            return bcadd(round(bcdiv($value, $rate, 4), 2), 0);
+            return bcadd(round(bcdiv((string) $value, (string) $rate, 4), 2), 0);
         } else {
-            return bcadd(round(bcmul($value, $rate, 4), 2), 0);
+            return bcadd(round(bcmul((string) $value, (string) $rate, 4), 2), 0);
         }
     }
 }

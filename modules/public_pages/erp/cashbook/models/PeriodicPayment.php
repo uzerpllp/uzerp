@@ -183,12 +183,12 @@ class PeriodicPayment extends DataObject
 
                 // echo 'increment='.$increment.'<br>';
 
-                $nextdate = date(DATE_FORMAT, strtotime($increment, strtotime(fix_date($nextdate))));
+                $nextdate = date(DATE_FORMAT, strtotime($increment, strtotime((string) fix_date($nextdate))));
 
                 // echo 'New next date='.$nextdate.'<br>';
             }
 
-            $nextmonth = date('m', strtotime(fix_date($nextdate)));
+            $nextmonth = date('m', strtotime((string) fix_date($nextdate)));
 
             // echo 'Current Month='.$currentmonth.' Next Month='.$nextmonth.'<br>';
 
@@ -196,7 +196,7 @@ class PeriodicPayment extends DataObject
 
                 // skipped too many months because current day does not exist in required next month
                 // so set the date to be last day of required next month
-                $nextdate = date(DATE_FORMAT, strtotime('-1 days', strtotime(date('Y-m-01', strtotime(fix_date($nextdate))))));
+                $nextdate = date(DATE_FORMAT, strtotime('-1 days', strtotime(date('Y-m-01', strtotime((string) fix_date($nextdate))))));
             }
         } else {
             $nextdate = date(DATE_FORMAT, strtotime($increment, strtotime($this->next_due_date)));
