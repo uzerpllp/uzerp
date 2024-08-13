@@ -31,7 +31,9 @@ class EgletGraphRenderer implements Renderer {
 			case 'line':
 				$smarty->display('eglets/eglet_line_chart.tpl');
 				break;
-
+			case 'echart':
+				$smarty->display('eglets/eglet_echart.tpl');
+				break;
 		}
 
 	}
