@@ -8,8 +8,6 @@
 
 class CustomerServiceGrapher extends SimpleGraphEGlet {
 
-	protected $version='$Revision: 1.4 $';
-
 	protected $template = 'Customer_Service.tpl';
 
 	function populate() {
@@ -18,18 +16,25 @@ class CustomerServiceGrapher extends SimpleGraphEGlet {
 		$customersales	= $orders->getServiceHistory();
 
 		$category = [];
-		$ontime_data = ['name' => 'On Time', 'type' => 'bar'];
+
+		// Adding three datasets to the series. Each one must be named
+		// and have a type set.
+		$ontime_data = ['name' => 'On Time', 'type' => 'bar', 'tooltip' => ['formatter' => '{b}<br>{a} <strong>{c}</strong>%']];
+		
+
 		foreach ($customersales['previous'] as $period => $value) {
-			$category[] = $period;
+			$date = explode('/', $period);
+			$category[] = "{$date[0]} - {$date[1]}";
+			// Add data-points to the series.
 			$ontime_data['data'][] = round((float) $value['ontime%']);
 		}
 
-		$infull_data = ['name' => 'In Full', 'type' => 'bar'];
+		$infull_data = ['name' => 'In Full', 'type' => 'bar', 'tooltip' => ['formatter' => '{b}<br>{a} <strong>{c}</strong>%']];
 		foreach ($customersales['previous'] as $period => $value) {
 			$infull_data['data'][] = round((float) $value['infull%']);
 		}
 
-		$otinfull_data = ['name' => 'On Time & In Full', 'type' => 'bar'];
+		$otinfull_data = ['name' => 'On Time & In Full', 'type' => 'bar', 'tooltip' => ['formatter' => '{b}<br>{a} <strong>{c}</strong>%']];
 		foreach ($customersales['previous'] as $period => $value) {
 			$otinfull_data['data'][] = round((float) $value['ontime_infull%']);
 		}
@@ -37,8 +42,20 @@ class CustomerServiceGrapher extends SimpleGraphEGlet {
 		$options['type']		= 'echart';
 		$options['identifier']	= __CLASS__;
 
-		$chart_options= new echartOptions(xData: $category, series: [$ontime_data, $infull_data, $otinfull_data]);
+		// Create the chart options object, adding the category data and the three datasets to the series.
+		$chart_options = new echartOptions(xData: $category, series: [$ontime_data, $infull_data, $otinfull_data]);
+		// Format yAxis labels.
+		$chart_options->setOption('yAxis', ['axisLabel' => ['formatter' => '{value}%']]);
+		// Turn on the chart legend.
 		$chart_options->setOption('legend', new stdClass());
+		// Postition the chart inside the uzlet container.
+		$chart_options->setOption('grid', [
+            'left' => '10%',
+            'top' => '10%',
+            'right' => '10%',
+            'bottom' => '70px'
+        ]);
+		
 		$options['echart'] = $chart_options->getOptionsArray();
 		$this->contents = json_encode($options);
 	}
