@@ -91,6 +91,10 @@ class SInvoiceCollection extends DataObjectCollection
 		
 		foreach ($transaction_types as $transaction_type=>$transaction_type_title)
 		{
+			if (!array_key_exists($transaction_type, $multipliers)) {
+				// avoid invoice templates
+				break;
+			}
 			$sh = new SearchHandler($this, false);
 			
 			$sh->setFields(array("to_char(invoice_date, 'YYYY/MM')",'sum(base_net_value) as value'));
@@ -122,6 +126,10 @@ class SInvoiceCollection extends DataObjectCollection
 
 		foreach ($transaction_types as $transaction_type=>$transaction_type_title)
 		{
+			if (!array_key_exists($transaction_type, $multipliers)) {
+				// avoid invoice templates
+				break;
+			}
 			$cc = new ConstraintChain();
 			
 			$cc->add(new Constraint('invoice_date', 'between', "'".$lastweekstart."' and '".$lastweekend."'"));
@@ -134,6 +142,10 @@ class SInvoiceCollection extends DataObjectCollection
 		
 		foreach ($transaction_types as $transaction_type=>$transaction_type_title)
 		{
+			if (!array_key_exists($transaction_type, $multipliers)) {
+				// avoid invoice templates
+				break;
+			}
 			$cc = new ConstraintChain();
 			
 			$cc->add(new Constraint('invoice_date', 'between', "'".$thisweekstart."' and '".$thisweekend."'"));
@@ -146,6 +158,10 @@ class SInvoiceCollection extends DataObjectCollection
 
 		foreach ($transaction_types as $transaction_type=>$transaction_type_title)
 		{
+			if (!array_key_exists($transaction_type, $multipliers)) {
+				// avoid invoice templates
+				break;
+			}
 			$cc = new ConstraintChain();
 			
 			$cc->add(new Constraint('invoice_date', '=', $db->qstr(fix_date(date(DATE_FORMAT)))));
@@ -158,6 +174,10 @@ class SInvoiceCollection extends DataObjectCollection
 		
 		foreach ($transaction_types as $transaction_type=>$transaction_type_title)
 		{
+			if (!array_key_exists($transaction_type, $multipliers)) {
+				// avoid invoice templates
+				break;
+			}
 			$cc = new ConstraintChain();
 			
 			$cc->add(new Constraint('invoice_date', 'between', "'".$yearstart."' and '".$thisweekend."'"));
