@@ -17,57 +17,29 @@ class CustomerServiceGrapher extends SimpleGraphEGlet {
 		$orders			= new CustomerServiceCollection(new SInvoiceLine);
 		$customersales	= $orders->getServiceHistory();
 
-		$db = &DB::Instance();
-
-		$types = array(
-			'ontime'		=> 'On Time',
-			'infull'		=> 'In Full',
-			'ontime_infull'	=> 'On Time / In Full'
-		);
-
-		$label = array();
-
-		$type_counter	= 0;
-		$sales_counter	= 0;
-
-		foreach ($types as $key => $title) {
-
-			$data = array();
-			$sales_counter = 0;
-
-			foreach ($customersales['previous'] as $period => $value) {
-
-				$data['x'][] = $period;
-				$data['y'][] = (float) number_format($value[$key . '%'], 2);
-
-				$label[$type_counter][$sales_counter] = $title . ': ' . number_format($value[$key . '%'], 2);
-
-				$sales_counter++;
-
-			}
-
-			$options['seriesList'][] = array(
-				'label'			=> $title,
-				'legendEntry'	=> TRUE,
-				'data'			=> $data,
-				'markers'		=> array(
-					'visible'	=> TRUE,
-					'type'		=> 'circle'
-				)
-			);
-
-			$type_counter++;
-
+		$category = [];
+		$ontime_data = ['name' => 'On Time', 'type' => 'bar'];
+		foreach ($customersales['previous'] as $period => $value) {
+			$category[] = $period;
+			$ontime_data['data'][] = round((float) $value['ontime%']);
 		}
 
-		$options['type']		= 'line';
+		$infull_data = ['name' => 'In Full', 'type' => 'bar'];
+		foreach ($customersales['previous'] as $period => $value) {
+			$infull_data['data'][] = round((float) $value['infull%']);
+		}
+
+		$otinfull_data = ['name' => 'On Time & In Full', 'type' => 'bar'];
+		foreach ($customersales['previous'] as $period => $value) {
+			$otinfull_data['data'][] = round((float) $value['ontime_infull%']);
+		}
+
+		$options['type']		= 'echart';
 		$options['identifier']	= __CLASS__;
-		$options['labels']		= $label;
 
+		$chart_options= new echartOptions(xData: $category, series: [$ontime_data, $infull_data, $otinfull_data]);
+		$chart_options->setOption('legend', new stdClass());
+		$options['echart'] = $chart_options->getOptionsArray();
 		$this->contents = json_encode($options);
-
 	}
-
 }
-
-// end of CustomerServiceGrapher.php
