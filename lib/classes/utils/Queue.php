@@ -50,7 +50,7 @@ class Queue implements Countable {
 	/**
 	 * To implement Countable
 	 */
-	function count() {
+	function count(): int {
 		return count($this->data);	
 	}
 	
