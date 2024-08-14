@@ -18,6 +18,7 @@ class DataObjectCollection implements Iterator, Countable {
 	protected $_templateobject	= null;
 	protected $_valid;
 	protected $data;
+	protected $_identifierField;
 
 	public $_doname;
 	public $_tablename;

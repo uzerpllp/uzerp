@@ -80,7 +80,7 @@ function smarty_function_view_data($params, &$smarty) {
 			$value			= call_user_func(array($model, $attribute));
 		}
 		
-		if (!empty($value) && !is_string($value) && method_exists($value, '__toString'))
+		if (!empty($value) && !is_string($value) && method_exists((string) $value, '__toString'))
 		{
 			$value = $value->__toString();
 		}

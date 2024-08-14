@@ -144,13 +144,15 @@ class SInvoice extends Invoice
     {
 
         // then set these formatters here because they depend on the loaded currency_id
-        $this->getField('net_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
-        $this->getField('tax_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
-        $this->getField('gross_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
-        $this->getField('settlement_discount')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
-        $this->getField('twin_net_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
-        $this->getField('twin_tax_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
-        $this->getField('twin_gross_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
+        if (isset($this->_data['currency_id'])) {
+            $this->getField('net_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
+            $this->getField('tax_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
+            $this->getField('gross_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
+            $this->getField('settlement_discount')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
+            $this->getField('twin_net_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
+            $this->getField('twin_tax_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
+            $this->getField('twin_gross_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
+        }
     }
 
     public static function Factory($header_data, &$errors = [], $do_name = null)

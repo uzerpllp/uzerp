@@ -9,7 +9,7 @@
 /* $Revision: 1.3 $ */
 
 interface Renderer {
-	public function render(EGlet &$eglet,&$smarty);
+	public function render(EGlet &$eglet, View &$smarty);
 }
 
 // end of Renderer.php

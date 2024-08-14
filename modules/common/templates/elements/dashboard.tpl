@@ -5,7 +5,7 @@
  **}
 {* $Revision: 1.11 $ *}
 {if isset($eglets)}
-
+<script src="/assets/js/vendor/echarts/echarts.min.js">
 	<!-- dashboard specific resources -->
 	{assign var='uzletid' value=0}
 	{foreach name=dashboard key=name item=eglet from=$eglets}

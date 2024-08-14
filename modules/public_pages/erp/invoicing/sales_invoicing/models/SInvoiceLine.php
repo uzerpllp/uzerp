@@ -72,13 +72,14 @@ class SInvoiceLine extends InvoiceLine {
 	{
 
 		// then set these formatters here because they depend on the loaded currency_id
-		$this->getField('net_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
-		$this->getField('tax_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
-		$this->getField('gross_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
-		$this->getField('twin_net_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
-		$this->getField('twin_tax_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
-		$this->getField('twin_gross_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
-
+		if (isset($this->_data['currency_id'])) {
+			$this->getField('net_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
+			$this->getField('tax_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
+			$this->getField('gross_value')->setFormatter(new CurrencyFormatter($this->_data['currency_id']));
+			$this->getField('twin_net_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
+			$this->getField('twin_tax_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
+			$this->getField('twin_gross_value')->setFormatter(new CurrencyFormatter($this->_data['twin_currency_id']));
+		}
 	}
 
 	public function delete($id = \null, &$errors = array(), $archive = \FALSE, $archive_table = \null, $archive_schema = \null)
