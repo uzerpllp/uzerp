@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Fixes to enable uzERP to run under PHP 8.3. Some new language features used, breaking compatability with PHP 7.x.
 - PHP dependencies updated.
 - Begin fixes to deprecated jQuery API (move from .live to .on for UI events)
+- Begin replacing wijmo charts with Apache Echarts
 
 ## [1.33.1] 2024-06-03
 
