@@ -13,8 +13,8 @@
  *
  */
 class IndexController extends DashboardController {
-	function __construct($module=null,$view) {
-		parent::__construct($module,$view);
+	function __construct($module=null, $view=null) {
+		parent::__construct($module, $view);
 	}
 }
 
