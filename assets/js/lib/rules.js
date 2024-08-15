@@ -639,7 +639,7 @@ $(document).ready(function () {
 	});
 	
 	// eglet a.ajax
-	$('.eglet a.ajax').on('click', function (event) {
+	$(document).on('click', '.eglet a.ajax', function (event) {
 		event.preventDefault();
 		
 		var $self = $(this),
