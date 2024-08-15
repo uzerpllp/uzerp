@@ -18,7 +18,7 @@ class EgletGraphRenderer implements Renderer {
 		$smarty->assign('identifier', $options->identifier);
 		$smarty->assign('options', $json_options);
 
-		switch (strtolower($options->type)) {
+		switch (strtolower((string) $options->type)) {
 
 			case 'pie':
 				$smarty->display('eglets/eglet_pie_chart.tpl');
@@ -31,6 +31,7 @@ class EgletGraphRenderer implements Renderer {
 			case 'line':
 				$smarty->display('eglets/eglet_line_chart.tpl');
 				break;
+
 			case 'echart':
 				$smarty->display('eglets/eglet_echart.tpl');
 				break;
