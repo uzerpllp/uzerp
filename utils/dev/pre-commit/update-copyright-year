@@ -5,6 +5,7 @@ YEAR=$(date +%Y)
 for file in "$@"
 do
     # Update copyright year, if present
+    sed -i s/\(c\)\ []0-9]*\-[0-9]*/\(c\)\ ${YEAR}/g $file
     sed -i s/\(c\)\ [0-9][0-9][0-9][0-9]/\(c\)\ ${YEAR}/g $file
 
     sed -i '/\$Revision\:/d' $file
