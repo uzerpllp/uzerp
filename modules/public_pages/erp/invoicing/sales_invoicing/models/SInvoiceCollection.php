@@ -34,6 +34,12 @@ class SInvoiceCollection extends DataObjectCollection
 
 	function getSalesHistory()
 	{
+		$cache = Cache::Instance();
+        $customersales = $cache->get('saleshistory');
+        if (!empty($customersales)) {
+			return $customersales;
+        }
+
 		$db = DB::Instance();
 		
 		$startmonth		= fix_date('01/'.date('m/Y'));
@@ -188,6 +194,8 @@ class SInvoiceCollection extends DataObjectCollection
 			$this->customerorders['current']['year_to_date']['value'] = bcadd($value,(string) $this->customerorders['current']['year_to_date']['value']);
 		}		
 		
+
+		$cache->add('saleshistory', $this->customerorders, 3600);
 		return $this->customerorders;
 	}
 	

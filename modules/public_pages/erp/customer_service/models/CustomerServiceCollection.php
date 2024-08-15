@@ -122,6 +122,11 @@ class CustomerServiceCollection extends DataObjectCollection
 	
 	function getServiceHistory()
 	{
+		$cache = Cache::Instance();
+        $customerorders = $cache->get('crservicehistory');
+        if (!empty($customerorders)) {
+			return $customerorders;
+        }
 		
 		$enddate	= fix_date('01/' . date('m/Y'));
 		$startdate	= fix_date(date(DATE_FORMAT, strtotime("-12 months", strtotime((string) $enddate))));
@@ -185,6 +190,7 @@ class CustomerServiceCollection extends DataObjectCollection
 			
 		}
 		
+		$cache->add('crservicehistory', $this->customerorders, 3600);
 		return $this->customerorders;
 		
 	}
