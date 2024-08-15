@@ -10,7 +10,7 @@ class SimpleRenderer implements Renderer
 {
 	protected $cache_lifetime;
 
-	public function render(EGlet &$eglet, &$smarty)
+	public function render(EGlet &$eglet, View &$smarty)
 	{
 
 		if ($eglet->should_render)
@@ -58,7 +58,7 @@ class SimpleRenderer implements Renderer
 				$smarty->assign('controller', $controller);
 			}
 
-			$smarty->cache_lifetime = 200;
+			$smarty->setCacheLifetime(200);
 
 			echo $smarty->fetch($eglet->getTemplate());
 		}
