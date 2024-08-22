@@ -694,7 +694,7 @@ function with(&$params, &$smarty)
  * @return String
  */
 function uzh($string, $quote_style = ENT_NOQUOTES) {
-	return nl2br(htmlentities($string, $quote_style, 'UTF-8'));
+	return nl2br(htmlentities($string, $quote_style, 'UTF-8', false));
 }
 
 function u($string)
