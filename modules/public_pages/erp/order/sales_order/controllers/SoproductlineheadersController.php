@@ -478,6 +478,7 @@ class soproductlineheadersController extends printController
         $s_data['productline_header_id'] = $this->_data['id'];
 
         $this->setSearch('productlinesSearch', 'customerOrders', $s_data);
+        $this->search->disable_field_selection = true;
 
         $this->view();
 
@@ -512,6 +513,7 @@ class soproductlineheadersController extends printController
         $s_data['productline_header_id'] = $this->_data['id'];
 
         $this->setSearch('productlinesSearch', 'customerInvoices', $s_data);
+        $this->search->disable_field_selection = true;
 
         $this->view();
 

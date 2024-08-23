@@ -1061,6 +1061,7 @@ class soproductlinesController extends printController
 		}
 
 		$this->setSearch('productlinesSearch', 'soheaderLines', $s_data);
+		$this->search->disable_field_selection = true;
 
 // Load the Product Header
 		$product = DataObjectFactory::Factory('SOProductlineHeader');

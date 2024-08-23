@@ -343,6 +343,7 @@ class PoproductlinesController extends printController {
 		}
 
 		$this->setSearch('productlinesSearch', 'poheaderLines', $s_data);
+		$this->search->disable_field_selection = true;
 
 // Load the Product Header
 		$product = DataObjectFactory::Factory('POProductlineHeader');
