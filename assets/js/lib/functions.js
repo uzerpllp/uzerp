@@ -1069,3 +1069,29 @@ class delayBlockUI {
 		$.unblockUI();
 	}
 };
+
+/**
+ * Replace the inner HTML of an element
+ * 
+ * Ensures that inline scripts in the new html runs.
+ *
+ * @param {*} elm  element
+ * @param {*} html  innerHTML
+ */
+function setInnerHTML(elm, html) {
+	elm.innerHTML = html;
+	
+	Array.from(elm.querySelectorAll("script"))
+		.forEach( oldScriptEl => {
+		const newScriptEl = document.createElement("script");
+		
+		Array.from(oldScriptEl.attributes).forEach( attr => {
+			newScriptEl.setAttribute(attr.name, attr.value) 
+		});
+		
+		const scriptText = document.createTextNode(oldScriptEl.innerHTML);
+		newScriptEl.appendChild(scriptText);
+		
+		oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
+	});
+};
