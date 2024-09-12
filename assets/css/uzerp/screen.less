@@ -23,13 +23,14 @@
 		body {
 			background-color: @date-picker-background; 
 			color: @date-picker-text;
-			font-family: Tahoma, Helvetica, Arial,Verdana, sans-serif;
-			font-size: 100%;
+			font-family: Inter, Tahoma, Helvetica, Arial, Verdana, sans-serif;
 			font-style: normal;
 			font-weight: normal;
 			letter-spacing: normal;
 			padding: 10px;
 			overflow: auto;
+			min-height: 100vh;
+			font-size: 75%;
 		}
 		
 		/* for image replacement */
@@ -40,18 +41,15 @@
 	
 		h1 {
 			color: @h1-text;
-			font-family: Helvetica, Arial, Verdana, sans-serif;
 			font-size: 17px;
 			padding-left: 3px;
 		}
 		
 		h2 {
-			font-family: Helvetica, Arial, Verdana, sans-serif;
 			font-size: 13px;
 		}
 		
 		h3 {
-			font-family: Helvetica, Arial, Verdana, sans-serif;
 			font-size: 11px;
 		}
 	
@@ -201,7 +199,6 @@
 	#main_with_sidebar, #main_without_sidebar {
 		background-color: @sidebar-background;
 		border: 1px solid @sidebar-border;
-		font-size: 11px;
 		padding: 15px;
 		height: 630px;
 		overflow-y: auto;
@@ -660,7 +657,6 @@
 		}
 		h3 {
 			color: #2E2E2E;
-			font-family: Helvetica, Arial, Verdana, sans-serif;
 			font-size: 13px;
 			font-weight: bold;
 			padding: 3px 15px 3px 10px;
@@ -676,7 +672,7 @@
 			border-radius: 5px;
 			li {
 				border-bottom: 1px solid @border1;
-				line-height: 18px;
+				line-height: 1.1rem;
 				list-style-type: none;
 			}
 			li:first-child {
@@ -693,7 +689,6 @@
 	}
 	
 	.sidebar_component {
-		font-size: 11px;
 		margin-bottom: 15px;
 		h3 {
 			font-size: 13px;
@@ -750,7 +745,7 @@
 	.egbox {
 		display: grid;
 		grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
-		grid-auto-rows: minmax(309px,auto);
+		grid-auto-rows: minmax(100px,auto);
 		grid-gap: 2em;
 		grid-auto-flow: dense;
 	}
@@ -813,8 +808,14 @@
 			animation: fadeIn 0.25s;
 		}
 
-		display: grid;
-		height: 100%;
+		border: 1px solid var(--border-1);
+		border-radius: 5px;
+	}
+
+	.eglet .heading {
+		color: #000;
+		background-color: var(--border-1);
+		padding: 5px;
 	}
 
 	.eglet_body > div > div {
@@ -1085,7 +1086,6 @@
 			border-bottom: 1px solid @border1;
 			display: inline;
 			float: left;
-			font-size: 11px;
 			font-weight: bold;
 			line-height: 24px;
 			margin-left: 1px;
@@ -1695,7 +1695,6 @@
 		text-align: center;
 	}
 
-
 /** report styling **/
 
 	#report_preview, #timesheet_table {
@@ -1720,7 +1719,6 @@
 	
 	tr.report_titles {
 		border-bottom: 1px solid #009DCC;
-		font-size: 11px;
 		font-weight: bold;
 	}
 	
@@ -2139,6 +2137,30 @@
 
 .dialog-form {
 	display: none;
+}
+
+/** Form Errors **/
+
+#data_grid_search .field-error{
+	clear: both;
+	float: left;
+	margin-left: 151px;
+}
+
+.field-error {
+	border-left: 2px solid #b90202;
+	padding-left: 3px;
+	vertical-align: middle;
+	display: table-cell;
+	padding: 3px;
+	color: #b90202;
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 1.6em;
+}
+
+#advanced_search.show {
+	display: block !important;
 }
 
 /** Error Page **/

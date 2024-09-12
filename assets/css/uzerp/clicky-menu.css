@@ -283,6 +283,16 @@ ul.panel {
   top: 0;
 }
 
+.panel > li {
+  padding: 5px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.panel li {
+  background: #fff;
+}
+
 .panel > li > ul {
   margin: 0.5em 0 1em 0;
 }
@@ -291,6 +301,8 @@ ul.panel {
 .panel .nav-group-title {
   color: var(--light-brand-color);
   font-weight: bold;
+  background-color: var(--background-1);
+  border-radius: 3px;
 }
 
 .panel li a,
