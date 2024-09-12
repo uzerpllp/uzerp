@@ -8,6 +8,11 @@
 
 @media screen {
 
+	:root { font-family: "Inter", sans-serif; }
+	@supports (font-variation-settings: normal) {
+  		:root { font-family: "InterVariable", sans-serif; font-optical-sizing: auto; }
+	}
+
 /** generic styling **/
 
 	/** resets and general elements **/
@@ -23,7 +28,6 @@
 		body {
 			background-color: @date-picker-background; 
 			color: @date-picker-text;
-			font-family: Inter, Tahoma, Helvetica, Arial, Verdana, sans-serif;
 			font-style: normal;
 			font-weight: normal;
 			letter-spacing: normal;
@@ -88,7 +92,7 @@
 			margin-top: 10px;
 			width: 100%;
 			tr {
-				line-height: 16px;
+				line-height: 1.1rem;
 			}
 		}
 		
@@ -994,6 +998,7 @@
 			padding: 2px 5px;
 			vertical-align: top;
 			position: relative;
+			font-feature-settings: 'tnum' 1;
 			&.sub_total {
 				background-color: #ADD8E6;
 				background-color: rgba(0, 100, 255, 0.15); /* lets use a transparent bgcolor for those browsers that support it. */
@@ -2148,16 +2153,18 @@
 }
 
 .field-error {
-	border-left: 2px solid #b90202;
 	padding-left: 3px;
 	vertical-align: middle;
 	display: table-cell;
 	padding: 3px;
 	color: #b90202;
-	font-size: 12px;
 	font-weight: bold;
-	line-height: 1.6em;
+	line-height: 1.2rem;
 }
+
+.field-error::before {
+	content: '* ';
+  }
 
 #advanced_search.show {
 	display: block !important;
