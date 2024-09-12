@@ -37,8 +37,8 @@ class CheckboxSearchField extends SearchField {
 
 	public function toHTML()
 	{
-		$html = '<input type="checkbox" class="checkbox" value="' . $this->on_value . '" name="Search[' . $this->fieldname . ']" id="search_' . $this->fieldname . '" ' . (($this->checked) || (!$this->value_set && $this->default)?'checked="checked"':'') . " /></li>" . "\n";
-		return $this->labelHTML() . $html;
+		$html = '<input type="checkbox" class="checkbox" value="' . $this->on_value . '" name="Search[' . $this->fieldname . ']" id="search_' . $this->fieldname . '" ' . (($this->checked) || (!$this->value_set && $this->default)?'checked="checked"':'') . " />";
+		return "<li>{$this->labelHTML()}\n{$html}\n</li>";
 	}
 
 	/**

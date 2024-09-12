@@ -184,7 +184,7 @@ abstract class SearchField {
 	{
 
 		// change to facilitate sortable fields
-		$html = '<li><label for="search_' . str_replace('/', '_', $this->fieldname) . '">' . prettify($this->label) . '</label>';
+		$html = '<label for="search_' . str_replace('/', '_', $this->fieldname) . '">' . prettify($this->label) . '</label>';
 
 		return $html;
 

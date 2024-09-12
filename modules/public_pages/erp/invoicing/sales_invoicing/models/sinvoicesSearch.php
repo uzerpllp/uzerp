@@ -93,16 +93,16 @@ class sinvoicesSearch extends BaseSearch
 		$search->addSearchField(
 			'invoice_number',
 			'invoice_number',
-			'equal-integer',
+			'equal',
 			'',
-			'advanced'
+			'basic'
 		);
 
 		// Search by Sales Order Number
 		$search->addSearchField(
 			'sales_order_number',
 			'sales_order_number',
-			'equal-integer',
+			'equal',
 			'',
 			'advanced'
 		);

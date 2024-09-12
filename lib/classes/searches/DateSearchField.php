@@ -25,6 +25,15 @@ class DateSearchField extends SearchField {
 	 */
 	public function toHTML()
 	{
+		$flash = Flash::Instance();
+		$errors = $flash->getMessages('errors');
+		if (array_key_exists($this->fieldname, $errors)) {
+			$field_error_markup = "<span class=\"field-error\">{$errors[$this->fieldname]}</span>";
+			$field_error_wrapper_class = 'class="form-error"';
+		} else {
+			$field_error_markup = "";
+			$field_error_wrapper_class = "";
+		}
 
 		$value = $this->value;
 
@@ -33,8 +42,9 @@ class DateSearchField extends SearchField {
 			$value = $this->default;
 		}
 
-		$html = '<input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . $value . '" /></li>';
-		return $this->labelHTML() . $html;
+		$field_markup = '<input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . $value . '" />';
+		$html = "<li {$field_error_wrapper_class}>{$this->labelHTML()}\n{$field_markup}{$field_error_markup}</li>\n";
+		return $html;
 
 	}
 
@@ -127,12 +137,12 @@ class DateSearchField extends SearchField {
 
 			if (!strtotime((string) fix_date($value)))
 			{
-				$errors[] = 'Search on ' . prettify($this->label) . ' needs to be a date';
+				$errors[$this->fieldname] = 'Search on ' . prettify($this->label) . ' needs to be a date';
 				return FALSE;
 			}
 			elseif (date(DATE_FORMAT, strtotime((string) fix_date($value))) != $value)
 			{
-				$errors[] = 'Invalid date ' . $value . ' for search on ' . prettify($this->label);
+				$errors[$this->fieldname] = 'Invalid date ' . $value . ' for search on ' . prettify($this->label);
 				return FALSE;
 			}
 

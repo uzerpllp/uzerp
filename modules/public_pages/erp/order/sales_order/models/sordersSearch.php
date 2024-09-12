@@ -46,7 +46,7 @@ class sordersSearch extends BaseSearch
 		$search->addSearchField(
 			'order_number',
 			'order_number',
-			'equal-integer',
+			'equal',
 			'',
 			'basic'
 		);

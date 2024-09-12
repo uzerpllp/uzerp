@@ -71,7 +71,7 @@ class NumericSearchField extends TextSearchField
 
 		if (!empty($value) && !is_numeric($value))
 		{
-			$errors[] = prettify($this->label) . ' needs to be numeric';
+			$errors[$this->fieldname] = prettify($this->label) . ' needs to be numeric';
 			return FALSE;
 		}
 

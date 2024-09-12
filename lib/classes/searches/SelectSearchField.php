@@ -50,12 +50,12 @@ class SelectSearchField extends SearchField {
 
 			}
 				
-			$html .= '</select></li>';
+			$html .= '</select>';
 	
 		}
 		
 		
-		return $this->labelHTML() . $html;
+		return "<li>\n{$this->labelHTML()}\n{$html}</li>";
 		
 	}
 

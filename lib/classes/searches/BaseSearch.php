@@ -99,9 +99,10 @@ class BaseSearch
 
                     if (isset($search_data[$fieldname])) {
 
-                        if ($searchField->isValid($search_data[$fieldname], $errors)) {
+                       // if ($searchField->isValid($search_data[$fieldname], $errors)) {
+                            $searchField->isValid($search_data[$fieldname], $errors);
                             $searchField->setValue($search_data[$fieldname]);
-                        }
+                        //}
                     }
                 }
             }

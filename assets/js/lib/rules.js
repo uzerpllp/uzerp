@@ -504,9 +504,19 @@ $(document).ready(function () {
 	// Set-up drag and drop on page load
 	drag_drop_fields();
 
-	// Set-up drag and drop after ajax replaces the data section
+	
 	$(document).on('change','#included_file', function(){
+		// Set-up drag and drop after ajax replaces the data section
 		drag_drop_fields();
+
+		// Open advanced search are if there are form errors to show
+		var  advancedSearch = document.getElementById('advanced_search')
+		if (advancedSearch) {
+			var advanceSearchErrors = advancedSearch.getElementsByClassName('form-error')
+			if (advanceSearchErrors.length > 0) {
+				advancedSearch.classList.add('show')
+			}
+		}
 	});
 
 		
@@ -913,9 +923,12 @@ $(document).ready(function () {
 		{
 			$self.removeClass('closed');
 			$self.addClass('open');
-		} else {
+		} else if ($self.hasClass('open')) {
 			$self.removeClass('open');
 			$self.addClass('closed');
+		}
+		else {
+			return
 		}
 	
 		$next.slideToggle( 100, 'linear' , function () {

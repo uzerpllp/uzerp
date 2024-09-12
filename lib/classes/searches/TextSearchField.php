@@ -13,10 +13,12 @@ class TextSearchField extends SearchField {
 		$flash = Flash::Instance();
 		$errors = $flash->getMessages('errors');
 		if (array_key_exists($this->fieldname, $errors)) {
-			$class = 'field-error';
-			$error_message = $errors[$this->fieldname];
+			$field_error_markup = "<span class=\"field-error\">{$errors[$this->fieldname]}</span>";
+			$field_error_wrapper_class = 'class="form-error"';
+		} else {
+			$field_error_markup = "";
+			$field_error_wrapper_class = "";
 		}
-		$error_str = "class=\"{$class}\" data-field-error=\"{$error_message}\"";
 
 		$value = $this->value;
 		
@@ -26,9 +28,9 @@ class TextSearchField extends SearchField {
 		}
 		
 		// change to facilitate list
-		$html = '<input '.$error_str.' type="text" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . uzh(stripslashes((string) $value)) . '" /></li>';
-		
-		return $this->labelHTML() . $html;
+		$field_markup = '<input type="text" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . ']" value="' . uzh(stripslashes((string) $value)) . '" />';
+		$html = "<li {$field_error_wrapper_class}>{$this->labelHTML()}\n{$field_markup}{$field_error_markup}</li>\n";
+		return $html;
 		
 	}
 	
