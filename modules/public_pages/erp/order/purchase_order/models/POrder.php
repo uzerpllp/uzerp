@@ -341,7 +341,7 @@ class POrder extends SPOrder {
 			if (!is_null($this->authorised_by) && EGS_USERNAME == $this->authorised_by && $this->base_net_value>0 && $porderlines_summary->count()>0)
 			{
 				$this->type='O';
-				$this->date_authorised=date(DATE_FORMAT);
+				$this->date_authorised=fix_date(date(DATE_FORMAT));
 			}
 			elseif ($this->type=='O')
 			{
