@@ -14,8 +14,7 @@
         "vlucas/phpdotenv": "^5.4",
         "twilio/sdk": "^6.40",
         "endroid/qr-code": "^3.9",
-        "league/csv": "^9.7",
-        "pestphp/pest": "2.*"
+        "league/csv": "^9.7"
     },
 
     "autoload": {
@@ -38,6 +37,7 @@
         }
     },
     "require-dev": {
+        "pestphp/pest": "2.*",
         "rector/rector": "^1.2.0",
         "symplify/easy-coding-standard": "^11.2"
     }
