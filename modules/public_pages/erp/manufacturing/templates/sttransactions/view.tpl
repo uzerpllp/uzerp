@@ -23,7 +23,7 @@
 			{view_data model=$transaction label='Quantity Moved' attribute="positive_qty()"}
 			{view_data model=$transaction label='Quantity Yet To Move' attribute="positive_error_qty()"}
 			{view_data model=$transaction label='Balance at create date' attribute="balance"}
-			{view_data model=$transaction attribute="current_balance()"}
+			{view_data model=$transaction attribute="current_balance"}
 			{if $transaction->status == 'E'}
 				{view_data model=$transaction label='Balance If Resolved' attribute="resolved_balance()"}
 			{/if}
