@@ -44,18 +44,20 @@ class STBalance extends DataObject
 		return $balance->getSum('balance', $field, 'st_balancesoverview');
 	}
 
-	public function save($debug = false)
+	public function save($debug = false, &$errors = [])
 	{
 		if ($this->balance < 0)
 		{
 			$errors[] = 'You do not have sufficient balance of '.$this->stitem.' at '.$this->whlocation;
+			return false;
 		}
 		else
 		{
-			parent::save();
+			return parent::save();
 		}
+		return true;
 	}
-        
+
 	static function getStockList($whlocation_id='')
 	{
 		//Get the obsolete items
@@ -70,17 +72,17 @@ class STBalance extends DataObject
 		
 		$cc = new ConstraintChain();
 		
-		if (!is_array($whlocation_id))
+		if (!is_countable($whlocation_id))
 		{
 			$whlocation_id = array($whlocation_id);
 		}
 		
-		if ( count($whlocation_id)>0 )
+		if ( is_countable($whlocation_id) && count($whlocation_id) > 0 )
 		{
 			$cc->add(new Constraint('whlocation_id', 'in', '('.implode(',', $whlocation_id).')'));
 		}
 
-		if (count($obsolete_ids) > 0) {
+		if (count($obs_ids) > 0) {
 			$cc->add(new Constraint('stitem_id','<> ANY', "(VALUES {$obsolete_ids})"));
 		}
 		
