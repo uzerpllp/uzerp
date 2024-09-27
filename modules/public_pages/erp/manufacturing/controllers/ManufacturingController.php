@@ -48,11 +48,11 @@ class ManufacturingController extends printController {
 		if (!$this->CheckParams('STTransaction')) {
 			sendBack();
 		}
-		$flash=Flash::Instance();
+		$flash = Flash::Instance();
+		$errors = [];
 
 		$db = DB::Instance();
 		$db->StartTrans();
-		$errors=array();
 		$data=$this->_data['STTransaction'];
 		$stitem=new STItem();
 		$stitem->load($data['stitem_id']);
@@ -65,7 +65,7 @@ class ManufacturingController extends printController {
 			$models=STTransaction::prepareMove($data, $errors);
 			if (count($errors)==0) {
 				foreach ($models as $model) {
-					$result=$model->save($errors);
+					$result=$model->save(false, $errors);
 					if($result===false) {
 						$db->FailTrans();
 					}
