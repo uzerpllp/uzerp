@@ -6,7 +6,7 @@
  *	Released under GPLv3 license; see LICENSE. 
  **/
 
-class LedgerTransaction extends DataObject
+abstract class LedgerTransaction extends DataObject
 {
 
 	protected $version='$Revision: 1.33 $';
@@ -104,28 +104,24 @@ class LedgerTransaction extends DataObject
 
 	public function saveForPayment(&$errors = array())
 	{
-		if (parent::save() === false)
-		{
+		if (parent::save() === false) {
 			$db=DB::Instance();
 			$errors[] = 'Error saving transaction : '.$db->errorMsg();
 			return FALSE;
 		}
 
-		//return $this->update_owner_balance($errors);
-		return true;
+		// Update the customer/supplier os balance
+		return $this->update_owner_balance($errors);
 	}
 
 	public function save($debug = false)
 	{
-
-		if (!parent::save())
-		{
+		if (!parent::save()) {
 			return false;
 		}
 
-		//return $this->update_owner_balance();	
-		return true;
-
+		// Update the customer/supplier os balance
+		return $this->update_owner_balance();
 	}
 
 	public static function saveTransaction(&$data, &$errors = [])
@@ -376,27 +372,33 @@ class LedgerTransaction extends DataObject
 	 * Private Functions
 	 */
 
-	 // Still used?
-	// private function update_owner_balance(&$errors = array())
-	// {
+	/**
+	 * Update balances on the source ledger, e.g. SL or PL
+	 *
+	 * @param array $errors
+	 * @return boolean
+	 */
+	private function update_owner_balance(&$errors = array())
+	{
+		$owner = $this->getOwner();
 
-	// 	$owner = $this->getOwner();
+		if (!$owner->isLoaded())
+		{
+			$errors[] = 'Error loading '.get_class($owner).' to update balance';
+			return FALSE;
+		}
 
-	// 	if (!$owner->isLoaded())
-	// 	{
-	// 		$errors[] = 'Error loading '.get_class($owner).' to update balance';
-	// 		return FALSE;
-	// 	}
+		if (!$owner->updateBalance($this))
+		{
+			$db = DB::Instance();
+			$errors[] = 'Error updating '.get_class($owner).' balance : '.$db->ErrorMsg();
+			return FALSE;
+		}
 
-	// 	if (!$owner->updateBalance($this))
-	// 	{
-	// 		$db = DB::Instance();
-	// 		$errors[] = 'Error updating '.get_class($owner).' balance : '.$db->ErrorMsg();
-	// 		return FALSE;
-	// 	}
+		return TRUE;
+	}
 
-	// 	return TRUE;
-	// }
+	abstract public function getOwner();
 }
 
 // End of LedgerTransaction
