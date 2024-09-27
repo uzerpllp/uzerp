@@ -1217,7 +1217,8 @@ class SlcustomersController extends LedgerController
             $options = [];
             $options[''] = 'Default';
             $invoice_layouts->load($sh, null);
-            if (count($invoice_layouts > 0)) {
+            
+            if (is_countable($invoice_layouts)) {
                 foreach($invoice_layouts as $layout) {
                     $options[$layout->id] = $layout->name;
                 }
