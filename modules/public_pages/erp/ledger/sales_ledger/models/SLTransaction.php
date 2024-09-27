@@ -69,6 +69,12 @@ class SLTransaction extends LedgerTransaction
 
 	}
 
+	/**
+	 * Return the owning SLCustomer model
+	 *
+	 * @return SLCustomer
+	 * @see LedgerTransaction::getOwner()
+	 */
 	public function getOwner()
 	{
 		$customer = DataObjectFactory::Factory('SLCustomer');

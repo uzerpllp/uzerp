@@ -398,6 +398,11 @@ abstract class LedgerTransaction extends DataObject
 		return TRUE;
 	}
 
+	/**
+	 * Return the owning Ledger Customer/Supplier model
+	 *
+	 * @return mixed (SLMaster, PLMaster, etc.)
+	 */
 	abstract public function getOwner();
 }
 
