@@ -302,7 +302,7 @@ class STTransaction extends DataObject
 
 	}
 
-	public function save($debug = false)
+	public function save($debug = false, &$errors = [])
 	{
 // Save the transaction record
 // and insert/balances associated with the location
@@ -361,7 +361,7 @@ class STTransaction extends DataObject
 
 			if (count($errors)==0)
 			{
-				$stbalance->save($errors);
+				$stbalance->save(false, $errors);
 			}
 
 			if (count($errors) > 0)
