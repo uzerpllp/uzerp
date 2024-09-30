@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
 - Begin fixes to deprecated jQuery API (move from .live to .on for UI events)
 - Begin replacing wijmo charts with Apache Echarts
 
+### Added
+
+- Enter optional Ext. Ref. on contra's in Sales and Purchase Ledger
+
 ## [1.33.1] 2024-06-03
 
 ### Fixed
