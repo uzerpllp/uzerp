@@ -79,10 +79,20 @@
 			{if $can_contra}
 				<tr>
 					<td align='right' colspan=4>
-						Contra total
+						<label for="contra_total">Contra total</label>
 					</td>
-					<td align='right'>
+					<td>
 						<input type='text' class="numeric" name="contra_total" id="contra_total" value={$contra_total|string_format:"%.2f"} readonly>
+					</td>
+					<td align='right' colspan=8>
+					</td>
+				</tr>
+				<tr>
+					<td align='right' colspan=4>
+						<label for="contra_total">Contra Ext. Ref. (optional)</label>
+					</td>
+					<td>
+						<input type='text' name="contra_ext_ref" id="contra_ext_ref" value="">
 					</td>
 					<td align='right' colspan=8>
 					</td>

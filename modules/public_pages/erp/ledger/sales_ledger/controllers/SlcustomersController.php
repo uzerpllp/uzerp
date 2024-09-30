@@ -1079,6 +1079,7 @@ class SlcustomersController extends LedgerController
             $slcontra['source'] = 'S';
             $slcontra['transaction_type'] = 'J';
             $slcontra['our_reference'] = $sl_journal_seq;
+            $slcontra['ext_reference'] = $this->_data['contra_ext_ref'];
             $slcontra['currency_id'] = $this->_data['SLCustomer']['currency_id'];
             $slcontra['rate'] = $this->_data['SLCustomer']['rate'];
             $slcontra['payment_term_id'] = $this->_data['SLCustomer']['payment_term_id'];

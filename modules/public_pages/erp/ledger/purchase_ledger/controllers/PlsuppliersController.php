@@ -648,6 +648,7 @@ class PlsuppliersController extends LedgerController
 			$plcontra['source']				= 'P';
 			$plcontra['transaction_type']	= 'J';
 			$plcontra['our_reference']		= $pl_journal_seq;
+			$plcontra['ext_reference']		= $this->_data['contra_ext_ref'];
 			$plcontra['currency_id']		= $this->_data['PLSupplier']['currency_id'];
 			$plcontra['rate']				= $this->_data['PLSupplier']['rate'];
 			$plcontra['payment_term_id']	= $this->_data['PLSupplier']['payment_term_id'];
