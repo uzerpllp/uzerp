@@ -164,12 +164,13 @@ class SearchHandler {
 			$this->page = 1;
 		}
 
-		if ($this->page>$this->lastpage) {
-			$this->page=$this->lastpage;
-		} elseif ($this->page<1){
-			$this->page=1;
+		// Let's assume that if we have set the page number, we know what we are doing.
+		if (($this->page > $this->lastpage) && empty($page)) {
+			$this->page = $this->lastpage;
+		} elseif ($this->page < 1){
+			$this->page = 1;
 		}
-		$this->offset=($this->page-1)*$this->perpage;
+		$this->offset=($this->page - 1) * $this->perpage;
 	}
 
 	public function extractFields() {
