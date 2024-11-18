@@ -229,6 +229,8 @@ class ExpensesController extends HrController
             $sh = new SearchHandler($he, false);
 
             $sh->extract();
+            // Set the number of the page the user asked for
+            $sh->extractPaging($_GET['page']);
 
             $sh->addConstraint(new Constraint('employee_id', '=', $employee_id));
 
