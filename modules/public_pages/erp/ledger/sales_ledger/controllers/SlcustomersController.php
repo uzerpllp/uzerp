@@ -1809,11 +1809,18 @@ class SlcustomersController extends LedgerController
 
         $smarty_params = array(
             'nonone' => 'true',
-            'depends' => 'slmaster_id'
+            'depends' => 'slmaster_id',
+            'use_collection' => 'use_collection',
         );
         unset($this->_data['depends']);
 
-        return $this->getOptions($this->_uses['SLTransaction'], 'person_id', 'getPeople', 'getOptions', $smarty_params);
+        $identiferfieldSQL = "concat_ws(' - ', concat_ws(', ', 
+            case when surname in ('.', '-') then null else surname end ,
+            case when firstname in ('.', '-') then null else firstname end,
+            case when title in ('.', '-') then null else title end) ,
+            case when postcode in ('.', '-') then null else postcode end)";
+
+        return $this->getOptions($this->_uses['SLTransaction'], 'person_id', 'getPeople', 'getOptions', $smarty_params, [], $identiferfieldSQL);
     }
 
     /*
