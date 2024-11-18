@@ -313,7 +313,7 @@ class Employee extends DataObject {
 
 		$employee = DataObjectFactory::Factory('employee');
 
-		if (SYSTEM_POLICIES_ENABLED) {
+		if (defined('SYSTEM_POLICIES_ENABLED') and SYSTEM_POLICIES_ENABLED == true) {
 			$employee->_policyConstraint['constraint']->add(new Constraint('person_id', '=', $this->user_person_id), 'OR');
 			$employee->_policyConstraint['name'][] = 'Own detail';
 			$employee->_policyConstraint['field'][] = 'person_id';
@@ -339,7 +339,7 @@ class Employee extends DataObject {
 			$cc->add(new Constraint($this->idField, 'in', '('.implode(',', $authorisation_list).')'), 'OR');
 		}
 
-		if (SYSTEM_POLICIES_ENABLED) {
+		if (defined('SYSTEM_POLICIES_ENABLED') and SYSTEM_POLICIES_ENABLED == true) {
 			$this->_policyConstraint['constraint']->add($cc, 'OR');
 			$this->_policyConstraint['name'][] = 'Is Authorised';
 			$this->_policyConstraint['field'][] = 'id';
