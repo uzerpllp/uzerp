@@ -1574,9 +1574,9 @@ abstract class Controller
             $field_options->_depends = $_depends;
         }
         if (! empty($_identifierField)) {
-            $field_options->_identifierField = $_identifierField;
+            $field_options->_identifierfield = $_identifierField;
         } elseif (! empty($this->_data['identifierfield'])) {
-            $field_options->_identifierField = explode(',', (string) $this->_data['identifierfield']);
+            $field_options->_identifierfield = explode(',', (string) $this->_data['identifierfield']);
         }
         if (isset($_smarty_params['use_collection']) && $_smarty_params['use_collection']) {
             $field_options->_use_collection = true;
