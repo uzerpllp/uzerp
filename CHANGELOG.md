@@ -1,6 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Fixed
+- Fixing paging of user expenses list.
+
+### Added
+- Cashbook, make payment - show person postcode with name to aid identification.
+- Add text1 field to CRM activities. To be accessed in user, custom templates.
+- Default email messages for output with invoice, statement and remiitance can now be customised.
+
 ## [1.33.1] 2024-06-03
 
 ### Fixed
