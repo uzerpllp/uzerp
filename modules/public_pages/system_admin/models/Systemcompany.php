@@ -327,9 +327,9 @@ class Systemcompany extends DataObject {
 	/**
 	 * Get the reply email address to be used when sending customer statements
 	 *
-	 * @return string  Email address
+	 * @return mixed  Email address
 	 */
-	function getStatementReplyToEmailAddress() {
+	function getStatementReplyToEmailAddress($with_email_trailer = false) {
 		$companyContact = DataObjectFactory::Factory('PartyContactMethod');
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('party_id', '=', $this->systemcompany->party_id));
@@ -339,15 +339,19 @@ class Systemcompany extends DataObject {
 		if (!$companyContact->loadBy($cc)) {
 			return false;
 		}
+
+		if ($with_email_trailer) {
+			return [$companyContact->contact => trim($companyContact->email_trailer)];
+		}
 		return $companyContact->contact;
 	}
 
 	/**
 	 * Get the reply email address to be used when sending customer invoices
 	 *
-	 * @return string  Email address
+	 * @return mixed  Email address
 	 */
-	function getInvoiceReplyToEmailAddress() {
+	function getInvoiceReplyToEmailAddress($with_email_trailer = false) {
 		$companyContact = DataObjectFactory::Factory('PartyContactMethod');
 		$cc = new ConstraintChain();
 		$cc->add(new Constraint('party_id', '=', $this->systemcompany->party_id));
@@ -356,6 +360,32 @@ class Systemcompany extends DataObject {
 
 		if (!$companyContact->loadBy($cc)) {
 			return false;
+		}
+
+		if ($with_email_trailer) {
+			return [$companyContact->contact => trim($companyContact->email_trailer)];
+		}
+		return $companyContact->contact;
+	}
+
+		/**
+	 * Get the reply email address to be used when sending customer invoices
+	 *
+	 * @return mixed  Email address
+	 */
+	function getRemittanceReplyToEmailAddress($with_email_trailer = false) {
+		$companyContact = DataObjectFactory::Factory('PartyContactMethod');
+		$cc = new ConstraintChain();
+		$cc->add(new Constraint('party_id', '=', $this->systemcompany->party_id));
+		$cc->add(new Constraint('lower(name)', '=', 'remittance'));
+		$cc->add(new Constraint('type', '=', 'E'));
+
+		if (!$companyContact->loadBy($cc)) {
+			return false;
+		}
+
+		if ($with_email_trailer) {
+			return [$companyContact->contact => trim($companyContact->email_trailer)];
 		}
 		return $companyContact->contact;
 	}

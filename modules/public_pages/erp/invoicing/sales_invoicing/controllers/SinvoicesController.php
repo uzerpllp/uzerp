@@ -1292,9 +1292,16 @@ class SinvoicesController extends printController
             $options['email'] = $customer->email_invoice();
         }
 
+        // INVOICE tagged email on sysco.
         $sc = new Systemcompany();
         $sc->load(COMPANY_ID);
-        $options['replyto'] = $sc->getInvoiceReplyToEmailAddress();
+        $replyto = $sc->getInvoiceReplyToEmailAddress(true);
+        if ($replyto) {
+            $options['replyto'] = key($replyto);
+            if (!empty($replyto[key($replyto)])) {
+                $options['email_text'] = $replyto[key($replyto)];
+            }
+        }
 
         // If the customer's statement email is not set,
         // then use the users employee work email

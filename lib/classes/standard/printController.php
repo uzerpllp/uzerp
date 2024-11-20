@@ -678,6 +678,22 @@ class printController extends Controller
         $this->view->set('default_printer', $this->getDefaultPrinter());
 
         $this->view->set('emailtext', $this->email_signature());
+
+        $sc = new Systemcompany();
+        $sc->load(COMPANY_ID);
+        $replyto = [];
+        if ($data == "Statement") {
+            $replyto = $sc->getStatementReplyToEmailAddress(true);
+        }
+        if ($data == "Invoice") {
+            $replyto = $sc->getInvoiceReplyToEmailAddress(true);
+        }
+        if ($data == "Remittance") {
+            $replyto = $sc->getRemittanceReplyToEmailAddress(true);
+        }
+        if (!empty($replyto)) {
+            $this->view->set('emailtext', $replyto[key($replyto)]);
+        }
     }
 
     public function email_signature()
@@ -824,7 +840,19 @@ class printController extends Controller
         $options['default_printer'] = $this->getDefaultPrinter();
 
         // generate and output the email text
-        $options['email_text'] = $this->email_signature();
+        if (!isset($options['email_text'])) {
+            $options['email_text'] = $this->email_signature();
+        }
+
+        $sc = new Systemcompany();
+        $sc->load(COMPANY_ID);
+        $replyto = [];
+        if ($options['report'] == 'Statement') {
+            $replyto = $sc->getStatementReplyToEmailAddress(true);
+            if (!empty($replyto) && !empty($replyto[key($replyto)])) {
+                $options['email_text'] = $replyto[key($replyto)];
+            }
+        }
 
         // set options
         $this->view->set('redirect', $this->_data['printaction']);
@@ -835,7 +863,7 @@ class printController extends Controller
     {
         $printparams['printtype'] = $data['printtype'];
         $printparams['printaction'] = $data['printaction'];
-        $printparams['filename'] = isset($data['filename']) ? $data['filename'] : '';
+        $printparams['filename'] = $data['filename'];
 
         if ($printparams['printaction'] == 'Email' || $printparams['printaction'] == 'Save') {
 
@@ -844,8 +872,8 @@ class printController extends Controller
             }
         }
 
-        $printparams['email'] = isset($data['email']) ? $data['email'] : '';
-        $printparams['emailtext'] = isset($data['emailtext']) ? $data['emailtext'] : '';
+        $printparams['email'] = $data['email'];
+        $printparams['emailtext'] = $data['emailtext'];
 
         if ($printparams['printaction'] == 'Email' && $printparams['email'] == '') {
             $errors[] = 'Requires an email address';

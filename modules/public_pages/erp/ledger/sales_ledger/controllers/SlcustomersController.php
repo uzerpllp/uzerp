@@ -1356,7 +1356,16 @@ class SlcustomersController extends LedgerController
             $options['email_subject'] = 'Account Statement from ' . SYSTEM_COMPANY;
             $sc = new Systemcompany();
             $sc->load(COMPANY_ID);
-            $options['replyto'] = $sc->getStatementReplyToEmailAddress();
+            if ($options['report'] == "Statement") {
+                $replyto = $sc->getStatementReplyToEmailAddress();
+            } else {
+                $replyto = $sc->getInvoiceReplyToEmailAddress();
+            }
+            if (is_array($replyto)) {
+                $options['replyto'] = key($replyto[0]);
+            } else {
+                $options['replyto'] = $replyto;
+            }
 
             // If the customer's statement email is not set,
             // then use the users employee work email
