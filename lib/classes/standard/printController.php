@@ -691,7 +691,7 @@ class printController extends Controller
         if ($data == "Remittance") {
             $replyto = $sc->getRemittanceReplyToEmailAddress(true);
         }
-        if (!empty($replyto)) {
+        if (!empty($replyto) && $replyto[key($replyto)] != "") {
             $this->view->set('emailtext', $replyto[key($replyto)]);
         }
     }
