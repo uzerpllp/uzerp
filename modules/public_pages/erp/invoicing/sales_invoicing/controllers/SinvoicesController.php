@@ -1452,6 +1452,7 @@ class SinvoicesController extends printController
                 if (! is_null($bank_account->bank_account_number)) {
                     $extra['bank_account']['bank_name'] = $bank_account->bank_name;
                     $extra['bank_account']['bank_sort_code'] = $bank_account->bank_sort_code;
+                    $extra['bank_account']['bank_account_name'] = $bank_account->bank_account_name;
                     $extra['bank_account']['bank_account_number'] = $bank_account->bank_account_number;
                     $extra['bank_account']['bank_address'] = $bank_account->bank_address;
                     $extra['bank_account']['bank_iban_number'] = $bank_account->bank_iban_number;
