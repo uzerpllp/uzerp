@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.34.1] 2024-11-21
+
+### Added
+
 ## [1.34] 2024-11-20
 
 ### Fixed
