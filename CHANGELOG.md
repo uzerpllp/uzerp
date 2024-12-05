@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.35] 2024-12-05
+
+### Changed
+
+- Make bank account name field available in customer statement XML output.
+
 ## [1.34] 2024-11-21
 
 ### Fixed
@@ -1240,6 +1246,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.35]: https://github.com/uzerpllp/uzerp/compare/1.34...1.35
 [1.34]: https://github.com/uzerpllp/uzerp/compare/1.33.1...1.34
 [1.33.1]: https://github.com/uzerpllp/uzerp/compare/1.33...1.33.1
 [1.33]: https://github.com/uzerpllp/uzerp/compare/1.32.7...1.33
