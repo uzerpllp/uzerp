@@ -1,6 +1,7 @@
 <?php
 
 use Ramsey\Uuid\Uuid;
+use \Symfony\Component\Yaml\Yaml;
 
 test('Validate MTD Fraud Prevention Headers with HMRC API', function () {
 
@@ -15,54 +16,66 @@ test('Validate MTD Fraud Prevention Headers with HMRC API', function () {
     $_SERVER['REMOTE_ADDR'] = '198.51.100.10';
     $_SERVER['SERVER_ADDR'] = '203.0.113.100';
 
-    $mtd = new MTD($client_browser_data, 'test-mtd-vat');
+    // Manually load all oauth configs
+    $sandboxes = Yaml::parse(file_get_contents('conf/oauth.yml'));
 
-    $headers = $mtd->fraud_protection_headers;
+    foreach ($sandboxes as $oauth_key => $config) {
+        // Ignore any config that does not target the HMRC test API
+        if ($config['baseurl'] !== 'https://test-api.service.hmrc.gov.uk') continue;
+        
+            $mtd = new MTD($client_browser_data, $oauth_key);
 
-    $uuid = Uuid::uuid5(Uuid::NAMESPACE_X500, EGS_USERNAME. '@' . $_SERVER['REMOTE_ADDR']);
-    $headers['Gov-Client-Device-ID'] = $uuid->toString();
+        $headers = $mtd->fraud_protection_headers;
 
-    $accessToken = $mtd->provider->getAccessToken('client_credentials');
+        $uuid = Uuid::uuid5(Uuid::NAMESPACE_X500, EGS_USERNAME. '@' . $_SERVER['REMOTE_ADDR']);
+        $headers['Gov-Client-Device-ID'] = $uuid->toString();
 
-    $url = "https://test-api.service.hmrc.gov.uk/test/fraud-prevention-headers/validate";
-    $request = $mtd->provider->getAuthenticatedRequest(
-        'GET',
-        $url,
-        $accessToken->getToken(),
-        [
-            'headers' => array_merge([
-            'Accept' => 'application/vnd.hmrc.1.0+json',
-            'Content-Type' => 'application/json'], $headers),
-            'body' => '',
-        ]
-    );
+        $accessToken = $mtd->provider->getAccessToken('client_credentials');
 
-    try
-    {
-        $response = $mtd->provider->getResponse($request);
-        if (!empty(json_decode($response->getBody(), true)['errors'])) {
-            foreach (json_decode($response->getBody(), true)['errors'] as $error ) {
-                $hdr = implode('/', $error['headers']);
-                echo "{$error['code']}, {$hdr}: {$error['message']}\n";
+        $url = "https://test-api.service.hmrc.gov.uk/test/fraud-prevention-headers/validate";
+        $request = $mtd->provider->getAuthenticatedRequest(
+            'GET',
+            $url,
+            $accessToken->getToken(),
+            [
+                'headers' => array_merge([
+                'Accept' => 'application/vnd.hmrc.1.0+json',
+                'Content-Type' => 'application/json'], $headers),
+                'body' => '',
+            ]
+        );
+
+        $responses = [];
+        try
+        {
+            $response = $mtd->provider->getResponse($request);
+            $responses[] = $response;
+            if (!empty(json_decode($response->getBody(), true)['errors'])) {
+                foreach (json_decode($response->getBody(), true)['errors'] as $error ) {
+                    $hdr = implode('/', $error['headers']);
+                    echo "{$error['code']}, {$hdr}: {$error['message']}\n";
+                }
+                echo "\n";
+                foreach ($headers as $header => $value) {
+                    echo "{$header}: {$value}\n";
+                }
+                echo "\n";
             }
-            echo "\n";
-            foreach ($headers as $header => $value) {
-                echo "{$header}: {$value}\n";
+        }
+        catch (Exception $e)
+        {
+            $api_errors = json_decode($e->getResponse()->getBody()->getContents());
+            if (is_countable($api_errors) && count($api_errors) > 1) {
+                foreach ($api_errors->errors as $error) {
+                    echo "{$error->code} {$error->message}\n";
+                }
+            } else {
+                echo $e;
             }
-            echo "\n";
         }
     }
-    catch (Exception $e)
-    {
-        $api_errors = json_decode($e->getResponse()->getBody()->getContents());
-        if (is_countable($api_errors) && count($api_errors) > 1) {
-            foreach ($api_errors->errors as $error) {
-                echo "{$error->code} {$error->message}\n";
-            }
-        } else {
-            echo $e;
-        }
-    }
 
-    expect(json_decode($response->getBody(), true)['errors'])->toBeEmpty();
+    foreach ($responses as $r) {
+        expect(json_decode($r->getBody(), true)['errors'])->toBeEmpty();
+    }
 });
