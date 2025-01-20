@@ -4,7 +4,6 @@
  *	Released under GPLv3 license; see LICENSE.
  **}
 {* $Revision: 1.7 $ *}
-{debug}
 {content_wrapper}
 {if $stitem->comp_class !='B'}
 {advanced_search}
