@@ -7,3 +7,8 @@ repos:
       entry: podman exec -it uzerp-app-dev vendor/bin/phpstan analyse --autoload-file utils/dev/loader.php --memory-limit 512M
       language: system
       types: [php]
+    - id: smartydebug
+      name: Check for Smarty debug tags
+      entry: php utils/dev/pre-commit/find-smarty-debug.php
+      language: system
+      types: [text]
