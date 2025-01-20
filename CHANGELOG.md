@@ -1,6 +1,8 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [] Unreleased
+
 ## [1.35] 2024-12-05
 
 ### Changed
