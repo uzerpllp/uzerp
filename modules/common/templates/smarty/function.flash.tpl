@@ -4,6 +4,7 @@
  *	Released under GPLv3 license; see LICENSE. 
  **}
 {* $Revision: 1.4 $ *}
+
 <div id="flash">
 	{if $function_flash.messages}
 		
@@ -53,22 +54,13 @@
 			}
 		</script>
 		
-		{assign var="errors" value=array()  }
-		{foreach from=$function_flash.errors key=fieldname item=error}
-			{if empty($fieldname)}
-			{append 'errors' $error}
-			{/if}
-		{/foreach}
-
-		{if $errors}
 		<ul id="errors">
 			
-			{foreach from=$errors item=error}
-				<li class="error">{$error}</li>
+			{foreach from=$function_flash.errors key=fieldname item=error}
+				<li class="error_{$fieldname}">{$error}</li>
 			{/foreach}
 			
 		</ul>
-		{/if}
 		
 	{/if}
 

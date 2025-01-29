@@ -57,7 +57,7 @@ class POrderSearchField extends SearchField
 				$checked = 'checked="checked"';
 			}
 
-			$html .= '<li><label>' . prettify($status) . '</label><input type="checkbox" class="checkbox" name="Search[' . $this->fieldname . '][' . $status . ']" ' . $checked . '/></li>';
+			$html .= '<label>' . prettify($status) . '</label><input type="checkbox" class="checkbox" name="Search[' . $this->fieldname . '][' . $status . ']" ' . $checked . '/>';
 
 		}
 

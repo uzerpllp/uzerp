@@ -24,9 +24,6 @@
 	{if isset($function_input.attrs_checkbox)}
 		<input {$function_input.attrs_checkbox} />
 	{/if}
-	{if isset($function_input.field_error)}
-		<span class="field-error">{$function_input.field_error}</span>
-	{/if}
 
 	{if $function_input.display_tags === TRUE}
 		</dd>

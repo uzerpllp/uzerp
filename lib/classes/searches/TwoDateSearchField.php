@@ -25,15 +25,6 @@ class TwoDateSearchField extends SearchField {
 	 */
 	public function toHTML()
 	{
-		$flash = Flash::Instance();
-		$errors = $flash->getMessages('errors');
-		if (array_key_exists($this->fieldname, $errors)) {
-			$field_error_markup = "<span class=\"field-error\">{$errors[$this->fieldname]}</span>";
-			$field_error_wrapper_class = 'class="form-error"';
-		} else {
-			$field_error_markup = "";
-			$field_error_wrapper_class = "";
-		}
 
 		if (!empty($this->value['from']))
 		{
@@ -61,9 +52,8 @@ class TwoDateSearchField extends SearchField {
 			$to = '';
 		}
 
-		$field_markup = '<input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . '][from]" value="' . $from . '" /><span class="search-twofield-sep"> to </span><input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '_to" name="Search[' . $this->fieldname . '][to]" value="' . $to . '" />';
-		$html = "<li {$field_error_wrapper_class}>{$this->labelHTML()}\n{$field_markup}{$field_error_markup}</li>\n";
-		return $html;
+		$html = '<input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '" name="Search[' . $this->fieldname . '][from]" value="' . $from . '" /><span class="search-twofield-sep"> to </span><input type="text" class="icon date slim datefield" id="search_' . $this->fieldname . '_to" name="Search[' . $this->fieldname . '][to]" value="' . $to . '" /></li>';
+		return $this->labelHTML() . $html;
 
 	}
 
@@ -145,7 +135,7 @@ class TwoDateSearchField extends SearchField {
 
 		if (!is_array($value))
 		{
-			$errors[$this->fieldname] = 'Search on ' . prettify($this->label) . ' needs to be a date pair';
+			$errors[] = 'Search on ' . prettify($this->label) . ' needs to be a date pair';
 			return false;
 		}
 		else
@@ -161,17 +151,17 @@ class TwoDateSearchField extends SearchField {
 
 					if (!empty($prevdate) && $prevdate > fix_date($date))
 					{
-						$errors[$this->fieldname] = 'Search on ' . prettify($this->label) . ' date range invalid';
+						$errors[] = 'Search on ' . prettify($this->label) . ' date range invalid';
 						return false;
 					}
 					elseif (!strtotime((string) fix_date($date)))
 					{
-						$errors[$this->fieldname] = 'Search on ' . prettify($this->label) . ' needs to be a date';
+						$errors[] = 'Search on ' . prettify($this->label) . ' needs to be a date';
 						return false;
 					}
 					elseif (date(DATE_FORMAT, strtotime((string) fix_date($date))) != $date)
 					{
-						$errors[$this->fieldname] = 'Invalid date ' . $date . ' for search on ' . prettify($this->label);
+						$errors[] = 'Invalid date ' . $date . ' for search on ' . prettify($this->label);
 						return false;
 					}
 
