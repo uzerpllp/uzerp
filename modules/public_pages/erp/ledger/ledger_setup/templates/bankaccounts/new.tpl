@@ -13,13 +13,13 @@
 				{input attribute="name"}
 				{input type='checkbox' attribute="primary_account"}
 				{input type='text'  attribute='description' class="compulsory" }
-				{input type='text'  attribute='bank_account_name' class="compulsory" }
 				{input attribute="bank_name"}
+				{input type='text'  attribute='bank_account_name' class="compulsory" }
+				{input type='text'  attribute='bank_address' class="compulsory" }
 				{input type='text'  attribute='bank_sort_code' class="compulsory" }
 				{input type='text'  attribute='bank_account_number' class="compulsory" }
-				{input type='text'  attribute='bank_address' class="compulsory" }
-				{input type='text'  attribute='bank_iban_number' class="compulsory" }
-				{input type='text'  attribute='bank_bic_code' class="compulsory" }
+				{input type='text'  attribute='bank_iban_number' class="compulsory" label="IBAN"}
+				{input type='text'  attribute='bank_bic_code' class="compulsory" label="BIC/Swift"}
 				{select attribute='currency_id' value=$currency}
 				{select attribute='glaccount_id' force=true nonone=true label='GL Account' options=$glaccounts}
 				{select attribute='glcentre_id' force=true nonone=true label='Cost Centre' options=$glcentres}

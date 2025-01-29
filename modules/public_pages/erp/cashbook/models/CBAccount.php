@@ -15,8 +15,10 @@ class CBAccount extends DataObject
 											,'primary_account'
 											,'description'
 											,'bank_name'
-											,'bank_address'
 											,'bank_account_name'
+											,'bank_address'
+											,'bank_iban_number' => 'IBAN'
+											,'bank_bic_code' => 'BIC/Swift'
 											,'currency'
 											,'balance');
 

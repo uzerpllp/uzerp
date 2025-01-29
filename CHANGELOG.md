@@ -1,18 +1,29 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [unreleased] 2024-07-17
+## [] Unreleased
+
+## [1.35] 2024-12-05
 
 ### Changed
 
-- Fixes to enable uzERP to run under PHP 8.3. Some new language features used, breaking compatability with PHP 7.x.
-- PHP dependencies updated.
-- Begin fixes to deprecated jQuery API (move from .live to .on for UI events)
-- Begin replacing wijmo charts with Apache Echarts
+- Make bank account name field available in customer statement XML output.
+
+## [1.34] 2024-11-21
+
+### Fixed
+
+- Paging of user expenses list.
 
 ### Added
 
-- Enter optional Ext. Ref. on contra's in Sales and Purchase Ledger
+- Cashbook, make payment - show person postcode with name to aid identification.
+- Add text1 field to CRM activities. To be accessed in user, custom templates.
+- Default email messages for output with invoice, statement and remittance can now be customised.
+
+### Changed
+
+- Make bank account name field available in sales invoice XML output.
 
 ## [1.33.1] 2024-06-03
 
@@ -1237,7 +1248,10 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
-[1.32.8]: https://github.com/uzerpllp/uzerp/compare/1.32.7...1.32.8
+[1.35]: https://github.com/uzerpllp/uzerp/compare/1.34...1.35
+[1.34]: https://github.com/uzerpllp/uzerp/compare/1.33.1...1.34
+[1.33.1]: https://github.com/uzerpllp/uzerp/compare/1.33...1.33.1
+[1.33]: https://github.com/uzerpllp/uzerp/compare/1.32.7...1.33
 [1.32.7]: https://github.com/uzerpllp/uzerp/compare/1.32.6...1.32.7
 [1.32.6]: https://github.com/uzerpllp/uzerp/compare/1.32.5...1.32.6
 [1.32.5]: https://github.com/uzerpllp/uzerp/compare/1.32.4...1.32.5

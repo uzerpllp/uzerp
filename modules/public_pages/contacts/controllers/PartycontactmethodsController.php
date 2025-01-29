@@ -30,6 +30,21 @@ class PartycontactmethodsController extends Controller
             'allow_delete' => true,
         ];
     }
+    
+	public function _new()
+    {
+        parent::_new();
+		// This sets some smarty vars so that the new/edit form
+		// only shows the email trailer/message edit area
+		// when editing details for the system company.
+		$this->view->set('editing_sysco', false);
+		$pid = $this->_uses['PartyContactMethod']->party_id ?? $this->_data['party_id'];
+		$company = new Company();
+		$company->loadBy('party_id', $pid);
+		if ($company->id == COMPANY_ID) {
+			$this->view->set('editing_sysco', true);
+		}
+    }
 
     #[\Override]
     public function index($collection = null, $sh = '', &$c_query = null)

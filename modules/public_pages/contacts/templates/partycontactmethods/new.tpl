@@ -1,9 +1,8 @@
 {** 
- *	(c) 2017 uzERP LLP (support#uzerp.com). All rights reserved. 
+ *	(c) 2024 uzERP LLP (support#uzerp.com). All rights reserved. 
  * 
  *	Released under GPLv3 license; see LICENSE. 
  **}
-{* 	$Revision: 1.4 $ *}	
 {content_wrapper}
 	<dl id="view_data_left">
 		{form controller="partycontactmethods" action="save"}
@@ -39,6 +38,15 @@
 					{input type='checkbox'  attribute='shipping' }
 					{input type='checkbox'  attribute='payment' }
 					{input type='checkbox'  attribute='technical' }
+					{if (isset($editing_sysco) && $editing_sysco == true && $PartyContactMethod->type == 'E') || (isset($editing_sysco) && $editing_sysco == true && $controller_data.type == 'E')}
+						<dt>
+						<label for="partycontactmethod_email_trailer">Email Trailer:</label>
+					</dt>
+					<dd>
+				<textarea cols="30" rows="5" name="PartyContactMethod[email_trailer]" id="partycontactmethod_email_trailer" placeholder="Leave blank for system default">{$PartyContactMethod->email_trailer}</textarea>
+				
+					</dd>
+					{/if}
 				{/with}
 			{/with}
 			{submit}

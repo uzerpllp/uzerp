@@ -17,8 +17,8 @@
 					{view_data attribute="bank_account_name"}
 					{view_data attribute="bank_account_number"}
 					{view_data attribute="bank_sort_code"}
-					{view_data attribute="bank_iban_number"}
-					{view_data attribute="bank_bic_code"}
+					{view_data attribute="bank_iban_number" label="IBAN"}
+					{view_data attribute="bank_bic_code" label = "BIC/Swift"}
 				{/view_section}
 			</dl>
 			<dl id="view_data_right">
