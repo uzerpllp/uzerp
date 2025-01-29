@@ -10,6 +10,7 @@
 	<meta content="{$csrf_token}" name="csrf-token" />
 	<title>{$config.BASE_TITLE} {$config.SYSTEM_VERSION}</title>
 	
+	<link rel="stylesheet" type="text/css" href="/assets/fonts/inter.css" />
 	<link rel="stylesheet" type="text/css" href="/{$main_css}" />
 	{if $user_css}
 	<link rel="stylesheet" type="text/css" href="/{$user_css}" />
