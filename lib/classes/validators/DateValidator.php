@@ -23,11 +23,11 @@ class DateValidator implements FieldValidation {
 
 		$format = DATE_FORMAT;
 
-		if(function_exists('strptime')) {
-			if(strptime($field->value,DATE_FORMAT)!==false) {
+		if(function_exists('date_parse_from_format')) {
+			if(date_parse_from_format(DATE_FORMAT, $field->value)!==false) {
 				return $field->value;
 			}
-			if(strptime($field->value,DATE_TIME_FORMAT)!==false) {
+			if(date_parse_from_format(DATE_TIME_FORMAT, $field->value)!==false) {
 				return $field->value;
 			}
 		}

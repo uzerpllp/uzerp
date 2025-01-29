@@ -111,7 +111,7 @@ function smarty_function_datetime($params, &$smarty) {
 
 		$format = format_for_strptime(DATE_TIME_FORMAT);
 
-		if (strptime($value, $format) !== FALSE)
+		if (date_parse_from_format($format, $value) !== FALSE)
 		{
 			$date_value		= array_shift(explode(' ', (string) $value));
 			$hour_value		= array_shift(explode(':', (string) array_pop(explode(' ', (string) $value))));
