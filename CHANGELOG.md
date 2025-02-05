@@ -1,7 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [] Unreleased
+## [v2.0.0-beta1] 2025-02-05
+
+### Changed
+
+- Fixes to enable uzERP to run under PHP 8.3. Some new language features used, breaking compatability with PHP 7.x.
+- PHP dependencies updated.
+- Begin fixes to deprecated jQuery API (move from .live to .on for UI events)
+- Begin replacing wijmo charts with Apache Echarts
 
 ## [1.35] 2024-12-05
 
