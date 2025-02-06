@@ -11,8 +11,6 @@ class ActivityCollection extends DataObjectCollection {
 
 	function __construct($do='Activity', $tablename='activitiesoverview') {
 		parent::__construct($do, $tablename);
-
-		$this->identifierField='name';
 	}
 
 }
