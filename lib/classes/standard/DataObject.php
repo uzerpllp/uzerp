@@ -3417,7 +3417,7 @@ class DataObject implements Iterator
                 $this->setTitle($modulecomponent->title);
             }
 
-            if ($modulecomponent->module_defaults !== null && count($modulecomponent->module_defaults) > 0) {
+            if (isset($modulecomponent->module_defaults) && $modulecomponent->module_defaults !== null && count($modulecomponent->module_defaults) > 0) {
                 foreach ($modulecomponent->module_defaults as $default) {
 
                     if ($this->isField($default->field_name) && $this->_fields[$default->field_name]->user_defaults_allowed) {
