@@ -27,7 +27,6 @@ class DataObject implements Iterator
     protected $_classname;
     protected $_classnames = array();
     protected $_select;
-    protected $module_defaults;
 
     // string: false if any errors found during construct allows graceful trap of errors during construct
     protected $_valid;
