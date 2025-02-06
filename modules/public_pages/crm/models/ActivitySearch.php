@@ -13,7 +13,7 @@ class ActivitySearch extends BaseSearch
 
     protected $fields = array();
 
-    public static function useDefault($search_data = null, &$errors, $defaults = null)
+    public static function useDefault($search_data = null, &$errors = [], $defaults = null)
     {
         $search = new ActivitySearch($defaults);
         $search->addSearchField('completed', 'show_completed', 'show', 'NULL');
