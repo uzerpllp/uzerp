@@ -12,11 +12,12 @@ class TextSearchField extends SearchField {
 	{
 		$flash = Flash::Instance();
 		$errors = $flash->getMessages('errors');
+		$error_str = '';
 		if (array_key_exists($this->fieldname, $errors)) {
 			$class = 'field-error';
 			$error_message = $errors[$this->fieldname];
+			$error_str = "class=\"{$class}\" data-field-error=\"{$error_message}\"";
 		}
-		$error_str = "class=\"{$class}\" data-field-error=\"{$error_message}\"";
 
 		$value = $this->value;
 		
