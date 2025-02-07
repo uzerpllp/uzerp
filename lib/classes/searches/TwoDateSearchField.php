@@ -78,8 +78,8 @@ class TwoDateSearchField extends SearchField {
 		}
 		else
 		{
-			$from	= $this->default['from'];
-			$to		= $this->default['to'];
+			$from	= $this->default['from'] ?? '';
+			$to		= $this->default['to'] ?? '';
 		}
 
 		switch($this->type)
@@ -191,8 +191,8 @@ class TwoDateSearchField extends SearchField {
 		}
 		else
 		{
-			$from	= $this->default['from'];
-			$to		= $this->default['to'];
+			$from	= $this->default['from'] ?? '';
+			$to		= $this->default['to'] ?? '';
 		}
 
 		// both values cannot be empty
