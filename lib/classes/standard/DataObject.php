@@ -217,7 +217,11 @@ class DataObject implements Iterator
         $this->setDefaultValidators();
         // $this->setAutoHandlers();
         // $this->setDefaultRelationships();
-        $this->setDefaultFieldValues();
+
+        // @see SystemPolicyControlList::setPolicyConstraint
+        // module_components don't apply
+        if (!$this instanceof SystemPolicyControlList) $this->setDefaultFieldValues();
+        
         $this->_classname = DataObject::className(get_class($this));
 
         if (empty($this->_classnames)) {
