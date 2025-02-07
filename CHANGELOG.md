@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [v2.0.0-beta1] 2025-02-05
+## [Unreleased]
 
 ### Changed
 
