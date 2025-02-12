@@ -90,7 +90,6 @@ svg[hidden] {
 }
 
 .clicky-menu {
-  justify-content: stretch;
   margin: 0;
   padding: 0;
   list-style: none;
