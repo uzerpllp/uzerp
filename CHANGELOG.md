@@ -1,7 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [] Unreleased
+## [1.35.1] 2025-02-13
+
+### Fixed
+
+- Preserve the email message/trailer when moving between pages in the send/print (sales) invoices.
 
 ## [1.35] 2024-12-05
 
@@ -1248,6 +1252,7 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.35.1]: https://github.com/uzerpllp/uzerp/compare/1.35...1.35.1
 [1.35]: https://github.com/uzerpllp/uzerp/compare/1.34...1.35
 [1.34]: https://github.com/uzerpllp/uzerp/compare/1.33.1...1.34
 [1.33.1]: https://github.com/uzerpllp/uzerp/compare/1.33...1.33.1
