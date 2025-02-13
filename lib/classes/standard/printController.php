@@ -199,6 +199,13 @@ class printController extends Controller
         $this->setTemplateName('text_inner');
     }
 
+    /**
+     * Select invoices for output
+     * 
+     * See template: modules/common/templates/elements/select_for_output.tpl
+     *
+     * @return void
+     */
     public function select_for_output()
     {
 
@@ -227,6 +234,28 @@ class printController extends Controller
         $output_details = $this->output_types[$this->_data['type']];
         $s_data = $output_details['search_defaults'];
         $s_data['type'] = $_GET['type'] = $type;
+
+        // Keep track of the email text on the session so that it
+        // remains as the user changes page.
+        $_SESSION['selected_output']['emailtext'] = $this->_data['emailtext'];
+        if (empty($_SESSION['selected_output']['emailtext'])) {
+            $sc = new Systemcompany();
+            $sc->load(COMPANY_ID);
+            $replyto = [];
+            if ($this->_data['type'] == "statement") {
+                $replyto = $sc->getStatementReplyToEmailAddress(true);
+            }
+            if ($this->_data['type'] == "invoice") {
+                $replyto = $sc->getInvoiceReplyToEmailAddress(true);
+            }
+            if ($this->_data['type'] == "remittance") {
+                $replyto = $sc->getRemittanceReplyToEmailAddress(true);
+            }
+            if (!empty($replyto) && $replyto[key($replyto)] != "") {
+                $_SESSION['selected_output']['emailtext'] = $replyto[key($replyto)];
+            }
+        }
+        $this->view->set('emailtext', $_SESSION['selected_output']['emailtext']);
 
         $this->setSearch($output_details['search_do'], $output_details['search_method'], $s_data, array(), TRUE);
         // End of search
@@ -677,7 +706,10 @@ class printController extends Controller
         $userPreferences = UserPreferences::instance(EGS_USERNAME);
         $this->view->set('default_printer', $this->getDefaultPrinter());
 
-        $this->view->set('emailtext', $this->email_signature());
+        // Fallback - add a default email signature
+        if ($this->view->get('emailtext') == false) {
+            $this->view->set('emailtext', $this->email_signature());
+        }
 
         $sc = new Systemcompany();
         $sc->load(COMPANY_ID);
