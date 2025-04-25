@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.35.3] 2025-04-25
+
+### Fixed
+
+- Fix sorting of people lists.
+- Sort people models case insensitive (in dropdowns, etc).
+
 ## [1.35.2] 2025-02-13
 
 ### Fixed
@@ -1258,6 +1265,8 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+
+[1.35.3]: https://github.com/uzerpllp/uzerp/compare/1.35.2...1.35.3
 [1.35.2]: https://github.com/uzerpllp/uzerp/compare/1.35.1...1.35.2
 [1.35.1]: https://github.com/uzerpllp/uzerp/compare/1.35...1.35.1
 [1.35]: https://github.com/uzerpllp/uzerp/compare/1.34...1.35
