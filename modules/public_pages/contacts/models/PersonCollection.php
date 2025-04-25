@@ -19,9 +19,10 @@ class PersonCollection extends PartyCollection
 		
 		$this->identifier		= 'surname';
 		$this->identifierField	= 'name';
+		$this->orderby = 'name';
 	}
 	
-	function load($sh,$c_query=null)
+	function load($sh, $c_query = null, $return_type = RETURN_OBJECTS)
 	{
 		$db=DB::Instance();
 		

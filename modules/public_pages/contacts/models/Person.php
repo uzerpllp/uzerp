@@ -39,7 +39,7 @@ class Person extends Party
 		$this->subClass	= true;
 		$this->fkField	= 'party_id';
 		
-		$this->orderby = array('surname', 'firstname');
+		$this->orderby = ['lower(surname)', 'lower(firstname)'];
 
 		$this->identifier			= 'surname';
 		$this->identifierField		= ['firstname', 'surname'];
