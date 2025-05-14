@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.35.4] 2025-05-14
+
+- Update dependencies to remove found security issues.
+- CVE-2024-35226 in smarty
+- CVE-2025-46337 ADOdb postgres driver
+
 ## [1.35.3] 2025-04-25
 
 ### Fixed
