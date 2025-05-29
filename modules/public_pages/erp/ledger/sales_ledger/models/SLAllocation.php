@@ -18,6 +18,7 @@ class SLAllocation extends DataObject {
 
 	function __construct($tablename='sl_allocation_details') {
 // Register non-persistent attributes
+		$this->setAdditional('transaction_type');
 		
 // Contruct the object
 		parent::__construct($tablename);
@@ -33,7 +34,15 @@ class SLAllocation extends DataObject {
 // Define system defaults
 		
 // Define enumerated types
-		
+		$this->setEnum(
+			'transaction_type',
+			['I'	=> 'Invoice'
+			,'C'	=> 'Credit Note'
+			,'J'	=> 'Journal'
+			,'P'	=> 'Payment'
+			,'R'	=> 'Receipt'
+			,'SD'	=> 'Settlement Discount']
+		);
 	}
 
 	static function saveAllocation ($transactions, &$errors) {
