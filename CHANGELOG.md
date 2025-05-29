@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.36.1] 2025-05-29
+
+### Added
+
+- Output function for PL and SL allocation views.
+
 ## [1.35.4] 2025-05-14
 
 - Update dependencies to remove found security issues.
