@@ -399,9 +399,38 @@ class PltransactionsController extends printController
 
 	public function view_allocations ()
 	{
-
 		$flash = Flash::Instance();
+		$sidebar = new SidebarController($this->view);
+		$sidebarlist = array();
 
+		if (isset($this->_data['trans_id'])) {
+			$report_link = [
+				'modules'		=> $this->_modules,
+				'controller'	=> 'pltransactions',
+				'action'=>'printDialog',
+				'printaction'=>'printTransactions',
+				'trans_id' => $this->_data['trans_id'],
+				'filename'=>'allocations'
+			];
+		} else {
+			$report_link = [
+				'modules'		=> $this->_modules,
+				'controller'	=> 'pltransactions',
+				'action'=>'printDialog',
+				'printaction'=>'printTransactions',
+				'filename'=>'allocations'
+			];
+		}
+		
+		$sidebarlist['printtrans'] = [
+			'tag'	=> 'Print Allocations',
+			'link'	=> $report_link
+		];
+		
+		$sidebar->addList('Actions',$sidebarlist);
+		$this->view->register('sidebar',$sidebar);
+		$this->view->set('sidebar',$sidebar);
+		
 		$collection = new PLTransactionCollection($this->_templateobject);
 
 		$this->_templateobject->setAdditional('payment_value', 'numeric');
@@ -459,6 +488,91 @@ class PltransactionsController extends printController
 		$this->view->set('linkvaluefield', 'plmaster_id');
 	}
 
-}
+	/**
+	 * PLAllocation Output Report
+	 *
+	 * @param string $status  current status of the output process
+	 * @return void
+	 */
+	public function printTransactions($status = 'generate')
+	{
+		$flash = Flash::Instance();
+		$errors = [];
+		
+		// output options array
+		$options = array(
+			'type' => array(
+				'pdf' => '',
+				'xml' => ''
+			),
+			'output' => array(
+				'print'	=> '',
+				'save'	=> '',
+				'email'	=> '',
+				'view'	=> ''
+			),
+			'filename'	=> 'PLAllocation_'.fix_date(date(DATE_FORMAT)),
+			'report'	=> 'LedgerAllocation'
+		);
 
+		// simply return the options if we're only at the dialog stage
+		if (strtolower($status) === "dialog")
+		{
+			return $options;
+		}
+
+		$collection = new PLTransactionCollection($this->_templateobject);
+		$this->_templateobject->setAdditional('payment_value', 'numeric');
+		$allocation = DataObjectFactory::Factory('PLAllocation');
+		$allocationcollection = new PLAllocationCollection($allocation);
+		$collection->_tablename = $allocationcollection->_tablename;
+		$sh = $this->setSearchHandler($collection);
+		$fields = array("our_reference||'-'||transaction_type as id"
+					 ,'supplier'
+					 ,'plmaster_id'
+					 ,'payee_name'
+					 ,'transaction_date'
+					 ,'transaction_type'
+					 ,'our_reference'
+					 ,'ext_reference'
+					 ,'currency'
+					 ,'currency_id'
+					 ,'gross_value'
+					 ,'allocation_date');
+		
+		$sh->setGroupBy($fields);
+		$fields[] = 'sum(payment_value) as payment_value';
+		$sh->setFields($fields);
+		
+		if (isset($this->_data['trans_id']))
+		{
+			$allocation->loadBy('transaction_id', $this->_data['trans_id']);
+			if ($allocation->isLoaded()) {
+				$sh->addConstraint(new Constraint('allocation_id', '=', $allocation->allocation_id));
+			} else {
+				$flash->addError('Error loading allocation');
+				sendBack();
+			}
+		}
+
+		$allocationcollection->load($sh);
+
+		if (count($errors) > 0)	{
+			echo $this->build_print_dialog_response(
+				FALSE,
+				array('message'=>implode('<br />', $errors))
+			);
+			exit;
+		}
+
+		// generate the xml and add it to the options array
+		$options['xmlSource'] = $this->generate_xml([
+				'model'					=> $allocationcollection,
+				'load_relationships'	=> FALSE
+		]);
+		
+		echo $this->generate_output($this->_data['print'], $options);
+		exit;
+	}
+}
 // End of PltransactionsController
