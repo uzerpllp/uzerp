@@ -10,6 +10,37 @@ All notable changes to this project will be documented in this file.
 - Begin fixes to deprecated jQuery API (move from .live to .on for UI events)
 - Begin replacing wijmo charts with Apache Echarts
 
+## [1.36.1] 2025-05-29
+
+### Added
+
+- Output function for PL and SL allocation views.
+
+## [1.35.4] 2025-05-14
+
+- Update dependencies to remove found security issues.
+- CVE-2024-35226 in smarty
+- CVE-2025-46337 ADOdb postgres driver
+
+## [1.35.3] 2025-04-25
+
+### Fixed
+
+- Fix sorting of people lists.
+- Sort people models case insensitive (in dropdowns, etc).
+
+## [1.35.2] 2025-02-13
+
+### Fixed
+
+- (CSS) Align menu top-level items to left in alternative menu.
+
+## [1.35.1] 2025-02-13
+
+### Fixed
+
+- Preserve the email message/trailer when moving between pages in the send/print (sales) invoices.
+
 ## [1.35] 2024-12-05
 
 ### Changed
@@ -1255,6 +1286,11 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
+[1.36.1]: https://github.com/uzerpllp/uzerp/compare/1.35.3..1.36.1
+[1.35.4]: https://github.com/uzerpllp/uzerp/compare/1.35.3...1.35.4
+[1.35.3]: https://github.com/uzerpllp/uzerp/compare/1.35.2...1.35.3
+[1.35.2]: https://github.com/uzerpllp/uzerp/compare/1.35.1...1.35.2
+[1.35.1]: https://github.com/uzerpllp/uzerp/compare/1.35...1.35.1
 [1.35]: https://github.com/uzerpllp/uzerp/compare/1.34...1.35
 [1.34]: https://github.com/uzerpllp/uzerp/compare/1.33.1...1.34
 [1.33.1]: https://github.com/uzerpllp/uzerp/compare/1.33...1.33.1
