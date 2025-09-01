@@ -21,13 +21,13 @@ class costSheetSearch extends BaseSearch {
 			'hidden'
 		);
 // Search by Date
-		$search->addSearchField(
-			'start_date/end_date',
-			'Date',
-			'betweenfields',
-			date(DATE_FORMAT),
-			'basic'
-		);
+//		$search->addSearchField(
+//			'start_date/end_date',
+//			'Date',
+//			'betweenfields',
+//			date(DATE_FORMAT),
+//			'basic'
+//		);
 // Search by Type
 		$search->addSearchField(
 			'type',
