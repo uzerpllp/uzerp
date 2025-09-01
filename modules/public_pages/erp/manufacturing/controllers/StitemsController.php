@@ -641,28 +641,28 @@ class StitemsController extends printController
                     )
                 );
             }
-                $sidebarlist['cost_sheet'] = array(
-                    'tag' => 'View Cost Sheet',
-                    'link' => array(
-                        'module' => 'costing',
-                        'controller' => 'STCosts',
-                        'action' => 'costSheet',
-                        'stitem_id' => $id
-                    )
-                );
-                $sidebarlist['cost_history'] = array(
-                    'tag' => 'View Cost History',
-                    'link' => array(
-                        'module' => 'costing',
-                        'controller' => 'STCosts',
-                        'action' => 'index',
-                        'stitem_id' => $id
-                    )
-                );
-
-            $sidebar->addList('Stucture and Operations', $sidebarlist);
+            $sidebarlist['cost_sheet'] = array(
+                'tag' => 'View Cost Sheet',
+                'link' => array(
+                    'module' => 'costing',
+                    'controller' => 'STCosts',
+                    'action' => 'costSheet',
+                    'stitem_id' => $id
+                )
+            );
         }
 
+        $sidebarlist['cost_history'] = array(
+            'tag' => 'View Cost History',
+            'link' => array(
+                'module' => 'costing',
+                'controller' => 'STCosts',
+                'action' => 'index',
+                'stitem_id' => $id
+            )
+        );
+
+        $sidebar->addList('Stucture and Operations', $sidebarlist);
 
         //Related Items
         if ($transaction->comp_class == 'P') {
