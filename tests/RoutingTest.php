@@ -114,6 +114,9 @@ if (!class_exists('SalesController')) {
 // -- Global test helpers --
 
 beforeEach(function () {
+    // Remove PHPUnit's error handler
+    restore_error_handler();
+
     // Reset the RouteParser singleton to ensure clean state
     RouteParser::resetInstance();
 
