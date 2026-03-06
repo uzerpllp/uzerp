@@ -3,7 +3,7 @@
         "robmorgan/phinx": "^0.12",
         "smarty/smarty": "^4.5.1",
         "riimu/kit-csrf": "^2.4",
-        "symfony/http-foundation": "7.1.*",
+        "symfony/http-foundation": "7.3.*",
         "symfony/yaml": "7.1.*",
         "ircmaxell/random-lib": "^1.2",
         "phpmailer/phpmailer": "~6.1",
@@ -30,7 +30,7 @@
     },
     "config": {
         "platform": {
-            "php": "8.3"
+            "php": "8.4"
         },
         "allow-plugins": {
             "pestphp/pest-plugin": true
