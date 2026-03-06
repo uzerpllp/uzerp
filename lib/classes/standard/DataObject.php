@@ -2856,7 +2856,7 @@ class DataObject implements Iterator
      *
      * @todo Change name!
      */
-    function getAll(ConstraintChain $cc = null, $ignore_tree = FALSE, $use_collection = FALSE, $limit = '')
+    function getAll(?ConstraintChain $cc = null, $ignore_tree = FALSE, $use_collection = FALSE, $limit = '')
     {
         $db = DB::Instance();
         $tablename = $this->_tablename;
@@ -2947,7 +2947,7 @@ class DataObject implements Iterator
         return $results;
     }
 
-    function getQuery($fields = '', ConstraintChain $cc = null, $use_collection = FALSE)
+    function getQuery($fields = '', ?ConstraintChain $cc = null, $use_collection = FALSE)
     {
         $db = DB::Instance();
         $tablename = $this->_tablename;
