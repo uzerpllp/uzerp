@@ -11,29 +11,19 @@ class RouteParser {
 	
 	protected $routes = array();
 	protected $dispatch = array();
-	private static $instance;
 	
 	private function __construct() {
 		$this->dispatch=$_GET;	
 	}
 	
 	public static function Instance() {
+		static $instance;
 		
-		if (!isset(self::$instance)) {
-			self::$instance = new RouteParser();
+		if (!isset($instance)) {
+			$instance = new RouteParser();
 		}
 		
-		return self::$instance;
-	}
-
-	/**
-	 * Resets the singleton instance.
-	 * Used for testing.
-	 *
-	 * @return void
-	 */
-	public static function resetInstance() {
-		self::$instance = null;
+		return $instance;
 	}
 	
 	public function AddRoute ($route) {
