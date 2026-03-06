@@ -7,7 +7,7 @@ use Smarty as Smarty;
  *
  *	@author uzERP LLP and Steve Blamey <blameys@blueloop.net>
  *	@license GPLv3 or later
- *	@copyright (c) 2017 uzERP LLP (support#uzerp.com). All rights reserved.
+ *	@copyright (c) 2026 uzERP LLP (support#uzerp.com). All rights reserved.
  *
  *	uzERP is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -23,6 +23,11 @@ class View implements Iterator, Countable {
 	public $registered_things	= array();
 	private $pointer			= 0;
 	private $smarty;
+	private	$php_functions_whitelist = [
+			'date',
+			'is_object',
+			'ltrim'
+		];
 
 	function __construct()
 	{
@@ -38,6 +43,10 @@ class View implements Iterator, Countable {
 		$this->smarty->setCompileDir(DATA_ROOT . 'templates_c');
 		$this->smarty->setTemplateDir(STANDARD_TPL_ROOT);
 		$this->smarty->setMergeCompiledIncludes(true);
+
+		foreach ($this->php_functions_whitelist as $func) {
+			$this->smarty->registerPlugin('modifier', $func, $func);
+		}
 
 		$this->smarty->addPluginsDir(
 			array(
