@@ -1,6 +1,6 @@
 {
     "require": {
-        "robmorgan/phinx": "^0.12",
+        "robmorgan/phinx": "^0.16.11",
         "smarty/smarty": "^4.5.1",
         "riimu/kit-csrf": "^2.4",
         "symfony/http-foundation": "7.3.*",
@@ -29,15 +29,17 @@
         ]
     },
     "config": {
-        "platform": {
-            "php": "8.4"
-        },
         "allow-plugins": {
             "pestphp/pest-plugin": true
+        },
+        "policy": {
+            "advisories": {
+                "block": false
+            }
         }
     },
     "require-dev": {
-        "pestphp/pest": "2.*",
+        "pestphp/pest": "^4.0",
         "rector/rector": "^1.2.0",
         "symplify/easy-coding-standard": "^11.2"
     }

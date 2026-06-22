@@ -3,8 +3,6 @@
 require('modules/public_pages/erp/manufacturing/controllers/Tree.php');
 
 test('Test Tree Class', function () {
-    // Remove prev error handler
-    restore_error_handler();
 
     $structure = array(
         'Item A (top)' => array(
