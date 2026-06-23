@@ -7,7 +7,7 @@ final class ModuleLocationCrmcalendareventscontroller extends UzerpMigration
 {
     public function up(): void
     {
-        $builder = $this->getQueryBuilder();
+        $builder = $this->getQueryBuilder('update');
         $builder
             ->update('module_components')
             ->set('location', 'modules/public_pages/crm/controllers/CrmcalendarEventsController.php')
