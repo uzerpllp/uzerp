@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.37] 2026-10-06
+
+### Changed
+
+- Make sales order header Text1, 2 and 3 fields available on sales order list.
+
 ## [1.36.1] 2025-05-29
 
 ### Added
@@ -1277,7 +1283,9 @@ VAT Report views and transaction printing updated to use new calculations, match
 - Use [composer](https://getcomposer.org/) to install PHP libs
 - phinx for database migrations
 
-
+[1.37]: https://github.com/uzerpllp/uzerp/compare/1.35.4...1.37
+[1.36.1]: https://github.com/uzerpllp/uzerp/compare/1.35.4...1.36.1
+[1.35.4]: https://github.com/uzerpllp/uzerp/compare/1.35.3...1.35.4
 [1.35.3]: https://github.com/uzerpllp/uzerp/compare/1.35.2...1.35.3
 [1.35.2]: https://github.com/uzerpllp/uzerp/compare/1.35.1...1.35.2
 [1.35.1]: https://github.com/uzerpllp/uzerp/compare/1.35...1.35.1
