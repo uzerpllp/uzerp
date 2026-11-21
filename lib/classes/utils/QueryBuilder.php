@@ -308,7 +308,8 @@ class QueryBuilder {
 			
 			if (!empty($fieldname))
 			{
-				$orderstring .= $fieldname . ' ' . (!empty($orderdir[$i]) ? $orderdir[$i] : 'ASC') . ', ';
+				$dir = (!empty($orderdir[$i]) && strtoupper(trim($orderdir[$i])) === 'DESC') ? 'DESC' : 'ASC';
+				$orderstring .= $fieldname . ' ' . $dir . ', ';
 			}
 			
 		}
